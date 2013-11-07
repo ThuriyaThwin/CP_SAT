@@ -399,9 +399,15 @@ int SatSolver::check_solution()
 }
 
 
-
+/*
 Mistral::ConstraintClauseBase::ConstraintClauseBase(Vector< Variable >& scp) 
   : GlobalConstraint(scp) { 
+  conflict = NULL;
+  priority = 1;
+}
+*/
+Mistral::ConstraintClauseBase::ConstraintClauseBase(Vector< Variable >& scp, bool __fd_variables, int st_from)
+  : GlobalConstraint(scp), fd_variables(__fd_variables), start_from(st_from) {
   conflict = NULL;
   priority = 1;
 }

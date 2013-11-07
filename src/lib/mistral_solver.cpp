@@ -141,6 +141,7 @@ void Mistral::SolverParameters::initialise() {
   activity_decay = 0.96;
   checked = 1;
   backjump = 0;
+  fd_learning = false;
   value_selection = 2;
   dynamic_value = 0; //1;
 
@@ -4820,6 +4821,670 @@ void Mistral::Solver::learn_nogood() {
   //exit(1);
 }
 
+
+void Mistral::Solver::simple_fdlearn_nogood() {
+
+	backtrack_level = level-1;
+	//	backtrack_level = level-2;
+
+
+	//	std::cout << "decisions "  << decisions.size << " and the values : \n        " << decisions << std::endl;
+
+	//did decision starts from 0 or1 ? also
+	learnt_clause.clear();
+	for (int i = 1; i <= decisions.size; ++i)
+	{
+
+		if(assignment_level[decisions[decisions.size-i].var.id()])
+			learnt_clause.add(NOT (encode_boolean_variable_as_literal(decisions[decisions.size-i].var.id(), decisions[decisions.size-i].var.get_min())) );
+	}
+
+	statistics.size_learned += learnt_clause.size;
+	statistics.avg_learned_size =
+			((statistics.avg_learned_size * (double)(statistics.num_failures)) + (double)(learnt_clause.size))
+			/ ((double)(++statistics.num_failures));
+
+
+
+	if( learnt_clause.size != 1 ) {
+
+		// if(lit_activity) {
+		//   int i=learnt_clause.size;
+		//   while(i--) {
+		// 	var_activity[UNSIGNED(learnt_clause[i])] += parameters.activity_increment;
+		//   }
+		// }
+
+
+		base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
+		//add_clause( learnt, learnt_clause, stats.learnt_avg_size );
+		//reason[UNSIGNED(p)] = base->learnt.back();
+
+		// EXPL
+		//base->reason_for[UNSIGNED(p)] = base->learnt.back();
+
+		//base->reason_for[UNSIGNED(p)] = base->learnt.back();
+		//reason_for[UNSIGNED(p)] = base;
+		//taboo_constraint = base;
+
+		taboo_constraint = (ConstraintImplementation*)(base->learnt.back());
+		//reason_for[UNSIGNED(p)].store_reason_for_change(VALUE_EVENT, base->learnt.back());
+	} else {
+		taboo_constraint = NULL;
+	}
+
+	//	      deduction = decisions.back();
+	//	      deduction.invert();
+
+	//	std::cout << "learnt_clause "  << learnt_clause.size << " and the values : \n        " << learnt_clause << std::endl;
+	//	if(learnt_clause.size <5)
+	//	std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
+	//	for (int i = 0; i< learnt_clause.size; ++i)
+	{
+		//	std::cout << "assignment level [i] = " << assignment_level[get_id_boolean_variable(learnt_clause[i])] << std::endl;
+	}
+	//	std::cout << "END! current level  "  << level << " \n and backtrack_level :     " << backtrack_level << std::endl;
+
+	//	std::cout << "endl no_recursive\n "  << std::endl;
+}
+
+void Mistral::Solver::fdlearn_nogood(){
+
+
+	if (level < 3)
+		simple_fdlearn_nogood();
+	else
+	{
+#ifdef 	_DEBUG_FD_NOGOOD
+		std::cout << " \n\n\n NEW no_recursive_call_jsp_learn_nogood \n Decisions size"  << decisions.size << " and the variables : \n        " << decisions << " \n and level = " << level << std::endl;
+#endif
+		int size = Visited_lower_bound_variables .size;
+		//	std::cout << "size  Visited_lower_bound_variables \n " << size << std::endl;
+		while (size--)
+		{
+			//static_cast<VariableRangeWithLearning*>(&variables[size])->initialise_latest_visited_lower_bounds() ;
+			//static_cast<VariableRangeWithLearning*>(variables[size].range_domain)->initialise_latest_visited_lower_bounds() ;
+			Visited_lower_bound_variables[size]->initialise_latest_visited_lower_bounds() ;
+		}
+		size = Visited_upper_bound_variables .size;
+
+		//	std::cout << "size  Visited_upper_bound_variables \n " << size << std::endl;
+		while (size--)
+		{
+			//static_cast<VariableRangeWithLearning*>(&variables[size])->initialise_latest_visited_upper_bounds() ;
+			//static_cast<VariableRangeWithLearning*>(variables[size].range_domain)->initialise_latest_visited_upper_bounds();
+			Visited_upper_bound_variables[size]->initialise_latest_visited_upper_bounds() ;
+		}
+
+		Visited_lower_bound_variables.clear() ;
+		Visited_upper_bound_variables.clear() ;
+
+
+
+		int pathC = 0, index = sequence.size-1;
+		Literal p=0, q;
+		Atom a = NULL_ATOM;
+		Variable x;
+		int lvl;
+		Explanation::iterator tmp;
+		Vector<Literal> bound_literals_to_explore;
+		// double *lit_activity = base->lit_activity.stack_;
+		// double *var_activity = base->var_activity.stack_;
+
+		// We start from the constraint that failed
+		Explanation *current_explanation = culprit.propagator;
+		//UNSAT!
+		if (current_explanation == NULL )
+		{
+			//Not finished yet
+			std::cout << "Should be UNSAT! " << std::endl;
+			exit (1);
+		}
+		Explanation *bound_explanation;
+
+
+		// Variable *scope = culprit.get_scope();
+		// int arity = culprit.arity();
+		// for(int i=0; i<arity; ++i) {
+		//   var_activity[scope[i].id()] += 10 * parameters.activity_increment;
+		// }
+
+		backtrack_level = 0;
+
+		// the resulting nogood is stored in the vector 'learnt_clause'
+		learnt_clause.clear();
+		learnt_clause.add(p);/*
+	std::cout << "DO \n \n   " << std::endl;
+	std::cout << "current_explanation   " << current_explanation << std::endl;
+	std::cout << "NULL_ATOM   " << NULL_ATOM << std::endl;
+		 */
+
+		//	std::cout << "assignment.size " << assignment_level.size <<  std::endl;
+		//std::cout << "visited.size " << visited.size <<  std::endl;
+		do {
+
+
+			//	std::cout << "\nDO " << std::endl;
+			//	std::cout << "a =  "<< a << std::endl;
+			//	std::cout << "PathC =  "<< pathC << std::endl;
+			//	std::cout << "CURRENT learnt_clause size "  << learnt_clause.size << " and the values : \n        " << learnt_clause << std::endl;
+
+			if(a == NULL_ATOM || assignment_level[a]) {
+
+				Explanation::iterator stop;
+				/*			std::cout << "?? current_explanation == NULL "  << std::endl;
+			std::cout << "a =  "<< a << std::endl;
+			std::cout << "NULL_ATOM =  "<< NULL_ATOM << std::endl;
+
+			std::cout << " assignment_level[a] "  << assignment_level[a] << std::endl;
+			std::cout << "  level "  << level << std::endl;
+				 */
+
+				if(current_explanation == NULL) {
+					std::cout << "?? current_explanation == NULL "  << std::endl;
+					std::cout << "a =  "<< a << std::endl;
+					std::cout << " variable =  "<< variables[a] << std::endl;
+					std::cout << " min =  "<< variables[a].get_min() << std::endl;
+					std::cout << " max =  "<< variables[a].get_max() << std::endl;
+					std::cout << " domain =  "<< variables[a].get_domain() << std::endl;
+					//					std::cout << " jsp_reason_for =  "<< jsp_reason_for[a-start_from] << std::endl;
+					std::cout << " reason_for =  "<< reason_for[a] << std::endl;
+
+					//					current_explanation = jsp_reason_for[a-start_from];
+
+					std::cout << "a =  "<< a << std::endl;
+					std::cout << "its literal without negation =  "<< encode_boolean_variable_as_literal(a, variables[a].get_min() ) << std::endl;
+					std::cout << "NULL_ATOM =  "<< NULL_ATOM << std::endl;
+
+					std::cout << " assignment_level[a] "  << assignment_level[a] << std::endl;
+					std::cout << "  level "  << level << std::endl;
+					std::cout << "  decisions "  << decisions << std::endl;
+
+					std::cout << "  \n \n sequence "  << sequence << std::endl;
+					//			std::cout << " c current_explanation == NULL "  << std::endl;
+					//				std::cout << "a =  "<< a << std::endl;
+					//				std::cout << "assignment_level[a] =  "<< assignment_level[a] << std::endl;
+					exit (1);
+					if (assignment_level[a]!= INFTY)
+					{
+						p = ((2*a) | (x.get_min())) + start_from;
+
+						visited.fast_add(a);
+
+						learnt_clause.add(NOT(p));
+
+						if(assignment_level[a] > backtrack_level)
+							backtrack_level = assignment_level[a];
+
+					}
+					else {
+
+
+						//				std::cout << "NULL POINTER!!! " << (statistics.num_filterings) << std::endl;
+						//				std::cout << "a =  "<< a << std::endl;
+						//				std::cout << "assignment_level[a] =  "<< assignment_level[a] << std::endl;
+
+						exit(1);
+					}
+				}
+				else{
+					//		std::cout << "a =  "<< a << std::endl;
+					//		std::cout << "assignment_level[a] =  "<< assignment_level[a] << std::endl;
+
+#ifdef _CHECK_NOGOOD
+
+					// std::cout << (int*)current_explanation << " " ;
+					// std::cout.flush();
+					// std::cout << current_explanation << std::endl;
+
+					store_reason(current_explanation, a);
+#endif
+
+					Explanation::iterator lit = current_explanation->get_reason_for(a, (a != NULL_ATOM ? assignment_level[a] : level), stop);
+
+					tmp = lit;
+					bound_literals_to_explore.clear();
+
+#ifdef 	_DEBUG_FD_NOGOOD
+					if (a==NULL_ATOM)
+						std::cout << " \n explaining a failure " << std::endl;
+					else
+					{
+
+						std::cout << " \n \n \n we start by explaining a [boolean] literal s.t. its variable is" << variables[a] << " ; domain : " << variables[a].get_domain() << " and its assignment_level : " << assignment_level[a] << std::endl;
+					}
+					std::cout << "` s.t. its explanation comes from : "<< current_explanation << std::endl;
+#endif
+					while(tmp < stop) {
+						q = *tmp;
+						++tmp;
+
+						if (is_a_bound_literal(q))
+						{
+
+#ifdef 	_DEBUG_FD_NOGOOD
+							std::cout << "\n is_a_bound_literal  "<< std::endl;
+							std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+							std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+							std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+#endif
+							bound_literals_to_explore.add(q);
+						}
+						else{
+							x = variables[get_id_boolean_variable(q)];
+							lvl = assignment_level[get_id_boolean_variable(q)];
+
+#ifdef 	_DEBUG_FD_NOGOOD
+							std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+#endif
+							if(		lvl)
+								if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
+									//Sould be done later!
+									/*
+						if(lit_activity) {
+							//lit_activity[q] += 0.5 * parameters.activity_increment;
+							lit_activity[NOT(q)] += // 0.5 *
+									parameters.activity_increment;
+							var_activity[get_id_boolean_variable(q)] += parameters.activity_increment;
+						}
+									 */
+									visited.fast_add(get_id_boolean_variable(q));
+
+									if(lvl >= level) {
+										// we'll need to replace 'a' by its parents since its level is too high
+										++pathC;
+									} else {
+										// q's level is below the current level, we are not expending it further
+										learnt_clause.add(q);
+
+										if(lvl > backtrack_level)
+											backtrack_level = lvl;
+									}
+								}
+						}
+					}
+					while (bound_literals_to_explore.size)
+					{
+						//should be checked
+						q= bound_literals_to_explore.pop();
+
+						if ( static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->first_time_visited(is_lower_bound(q)) )
+						{
+							if (is_lower_bound(q))
+								Visited_lower_bound_variables.add(static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain));
+							else
+								Visited_upper_bound_variables.add(static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain));
+						}
+
+						bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->reason_for(q) ;
+
+#ifdef 	_DEBUG_FD_NOGOOD
+						std::cout << "\n we will explain "<< q << std::endl;
+						std::cout << "which corresponds to " << std::endl;
+						std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+						std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+						std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+#endif
+						if(bound_explanation)
+						{
+
+#ifdef 	_DEBUG_FD_NOGOOD
+							std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
+#endif
+							Explanation::iterator end_tmp_iterator;
+							//Note that we do not need the level here ! I should remove that later
+							Explanation::iterator start_tmp_iterator = bound_explanation->get_reason_for(q, level, end_tmp_iterator);
+
+
+							tmp = start_tmp_iterator;
+
+							while(tmp < end_tmp_iterator) {
+								q = *tmp;
+								++tmp;
+								if (is_a_bound_literal(q))
+								{
+
+#ifdef 	_DEBUG_FD_NOGOOD
+									std::cout << "\n is_a_bound_literal  "<< std::endl;
+									std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+									std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+#endif
+									bound_literals_to_explore.add(q);
+
+								}
+								else
+								{
+									x = variables[get_id_boolean_variable(q)];
+									lvl = assignment_level[get_id_boolean_variable(q)];
+
+
+#ifdef 	_DEBUG_FD_NOGOOD
+
+									std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+#endif
+									if(		lvl)
+										if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
+											//Sould be done later!
+											/*
+									if(lit_activity) {
+										//lit_activity[q] += 0.5 * parameters.activity_increment;
+										lit_activity[NOT(q)] += // 0.5 *
+												parameters.activity_increment;
+										var_activity[get_id_boolean_variable(q)] += parameters.activity_increment;
+									}
+											 */
+											visited.fast_add(get_id_boolean_variable(q));
+
+											if(lvl >= level) {
+												// we'll need to replace 'a' by its parents since its level is too high
+
+												++pathC;
+											} else {
+												// q's level is below the current level, we are not expending it further
+												learnt_clause.add(q);
+
+												if(lvl > backtrack_level)
+													backtrack_level = lvl;
+											}
+										}
+
+
+								}
+							}
+						}
+
+					}
+
+				}
+			}
+
+			//			if( pathC > 0 )
+			//check index!
+			while(!visited.fast_contain(sequence[++index].id())) {
+
+				//	std::cout << " c new index " <<  index << std::endl;
+
+				//	std::cout << " c sequence[++index].id() == " <<  sequence[index].id() << std::endl;
+
+#ifdef _DEBUG_NOGOOD
+				if(_DEBUG_NOGOOD) {
+					if(index >= variables.size-1) {
+						std::cout << "reached the end of the stack!!" << std::endl;
+					}
+				}
+#endif
+
+			};
+			/*
+		x = sequence[index];
+		a = x.id();
+		p = ((2*a) | (x.get_min()));
+		lvl = assignment_level[a];
+
+		if( pathC > 1 ) {
+			// there are still atoms to expend, we start with 'a'
+
+			// EXPL
+			current_explanation = reason_for[a];
+			visited.fast_add(a);
+
+#ifdef _DEBUG_NOGOOD
+			if(_DEBUG_NOGOOD) {
+				//for(int i=0; i<depth; ++i) std::cout << "  ";
+				std::cout << pathC << " - replace ";
+				print_literal(std::cout, p);
+				std::cout << " by its ";
+				std::cout.flush();
+			}
+#endif
+
+		}
+#ifdef _DEBUG_NOGOOD
+		else {
+			if(_DEBUG_NOGOOD) {
+				std::cout << std::endl;
+			}
+		}
+#endif
+			 */
+
+
+
+			//		std::cout << "GOT IT ! " << std::endl;
+			if( pathC > 0 ) {
+				x = sequence[index];
+				a = x.id();
+				//  p = ((2*a) | (x.get_min()));
+				p= encode_boolean_variable_as_literal(x.id(),x.get_min() );
+				//		p = ((2*a) | (x.get_min())) + start_from;
+				lvl = assignment_level[a];
+
+				//		std::cout << " explore the variable x " << x << std::endl;
+				//		std::cout << " assignment level of x " << lvl << std::endl;
+				//std::cout << " explore the variable x " << x << std::endl;
+				//		std::cout << " pathC " << pathC << std::endl;
+			}
+			if( pathC > 0 ) {
+
+				// there are still atoms to expend, we start with 'a'
+
+				// EXPL
+				current_explanation = reason_for[a];
+
+				//				std::cout << " reason_for[a] " << reason_for[a] << std::endl;
+
+				//		current_explanation = jsp_reason_for[a-start_from];
+				visited.fast_add(a);
+			}
+			else if (pathC==0)
+			{
+
+				//	std::cout << "\n \n \n PatyhC == 0 !!!!! " << pathC << std::endl;
+				//		std::cout << "backtrack level =" << backtrack_level << std::endl;
+				//		std::cout << "level =" << level << std::endl;
+
+				//				std::cout << "learnt_clause =" << learnt_clause << std::endl;
+				int bts=0, found =0, bts_value=0;
+				int index__ =0;
+				for (int i = 1; i< learnt_clause.size; ++i)
+				{
+					//				std::cout << "assignment level [i] = " << assignment_level[get_id_boolean_variable(learnt_clause[i])] << std::endl;
+					if (assignment_level[get_id_boolean_variable(learnt_clause[i])]==backtrack_level)
+					{
+						index__=i;
+						bts++;
+						//			std::cout << "[i] =" << i << std::endl;
+						//			std::cout << "learnt_clause[i] =" << learnt_clause[i] << std::endl;
+						x = variables[get_id_boolean_variable(learnt_clause[i])];
+						a = get_id_boolean_variable(learnt_clause[i]);
+						//			std::cout << " a =" << a  << std::endl;
+						//			std::cout << " x =" << x  << std::endl;
+
+						//  p = ((2*a) | (x.get_min()));
+						p= encode_boolean_variable_as_literal(x.id(),x.get_min() );
+
+						//		std::cout << " p here =" << p  << std::endl;
+
+						//		p = ((2*a) | (x.get_min())) + start_from;
+						lvl = assignment_level[a];
+
+						//		std::cout << " explore the variable x " << x << std::endl;
+						//		std::cout << " assignment level of x " << lvl << std::endl;
+						//std::cout << " explore the variable x " << x << std::endl;
+						//		std::cout << " pathC " << pathC << std::endl;
+						current_explanation = reason_for[a];
+						if (current_explanation!=NULL)
+						{
+							visited.fast_add(a);
+							pathC++;
+							found=1;
+							learnt_clause.remove(i);
+							//			std::cout << " current_explanation " << current_explanation << std::endl;
+
+
+							break;
+						}
+					}
+					else
+						if(bts_value < assignment_level[get_id_boolean_variable(learnt_clause[i])])
+							bts_value=assignment_level[get_id_boolean_variable(learnt_clause[i])];
+				}
+
+				//	std::cout << "bts =" << bts << std::endl;
+				//	std::cout << "new pathC =" << pathC << std::endl;
+				backtrack_level=bts_value;
+
+				//		std::cout << "backtrack_level" << backtrack_level << std::endl;
+				//learnt_clause.remove()
+				if (!bts)
+					exit(1);
+
+				if (!pathC)
+				{
+					//	x = sequence[index];
+					//	a = x.id();
+
+					//p= encode_boolean_variable_as_literal(x.id(),x.get_min() );
+
+					//lvl = assignment_level[a];
+
+					//			std::cout << "\n \n \n before !! " << p << std::endl;
+
+					//	p= NOT(learnt_clause[index__]);
+					//			std::cout << "\n \n \n after !! " << p << std::endl;
+					//					p= learnt_clause[index__];
+					//learnt_clause[0]=NOT(learnt_clause[index__]);
+					learnt_clause.remove(index__);
+					pathC=1;
+
+					//			std::cout << " get out" << std::endl;
+
+				}
+			}
+			else
+			{
+				if (pathC !=1)
+				{
+					std::cout << "PatyhC < 0 !!!!! " << pathC << std::endl;
+					exit(1);
+				}
+			}
+
+
+			//		std::cout << "latest before while =" << pathC << std::endl;
+		} while( --pathC );
+
+		//		std::cout << "after while !!!!! " << std::endl;
+		//		std::cout << "\n p =" << p << std::endl;
+		//		std::cout << "\n NULLATOM =" << NULL_ATOM << std::endl;
+		//		std::cout << "learnt_clause size =" << learnt_clause.size << std::endl;
+		//		std::cout << "learnt_clause =" << learnt_clause << std::endl;
+
+
+		// p is the last decision, since all atoms above it in the
+		// assumption stack have been skipped or expended.
+		learnt_clause[0] = NOT(p);
+
+#ifdef _DEBUG_SEARCH
+		if(_DEBUG_SEARCH) {
+			for(int i=0; i<level; ++i) std::cout << " ";
+			std::cout << "learn " << learnt_clause.size << " (";
+			print_literal(std::cout, learnt_clause[0]);
+			for(unsigned int i=1; i<learnt_clause.size; ++i) {
+				std::cout << " v " ;//<< learnt_clause[i];
+				print_literal(std::cout, learnt_clause[i]);
+			}
+			std::cout << " ) " << (backtrack_level<level-1 ? "-backjump" : "") << std::endl;
+		}
+#endif
+
+		//exit(1);
+
+#ifdef _CHECK_NOGOOD
+		store_nogood(learnt_clause);
+#endif
+
+
+
+
+
+
+		statistics.size_learned += learnt_clause.size;
+		statistics.avg_learned_size =
+				((statistics.avg_learned_size * (double)(statistics.num_failures)) + (double)(learnt_clause.size))
+				/ ((double)(++statistics.num_failures));
+
+		if( learnt_clause.size != 1 ) {
+
+			// if(lit_activity) {
+			//   int i=learnt_clause.size;
+			//   while(i--) {
+			// 	var_activity[UNSIGNED(learnt_clause[i])] += parameters.activity_increment;
+			//   }
+			// }
+
+
+			base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
+			//add_clause( learnt, learnt_clause, stats.learnt_avg_size );
+			//reason[UNSIGNED(p)] = base->learnt.back();
+
+			// EXPL
+			//base->reason_for[UNSIGNED(p)] = base->learnt.back();
+
+			//base->reason_for[UNSIGNED(p)] = base->learnt.back();
+			//reason_for[UNSIGNED(p)] = base;
+			//taboo_constraint = base;
+
+			taboo_constraint = (ConstraintImplementation*)(base->learnt.back());
+			//reason_for[UNSIGNED(p)].store_reason_for_change(VALUE_EVENT, base->learnt.back());
+		} else {
+			taboo_constraint = NULL;
+		}
+		visited.clear();
+		//#ifdef _DEBUG
+		//		std::cout << "END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
+		//		std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
+		/*		std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
+		for (int i = 0; i< learnt_clause.size; ++i)
+		{
+			std::cout << "assignment level [i] = " << assignment_level[get_id_boolean_variable(learnt_clause[i])] << std::endl;
+		}
+		std::cout << "END! current level  "  << level << " \n and backtrack_level :     " << backtrack_level << std::endl;
+
+		std::cout << "endl no_recursive \n"  << std::endl;
+		 */
+		// int real_size = 0;
+		// for(int i=0; i<base->learnt.size; ++i) {
+		//   real_size += base->learnt[i]->size;
+		// }
+		// if(real_size != statistics.size_learned) {
+		//   std::cout << "discrepancy after learning!!\n" ;
+		//   exit(1);
+		// }
+
+
+		//backjump_decision = decision(variables[UNSIGNED(p)], Decision::REMOVAL, SIGN(p));
+
+#ifdef _DEBUG_NOGOOD
+		if(_DEBUG_NOGOOD) {
+			//for(int i=0; i<level; ++i) std::cout << " ";
+			std::cout << "backtrackLevel = " << backtrack_level << "/" << (decisions.size) << std::endl;
+		}
+#endif
+
+		//   while(level>backtrack_level) {
+		//     restore();
+		//     decisions.pop();
+		//   }
+
+		//return decision;
+
+		//exit(1);
+	}
+}
+
+
 void Mistral::Solver::forget() {
 
   //std::cout << lit_activity << " "  << lit_activity[0] << " "  << lit_activity[1] << std::endl;
@@ -4901,26 +5566,49 @@ Mistral::Outcome Mistral::Solver::branch_right() {
 
     Mistral::Decision deduction;
 
-    
-    
-    if(parameters.backjump && !culprit.empty()) {
+
+    //    if(parameters.jsp_backjump && !culprit.empty()) {
+    if(parameters.fd_learning && !culprit.empty()) {
 
 #ifdef _OLD_
 
 #else
 
-      learn_nogood();
+    	//      learn_nogood();
+
+    	//	simple_fdlearn_nogood();
+    	fdlearn_nogood();
+#endif
+
+    	Literal p = learnt_clause[0];
+    	deduction = Decision(variables[get_id_boolean_variable(p)], Decision::REMOVAL, NOT(SIGN(p)));
+    	// 	std::cout << "endl learning ?  "  << std::endl;
+    	//  	std::cout << "decisions "  << decisions.size << " and the values : \n        " << decisions << std::endl;
+
+    	//    	backtrack_level = level-1;
+    	//   	      deduction = decisions.back();
+    	//  	      deduction.invert();
+
+    }
+    else{
+    	if(parameters.backjump && !culprit.empty()) {
+
+#ifdef _OLD_
+
+#else
+
+    		learn_nogood();
 
 #endif
 
-      Literal p = learnt_clause[0];
-      deduction = Decision(variables[UNSIGNED(p)], Decision::REMOVAL, NOT(SIGN(p)));
-    } else {
-      backtrack_level = level-1;
-      deduction = decisions.back();
-      deduction.invert();
+    		Literal p = learnt_clause[0];
+    		deduction = Decision(variables[UNSIGNED(p)], Decision::REMOVAL, NOT(SIGN(p)));
+    	} else {
+    		backtrack_level = level-1;
+    		deduction = decisions.back();
+    		deduction.invert();
+    	}
     }
-    
     restore(backtrack_level);  
     
 #ifdef _DEBUG_SEARCH
@@ -7015,6 +7703,46 @@ Mistral::RestartPolicy *Mistral::Solver::restart_factory(std::string rpolicy) {
 
 void Mistral::Solver::initialise_random_seed(const int seed) {
   usrand(seed);
+}
+
+
+void Mistral::Solver::set_fdlearning_on() {
+
+	//	parameters.jsp_backjump = true;
+	parameters.backjump = true;
+	parameters.fd_learning = true;
+
+	Vector< Variable >   bool_variables;
+	if(!base) {
+
+		bool_variables.clear();
+		//	std::cout << "Variables  : " << variables << std::endl;
+		//	std::cout << "start_from  : " << start_from << std::endl;
+		for (int i = start_from; i<  (variables.size -1 ) ; ++i)
+			bool_variables.add(variables[i]);
+
+		//	std::cout << "bool_variables  : " << bool_variables << std::endl;
+		base = new ConstraintClauseBase(bool_variables, true,start_from);
+
+		//			base->init_jsp();
+		add(Constraint(base));
+		//add(base);
+	}
+
+	//	std::cout << "nb of bool var ? : " << variables.size - start_from << std::endl;
+
+
+	//visited.initialise(0, bool_variables.size -1, BitSet::empt);
+	//should we re-initialize visited here?
+	//	visited.initialise(0, bool_variables.size-1);
+	//	std::cout << "visited : " << visited << std::endl;
+	//	std::cout << "visited size ? : " << visited.size << std::endl;
+	//	std::cout << "visited.capacity ? : " << visited.capacity << std::endl;
+
+	//	jsp_reason_for.initialise(variables.size - start_from -1,variables.size - start_from -1 , NULL);
+	//	jsp_reason_for.initialise(variables.size - start_from ,variables.size - start_from , NULL);
+	//reason_for[vidx - start_from] = var_evt.third;
+
 }
 
 

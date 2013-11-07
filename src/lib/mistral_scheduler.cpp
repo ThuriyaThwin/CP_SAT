@@ -1681,6 +1681,7 @@ void SchedulingSolver::setup() {
     }
     if (params->FD_learning)
     {
+
     	Variable t(lb, ub);
     	tasks.add(t);
     }
@@ -1818,6 +1819,8 @@ void SchedulingSolver::setup() {
 
   }
 
+  if (params->FD_learning)
+	  start_from = tasks.size;
 
 #ifdef _MONITOR
   monitor_list << tasks[15] << " "

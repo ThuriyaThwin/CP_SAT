@@ -175,6 +175,7 @@ namespace Mistral {
 #define DYN_VAR     31
 #define REMOVED_VAR 512
 #define EXPRESSION  3
+#define RANGE_VAR_WITHLEARNING 32
 
 #define NUM_METHODS 30
 #define NUM_VARTYPES 6

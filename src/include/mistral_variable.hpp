@@ -1525,6 +1525,142 @@ namespace Mistral {
     }
   };
 
+  class VariableRangeWithLearning : public VariableRange {
+
+  public:
+	  VariableRangeWithLearning(const int lb, const int ub) : VariableRange(lb,ub) {
+
+		  latest_visited_upper_bound = INFTY;
+		  latest_visited_lower_bound = -INFTY;
+		  lowerbounds.clear();
+		  upperbounds.clear();
+		  lower_bound_reasons.clear();
+		  upper_bound_reasons.clear();
+		  lowerbounds.add(lb);
+		  upperbounds.add(ub);
+		  lower_bound_reasons.add(NULL);
+		  upper_bound_reasons.add(NULL);
+
+	  };
+	  Explanation* reason_for(Literal l);
+
+	  void set_latest_visited_lower_bound(int l){latest_visited_lower_bound=l;} ;
+	  int get_latest_visited_lower_bound(){ return latest_visited_lower_bound;} ;
+
+	  void set_latest_visited_upper_bound(int u){latest_visited_upper_bound = u;} ;
+	  int get_latest_visited_upper_bound(){return latest_visited_upper_bound;} ;
+
+	  void initialise_latest_visited_upper_bounds () {latest_visited_upper_bound = INFTY;}
+	  void initialise_latest_visited_lower_bounds () {latest_visited_lower_bound = -INFTY;}
+	  bool first_time_visited (bool is_a_lowerbound) ;
+
+	  bool set_visited(unsigned int literal);
+	  /// Remove all values strictly lower than l
+	  inline Event set_min(const int lo,  Explanation * C) {
+		  Event lower_bound = LB_EVENT;
+
+		  // first check if we can abort early
+		  if(max <  lo) return FAIL_EVENT;
+		  if(min >= lo) return NO_EVENT;
+
+		  save();
+
+		  min = lo;
+
+		  lowerbounds.add(lo);
+		  lower_bound_reasons.add(C);
+		  //  std::cout << "NEW LOWER BOUND \n \n " << std::endl;
+		  //  std::cout << "lowerbounds"<< lowerbounds << std::endl;
+		  //	  std::cout << "lower_bound_reasons"<< lower_bound_reasons << std::endl;
+		  //	  int size =lowerbounds.size ;
+		  //	  std::cout << "size" << size<< std::endl;
+
+		  if(min == max) lower_bound |= VALUE_EVENT;
+
+		  solver->trigger_event(id, lower_bound);
+		  return lower_bound;
+	  }
+
+	  /// Remove all values strictly greater than u
+	  inline Event set_max(const int up, Explanation * C) {
+		  Event upper_bound = UB_EVENT;
+
+		  // first check if we can abort early
+		  if(min >  up) return FAIL_EVENT;
+		  if(max <= up) return NO_EVENT;
+
+		  save();
+
+		  max = up;
+		  upperbounds.add(up);
+		  upper_bound_reasons.add(C);
+
+		  //	  std::cout << "NEW LOWER BOUND \n \n " << std::endl;
+		  //	  std::cout << "lowerbounds"<< lowerbounds << std::endl;
+		  //		  std::cout << "lower_bound_reasons"<< lower_bound_reasons << std::endl;
+		  //		  int size =lowerbounds.size ;
+		  //		  std::cout << "size" << size<< std::endl;
+
+
+		  //HERE : How to backtrack ?
+		  if(max == min) upper_bound |= VALUE_EVENT;
+
+		  solver->trigger_event(id, upper_bound);
+		  return upper_bound;
+	  }
+
+	  inline Event restore() {
+
+		//  std::cout << "restore restore restore "<< std::endl;
+		  trail_.pop();
+		  trail_.pop(max);
+		  trail_.pop(min);
+		  int size = lowerbounds.size;
+		  while(size--)
+		  {
+			  if(lowerbounds[size]>min)
+			  {
+				  lowerbounds.pop();
+				  lower_bound_reasons.pop();
+			  }
+			  else
+			  {
+
+			//	  std::cout << "restore lower is done Latest lowerbounds ==  "<< lowerbounds[size] <<std::endl;
+			//	  std::cout << "min ==  "<< min <<std::endl;
+				  break;
+			  }
+		  }
+		  size = upperbounds.size;
+		  while(size--)
+		  {
+			  if(upperbounds[size]<max)
+			  {
+				  upperbounds.pop();
+				  upper_bound_reasons.pop();
+			  }
+			  else
+			  {
+
+			//	  std::cout << "restore lower is done Latest upperbounds ==  "<< upperbounds[size] <<std::endl;
+			//	  std::cout << "max ==  "<< max <<std::endl;
+				  break;
+			  }
+		  }
+
+		  return NO_EVENT;
+	  }
+
+
+	  Vector<int> lowerbounds;
+	  Vector<int> upperbounds;
+  private:
+	  Vector<Explanation*> lower_bound_reasons;
+	  Vector<Explanation*> upper_bound_reasons;
+	  int latest_visited_lower_bound ;
+	  int latest_visited_upper_bound ;
+
+  };
   class VariableVirtual : public VariableBitmap {};
 
 

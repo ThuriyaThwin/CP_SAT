@@ -107,6 +107,7 @@ namespace Mistral {
 
 
     int backjump;
+    bool fd_learning;
 
     /// whether solutions are checked
     // 0 -> not checked
@@ -766,6 +767,20 @@ namespace Mistral {
     double get_current_target();
     // //@}
 
+    //FD learning
+    void simple_fdlearn_nogood();
+    void fdlearn_nogood();
+
+    //Data Structures needed with jsp_learn_nogood
+    Vector<VariableRangeWithLearning*> Visited_lower_bound_variables ;
+    Vector<VariableRangeWithLearning*> Visited_upper_bound_variables ;
+    //start_from is the index of the first boolean variable in the sequence
+    int start_from;
+    //Here we suppose we index first range variables then boolean variables, hence start_from should be equal to nb_range_variables. I'll be back later to that
+    //   inline int get_id_boolean_variable (unsigned int literal ) {return (((literal-start_from) /2) + start_from) ;}
+    inline int get_id_boolean_variable (unsigned int literal ) {return ((literal /2) + start_from) ;}
+    inline unsigned int encode_boolean_variable_as_literal (unsigned int id_var, int sign) {return (((id_var - start_from)*2 ) + sign);}
+    void treat_explanation(Explanation::iterator & lit, Explanation::iterator & stop, int& pathC );
 
     BranchingHeuristic *heuristic_factory(std::string var_ordering, std::string branching, const int randomness=1);
     // {
@@ -817,6 +832,7 @@ namespace Mistral {
     void initialise_random_seed(const int seed);
     void set_time_limit(const double limit);
     void set_learning_on();
+    void set_fdlearning_on();
     void close_propagation();
 
 
@@ -1157,6 +1173,21 @@ public:
   //SearchMonitor& operator<< (SearchMonitor& os, std::string& x);
   SearchMonitor& operator<< (SearchMonitor& os, const char* x);
   SearchMonitor& operator<< (SearchMonitor& os, const int x);
+
+  //Needed with learning :
+  //with 32 bits :
+  //The first bit is the sign : 0 lower bound; 1 : upper bound.
+  //The next 16 bits for values : --> biggest value is 65535.
+  //the last 4 bits are for the variable_id : biggest variable_id is 32767.
+  inline unsigned int encode_bound_literal (int id_variable, int value,int sign) {return ( (sign << 31) | (value << 15)   | id_variable);}
+  inline int get_variable_from_literal (unsigned int literal) { return ( 0x7FFF & literal) ;}
+  inline int get_value_from_literal (unsigned int literal) {return ( (literal & 0x7FFFFFFF) >> 15);}
+  inline int get_sign_from_literal (unsigned int literal) {return (literal >> 31);}
+  inline bool is_upper_bound (unsigned int literal) {return (literal >> 31) ;}
+  inline bool is_lower_bound (unsigned int literal) {return 1- (literal >> 31) ;}
+  inline bool is_a_bound_literal (unsigned int literal) {return (literal > 0x7FFF ) ;}
+
+  inline int negate_literal (unsigned int literal) { return ( 0x7FFF & literal) ;}
 
 
 }

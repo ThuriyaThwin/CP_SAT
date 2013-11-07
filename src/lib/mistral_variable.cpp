@@ -128,8 +128,11 @@ void Mistral::Variable::initialise_domain(const int lo, const int up, const int 
 #ifdef _DEBUG_BUILD
   std::cout << "init domain from bounds [" << lo << "," << up << "] (type = " << domain2str(type) << " -> " ; //<< ")";
 #endif 
-
-  if(lo == up) {
+  if (type==RANGE_VAR_WITHLEARNING) {
+     domain_type = RANGE_VAR;
+     range_domain = new VariableRangeWithLearning(lo, up);
+   } else
+	if(lo == up) {
     domain_type = CONST_VAR;
     constant_value = lo;
   } else if(type == EXPRESSION) {
@@ -1845,6 +1848,126 @@ Mistral::Event Mistral::VariableRange::set_domain(const BitSet& s) {
 int Mistral::VariableImplementation::assigned_at_last_level() const {
   return ((Solver*)solver)->assignment_level[id] == solver->level;
 }
+
+
+bool Mistral::VariableRangeWithLearning::first_time_visited (bool is_a_lowerbound) {
+	if (is_a_lowerbound)
+		return (latest_visited_lower_bound == -INFTY);
+	else
+		return (latest_visited_upper_bound == INFTY);
+}
+
+bool Mistral::VariableRangeWithLearning::set_visited (unsigned int literal) {
+
+	if (is_lower_bound(literal))
+	{
+		if (latest_visited_lower_bound> get_value_from_literal(literal))
+			return true;
+		else
+		{
+			latest_visited_lower_bound= get_value_from_literal(literal);
+			return false;
+		}
+	}
+	else
+	{
+		if (latest_visited_upper_bound < get_value_from_literal(literal))
+			return true;
+		else
+		{
+			latest_visited_upper_bound= get_value_from_literal(literal);
+			return false;
+		}
+	}
+
+}
+
+Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) {
+	//	std::cout << "reason_for" << std::endl;
+	//	std::cout << "literal" << l << std::endl;
+	//display(std::cout);
+	//	std::cout << " \n max " << max << std::endl;
+	//	std::cout << " \n min " << min << std::endl;
+	//	std::cout << "variable" <<<< std::endl;
+	//	std::cout << "value" << get_value_from_literal(l) << std::endl;
+
+	//	std::cout << "lowerbounds "<< lowerbounds << std::endl;
+	//	std::cout << "upperbounds"<< upperbounds << std::endl;
+	//	std::cout << "lowerbounds reasons "<< lower_bound_reasons << std::endl;
+	//	std::cout << "upperbounds reasons "<< upper_bound_reasons << std::endl;
+	//	std::cout << "upperbounds reasons .size "<< upper_bound_reasons.size << std::endl;
+
+	int size;
+	if (is_lower_bound(l))
+	{
+		if	(latest_visited_lower_bound >= get_value_from_literal(l))
+		{
+
+			//		std::cout << "return NULL because the lower bound is already visited" << std::endl;
+			return NULL;
+		}
+		//		std::cout << "yes"<< std::endl;
+		//		std::cout << "l"<< l << std::endl;
+		//		std::cout << "lowerbounds "<< lowerbounds << std::endl;
+		//		std::cout << "lower_bound_reasons"<< lower_bound_reasons << std::endl;
+		size =lowerbounds.size ;
+
+		//		std::cout << "size" << size<< std::endl;
+		while (size --)
+			if(lowerbounds[size]< get_value_from_literal(l))
+			{
+
+				//			std::cout << " c lower bound found! " << std::endl;
+				//			if (upper_bound_reasons[size+1] == NULL)
+				//				std::cout << "c return NULL " << std::endl;
+				//			else
+				//				std::cout << " c return lowerbounds reason_for --> " << *lower_bound_reasons[size+1] << std::endl;
+				latest_visited_lower_bound = lowerbounds[size+1];
+				return lower_bound_reasons[size+1];
+			}
+	}
+	else
+	{
+		if(latest_visited_upper_bound <= get_value_from_literal(l))
+		{
+
+			//		std::cout << "return NULL because the upper bound is already visited" << std::endl;
+			return NULL;
+		}
+		/*
+		std::cout << "no"<< std::endl;
+		std::cout << "l"<< l << std::endl;
+		std::cout << "value"<< get_value_from_literal(l) << std::endl;
+		std::cout << "upperbounds"<< upperbounds << std::endl;
+		std::cout << "upper_bound_reasons"<< upper_bound_reasons << std::endl;
+
+		std::cout << "upper_bound_reasons size"<< upper_bound_reasons.size << std::endl;
+		 */
+		size =upperbounds.size ;
+		while (size --)
+			if(upperbounds[size]> get_value_from_literal(l))
+			{
+
+				//			std::cout << "c upperbound found" << size<< std::endl;
+				//			if (upper_bound_reasons[size+1] == NULL)
+				//				std::cout << "c return NULL " << std::endl;
+				//			else
+
+				//					std::cout <<" c return upperbounds reason_for --> " << *upper_bound_reasons[size+1] << std::endl;
+
+				latest_visited_upper_bound = upperbounds[size+1];
+				return upper_bound_reasons[size+1];
+			}
+
+	}
+
+	std::cout << "END ? " << std::endl;
+	exit(1);
+	//	return lower_bound_reasons[0];
+
+}
+
+
 
 void Mistral::VariableList::initialise(Solver *s) {
   VariableImplementation::initialise(s);

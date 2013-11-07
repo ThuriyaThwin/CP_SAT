@@ -305,8 +305,9 @@ namespace Mistral {
     
     /**@name Constructors*/
     //@{
-    ConstraintClauseBase() : GlobalConstraint() { conflict = NULL; }
-    ConstraintClauseBase(Vector< Variable >& scp);
+    ConstraintClauseBase() : GlobalConstraint() { conflict = NULL; fd_variables=false; start_from=0;}
+//    ConstraintClauseBase(Vector< Variable >& scp);
+    ConstraintClauseBase(Vector< Variable >& scp, bool __fd_variables=false, int st_from=0);
     virtual void mark_domain();
     virtual Constraint clone() { return Constraint(new ConstraintClauseBase(scope), type); }
     virtual void initialise();
@@ -339,7 +340,10 @@ namespace Mistral {
     // virtual Explanation::iterator end  (Atom a) { return (a == NULL_ATOM ? conflict->end(a)   : reason_for[a]->end(a));   }
 
     virtual iterator get_reason_for(const Atom a, const int lvl, iterator& end) { 
-      return(a == NULL_ATOM ? conflict->get_reason_for(a, lvl, end) : reason_for[a]->get_reason_for(a, lvl, end));
+    	if (!fd_variables)
+    		return(a == NULL_ATOM ? conflict->get_reason_for(a, lvl, end) : reason_for[a]->get_reason_for(a, lvl, end));
+    	else
+    		return(a == NULL_ATOM ? conflict->get_reason_for(a, lvl, end) : reason_for[a-start_from]->get_reason_for(a-start_from, lvl, end));
     }
 
     /**@name Miscellaneous*/
@@ -350,7 +354,9 @@ namespace Mistral {
     virtual std::ostream& display(std::ostream&) const ;
     virtual std::string name() const { return "clause_base"; }
     //@}
-    
+  private :
+    bool fd_variables;
+    int start_from;
   };
 
 

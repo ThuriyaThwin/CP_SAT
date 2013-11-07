@@ -2272,6 +2272,31 @@ std::cout << "[" << std::setw(4) << id << "](" << name() << "): restore" << std:
     //@}
   };
 
+  class ExplainedConstraintLess : public ConstraintLess {
+
+  public:
+	  ExplainedConstraintLess (Variable x, Variable y, const int ofs=0)
+  : ConstraintLess(x,y,ofs) {}
+
+	  ExplainedConstraintLess(Vector< Variable >& scp, const int ofs=0)
+	  : ConstraintLess(scp,ofs) {}
+
+	  virtual Constraint clone() { return Constraint(new ExplainedConstraintLess(scope[0], scope[1], offset)// , type
+	  ); }
+	  virtual bool explained() { return true; }
+	  virtual iterator get_reason_for(const Atom a, const int lvl, iterator& end);
+	  virtual iterator get_bound_reason_for(const Literal l, iterator& end);
+
+	  virtual PropagationOutcome propagate();
+	  virtual PropagationOutcome propagate(const int changed_idx, const Event evt);
+
+  private:
+
+	  Literal explanation[2];
+	  // Literal triggered_by;
+  };
+
+
   /**********************************************
    * <= Predicate
    **********************************************/ 
@@ -3386,6 +3411,39 @@ std::cout << "[" << std::setw(4) << id << "](" << name() << "): restore" << std:
     virtual std::ostream& display(std::ostream&) const ;
     virtual std::string name() const { return "<>="; }
     //@}
+  };
+
+
+  class ExplainedConstraintReifiedDisjunctive : public ConstraintReifiedDisjunctive {
+
+  public:
+
+	  ExplainedConstraintReifiedDisjunctive(Variable x, Variable y, Variable z, const int p0, const int p1):
+		  ConstraintReifiedDisjunctive(x, y, z, p0, p1) {}
+	  ExplainedConstraintReifiedDisjunctive(Vector< Variable >& scp, const int p0, const int p1) :
+		  ConstraintReifiedDisjunctive(scp,p0, p1) {}
+	  // ConstraintReifiedDisjunctive(std::vector< Variable >& scp, const int p0, const int p1);
+
+	  virtual PropagationOutcome propagate(const int changed_idx, const Event evt);
+	  virtual Constraint clone() { return Constraint(new ExplainedConstraintReifiedDisjunctive(scope[0], scope[1], scope[2], processing_time[0], processing_time[1])); }
+	  virtual Constraint get_negation(const int var, Variable x) {
+		  return Constraint( new ExplainedConstraintReifiedDisjunctive( scope[0], scope[1], x, processing_time[0], processing_time[1] ) );
+	  }
+	  // ??
+	  //virtual bool absorb_negation(const int var) { return var==2; }
+	  //}
+
+	  /**@name Miscellaneous*/
+	  //@{
+	  //  virtual std::ostream& display(std::ostream&) const ;
+
+	  //@}
+	  virtual bool explained() { return true; }
+	  virtual iterator get_reason_for(const Atom a, const int lvl, iterator& end);
+	  virtual iterator get_bound_reason_for(const Literal l, iterator& end);
+
+  private:
+	  Literal explanation[4];
   };
 
 
