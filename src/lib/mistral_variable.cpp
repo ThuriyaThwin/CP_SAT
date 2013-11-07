@@ -1723,7 +1723,12 @@ Mistral::Event Mistral::Variable::restore() {
 
   if     (domain_type ==  BITSET_VAR) evt = bitset_domain->restore();
   //else if(domain_type ==    LIST_VAR) evt = list_domain->restore();
-  else if(domain_type ==   RANGE_VAR) evt = range_domain->restore();
+  else if(domain_type ==   RANGE_VAR)
+  {
+	  if (dynamic_cast <VariableRangeWithLearning*> (range_domain))
+		  evt = (static_cast<VariableRangeWithLearning*> (range_domain)) -> restore();
+	  else  evt = range_domain->restore();
+  }
   //else if(domain_type == VIRTUAL_VAR) evt = virtual_domain->restore();
   else if(domain_type ==   CONST_VAR) evt = NO_EVENT;
   else if(domain_type ==   EXPRESSION) {
@@ -4106,6 +4111,99 @@ Mistral::Variable Mistral::Precedence(Variable X, const int d, Variable Y)
 }
 
 
+
+void Mistral::ExplainedPrecedenceExpression::extract_constraint(Solver *s) {
+	if(children.size==2) {
+		s->add(Constraint(new ExplainedConstraintLess(children, offset)// , (BINARY|IDEMPOTENT)
+		) );
+	}
+	else {
+		std::cout << "Not supported (yet)! \n EXIT" << std::endl;
+		exit(1);
+		/*    if(spin) {
+
+#ifdef _DEBUG_AC
+      std::cout << "pre-propagte (" << children[0] << " <= "
+		<< offset << ") ";
+#endif
+      //std::cout << "HERE" << std::endl;
+
+      if(FAILED(children[0].set_max(offset)))
+	{
+#ifdef _DEBUG_AC
+	  std::cout << "fail!\n";
+#endif
+	  s->fail();
+	}
+#ifdef _DEBUG_AC
+    else
+      std::cout << "ok\n";
+#endif
+
+    } else {
+#ifdef _DEBUG_AC
+      std::cout << "pre-propagte (" << children[0] << " >= "
+		<< offset << ") ";
+#endif
+
+      if(FAILED(children[0].set_min(offset)))
+	{
+#ifdef _DEBUG_AC
+	  std::cout << "fail!\n";
+#endif
+	  s->fail();
+	}
+#ifdef _DEBUG_AC
+    else
+      std::cout << "ok\n";
+#endif
+    }
+  }
+		 */
+	}
+}
+
+void Mistral::ExplainedPrecedenceExpression::extract_variable(Solver *s) {
+	Variable aux(0, 1, BOOL_VAR);
+	_self = aux;
+
+	_self.initialise(s, 1);
+	_self = _self.get_var();
+	children.add(_self);
+}
+
+void Mistral::ExplainedPrecedenceExpression::extract_predicate(Solver *s) {
+	std::cout << "Not supported (yet)! ExplainedPrecedenceExpression::extract_predicate \n EXIT" << std::endl;
+	exit(1);
+
+	if(children.size==3) {
+//		s->add(Constraint(new ExplainedPredicateLess(children, offset)));
+//		std::cout << "Not supported (yet)! \n EXIT" << std::endl;
+//		exit(1);
+	} else
+	{
+		std::cout << "Not supported (yet)! \n EXIT" << std::endl;
+		exit(1);
+	}
+	/*if(spin) {
+    s->add(Constraint(new PredicateUpperBound(children, offset)));
+  } else {
+    s->add(Constraint(new PredicateLowerBound(children, offset)));
+  }*/
+}
+
+const char* Mistral::ExplainedPrecedenceExpression::get_name() const {
+	return "explained prec";
+}
+
+Mistral::Variable Mistral::ExplainedPrecedence(Variable X, const int d, Variable Y)
+{
+	Variable exp(new ExplainedPrecedenceExpression(X,Y,d));
+	return exp;
+}
+
+
+
 Mistral::Variable Mistral::Variable::operator<(Variable x) {
   Variable exp(new PrecedenceExpression(*this,x,1));
   return exp;
@@ -4223,6 +4321,22 @@ Mistral::Variable Mistral::ReifiedDisjunctive(Variable X, Variable Y,
   return exp;
 }
 
+
+void Mistral::ExplainedReifiedDisjunctiveExpression::extract_predicate(Solver *s) {
+  //s->add(new ConstraintTernaryDisjunctive(children, processing_time[0], processing_time[1]));
+  s->add(Constraint(new ExplainedConstraintReifiedDisjunctive(children, processing_time[0], processing_time[1])));
+}
+
+const char* Mistral::ExplainedReifiedDisjunctiveExpression::get_name() const {
+  return "r-disjunct with learning";
+}
+
+Mistral::Variable Mistral::ExplainedReifiedDisjunctive(Variable X, Variable Y,
+					      const int px, const int py)
+{
+  Variable exp(new ExplainedReifiedDisjunctiveExpression(X,Y,px,py));
+  return exp;
+}
 
 
 Mistral::FreeExpression::FreeExpression(Variable X) 

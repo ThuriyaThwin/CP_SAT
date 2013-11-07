@@ -4891,9 +4891,9 @@ void Mistral::Solver::simple_fdlearn_nogood() {
 void Mistral::Solver::fdlearn_nogood(){
 
 
-	if (level < 3)
-		simple_fdlearn_nogood();
-	else
+//	if (level < 3)
+//		simple_fdlearn_nogood();
+//	else
 	{
 #ifdef 	_DEBUG_FD_NOGOOD
 		std::cout << " \n\n\n NEW no_recursive_call_jsp_learn_nogood \n Decisions size"  << decisions.size << " and the variables : \n        " << decisions << " \n and level = " << level << std::endl;
@@ -5444,7 +5444,7 @@ void Mistral::Solver::fdlearn_nogood(){
 		visited.clear();
 		//#ifdef _DEBUG
 		//		std::cout << "END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
-		//		std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
+	//			std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
 		/*		std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
 		for (int i = 0; i< learnt_clause.size; ++i)
 		{
@@ -5576,7 +5576,7 @@ Mistral::Outcome Mistral::Solver::branch_right() {
 
     	//      learn_nogood();
 
-    	//	simple_fdlearn_nogood();
+//    		simple_fdlearn_nogood();
     	fdlearn_nogood();
 #endif
 

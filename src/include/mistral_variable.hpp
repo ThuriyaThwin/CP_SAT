@@ -2800,6 +2800,27 @@ namespace Mistral {
 
   Variable Precedence(Variable X, const int d, Variable Y);
 
+
+
+  class ExplainedPrecedenceExpression : public PrecedenceExpression {
+
+  public:
+	  ExplainedPrecedenceExpression(Variable X,
+			  const int of=0, const int sp=1) :  PrecedenceExpression(X,of,sp) {}
+	  ExplainedPrecedenceExpression(Variable X, Variable Y,
+			  const int of=0, const int sp=1) : PrecedenceExpression(X,Y, of,sp){}
+
+	  virtual void extract_constraint(Solver*);
+	  virtual void extract_variable(Solver*);
+	  virtual void extract_predicate(Solver*);
+	  virtual const char* get_name() const;
+
+  };
+
+  Variable ExplainedPrecedence(Variable X, const int d, Variable Y);
+
+
+
   class DisjunctiveExpression : public Expression {
 
   public:
@@ -2845,6 +2866,26 @@ namespace Mistral {
 
   Variable ReifiedDisjunctive(Variable X, Variable Y, const int px, const int py);
   
+
+  class ExplainedReifiedDisjunctiveExpression : public ReifiedDisjunctiveExpression {
+
+  public:
+
+	  ExplainedReifiedDisjunctiveExpression(Variable X,
+			  Variable Y,
+			  const int p0=1,
+			  const int p1=1) : ReifiedDisjunctiveExpression (X, Y, p0,p1) {}
+
+	  //    virtual void extract_constraint(Solver*);
+	  //virtual void extract_variable(Solver*);
+	  virtual void extract_predicate(Solver*);
+	  virtual const char* get_name() const;
+
+  };
+
+  Variable ExplainedReifiedDisjunctive(Variable X, Variable Y, const int px, const int py);
+
+
 
   class FreeExpression : public Expression {
 

@@ -1682,7 +1682,8 @@ void SchedulingSolver::setup() {
     if (params->FD_learning)
     {
 
-    	Variable t(lb, ub);
+    	//Variable t(lb, ub);
+    	Variable t(lb, ub,RANGE_VAR_WITHLEARNING);
     	tasks.add(t);
     }
     else
@@ -1702,7 +1703,7 @@ void SchedulingSolver::setup() {
       ti = data->getJobTask(i,j-1);
       tj = data->getJobTask(i,j);
       if (params->FD_learning)
-    	  add( Precedence(tasks[ti],
+    	  add( ExplainedPrecedence(tasks[ti],
     			  (data->getDuration(ti) +
     					  (data->hasTimeLag() ? data->getMinLag(i,j-1) : 0)),
     					  tasks[tj]) );
@@ -1721,7 +1722,7 @@ void SchedulingSolver::setup() {
 	  ti = data->getJobTask(i,j-1);
 	  tj = data->getJobTask(i,j);
 	  if (params->FD_learning)
-		  add( Precedence(tasks[tj],
+		  add(ExplainedPrecedence(tasks[tj],
 				  -(data->getDuration(ti)+data->getMaxLag(i,j-1)),
 				  tasks[ti]) );
 	  else
@@ -1771,7 +1772,7 @@ void SchedulingSolver::setup() {
 	//first_task_of_disjunct.push_back(ti);
 	//second_task_of_disjunct.push_back(tj);
 	if (params->FD_learning)
-		disjuncts.add( ReifiedDisjunctive( tasks[ti],
+		disjuncts.add( ExplainedReifiedDisjunctive( tasks[ti],
 				tasks[tj],
 
 				data->getDuration(ti)
@@ -1805,15 +1806,23 @@ void SchedulingSolver::setup() {
 //   //exit(1);
 
 
+  if (params->FD_learning)
+  {
+	  Variable x_cmax(lb_C_max, ub_C_max, RANGE_VAR_WITHLEARNING);
+	  C_max = x_cmax;
+  }
+  else
+  {
+	  Variable x_cmax(lb_C_max, ub_C_max);
+	  C_max = x_cmax;
+  }
 
 
-  Variable x_cmax(lb_C_max, ub_C_max);
-  C_max = x_cmax;
   for(i=0; i<data->nJobs(); ++i) {
     ti = data->getLastTaskofJob(i);
 
     if (params->FD_learning)
-    	add(Precedence(tasks[ti], data->getDuration(ti), C_max));
+    	add(ExplainedPrecedence(tasks[ti], data->getDuration(ti), C_max));
     else
     	add(Precedence(tasks[ti], data->getDuration(ti), C_max));
 
@@ -2167,7 +2176,10 @@ int DTP_Model::set_objective(const int obj) {
 }
 
 int C_max_Model::set_objective(const int obj) {
-  return (C_max.set_max(obj) != FAIL_EVENT ? UNKNOWN : UNSAT);
+	if (params->FD_learning)
+		return ( (static_cast<VariableRangeWithLearning *> (C_max.range_domain) ) -> set_max(obj,NULL) != FAIL_EVENT ? UNKNOWN : UNSAT);
+	else
+		return (C_max.set_max(obj) != FAIL_EVENT ? UNKNOWN : UNSAT);
 }
 
 int L_sum_Model::get_objective() {
@@ -2733,8 +2745,10 @@ void SchedulingSolver::dichotomic_search()
 
     save();
     
+
     result = set_objective(objective);
-    
+    if (params->FD_learning)
+    	set_fdlearning_on();
 
 #ifdef _DEBUG_PRUNING
     monitor(tasks);
