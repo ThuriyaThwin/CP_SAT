@@ -80,7 +80,7 @@ namespace Mistral {
     static const int RGUIDED =  3;
     static const int RAND    =  4;
 
-    static const int nia = 20;
+    static const int nia = 21;
     static const char* int_ident[nia];
     
     static const int nsa = 11;
@@ -132,6 +132,7 @@ namespace Mistral {
     std::string Presolve;
 
     int PolicyRestart;
+    int FD_learning;
 
     ParameterList(int length, char** commandline);
     //ParameterList();

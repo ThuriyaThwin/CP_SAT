@@ -249,7 +249,7 @@ const char* ParameterList::int_ident[ParameterList::nia] =
   {"-ub", "-lb", "-check", "-seed", "-cutoff", "-dichotomy", 
    "-base", "-randomized", "-verbose", "-optimise", "-nogood", 
    "-dyncutoff", "-nodes", "-hlimit", "-init", "-neighbor", 
-   "-initstep", "-fixtasks", "-order", "-ngdt"};
+   "-initstep", "-fixtasks", "-order", "-ngdt" , "-fdlearning"};
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
   {"-heuristic", "-restart", "-factor", "-decay", "-type", 
@@ -330,7 +330,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   NgdType   = 2;
   OrderTasks = 1;
 
-
+  FD_learning=0;
 
   if(Type == "osp") {
     Objective = "makespan";
@@ -392,6 +392,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[17] != NOVAL) FixTasks    = int_param[17]; 
   if(int_param[18] != NOVAL) OrderTasks  = int_param[18]; 
   if(int_param[19] != NOVAL) NgdType     = int_param[19]; 
+  if(int_param[20] != NOVAL) FD_learning     = int_param[20];
 
   if(strcmp(str_param[0 ],"nil")) Heuristic  = str_param[0];
   if(strcmp(str_param[1 ],"nil")) Policy     = str_param[1];
@@ -429,6 +430,7 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << " c +==============[ parameters ]===============+" << std::endl;
   os << std::left << std::setw(30) << " c | data file " << ":" << std::right << std::setw(15) << data_file_name << " |" << std::endl;
   os << std::left << std::setw(30) << " c | type " << ":" << std::right << std::setw(15) << Type << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | learning " << ":" << std::right << std::setw(15) << (FD_learning? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | seed " << ":" << std::right << std::setw(15) << Seed << " |" << std::endl;
   os << std::left << std::setw(30) << " c | greedy iterations " << ":" << std::right << std::setw(15) << InitBound << " |" << std::endl;
   os << std::left << std::setw(30) << " c | use initial probe " << ":" << std::right << std::setw(15) << (InitStep ? "yes" : "no") << " |" << std::endl;
@@ -1646,8 +1648,8 @@ std::ostream& SchedulingSolver::printStats(std::ostream& os) {
 void SchedulingSolver::setup() {
 
   int i,j,k, lb, ub, ti, tj, rki, rkj, hi, hj, aux;
-  
 
+//  std::cout << "learn ? " << params->FD_learning <<std::endl;
 
   lb_C_max = (params->LBinit<0 ? data->getMakespanLowerBound() : params->LBinit);
   ub_C_max = (params->UBinit<0 ? data->getMakespanUpperBound(params->InitBound) : params->UBinit);
@@ -1677,9 +1679,17 @@ void SchedulingSolver::setup() {
       std::cout << "INCONSISTENT" << std::endl;
       exit(1);
     }
+    if (params->FD_learning)
+    {
+    	Variable t(lb, ub);
+    	tasks.add(t);
+    }
+    else
+    {
+    	Variable t(lb, ub);
+    	tasks.add(t);
+    }
 
-    Variable t(lb, ub);
-    tasks.add(t);
   }
 
 
@@ -1690,10 +1700,17 @@ void SchedulingSolver::setup() {
     for(j=1; j<data->nTasksInJob(i); ++j) {
       ti = data->getJobTask(i,j-1);
       tj = data->getJobTask(i,j);
-      add( Precedence(tasks[ti], 
-		      (data->getDuration(ti) + 
-		       (data->hasTimeLag() ? data->getMinLag(i,j-1) : 0)), 
-		      tasks[tj]) );
+      if (params->FD_learning)
+    	  add( Precedence(tasks[ti],
+    			  (data->getDuration(ti) +
+    					  (data->hasTimeLag() ? data->getMinLag(i,j-1) : 0)),
+    					  tasks[tj]) );
+      else
+    	  add( Precedence(tasks[ti],
+    			  (data->getDuration(ti) +
+    					  (data->hasTimeLag() ? data->getMinLag(i,j-1) : 0)),
+    					  tasks[tj]) );
+
     }
 
   // time lags constraints
@@ -1702,9 +1719,15 @@ void SchedulingSolver::setup() {
       for(j=1; j<data->nTasksInJob(i); ++j) if(data->getMaxLag(i,j-1) >= 0) {
 	  ti = data->getJobTask(i,j-1);
 	  tj = data->getJobTask(i,j);
-	  add( Precedence(tasks[tj], 
-			  -(data->getDuration(ti)+data->getMaxLag(i,j-1)), 
-			  tasks[ti]) );
+	  if (params->FD_learning)
+		  add( Precedence(tasks[tj],
+				  -(data->getDuration(ti)+data->getMaxLag(i,j-1)),
+				  tasks[ti]) );
+	  else
+		  add( Precedence(tasks[tj],
+				  -(data->getDuration(ti)+data->getMaxLag(i,j-1)),
+				  tasks[ti]) );
+
 	}
   }
 
@@ -1746,14 +1769,22 @@ void SchedulingSolver::setup() {
 
 	//first_task_of_disjunct.push_back(ti);
 	//second_task_of_disjunct.push_back(tj);
+	if (params->FD_learning)
+		disjuncts.add( ReifiedDisjunctive( tasks[ti],
+				tasks[tj],
 
-	disjuncts.add( ReifiedDisjunctive( tasks[ti],
-					   tasks[tj],
-  
-					   data->getDuration(ti)
-					   +(data->hasSetupTime() ? data->getSetupTime(k,ti,tj) : 0),
-					   data->getDuration(tj)
-					   +(data->hasSetupTime() ? data->getSetupTime(k,tj,ti) : 0) ) );
+				data->getDuration(ti)
+				+(data->hasSetupTime() ? data->getSetupTime(k,ti,tj) : 0),
+				data->getDuration(tj)
+				+(data->hasSetupTime() ? data->getSetupTime(k,tj,ti) : 0) ) );
+	else
+		disjuncts.add( ReifiedDisjunctive( tasks[ti],
+				tasks[tj],
+
+				data->getDuration(ti)
+				+(data->hasSetupTime() ? data->getSetupTime(k,ti,tj) : 0),
+				data->getDuration(tj)
+				+(data->hasSetupTime() ? data->getSetupTime(k,tj,ti) : 0) ) );
 
 
 	Vector< Variable > tasks_of_d;
@@ -1779,7 +1810,12 @@ void SchedulingSolver::setup() {
   C_max = x_cmax;
   for(i=0; i<data->nJobs(); ++i) {
     ti = data->getLastTaskofJob(i);
-    add(Precedence(tasks[ti], data->getDuration(ti), C_max));
+
+    if (params->FD_learning)
+    	add(Precedence(tasks[ti], data->getDuration(ti), C_max));
+    else
+    	add(Precedence(tasks[ti], data->getDuration(ti), C_max));
+
   }
 
 
