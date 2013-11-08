@@ -49,7 +49,7 @@ int main( int argc, char** argv )
 
   // SchedulingSolver solver(model, &params, &stats);
   usrand(params.Seed);
-  
+
   solver->consolidate();
 
   //std::cout << solver << std::endl;

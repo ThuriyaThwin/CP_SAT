@@ -1829,7 +1829,10 @@ void SchedulingSolver::setup() {
   }
 
   if (params->FD_learning)
+  {
 	  start_from = tasks.size;
+	  set_fdlearning_on();
+  }
 
 #ifdef _MONITOR
   monitor_list << tasks[15] << " "
@@ -2711,7 +2714,7 @@ void SchedulingSolver::dichotomic_search()
 
   //propagate the bounds, with respect to the initial upper bound
   Outcome result = (IS_OK(propagate()) ? UNKNOWN : UNSAT);
-
+  //std::cout << " solver : \n " << this << std::endl ;
   
   ////////// dichotomic search ///////////////
   while( //result == UNKNOWN && 
@@ -2747,8 +2750,7 @@ void SchedulingSolver::dichotomic_search()
     
 
     result = set_objective(objective);
-    if (params->FD_learning)
-    	set_fdlearning_on();
+
 
 #ifdef _DEBUG_PRUNING
     monitor(tasks);
