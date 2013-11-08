@@ -343,6 +343,9 @@ namespace Mistral {
     	if (!fd_variables)
     		return(a == NULL_ATOM ? conflict->get_reason_for(a, lvl, end) : reason_for[a]->get_reason_for(a, lvl, end));
     	else
+    		//TODO it should be
+    		// return(a == NULL_ATOM ? conflict->get_reason_for(a, lvl, end) : reason_for[a-start_from]->get_reason_for(a, lvl, end));
+    		//but this is not so important since we return the whole clause
     		return(a == NULL_ATOM ? conflict->get_reason_for(a, lvl, end) : reason_for[a-start_from]->get_reason_for(a-start_from, lvl, end));
     }
 

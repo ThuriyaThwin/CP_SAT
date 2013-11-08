@@ -2276,22 +2276,23 @@ std::cout << "[" << std::setw(4) << id << "](" << name() << "): restore" << std:
 
   public:
 	  ExplainedConstraintLess (Variable x, Variable y, const int ofs=0)
-  : ConstraintLess(x,y,ofs) {}
+  : ConstraintLess(x,y,ofs),scope0(static_cast<VariableRangeWithLearning*> (x.range_domain)), scope1(static_cast<VariableRangeWithLearning*> (y.range_domain)) {}
 
 	  ExplainedConstraintLess(Vector< Variable >& scp, const int ofs=0)
-	  : ConstraintLess(scp,ofs) {}
+	  : ConstraintLess(scp,ofs), scope0(static_cast<VariableRangeWithLearning*>(scp[0].range_domain)), scope1(static_cast<VariableRangeWithLearning*> (scp[1].range_domain)) {if (scp.size > 2) {std::cout << " c ExplainedConstraintLess works only with 2 variables" << std::endl; exit (1);}}
 
 	  virtual Constraint clone() { return Constraint(new ExplainedConstraintLess(scope[0], scope[1], offset)// , type
 	  ); }
 	  virtual bool explained() { return true; }
 	  virtual iterator get_reason_for(const Atom a, const int lvl, iterator& end);
-	  virtual iterator get_bound_reason_for(const Literal l, iterator& end);
+	  //virtual iterator get_bound_reason_for(const Literal l, iterator& end);
 
 	  virtual PropagationOutcome propagate();
 	  virtual PropagationOutcome propagate(const int changed_idx, const Event evt);
 
   private:
-
+	  VariableRangeWithLearning* scope0;
+	  VariableRangeWithLearning* scope1;
 	  Literal explanation[2];
 	  // Literal triggered_by;
   };
@@ -3419,12 +3420,18 @@ std::cout << "[" << std::setw(4) << id << "](" << name() << "): restore" << std:
   public:
 
 	  ExplainedConstraintReifiedDisjunctive(Variable x, Variable y, Variable z, const int p0, const int p1):
-		  ConstraintReifiedDisjunctive(x, y, z, p0, p1) {}
+		  ConstraintReifiedDisjunctive(x, y, z, p0, p1), scope0(static_cast<VariableRangeWithLearning*> (x.range_domain)), scope1(static_cast<VariableRangeWithLearning*> (y.range_domain)) , scope2(static_cast<VariableRangeWithLearning*> (z.range_domain)) {}
 	  ExplainedConstraintReifiedDisjunctive(Vector< Variable >& scp, const int p0, const int p1) :
-		  ConstraintReifiedDisjunctive(scp,p0, p1) {}
+		  ConstraintReifiedDisjunctive(scp,p0, p1), scope0(static_cast<VariableRangeWithLearning*>(scp[0].range_domain)), scope1(static_cast<VariableRangeWithLearning*>(scp[1].range_domain)) , scope2(static_cast<VariableRangeWithLearning*> (scp[2].range_domain)) {
+		  if (scp.size > 3) {
+			  std::cout << " c ExplainedConstraintReifiedDisjunctive works only with 3 variables" << std::endl;
+			  exit(1);
+		  }
+	  }
 	  // ConstraintReifiedDisjunctive(std::vector< Variable >& scp, const int p0, const int p1);
 
 	  virtual PropagationOutcome propagate(const int changed_idx, const Event evt);
+	  virtual PropagationOutcome propagate();
 	  virtual Constraint clone() { return Constraint(new ExplainedConstraintReifiedDisjunctive(scope[0], scope[1], scope[2], processing_time[0], processing_time[1])); }
 	  virtual Constraint get_negation(const int var, Variable x) {
 		  return Constraint( new ExplainedConstraintReifiedDisjunctive( scope[0], scope[1], x, processing_time[0], processing_time[1] ) );
@@ -3440,9 +3447,12 @@ std::cout << "[" << std::setw(4) << id << "](" << name() << "): restore" << std:
 	  //@}
 	  virtual bool explained() { return true; }
 	  virtual iterator get_reason_for(const Atom a, const int lvl, iterator& end);
-	  virtual iterator get_bound_reason_for(const Literal l, iterator& end);
+	  //virtual iterator get_bound_reason_for(const Literal l, iterator& end);
 
   private:
+	  VariableRangeWithLearning* scope0;
+	  VariableRangeWithLearning* scope1;
+	  VariableRangeWithLearning* scope2;
 	  Literal explanation[4];
   };
 

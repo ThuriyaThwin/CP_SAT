@@ -2068,30 +2068,28 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintLess::propagate() {
 //     std::cout << " " << scope[i].get_domain();
 //   std::cout << std::endl;
 //   }
+	//TODO declare  wiped in ExplainedConstraintLess from the beggining
   Mistral::PropagationOutcome wiped = CONSISTENT;
-  if((static_cast<VariableRangeWithLearning*> (scope[1].range_domain))->set_min(scope[0].get_min() + offset, this) == FAIL_EVENT) wiped = FAILURE(1);
-  if(IS_OK(wiped) && (static_cast<VariableRangeWithLearning*> (scope[0].range_domain))->set_max(scope[1].get_max() - offset, this) == FAIL_EVENT) wiped = FAILURE(0);
-
-
-//   if(scope[0].id() == 6 && scope[1].id() == 9) {
-//     for(unsigned int i=0; i<scope.size; ++i)
-//       std::cout << " " << scope[i].get_domain();
-//     std::cout << std::endl;
-//   }
+  //if((static_cast<VariableRangeWithLearning*> (scope[1].range_domain))->set_min(scope[0].get_min() + offset, this) == FAIL_EVENT) wiped = FAILURE(1);
+  if(scope1->set_min(scope[0].get_min() + offset, this) == FAIL_EVENT) wiped = FAILURE(1);
+//    if(IS_OK(wiped) && (static_cast<VariableRangeWithLearning*> (scope[0].range_domain))->set_max(scope[1].get_max() - offset, this) == FAIL_EVENT) wiped = FAILURE(0);
+  if(IS_OK(wiped) && scope0->set_max(scope[1].get_max() - offset, this) == FAIL_EVENT) wiped = FAILURE(0);
 
   return wiped;
 }
 
 Mistral::PropagationOutcome Mistral::ExplainedConstraintLess::propagate(const int changed_idx, const Event evt) {
 
-  Mistral::PropagationOutcome wiped = CONSISTENT;
-  if(changed_idx==0) {
-    if(LB_CHANGED(evt) && (static_cast<VariableRangeWithLearning*> (scope[1].range_domain))->set_min(scope[0].get_min() + offset, this) == FAIL_EVENT) wiped = FAILURE(1);
-  } else {
-    if(UB_CHANGED(evt) && (static_cast<VariableRangeWithLearning*> (scope[0].range_domain))->set_max(scope[1].get_max() - offset, this ) == FAIL_EVENT) wiped = FAILURE(0);
-  }
+	Mistral::PropagationOutcome wiped = CONSISTENT;
+	if(changed_idx==0) {
+		//    if(LB_CHANGED(evt) && (static_cast<VariableRangeWithLearning*> (scope[1].range_domain))->set_min(scope[0].get_min() + offset, this) == FAIL_EVENT) wiped = FAILURE(1);
+		if(LB_CHANGED(evt) && (scope1->set_min(scope[0].get_min() + offset, this) == FAIL_EVENT)) wiped = FAILURE(1);
+	} else {
+		//    if(UB_CHANGED(evt) && (static_cast<VariableRangeWithLearning*> (scope[0].range_domain))->set_max(scope[1].get_max() - offset, this ) == FAIL_EVENT) wiped = FAILURE(0);
+		if(UB_CHANGED(evt) && ( scope0->set_max(scope[1].get_max() - offset, this ) == FAIL_EVENT)) wiped = FAILURE(0);
+	}
 
-  return wiped;
+	return wiped;
 }
 
 Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(const Atom a, const int lvl, iterator& end){
@@ -2110,7 +2108,8 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 				if (
 						(get_value_from_literal(a)-offset) <=
 						(((VariableRangeWithLearning*) scope[0].range_domain)->lowerbounds[0])
-				)
+					//	(scope0->lowerbounds[0])
+						)
 					end = &(explanation[0]);
 				else
 				{
@@ -2143,17 +2142,6 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 	}
 	return &(explanation[0]);
 
-}
-
-
-
-
-
-//Not yet
-Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_bound_reason_for(const Literal l, iterator& end){
-
-//	explanation.add(1);
-	return &(explanation[0]);
 }
 
 
@@ -2314,12 +2302,6 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 	return &(explanation[0]);
 }
 
-Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::get_bound_reason_for(const Literal l, iterator& end){
-
-//	explanation.add(1);
-	return &(explanation[0]);
-}
-
 
 Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::propagate(const int changed_idx, const Event evt) {
   PropagationOutcome wiped = CONSISTENT;
@@ -2344,12 +2326,16 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
     // it becomes a precedence, we must enforce both rules no matter what and there cannot be further changes.
 
     if(LB_CHANGED(evt)) {
-      if( (static_cast<VariableRangeWithLearning*> (scope[0].range_domain))->set_max( *max_t1_ptr-processing_time[0], this ) == FAIL_EVENT) wiped = FAILURE(0);
-      else if( (static_cast<VariableRangeWithLearning*> (scope[1].range_domain))->set_min( *min_t0_ptr+processing_time[0], this ) == FAIL_EVENT) wiped = FAILURE(1);
-    } else {
-      if( (static_cast<VariableRangeWithLearning*> (scope[0].range_domain))->set_min( *min_t1_ptr+processing_time[1], this ) == FAIL_EVENT) wiped = FAILURE(0);
-      else if( (static_cast<VariableRangeWithLearning*> (scope[1].range_domain))->set_max( *max_t0_ptr-processing_time[1],this  ) == FAIL_EVENT) wiped = FAILURE(1);
-    }
+//      if( (static_cast<VariableRangeWithLearning*> (scope[0].range_domain))->set_max( *max_t1_ptr-processing_time[0], this ) == FAIL_EVENT) wiped = FAILURE(0);
+        if( scope0->set_max( *max_t1_ptr-processing_time[0], this ) == FAIL_EVENT) wiped = FAILURE(0);
+  //      else if( (static_cast<VariableRangeWithLearning*> (scope[1].range_domain))->set_min( *min_t0_ptr+processing_time[0], this ) == FAIL_EVENT) wiped = FAILURE(1);
+       else if( scope1->set_min( *min_t0_ptr+processing_time[0], this ) == FAIL_EVENT) wiped = FAILURE(1);
+      } else {
+     // if( (static_cast<VariableRangeWithLearning*> (scope[0].range_domain))->set_min( *min_t1_ptr+processing_time[1], this ) == FAIL_EVENT) wiped = FAILURE(0);
+    	  if( scope0->set_min( *min_t1_ptr+processing_time[1], this ) == FAIL_EVENT) wiped = FAILURE(0);
+//    	       else if( (static_cast<VariableRangeWithLearning*> (scope[1].range_domain))->set_max( *max_t0_ptr-processing_time[1],this  ) == FAIL_EVENT) wiped = FAILURE(1);
+	       else if( scope1->set_max( *max_t0_ptr-processing_time[1],this  ) == FAIL_EVENT) wiped = FAILURE(1);
+  }
   } else if(*state!=3) {
 
 
@@ -2363,23 +2349,27 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
       if(// events.contain(1)
 	 changed_idx == 1
 	 && UB_CHANGED(evt)) {
-	if( (static_cast<VariableRangeWithLearning*> (scope[0].range_domain))->set_max( *max_t1_ptr-processing_time[0],this  ) == FAIL_EVENT) wiped = FAILURE(0);
+//    		if( (static_cast<VariableRangeWithLearning*> (scope[0].range_domain))->set_max( *max_t1_ptr-processing_time[0],this  ) == FAIL_EVENT) wiped = FAILURE(0);
+    		if( scope0->set_max( *max_t1_ptr-processing_time[0],this  ) == FAIL_EVENT) wiped = FAILURE(0);
       }
       if(IS_OK(wiped) && // events.contain(0)
 	 changed_idx == 0
 	 && LB_CHANGED(evt)) {
-	if( (static_cast<VariableRangeWithLearning*> (scope[1].range_domain))->set_min( *min_t0_ptr+processing_time[0],this  ) == FAIL_EVENT) wiped = FAILURE(1);
-      }
+//	if( (static_cast<VariableRangeWithLearning*> (scope[1].range_domain))->set_min( *min_t0_ptr+processing_time[0],this  ) == FAIL_EVENT) wiped = FAILURE(1);
+   if( scope1 ->set_min( *min_t0_ptr+processing_time[0],this  ) == FAIL_EVENT) wiped = FAILURE(1);
+    	      }
     } else {
       if(// events.contain(0)
 	 changed_idx == 0
 	 && UB_CHANGED(evt)) {
-	if( (static_cast<VariableRangeWithLearning*> (scope[1].range_domain))->set_max( *max_t0_ptr-processing_time[1] ,this ) == FAIL_EVENT) wiped = FAILURE(1);
+    	  // if( (static_cast<VariableRangeWithLearning*> (scope[1].range_domain))->set_max( *max_t0_ptr-processing_time[1] ,this ) == FAIL_EVENT) wiped = FAILURE(1);
+   if( scope1->set_max( *max_t0_ptr-processing_time[1] ,this ) == FAIL_EVENT) wiped = FAILURE(1);
       }
       if(IS_OK(wiped) && // events.contain(1)
 	 changed_idx == 1
 	 && LB_CHANGED(evt)) {
-	if( (static_cast<VariableRangeWithLearning*> (scope[0].range_domain))->set_min( *min_t1_ptr+processing_time[1] ,this ) == FAIL_EVENT) wiped = FAILURE(0);
+// 		if( (static_cast<VariableRangeWithLearning*> (scope[0].range_domain))->set_min( *min_t1_ptr+processing_time[1] ,this ) == FAIL_EVENT) wiped = FAILURE(0);
+   		if(scope0->set_min( *min_t1_ptr+processing_time[1] ,this ) == FAIL_EVENT) wiped = FAILURE(0);
       }
     }
   } else {
@@ -2406,11 +2396,12 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
     	}
 
       // x[1]+p[1] <= x[0] because x[0]'s min is too high or x[1]'s max is too low
-      else if( (static_cast<VariableRangeWithLearning*> (scope[0].range_domain))->set_min( *min_t1_ptr+processing_time[1] ,this ) == FAIL_EVENT) wiped = FAILURE(0);
-      else if( (static_cast<VariableRangeWithLearning*> (scope[1].range_domain))->set_max( *max_t0_ptr-processing_time[1] ,this ) == FAIL_EVENT) wiped = FAILURE(1);
+//        else if( (static_cast<VariableRangeWithLearning*> (scope[0].range_domain))->set_min( *min_t1_ptr+processing_time[1] ,this ) == FAIL_EVENT) wiped = FAILURE(0);
+ //       else if( (static_cast<VariableRangeWithLearning*> (scope[1].range_domain))->set_max( *max_t0_ptr-processing_time[1] ,this ) == FAIL_EVENT) wiped = FAILURE(1);
+        else if( scope0->set_min( *min_t1_ptr+processing_time[1] ,this ) == FAIL_EVENT) wiped = FAILURE(0);
+        else if( scope1->set_max( *max_t0_ptr-processing_time[1] ,this ) == FAIL_EVENT) wiped = FAILURE(1);
       explanation[2] = encode_bound_literal(scope[0].id(),*min_t0_ptr,0 );
       explanation[3] = encode_bound_literal(scope[1].id(),*max_t1_ptr,1 );;
-
 
 
 #ifdef _DEBUG_RDISJUNCTIVE
@@ -2429,8 +2420,10 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
     	  std::cout << "\n \n \n \n \n FAIL with scope[2].id() = " << scope[2].id() << std::endl;
     	  }
 
-      else if( (static_cast<VariableRangeWithLearning*> (scope[0].range_domain))->set_max( *max_t1_ptr-processing_time[0],this  ) == FAIL_EVENT) wiped = FAILURE(0);
-      else if( (static_cast<VariableRangeWithLearning*> (scope[1].range_domain))->set_min( *min_t0_ptr+processing_time[0] ,this ) == FAIL_EVENT) wiped = FAILURE(1);
+//      else if( (static_cast<VariableRangeWithLearning*> (scope[0].range_domain))->set_max( *max_t1_ptr-processing_time[0],this  ) == FAIL_EVENT) wiped = FAILURE(0);
+ //     else if( (static_cast<VariableRangeWithLearning*> (scope[1].range_domain))->set_min( *min_t0_ptr+processing_time[0] ,this ) == FAIL_EVENT) wiped = FAILURE(1);
+      else if( scope0->set_max( *max_t1_ptr-processing_time[0],this  ) == FAIL_EVENT) wiped = FAILURE(0);
+      else if( scope1->set_min( *min_t0_ptr+processing_time[0] ,this ) == FAIL_EVENT) wiped = FAILURE(1);
       explanation[2] = encode_bound_literal(scope[0].id(),*max_t0_ptr,1 );
       explanation[3] = encode_bound_literal(scope[1].id(),*min_t1_ptr,0 );
 
@@ -2457,6 +2450,52 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
 #endif
 
   //changes.clear();
+
+  return wiped;
+}
+
+
+Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::propagate() {
+  PropagationOutcome wiped = CONSISTENT;
+std::cout<< " ExplainedConstraintReifiedDisjunctive::propagate ! \n" << std::endl;
+//		exit(1);
+  if( *min_t0_ptr + processing_time[0] > *max_t1_ptr ) {
+
+    if( scope[2].set_domain(0) == FAIL_EVENT) wiped = FAILURE(2);
+    // x[1]+p[1] <= x[0] because x[0]'s min is too high or x[1]'s max is too low
+    else if( scope[0].set_min( *min_t1_ptr+processing_time[1] ) == FAIL_EVENT) wiped = FAILURE(0);
+    else if( scope[1].set_max( *max_t0_ptr-processing_time[1] ) == FAIL_EVENT) wiped = FAILURE(1);
+
+#ifdef _DEBUG_RDISJUNCTIVE
+    std::cout << "  -> YES!: " ;
+    display(std::cout);
+    std::cout << std::endl;
+#endif
+
+  } else if( *min_t1_ptr + processing_time[1] > *max_t0_ptr ) {
+
+    if( scope[2].set_domain(1) == FAIL_EVENT) wiped = FAILURE(2);
+    else if( scope[0].set_max( *max_t1_ptr-processing_time[0] ) == FAIL_EVENT) wiped = FAILURE(0);
+    else if( scope[1].set_min( *min_t0_ptr+processing_time[0] ) == FAIL_EVENT) wiped = FAILURE(1);
+
+#ifdef _DEBUG_RDISJUNCTIVE
+    std::cout << "  -> YES!: " ;
+    display(std::cout);
+    std::cout << std::endl;
+#endif
+
+  }
+
+
+  if(IS_OK(wiped) && *state != 3) {
+    if(*state == 2) {
+      if( scope[0].set_max( *max_t1_ptr-processing_time[0] ) == FAIL_EVENT) wiped = FAILURE(0);
+      else if( scope[1].set_min( *min_t0_ptr+processing_time[0] ) == FAIL_EVENT) wiped = FAILURE(1);
+    } else {
+      if( scope[0].set_min( *min_t1_ptr+processing_time[1] ) == FAIL_EVENT) wiped = FAILURE(0);
+      else if( scope[1].set_max( *max_t0_ptr-processing_time[1] ) == FAIL_EVENT) wiped = FAILURE(1);
+    }
+  }
 
   return wiped;
 }
@@ -2674,7 +2713,8 @@ void Mistral::ConstraintReifiedDisjunctive::mark_domain() {
 
 Mistral::PropagationOutcome Mistral::ConstraintReifiedDisjunctive::propagate() {
   PropagationOutcome wiped = CONSISTENT;
-
+std::cout<< " check sat \n" << std::endl;
+		exit(1);
   if( *min_t0_ptr + processing_time[0] > *max_t1_ptr ) {
     
     if( scope[2].set_domain(0) == FAIL_EVENT) wiped = FAILURE(2);
