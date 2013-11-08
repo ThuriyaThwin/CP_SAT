@@ -2463,8 +2463,8 @@ std::cout<< " ExplainedConstraintReifiedDisjunctive::propagate ! \n" << std::end
 
     if( scope[2].set_domain(0) == FAIL_EVENT) wiped = FAILURE(2);
     // x[1]+p[1] <= x[0] because x[0]'s min is too high or x[1]'s max is too low
-    else if( scope[0].set_min( *min_t1_ptr+processing_time[1] ) == FAIL_EVENT) wiped = FAILURE(0);
-    else if( scope[1].set_max( *max_t0_ptr-processing_time[1] ) == FAIL_EVENT) wiped = FAILURE(1);
+    else if( scope0->set_min( *min_t1_ptr+processing_time[1],NULL ) == FAIL_EVENT) wiped = FAILURE(0);
+    else if( scope1->set_max( *max_t0_ptr-processing_time[1] ,NULL) == FAIL_EVENT) wiped = FAILURE(1);
 
 #ifdef _DEBUG_RDISJUNCTIVE
     std::cout << "  -> YES!: " ;
@@ -2475,8 +2475,8 @@ std::cout<< " ExplainedConstraintReifiedDisjunctive::propagate ! \n" << std::end
   } else if( *min_t1_ptr + processing_time[1] > *max_t0_ptr ) {
 
     if( scope[2].set_domain(1) == FAIL_EVENT) wiped = FAILURE(2);
-    else if( scope[0].set_max( *max_t1_ptr-processing_time[0] ) == FAIL_EVENT) wiped = FAILURE(0);
-    else if( scope[1].set_min( *min_t0_ptr+processing_time[0] ) == FAIL_EVENT) wiped = FAILURE(1);
+    else if( scope0->set_max( *max_t1_ptr-processing_time[0],NULL ) == FAIL_EVENT) wiped = FAILURE(0);
+    else if( scope1->set_min( *min_t0_ptr+processing_time[0], NULL ) == FAIL_EVENT) wiped = FAILURE(1);
 
 #ifdef _DEBUG_RDISJUNCTIVE
     std::cout << "  -> YES!: " ;
@@ -2489,11 +2489,11 @@ std::cout<< " ExplainedConstraintReifiedDisjunctive::propagate ! \n" << std::end
 
   if(IS_OK(wiped) && *state != 3) {
     if(*state == 2) {
-      if( scope[0].set_max( *max_t1_ptr-processing_time[0] ) == FAIL_EVENT) wiped = FAILURE(0);
-      else if( scope[1].set_min( *min_t0_ptr+processing_time[0] ) == FAIL_EVENT) wiped = FAILURE(1);
+      if( scope0->set_max( *max_t1_ptr-processing_time[0],NULL ) == FAIL_EVENT) wiped = FAILURE(0);
+      else if( scope1->set_min( *min_t0_ptr+processing_time[0],NULL ) == FAIL_EVENT) wiped = FAILURE(1);
     } else {
-      if( scope[0].set_min( *min_t1_ptr+processing_time[1] ) == FAIL_EVENT) wiped = FAILURE(0);
-      else if( scope[1].set_max( *max_t0_ptr-processing_time[1] ) == FAIL_EVENT) wiped = FAILURE(1);
+      if( scope0->set_min( *min_t1_ptr+processing_time[1],NULL ) == FAIL_EVENT) wiped = FAILURE(0);
+      else if( scope1->set_max( *max_t0_ptr-processing_time[1] ,NULL) == FAIL_EVENT) wiped = FAILURE(1);
     }
   }
 
@@ -2713,8 +2713,6 @@ void Mistral::ConstraintReifiedDisjunctive::mark_domain() {
 
 Mistral::PropagationOutcome Mistral::ConstraintReifiedDisjunctive::propagate() {
   PropagationOutcome wiped = CONSISTENT;
-std::cout<< " check sat \n" << std::endl;
-		exit(1);
   if( *min_t0_ptr + processing_time[0] > *max_t1_ptr ) {
     
     if( scope[2].set_domain(0) == FAIL_EVENT) wiped = FAILURE(2);
