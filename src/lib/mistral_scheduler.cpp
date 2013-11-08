@@ -2763,7 +2763,7 @@ void SchedulingSolver::dichotomic_search()
     
     if( result == SAT ) {
       new_objective = get_objective();
-      
+      std::cout << " c SAT! " << std::endl;
       // 	stats->normalized_objective = solver->get_normalized_objective();
       
       // at level 0, deduce new bounds for all variables with respect to the new objective
@@ -2786,16 +2786,18 @@ void SchedulingSolver::dichotomic_search()
       //pool->getBestSolution()->print(std::cout);
       
     } else {
-
+    	std::cout << " c NOT SAT! " ;
       new_objective = objective;
       minfsble = objective+1;
 
       if( result == UNSAT ) {
+    	  std::cout << " UNSAT! " ;
 	std::cout << std::left << std::setw(30) << " c | real lower bound" << ":" << std::right << std::setw(15) << minfsble << " |" << std::endl;
       } else {
 	std::cout << std::left << std::setw(30) << " c | dichotomic lower bound" << ":" << std::right << std::setw(15) << minfsble << " |" << std::endl;
       }
-      
+
+	  std::cout << std::endl;
 
       
       // 	if(nogoods) {

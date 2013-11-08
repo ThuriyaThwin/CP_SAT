@@ -5279,8 +5279,9 @@ void Mistral::Solver::fdlearn_nogood(){
 			}
 			else if (pathC==0)
 			{
-
-				//	std::cout << "\n \n \n PatyhC == 0 !!!!! " << pathC << std::endl;
+				//TODO check if we can have paTHC=0 + give explanation in a failure on ExplainedContDisjunctioReif
+					std::cout << "\n \n \n PatyhC == 0 !!!!! " << pathC << std::endl;
+					exit(1);
 				//		std::cout << "backtrack level =" << backtrack_level << std::endl;
 				//		std::cout << "level =" << level << std::endl;
 
