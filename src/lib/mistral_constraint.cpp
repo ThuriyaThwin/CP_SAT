@@ -2075,6 +2075,13 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintLess::propagate() {
 //    if(IS_OK(wiped) && (static_cast<VariableRangeWithLearning*> (scope[0].range_domain))->set_max(scope[1].get_max() - offset, this) == FAIL_EVENT) wiped = FAILURE(0);
   if(IS_OK(wiped) && scope0->set_max(scope[1].get_max() - offset, this) == FAIL_EVENT) wiped = FAILURE(0);
 
+  if (wiped != CONSISTENT)
+      {
+  //  	  std::cout << "wiped == " << wiped << std::endl;
+    	  ((Solver*) solver) ->__failure = this;
+      std::cout << " fail : " << *this << std::endl;
+      }
+
   return wiped;
 }
 
@@ -2088,7 +2095,12 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintLess::propagate(const in
 		//    if(UB_CHANGED(evt) && (static_cast<VariableRangeWithLearning*> (scope[0].range_domain))->set_max(scope[1].get_max() - offset, this ) == FAIL_EVENT) wiped = FAILURE(0);
 		if(UB_CHANGED(evt) && ( scope0->set_max(scope[1].get_max() - offset, this ) == FAIL_EVENT)) wiped = FAILURE(0);
 	}
-
+	 if (wiped != CONSISTENT)
+	      {
+	  //  	  std::cout << "wiped == " << wiped << std::endl;
+	    	 ( (Solver*) solver) ->__failure = this;
+	      std::cout << " fail : " << *this << std::endl;
+	      }
 	return wiped;
 }
 
@@ -2501,7 +2513,12 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
 #endif
 
   //changes.clear();
-
+  if (wiped != CONSISTENT)
+       {
+   //  	  std::cout << "wiped == " << wiped << std::endl;
+     	  ((Solver*) solver) ->__failure = this;
+       std::cout << " fail : " << *this << std::endl;
+       }
   return wiped;
 }
 
@@ -2548,6 +2565,12 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
     }
   }
 
+  if (wiped != CONSISTENT)
+       {
+   //  	  std::cout << "wiped == " << wiped << std::endl;
+     	  ((Solver*) solver) ->__failure = this;
+      std::cout << " fail from  : " << *this << std::endl;
+       }
   return wiped;
 }
 

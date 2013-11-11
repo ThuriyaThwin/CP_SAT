@@ -4936,7 +4936,13 @@ void Mistral::Solver::fdlearn_nogood(){
 		// double *var_activity = base->var_activity.stack_;
 
 		// We start from the constraint that failed
-		Explanation *current_explanation = culprit.propagator;
+		Explanation *current_explanation ;
+		if (__failure)
+			current_explanation=__failure;
+		else
+			current_explanation= culprit.propagator;
+		//std::cout << " \n\n\n fdlearn_nogood \n "  << current_explanation  << std::endl;
+
 		//UNSAT!
 		if (current_explanation == NULL )
 		{
@@ -4954,7 +4960,7 @@ void Mistral::Solver::fdlearn_nogood(){
 		// }
 
 		backtrack_level = 0;
-
+		int graph_size = 0;
 		// the resulting nogood is stored in the vector 'learnt_clause'
 		learnt_clause.clear();
 		learnt_clause.add(p);/*
@@ -5045,7 +5051,7 @@ void Mistral::Solver::fdlearn_nogood(){
 #endif
 
 					Explanation::iterator lit = current_explanation->get_reason_for(a, (a != NULL_ATOM ? assignment_level[a] : level), stop);
-
+					graph_size++;
 					tmp = lit;
 					bound_literals_to_explore.clear();
 
@@ -5121,7 +5127,7 @@ void Mistral::Solver::fdlearn_nogood(){
 						}
 
 						bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->reason_for(q) ;
-
+						graph_size++;
 #ifdef 	_DEBUG_FD_NOGOOD
 						std::cout << "\n we will explain "<< q << std::endl;
 						std::cout << "which corresponds to " << std::endl;
@@ -5285,7 +5291,7 @@ void Mistral::Solver::fdlearn_nogood(){
 			{
 				//TODO check if we can have paTHC=0 + give explanation in a failure on ExplainedContDisjunctioReif
 					std::cout << "\n \n \n PatyhC == 0 !!!!! " << pathC << std::endl;
-					exit(1);
+				//	exit(1);
 				//		std::cout << "backtrack level =" << backtrack_level << std::endl;
 				//		std::cout << "level =" << level << std::endl;
 
@@ -5411,7 +5417,13 @@ void Mistral::Solver::fdlearn_nogood(){
 		std::cout << "learnt_clause : "  << learnt_clause.size  << std::endl;
 #endif
 #ifdef _CHECK_NOGOOD
-		store_nogood(learnt_clause);
+		if (graph_size <15)
+		{
+			std::cout << "graph_size : "  << graph_size  << std::endl;
+			std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
+
+			store_nogood(learnt_clause);
+		}
 #endif
 
 
@@ -8167,6 +8179,7 @@ void Mistral::Solver::store_nogood(Vector< Literal >& lc) {
   atom.add(NULL_ATOM);
   node_num.add(statistics.num_filterings);
   nogood_clause.add(lc);
+  __nogoods.add(lc);
   nogood_origin.add(NULL);
 }
 

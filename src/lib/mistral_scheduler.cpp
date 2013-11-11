@@ -2838,8 +2838,8 @@ void SchedulingSolver::dichotomic_search()
     if (parameters.fd_learning)
     {
     	//For each single nogood we create a new solvet with exactly the same parameters!
-    	for(int i=0; i<nogood_clause.size; ++i) {
-    		if(!nogood_origin[i])
+    	for(int i=0; i<__nogoods.size; ++i) {
+    //		if(!nogood_origin[i])
     		{
     			StatisticList __stats;
     			__stats.start();
@@ -2870,17 +2870,17 @@ void SchedulingSolver::dichotomic_search()
 
     			old_max.clear();
     			old_min.clear();
-    			std::cout << " check learnt nogood :  "<< nogood_clause[i] << " -- at node " << node_num[i] << std::endl;
+    			std::cout << " check learnt nogood :  "<< __nogoods[i] << " -- at node " << node_num[i] << std::endl;
 
-    			std::cout << " learnt nogood i.size :  "<< nogood_clause[i].size  << std::endl;
+    			std::cout << " learnt nogood i.size :  "<< __nogoods[i].size  << std::endl;
 
-    			for(int j=0; j<nogood_clause[i].size; ++j) {
-    				id =get_id_boolean_variable(nogood_clause[i][j]);
+    			for(int j=0; j<__nogoods[i].size; ++j) {
+    				id =get_id_boolean_variable(__nogoods[i][j]);
     				//		std::cout << " id = " << id << std::endl;
     				//		std::cout << " the variable is : " << variables[id] <<" and its domain is : " <<  variables[id].get_domain() << std::endl;
     				old_min.add( __solver->variables[id].get_min());
     				old_max.add( __solver->variables[id].get_max());
-    				__solver->variables[get_id_boolean_variable(nogood_clause[i][j])].set_domain(SIGN(NOT(nogood_clause[i][j])));
+    				__solver->variables[get_id_boolean_variable(__nogoods[i][j])].set_domain(SIGN(NOT(__nogoods[i][j])));
     				//		std::cout << " the new domain is : " << __solver->variables[id].get_domain() << " because its literal is " <<  nogood_clause[i][j] <<std::endl;
     			}
     			if(__solver->propagate()) {
@@ -2895,7 +2895,12 @@ void SchedulingSolver::dichotomic_search()
 #endif
     for (int i= 0; i < base->learnt.size ; ++i)
     	base->remove(i);
-
+    nogood_origin.clear();
+    nogood_clause.clear();
+    __nogoods.clear();
+    solution.clear();
+    node_num.clear();
+    atom.clear();
 
     ++iteration;
   } 

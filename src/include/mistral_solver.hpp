@@ -421,6 +421,7 @@ namespace Mistral {
 #ifdef _CHECK_NOGOOD
     Vector< Explanation* >       nogood_origin;
     Vector < Vector< Literal > >  nogood_clause;
+    Vector < Vector< Literal > >  __nogoods;
     Vector< int >  solution;
     Vector< int >  node_num;
     Vector< Atom >  atom;
@@ -835,6 +836,7 @@ namespace Mistral {
     void set_fdlearning_on();
     void close_propagation();
 
+    Explanation * __failure;
 
     /*!@name Printing*/
     //@{
