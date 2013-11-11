@@ -2508,7 +2508,7 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
 
 Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::propagate() {
   PropagationOutcome wiped = CONSISTENT;
-std::cout<< " ExplainedConstraintReifiedDisjunctive::propagate ! \n" << std::endl;
+//std::cout<< " ExplainedConstraintReifiedDisjunctive::propagate ! \n" << std::endl;
 //		exit(1);
   if( *min_t0_ptr + processing_time[0] > *max_t1_ptr ) {
 

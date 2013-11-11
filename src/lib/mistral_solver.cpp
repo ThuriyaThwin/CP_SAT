@@ -4845,6 +4845,10 @@ void Mistral::Solver::simple_fdlearn_nogood() {
 			/ ((double)(++statistics.num_failures));
 
 
+#ifdef _CHECK_NOGOOD
+  store_nogood(learnt_clause);
+#endif
+
 
 	if( learnt_clause.size != 1 ) {
 

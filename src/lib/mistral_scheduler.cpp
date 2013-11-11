@@ -1,6 +1,7 @@
  
 
 #include "mistral_scheduler.hpp"
+#include "mistral_sat.hpp"
 #include <math.h>
 #include <assert.h>
 
@@ -2715,7 +2716,13 @@ void SchedulingSolver::dichotomic_search()
   //propagate the bounds, with respect to the initial upper bound
   Outcome result = (IS_OK(propagate()) ? UNKNOWN : UNSAT);
   //std::cout << " solver : \n " << this << std::endl ;
-  
+
+#ifdef _CHECK_NOGOOD
+  int init_obj  = (int)(floor(((double)minfsble + (double)maxfsble)/2));
+  Vector<int> old_min, old_max;
+  int id;
+#endif
+
   ////////// dichotomic search ///////////////
   while( //result == UNKNOWN && 
 	 minfsble<maxfsble && 
@@ -2824,6 +2831,67 @@ void SchedulingSolver::dichotomic_search()
     // 	      << " to " << std::setw(5) << maxfsble << " " << iteration << " " << params->Dichotomy << std::endl;
     std::cout << " c +==========[ end dichotomic step ]==========+" << std::endl;
     
+
+    // A module for checking learnt nogoods
+#ifdef _CHECK_NOGOOD
+
+    if (parameters.fd_learning)
+    {
+    	//For each single nogood we create a new solvet with exactly the same parameters!
+    	for(int i=0; i<nogood_clause.size; ++i) {
+
+    		StatisticList __stats;
+    		__stats.start();
+    		Instance __jsp(*params);
+    		std::cout << std::endl;
+    		__jsp.printStats(std::cout);
+    		params->print(std::cout);
+    		SchedulingSolver *__solver;
+    		if(params->Objective == "makespan") {
+    			std::cout << "c Minimising Makespan" << std::endl;
+    			if(params->Type == "now") __solver = new No_wait_Model(__jsp, params, -1, 0);
+    			else if(params->Type == "now2") {
+    				//params.Type = "now";
+    				__solver = new No_wait_Model(__jsp, params, -1, 1);
+    			}
+    			else __solver = new C_max_Model(&__jsp, params, &__stats);
+    		} else if(params->Objective == "tardiness") {
+    			std::cout << "c Minimising Tardiness" << std::endl;
+    			__solver = new L_sum_Model(__jsp, params, -1);
+    		}
+    		else {
+    			std::cout << "c unknown objective, exiting" << std::endl;
+    			exit(1);
+    		}
+    		__solver->consolidate();
+    		__solver->save();
+    		__solver->set_objective(init_obj);
+
+    		old_max.clear();
+    		old_min.clear();
+    		std::cout << " check learnt nogood :  "<< nogood_clause[i] << " -- at node " << node_num[i] << std::endl;
+
+    		for(int j=0; j<nogood_clause[i].size; ++j) {
+    			id =get_id_boolean_variable(nogood_clause[i][j]);
+    			//		std::cout << " id = " << id << std::endl;
+    			//		std::cout << " the variable is : " << variables[id] <<" and its domain is : " <<  variables[id].get_domain() << std::endl;
+    			old_min.add( __solver->variables[id].get_min());
+    			old_max.add( __solver->variables[id].get_max());
+    			__solver->variables[get_id_boolean_variable(nogood_clause[i][j])].set_domain(SIGN(NOT(nogood_clause[i][j])));
+    			//		std::cout << " the new domain is : " << __solver->variables[id].get_domain() << " because its literal is " <<  nogood_clause[i][j] <<std::endl;
+    		}
+    		if(__solver->propagate()) {
+    			std::cout << " WRONG NOGOOD!!\n";
+    			exit(1);
+    		}
+    		std::cout << " is a valid nogood !\n";
+    		delete __solver;
+    	}
+    }
+#endif
+    for (int i= 0; i < base->learnt.size ; ++i)
+    	base->remove(i);
+
 
     ++iteration;
   } 
