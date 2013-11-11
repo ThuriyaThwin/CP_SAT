@@ -37,7 +37,7 @@
 //#define _OLD_ true
 //#define _DEBUG_NOGOOD true //(statistics.num_filterings == 491)
 //#define _DEBUG_SEARCH true
-#define _DEBUG_FD_NOGOOD true
+//#define _DEBUG_FD_NOGOOD true
 //((statistics.num_filterings == 48212) || (statistics.num_filterings == 46738) || (statistics.num_filterings == 44368) || (statistics.num_filterings == 43659))
 
 //#define _DEBUG_RESTORE true
@@ -5418,8 +5418,9 @@ void Mistral::Solver::fdlearn_nogood(){
 		std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
 		std::cout << "learnt_clause : "  << learnt_clause.size  << std::endl;
 #endif
+
 #ifdef _CHECK_NOGOOD
-		if (graph_size <35)
+	//	if (graph_size <35)
 		{
 			std::cout << "graph_size : "  << graph_size  << std::endl;
 			std::cout << "learnt_clause : "  << learnt_clause  << std::endl;

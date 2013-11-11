@@ -3408,6 +3408,7 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c)
 	Instance __jsp(*params);
 	std::cout << std::endl;
 	__jsp.printStats(std::cout);
+	params->FD_learning = 0;
 	params->print(std::cout);
 	SchedulingSolver *__solver;
 	if(params->Objective == "makespan") {
@@ -3427,7 +3428,7 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c)
 		exit(1);
 	}
 	__solver->consolidate();
-	__solver->save();
+	//__solver->save();
 	__solver->set_objective(init_obj);
 	Vector<int> old_min, old_max;
 	old_max.clear();
@@ -3442,14 +3443,28 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c)
 		//		std::cout << " the variable is : " << variables[id] <<" and its domain is : " <<  variables[id].get_domain() << std::endl;
 		old_min.add( __solver->variables[id].get_min());
 		old_max.add( __solver->variables[id].get_max());
-		__solver->variables[get_id_boolean_variable(c[j])].set_domain(SIGN(NOT(c[j])));
+		__solver->variables[id].set_domain(SIGN(NOT(c[j])));
 		//		std::cout << " the new domain is : " << __solver->variables[id].get_domain() << " because its literal is " <<  nogood_clause[i][j] <<std::endl;
 	}
-	if(__solver->propagate()) {
+
+	//	->chronological_dfs();
+	Outcome  __result= __solver->depth_first_search();
+	//	cout << s.statistics << endl;
+	if(__result)
+	{
+		std::cout << " WRONG NOGOOD!!\n";
+		exit(1);
+	}
+	else
+		std::cout << " is a valid nogood !\n";
+	delete __solver;
+
+	/*if(__solver->propagate()) {
 		std::cout << " WRONG NOGOOD!!\n";
 		exit(1);
 	}
 	std::cout << " is a valid nogood !\n";
 	delete __solver;
+	 */
 }
 #endif
