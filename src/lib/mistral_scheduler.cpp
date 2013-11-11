@@ -3448,7 +3448,19 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c)
 	}
 
 	//	->chronological_dfs();
-	Outcome  __result= __solver->depth_first_search();
+	//Outcome  __result= __solver->depth_first_search();
+
+	BranchingHeuristic *__heu = new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (__solver, __solver->disjunct_map);
+
+	//BranchingHeuristic *heu = new GenericHeuristic < NoOrder, MinValue > (this);
+
+	RestartPolicy *__pol = new Geometric();
+
+
+	__solver->initialise_search(__solver->disjuncts, __heu, __pol);
+
+	Outcome  __result= __solver->restart_search(0);
+
 	//	cout << s.statistics << endl;
 	if(__result)
 	{
