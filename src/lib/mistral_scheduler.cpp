@@ -2871,6 +2871,8 @@ void SchedulingSolver::dichotomic_search()
     		old_min.clear();
     		std::cout << " check learnt nogood :  "<< nogood_clause[i] << " -- at node " << node_num[i] << std::endl;
 
+    		std::cout << " learnt nogood i.size :  "<< nogood_clause[i].size  << std::endl;
+
     		for(int j=0; j<nogood_clause[i].size; ++j) {
     			id =get_id_boolean_variable(nogood_clause[i][j]);
     			//		std::cout << " id = " << id << std::endl;

@@ -35,7 +35,7 @@
 //#define _OLD_ true
 //#define _DEBUG_NOGOOD true //(statistics.num_filterings == 491)
 //#define _DEBUG_SEARCH true
-
+#define _DEBUG_FD_NOGOOD true
 //((statistics.num_filterings == 48212) || (statistics.num_filterings == 46738) || (statistics.num_filterings == 44368) || (statistics.num_filterings == 43659))
 
 //#define _DEBUG_RESTORE true
@@ -4900,7 +4900,7 @@ void Mistral::Solver::fdlearn_nogood(){
 //	else
 	{
 #ifdef 	_DEBUG_FD_NOGOOD
-		std::cout << " \n\n\n NEW no_recursive_call_jsp_learn_nogood \n Decisions size"  << decisions.size << " and the variables : \n        " << decisions << " \n and level = " << level << std::endl;
+		std::cout << " \n\n\n fdlearn_nogood \n Decisions size"  << decisions.size << " and the variables : \n        " << decisions << " \n and level = " << level << std::endl;
 #endif
 		int size = Visited_lower_bound_variables .size;
 		//	std::cout << "size  Visited_lower_bound_variables \n " << size << std::endl;
@@ -5405,7 +5405,11 @@ void Mistral::Solver::fdlearn_nogood(){
 #endif
 
 		//exit(1);
-
+#ifdef 	_DEBUG_FD_NOGOOD
+		std::cout << " c END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
+		std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
+		std::cout << "learnt_clause : "  << learnt_clause.size  << std::endl;
+#endif
 #ifdef _CHECK_NOGOOD
 		store_nogood(learnt_clause);
 #endif
@@ -5447,6 +5451,9 @@ void Mistral::Solver::fdlearn_nogood(){
 			taboo_constraint = NULL;
 		}
 		visited.clear();
+
+
+
 		//#ifdef _DEBUG
 		//		std::cout << "END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
 	//			std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
