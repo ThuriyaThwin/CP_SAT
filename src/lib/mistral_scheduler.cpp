@@ -2839,7 +2839,7 @@ void SchedulingSolver::dichotomic_search()
     {
     	//For each single nogood we create a new solvet with exactly the same parameters!
     	for(int i=0; i<__nogoods.size; ++i) {
-    //		if(!nogood_origin[i])
+    		//		if(!nogood_origin[i])
     		{
     			StatisticList __stats;
     			__stats.start();
@@ -2892,15 +2892,16 @@ void SchedulingSolver::dichotomic_search()
     		}
     	}
     }
-#endif
-    for (int i= 0; i < base->learnt.size ; ++i)
-    	base->remove(i);
     nogood_origin.clear();
     nogood_clause.clear();
     __nogoods.clear();
     solution.clear();
     node_num.clear();
     atom.clear();
+#endif
+    for (int i= 0; i < base->learnt.size ; ++i)
+    	base->remove(i);
+
 
     ++iteration;
   } 

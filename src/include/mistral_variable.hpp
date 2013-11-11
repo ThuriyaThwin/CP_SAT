@@ -1536,8 +1536,10 @@ namespace Mistral {
 		  upperbounds.clear();
 		  lower_bound_reasons.clear();
 		  upper_bound_reasons.clear();
+#ifdef _CHECK_NOGOOD
 		  lowerbounds_levels.clear();
 		  upperbounds_levels.clear();
+#endif
 		  lowerbounds.add(lb);
 		  upperbounds.add(ub);
 		  lower_bound_reasons.add(NULL);

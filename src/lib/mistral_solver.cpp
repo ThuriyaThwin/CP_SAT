@@ -5293,7 +5293,7 @@ void Mistral::Solver::fdlearn_nogood(){
 			{
 				//TODO check if we can have paTHC=0 + give explanation in a failure on ExplainedContDisjunctioReif
 					std::cout << "\n \n \n PatyhC == 0 !!!!! " << pathC << std::endl;
-				//	exit(1);
+					exit(1);
 				//		std::cout << "backtrack level =" << backtrack_level << std::endl;
 				//		std::cout << "level =" << level << std::endl;
 
@@ -5423,8 +5423,16 @@ void Mistral::Solver::fdlearn_nogood(){
 		{
 			std::cout << "graph_size : "  << graph_size  << std::endl;
 			std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
-		((SchedulingSolver *) this)->	check_nogood(learnt_clause);
-		//	store_nogood(learnt_clause);
+
+			for (int i = 0; i< learnt_clause.size; ++i)
+			{
+				std::cout << "assignment level [i] = " << assignment_level[get_id_boolean_variable(learnt_clause[i])] << std::endl;
+			}
+			std::cout << "END! current level  "  << level << " \n and backtrack_level :     " << backtrack_level << std::endl;
+
+
+			((SchedulingSolver *) this)->	check_nogood(learnt_clause);
+			//	store_nogood(learnt_clause);
 		}
 #endif
 
@@ -5460,7 +5468,7 @@ void Mistral::Solver::fdlearn_nogood(){
 			taboo_constraint = NULL;
 		}
 		visited.clear();
-
+		__failure=NULL;
 
 
 		//#ifdef _DEBUG
