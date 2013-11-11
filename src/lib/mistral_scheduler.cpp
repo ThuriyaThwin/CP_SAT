@@ -2716,9 +2716,9 @@ void SchedulingSolver::dichotomic_search()
   //propagate the bounds, with respect to the initial upper bound
   Outcome result = (IS_OK(propagate()) ? UNKNOWN : UNSAT);
   //std::cout << " solver : \n " << this << std::endl ;
-
+  init_obj  = (int)(floor(((double)minfsble + (double)maxfsble)/2));
 #ifdef _CHECK_NOGOOD
-  int init_obj  = (int)(floor(((double)minfsble + (double)maxfsble)/2));
+  //int init_obj  = (int)(floor(((double)minfsble + (double)maxfsble)/2));
   Vector<int> old_min, old_max;
   int id;
 #endif
@@ -3397,3 +3397,58 @@ void SchedulingSolver::print_solution(std::ostream& os, std::string type)
   pool->getBestSolution()->print(os, type);
   os << std::endl;
 }
+#ifdef _CHECK_NOGOOD
+void SchedulingSolver::check_nogood(Vector<Literal> & c)
+//For each single nogood we create a new solvet with exactly the same parameters!
+//for(int i=0; i<__nogoods.size; ++i) {//		if(!nogood_origin[i])
+{
+	StatisticList __stats;
+	__stats.start();
+	Instance __jsp(*params);
+	std::cout << std::endl;
+	__jsp.printStats(std::cout);
+	params->print(std::cout);
+	SchedulingSolver *__solver;
+	if(params->Objective == "makespan") {
+		std::cout << "c Minimising Makespan" << std::endl;
+		if(params->Type == "now") __solver = new No_wait_Model(__jsp, params, -1, 0);
+		else if(params->Type == "now2") {
+			//params.Type = "now";
+			__solver = new No_wait_Model(__jsp, params, -1, 1);
+		}
+		else __solver = new C_max_Model(&__jsp, params, &__stats);
+	} else if(params->Objective == "tardiness") {
+		std::cout << "c Minimising Tardiness" << std::endl;
+		__solver = new L_sum_Model(__jsp, params, -1);
+	}
+	else {
+		std::cout << "c unknown objective, exiting" << std::endl;
+		exit(1);
+	}
+	__solver->consolidate();
+	__solver->save();
+	__solver->set_objective(init_obj);
+	Vector<int> old_min, old_max;
+	old_max.clear();
+	old_min.clear();
+	std::cout << " check learnt nogood :  "<< c << " -- at node " << std::endl;
+
+	std::cout << " learnt nogood i.size :  "<< c.size  << std::endl;
+
+	for(int j=0; j<c.size; ++j) {
+		int id =get_id_boolean_variable(c[j]);
+		//		std::cout << " id = " << id << std::endl;
+		//		std::cout << " the variable is : " << variables[id] <<" and its domain is : " <<  variables[id].get_domain() << std::endl;
+		old_min.add( __solver->variables[id].get_min());
+		old_max.add( __solver->variables[id].get_max());
+		__solver->variables[get_id_boolean_variable(c[j])].set_domain(SIGN(NOT(c[j])));
+		//		std::cout << " the new domain is : " << __solver->variables[id].get_domain() << " because its literal is " <<  nogood_clause[i][j] <<std::endl;
+	}
+	if(__solver->propagate()) {
+		std::cout << " WRONG NOGOOD!!\n";
+		exit(1);
+	}
+	std::cout << " is a valid nogood !\n";
+	delete __solver;
+}
+#endif

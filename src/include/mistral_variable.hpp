@@ -1529,18 +1529,27 @@ namespace Mistral {
 
   public:
 	  VariableRangeWithLearning(const int lb, const int ub) : VariableRange(lb,ub) {
-
+	//	  std::cout << "HERE \n \n " << std::endl;
 		  latest_visited_upper_bound = INFTY;
 		  latest_visited_lower_bound = -INFTY;
 		  lowerbounds.clear();
 		  upperbounds.clear();
 		  lower_bound_reasons.clear();
 		  upper_bound_reasons.clear();
+		  lowerbounds_levels.clear();
+		  upperbounds_levels.clear();
 		  lowerbounds.add(lb);
 		  upperbounds.add(ub);
 		  lower_bound_reasons.add(NULL);
 		  upper_bound_reasons.add(NULL);
+		//  std::cout << "111NDDDDD \n \n " << std::endl;
+	//	  std::cout << "level  \n \n " << solver->level <<std::endl;
+#ifdef _CHECK_NOGOOD
+		  lowerbounds_levels.add(0);
+		  upperbounds_levels.add(0);
+#endif
 
+//		  std::cout << "ENDDDDD \n \n " << std::endl;
 	  };
 	  Explanation* reason_for(Literal l);
 
@@ -1569,6 +1578,9 @@ namespace Mistral {
 
 		  lowerbounds.add(lo);
 		  lower_bound_reasons.add(C);
+#ifdef _CHECK_NOGOOD
+		  lowerbounds_levels.add(solver->level);
+#endif
 		  //  std::cout << "NEW LOWER BOUND \n \n " << std::endl;
 		  //  std::cout << "lowerbounds"<< lowerbounds << std::endl;
 		  //	  std::cout << "lower_bound_reasons"<< lower_bound_reasons << std::endl;
@@ -1594,7 +1606,9 @@ namespace Mistral {
 		  max = up;
 		  upperbounds.add(up);
 		  upper_bound_reasons.add(C);
-
+#ifdef _CHECK_NOGOOD
+		  upperbounds_levels.add(solver->level);
+#endif
 		  //	  std::cout << "NEW LOWER BOUND \n \n " << std::endl;
 		  //	  std::cout << "lowerbounds"<< lowerbounds << std::endl;
 		  //		  std::cout << "lower_bound_reasons"<< lower_bound_reasons << std::endl;
@@ -1622,6 +1636,9 @@ namespace Mistral {
 			  {
 				  lowerbounds.pop();
 				  lower_bound_reasons.pop();
+#ifdef _CHECK_NOGOOD
+				  lowerbounds_levels.pop();
+#endif
 			  }
 			  else
 			  {
@@ -1638,6 +1655,9 @@ namespace Mistral {
 			  {
 				  upperbounds.pop();
 				  upper_bound_reasons.pop();
+#ifdef _CHECK_NOGOOD
+				  upperbounds_levels.pop();
+#endif
 			  }
 			  else
 			  {
@@ -1654,6 +1674,11 @@ namespace Mistral {
 
 	  Vector<int> lowerbounds;
 	  Vector<int> upperbounds;
+#ifdef _CHECK_NOGOOD
+	  Vector<int> lowerbounds_levels;
+	  Vector<int> upperbounds_levels;
+#endif
+
   private:
 	  Vector<Explanation*> lower_bound_reasons;
 	  Vector<Explanation*> upper_bound_reasons;

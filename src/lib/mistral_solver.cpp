@@ -31,7 +31,9 @@
 #include <mistral_variable.hpp>
 #include <mistral_constraint.hpp>
 
-
+#ifdef _CHECK_NOGOOD
+#include <mistral_scheduler.hpp>
+#endif
 //#define _OLD_ true
 //#define _DEBUG_NOGOOD true //(statistics.num_filterings == 491)
 //#define _DEBUG_SEARCH true
@@ -5375,7 +5377,7 @@ void Mistral::Solver::fdlearn_nogood(){
 			}
 			else
 			{
-				if (pathC !=1)
+			//	if (pathC !=1)
 				{
 					std::cout << "PatyhC < 0 !!!!! " << pathC << std::endl;
 					exit(1);
@@ -5417,19 +5419,14 @@ void Mistral::Solver::fdlearn_nogood(){
 		std::cout << "learnt_clause : "  << learnt_clause.size  << std::endl;
 #endif
 #ifdef _CHECK_NOGOOD
-		if (graph_size <15)
+		if (graph_size <35)
 		{
 			std::cout << "graph_size : "  << graph_size  << std::endl;
 			std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
-
-			store_nogood(learnt_clause);
+		((SchedulingSolver *) this)->	check_nogood(learnt_clause);
+		//	store_nogood(learnt_clause);
 		}
 #endif
-
-
-
-
-
 
 		statistics.size_learned += learnt_clause.size;
 		statistics.avg_learned_size =

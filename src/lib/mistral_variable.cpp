@@ -1898,18 +1898,76 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 
 	//	std::cout << "lowerbounds "<< lowerbounds << std::endl;
 	//	std::cout << "upperbounds"<< upperbounds << std::endl;
+
+	//	std::cout << "upperbounds_levels"<< upperbounds_levels << std::endl;
+	//	std::cout << "lowerbounds_levels"<< lowerbounds_levels << std::endl;
 	//	std::cout << "lowerbounds reasons "<< lower_bound_reasons << std::endl;
 	//	std::cout << "upperbounds reasons "<< upper_bound_reasons << std::endl;
 	//	std::cout << "upperbounds reasons .size "<< upper_bound_reasons.size << std::endl;
 
+#ifdef _CHECK_NOGOOD
+	for (int i=1; i < upperbounds_levels.size; ++i)
+		if (upperbounds_levels[i-1]>upperbounds_levels[i])
+		{
+			std::cout << "upperbounds_levels not ordered" << std::endl;
+			exit(1);
+		}
+
+	for (int i=1; i < lowerbounds_levels.size; ++i)
+		if (lowerbounds_levels[i-1]>lowerbounds_levels[i])
+		{
+			std::cout << "lowerbounds_levels not ordered" << std::endl;
+			exit(1);
+		}
+
+
+	for (int i=1; i < lowerbounds.size; ++i)
+		if (lowerbounds[i-1]>lowerbounds[i])
+		{
+			//			std::cout << "lowerbounds not ordered" << std::endl;
+			exit(1);
+		}
+
+	for (int i=1; i < upperbounds.size; ++i)
+		if (upperbounds[i-1]<upperbounds[i])
+		{
+			//			std::cout << "upperbounds not ordered" << std::endl;
+			exit(1);
+		}
+
+	if (upper_bound_reasons.size-upperbounds.size )
+	{
+		std::cout << "upperbounds size problem!" << std::endl;
+		exit(1);
+	}
+
+	if (lower_bound_reasons.size -lowerbounds.size )
+	{
+		std::cout << "lowerbounds size problem!" << std::endl;
+		exit(1);
+	}
+
+	if (lowerbounds_levels.size -lowerbounds.size )
+	{
+		std::cout << "lowerbounds_levels size problem!" << std::endl;
+		exit(1);
+	}
+
+
+	if (upperbounds_levels.size -upperbounds.size )
+	{
+		std::cout << "upperbounds_levels size problem!" << std::endl;
+		exit(1);
+	}
+#endif
 	int size;
 	if (is_lower_bound(l))
 	{
-		if	(latest_visited_lower_bound >= get_value_from_literal(l))
+		//	if	(latest_visited_lower_bound >= get_value_from_literal(l))
 		{
 
 			//		std::cout << "return NULL because the lower bound is already visited" << std::endl;
-			return NULL;
+			//		return NULL;
 		}
 		//		std::cout << "yes"<< std::endl;
 		//		std::cout << "l"<< l << std::endl;
@@ -1927,17 +1985,17 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 				//				std::cout << "c return NULL " << std::endl;
 				//			else
 				//				std::cout << " c return lowerbounds reason_for --> " << *lower_bound_reasons[size+1] << std::endl;
-				latest_visited_lower_bound = lowerbounds[size+1];
+				//	latest_visited_lower_bound = lowerbounds[size+1];
 				return lower_bound_reasons[size+1];
 			}
 	}
 	else
 	{
-		if(latest_visited_upper_bound <= get_value_from_literal(l))
+		//	if(latest_visited_upper_bound <= get_value_from_literal(l))
 		{
 
 			//		std::cout << "return NULL because the upper bound is already visited" << std::endl;
-			return NULL;
+			//		return NULL;
 		}
 		/*
 		std::cout << "no"<< std::endl;
@@ -1960,7 +2018,7 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 
 				//					std::cout <<" c return upperbounds reason_for --> " << *upper_bound_reasons[size+1] << std::endl;
 
-				latest_visited_upper_bound = upperbounds[size+1];
+				//		latest_visited_upper_bound = upperbounds[size+1];
 				return upper_bound_reasons[size+1];
 			}
 
