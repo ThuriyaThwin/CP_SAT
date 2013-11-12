@@ -1905,6 +1905,29 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 	//	std::cout << "upperbounds reasons "<< upper_bound_reasons << std::endl;
 	//	std::cout << "upperbounds reasons .size "<< upper_bound_reasons.size << std::endl;
 
+	//Needed for debugging : tracking upper bound 1078
+#if TRACKING_BOUND
+	if ((get_value_from_literal(l) ==TRACKING_BOUND) && !(is_lower_bound(l)))
+	{
+		std::cout << " \n \n \n   \n                    tarcking bound : " << std::endl;
+		std::cout << "literal" << l << std::endl;
+		display(std::cout);
+		std::cout << " \n max " << max << std::endl;
+		std::cout << " \n min " << min << std::endl;
+		std::cout << "variable" << std::endl;
+		std::cout << "value" << get_value_from_literal(l) << std::endl;
+
+		std::cout << "lowerbounds "<< lowerbounds << std::endl;
+		std::cout << "upperbounds"<< upperbounds << std::endl;
+
+		//	std::cout << "lowerbounds reasons "<< lower_bound_reasons << std::endl;
+		std::cout << "upperbounds reasons "<< upper_bound_reasons << std::endl;
+		std::cout << "upperbounds reasons .size "<< upper_bound_reasons.size << std::endl;
+
+
+	}
+#endif
+
 #ifdef _CHECK_NOGOOD
 	for (int i=1; i < upperbounds_levels.size; ++i)
 		if (upperbounds_levels[i-1]>upperbounds_levels[i])
@@ -1974,7 +1997,12 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 		//		std::cout << "lowerbounds "<< lowerbounds << std::endl;
 		//		std::cout << "lower_bound_reasons"<< lower_bound_reasons << std::endl;
 		size =lowerbounds.size ;
-
+//TODO 	move the test to _CHECK_NOGOOD
+		if (get_value_from_literal(l) > lowerbounds[size-1])
+		{
+			std::cout << "We are explaining a future lower bound! The value to explain is " << get_value_from_literal(l)  << " while the history of lower bounds : "<< lowerbounds << std::endl;
+			exit(1);
+		}
 		//		std::cout << "size" << size<< std::endl;
 		while (size --)
 			if(lowerbounds[size]< get_value_from_literal(l))
@@ -1991,6 +2019,8 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 	}
 	else
 	{
+
+
 		//	if(latest_visited_upper_bound <= get_value_from_literal(l))
 		{
 
@@ -2007,6 +2037,12 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 		std::cout << "upper_bound_reasons size"<< upper_bound_reasons.size << std::endl;
 		 */
 		size =upperbounds.size ;
+		//TODO 	move the test to _CHECK_NOGOOD
+		if (get_value_from_literal(l) < upperbounds[size-1])
+		{
+			std::cout << "We are explaining a future upper bound! The value to explain is " << get_value_from_literal(l)  << " while the history of upper bounds : "<< upperbounds << std::endl;
+			exit(1);
+		}
 		while (size --)
 			if(upperbounds[size]> get_value_from_literal(l))
 			{

@@ -38,6 +38,7 @@
 //#define _DEBUG_NOGOOD true //(statistics.num_filterings == 491)
 //#define _DEBUG_SEARCH true
 //#define _DEBUG_FD_NOGOOD true
+#define TRACKING_BOUND 1078
 //((statistics.num_filterings == 48212) || (statistics.num_filterings == 46738) || (statistics.num_filterings == 44368) || (statistics.num_filterings == 43659))
 
 //#define _DEBUG_RESTORE true
@@ -4901,9 +4902,9 @@ void Mistral::Solver::fdlearn_nogood(){
 //		simple_fdlearn_nogood();
 //	else
 	{
-#ifdef 	_DEBUG_FD_NOGOOD
-		std::cout << " \n\n\n fdlearn_nogood \n Decisions size"  << decisions.size << " and the variables : \n        " << decisions << " \n and level = " << level << std::endl;
-#endif
+//#ifdef 	_DEBUG_FD_NOGOOD
+//		std::cout << " \n\n\n fdlearn_nogood \n Decisions size \n " ; // << decisions.size << " and the variables : \n        " << decisions << " \n and level = " << level << std::endl;
+//#endif
 		int size = Visited_lower_bound_variables .size;
 		//	std::cout << "size  Visited_lower_bound_variables \n " << size << std::endl;
 		while (size--)
@@ -4995,6 +4996,7 @@ void Mistral::Solver::fdlearn_nogood(){
 				if(current_explanation == NULL) {
 					std::cout << "?? current_explanation == NULL "  << std::endl;
 					std::cout << "a =  "<< a << std::endl;
+					std::cout << "pathC =  "<< pathC << std::endl;
 					std::cout << " variable =  "<< variables[a] << std::endl;
 					std::cout << " min =  "<< variables[a].get_min() << std::endl;
 					std::cout << " max =  "<< variables[a].get_max() << std::endl;
@@ -5074,6 +5076,11 @@ void Mistral::Solver::fdlearn_nogood(){
 						if (is_a_bound_literal(q))
 						{
 
+#ifdef TRACKING_BOUND
+							if ((get_value_from_literal(q) ==TRACKING_BOUND) && !(is_lower_bound(q)))
+								std::cout << " \n \n \n \n \n \n                                    Tracking bound : its explanation comes from : "<< current_explanation << std::endl;
+#endif
+
 #ifdef 	_DEBUG_FD_NOGOOD
 							std::cout << "\n is_a_bound_literal  "<< std::endl;
 							std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
@@ -5087,7 +5094,7 @@ void Mistral::Solver::fdlearn_nogood(){
 							lvl = assignment_level[get_id_boolean_variable(q)];
 
 #ifdef 	_DEBUG_FD_NOGOOD
-							std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+							std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 #endif
 							if(		lvl)
 								if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
@@ -5103,6 +5110,7 @@ void Mistral::Solver::fdlearn_nogood(){
 									visited.fast_add(get_id_boolean_variable(q));
 
 									if(lvl >= level) {
+//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 										// we'll need to replace 'a' by its parents since its level is too high
 										++pathC;
 									} else {
@@ -5119,6 +5127,9 @@ void Mistral::Solver::fdlearn_nogood(){
 					{
 						//should be checked
 						q= bound_literals_to_explore.pop();
+#ifdef TRACKING_BOUND
+						Literal old = q;
+#endif
 
 						if ( static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->first_time_visited(is_lower_bound(q)) )
 						{
@@ -5147,7 +5158,6 @@ void Mistral::Solver::fdlearn_nogood(){
 							//Note that we do not need the level here ! I should remove that later
 							Explanation::iterator start_tmp_iterator = bound_explanation->get_reason_for(q, level, end_tmp_iterator);
 
-
 							tmp = start_tmp_iterator;
 
 							while(tmp < end_tmp_iterator) {
@@ -5155,6 +5165,10 @@ void Mistral::Solver::fdlearn_nogood(){
 								++tmp;
 								if (is_a_bound_literal(q))
 								{
+#ifdef TRACKING_BOUND
+									if ((get_value_from_literal(q) ==TRACKING_BOUND) && !(is_lower_bound(q)))
+										std::cout << "\n \n \n \n \n \n                                    Tracking bound : its explanation comes from : "<< bound_explanation << std::endl;
+#endif
 
 #ifdef 	_DEBUG_FD_NOGOOD
 									std::cout << "\n is_a_bound_literal  "<< std::endl;
@@ -5173,7 +5187,7 @@ void Mistral::Solver::fdlearn_nogood(){
 
 #ifdef 	_DEBUG_FD_NOGOOD
 
-									std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+									std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 #endif
 									if(		lvl)
 										if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
@@ -5190,7 +5204,14 @@ void Mistral::Solver::fdlearn_nogood(){
 
 											if(lvl >= level) {
 												// we'll need to replace 'a' by its parents since its level is too high
-
+	/*											std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+												std::cout << " s.t. explanation coming from : " << bound_explanation << std::endl;
+												std::cout << "\n explaination comes from  "<< old << std::endl;
+												std::cout << "which corresponds to " << std::endl;
+												std::cout << " Range variable id : "<< get_variable_from_literal(old) << std::endl;
+												std::cout << " is a " << (is_lower_bound(old) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(old) << std::endl;
+												std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(old)].get_domain() << std::endl;
+*/
 												++pathC;
 											} else {
 												// q's level is below the current level, we are not expending it further

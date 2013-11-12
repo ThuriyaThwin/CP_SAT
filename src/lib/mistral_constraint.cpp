@@ -2079,7 +2079,7 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintLess::propagate() {
       {
   //  	  std::cout << "wiped == " << wiped << std::endl;
     	  ((Solver*) solver) ->__failure = this;
-      std::cout << " fail : " << *this << std::endl;
+      //std::cout << " fail : " << *this << std::endl;
       }
 
   return wiped;
@@ -2099,7 +2099,7 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintLess::propagate(const in
 	      {
 	  //  	  std::cout << "wiped == " << wiped << std::endl;
 	    	 ( (Solver*) solver) ->__failure = this;
-	      std::cout << " fail : " << *this << std::endl;
+	      //std::cout << " fail : " << *this << std::endl;
 	      }
 	return wiped;
 }
@@ -2451,7 +2451,8 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
 
 //    	((Solver* ) solver) -> jsp_reason_for[scope[2].id()-((Solver* ) solver)->start_from] = this;
     	((Solver* ) solver) -> reason_for[scope[2].id()] = this;
-
+    	explanation[2] = encode_bound_literal(scope[0].id(),*min_t0_ptr,0 );
+    	explanation[3] = encode_bound_literal(scope[1].id(),*max_t1_ptr,1 );
     	if( scope[2].set_domain(0) == FAIL_EVENT)
     	{
     		wiped = FAILURE(2);
@@ -2463,8 +2464,7 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
  //       else if( (static_cast<VariableRangeWithLearning*> (scope[1].range_domain))->set_max( *max_t0_ptr-processing_time[1] ,this ) == FAIL_EVENT) wiped = FAILURE(1);
         else if( scope0->set_min( *min_t1_ptr+processing_time[1] ,this ) == FAIL_EVENT) wiped = FAILURE(0);
         else if( scope1->set_max( *max_t0_ptr-processing_time[1] ,this ) == FAIL_EVENT) wiped = FAILURE(1);
-      explanation[2] = encode_bound_literal(scope[0].id(),*min_t0_ptr,0 );
-      explanation[3] = encode_bound_literal(scope[1].id(),*max_t1_ptr,1 );;
+
 
 
 #ifdef _DEBUG_RDISJUNCTIVE
@@ -2476,8 +2476,11 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
     } else if( *min_t1_ptr + processing_time[1] > *max_t0_ptr ) {
 
 //        ((Solver* ) solver) -> jsp_reason_for[scope[2].id()-((Solver* ) solver)->start_from] = this;
-        ((Solver* ) solver) -> reason_for[scope[2].id()] = this;
-      if( scope[2].set_domain(1) == FAIL_EVENT)
+    	((Solver* ) solver) -> reason_for[scope[2].id()] = this;
+    	explanation[2] = encode_bound_literal(scope[0].id(),*max_t0_ptr,1 );
+    	explanation[3] = encode_bound_literal(scope[1].id(),*min_t1_ptr,0 );
+
+    	if( scope[2].set_domain(1) == FAIL_EVENT)
     	  {
     	  wiped = FAILURE(2);
     	  std::cout << "\n \n \n \n \n FAIL with scope[2].id() = " << scope[2].id() << std::endl;
@@ -2487,8 +2490,7 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
  //     else if( (static_cast<VariableRangeWithLearning*> (scope[1].range_domain))->set_min( *min_t0_ptr+processing_time[0] ,this ) == FAIL_EVENT) wiped = FAILURE(1);
       else if( scope0->set_max( *max_t1_ptr-processing_time[0],this  ) == FAIL_EVENT) wiped = FAILURE(0);
       else if( scope1->set_min( *min_t0_ptr+processing_time[0] ,this ) == FAIL_EVENT) wiped = FAILURE(1);
-      explanation[2] = encode_bound_literal(scope[0].id(),*max_t0_ptr,1 );
-      explanation[3] = encode_bound_literal(scope[1].id(),*min_t1_ptr,0 );
+
 
 #ifdef _DEBUG_RDISJUNCTIVE
       std::cout << "  -> YES!: " ;
@@ -2517,7 +2519,7 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
        {
    //  	  std::cout << "wiped == " << wiped << std::endl;
      	  ((Solver*) solver) ->__failure = this;
-       std::cout << " fail : " << *this << std::endl;
+       //std::cout << " fail : " << *this << std::endl;
        }
   return wiped;
 }
@@ -2528,7 +2530,7 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
 //std::cout<< " ExplainedConstraintReifiedDisjunctive::propagate ! \n" << std::endl;
 //		exit(1);
   if( *min_t0_ptr + processing_time[0] > *max_t1_ptr ) {
-
+ 	((Solver* ) solver) -> reason_for[scope[2].id()] = NULL;
     if( scope[2].set_domain(0) == FAIL_EVENT) wiped = FAILURE(2);
     // x[1]+p[1] <= x[0] because x[0]'s min is too high or x[1]'s max is too low
     else if( scope0->set_min( *min_t1_ptr+processing_time[1],NULL ) == FAIL_EVENT) wiped = FAILURE(0);
@@ -2541,7 +2543,7 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
 #endif
 
   } else if( *min_t1_ptr + processing_time[1] > *max_t0_ptr ) {
-
+	 ((Solver* ) solver) -> reason_for[scope[2].id()] = NULL;
     if( scope[2].set_domain(1) == FAIL_EVENT) wiped = FAILURE(2);
     else if( scope0->set_max( *max_t1_ptr-processing_time[0],NULL ) == FAIL_EVENT) wiped = FAILURE(0);
     else if( scope1->set_min( *min_t0_ptr+processing_time[0], NULL ) == FAIL_EVENT) wiped = FAILURE(1);
@@ -2569,7 +2571,7 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
        {
    //  	  std::cout << "wiped == " << wiped << std::endl;
      	  ((Solver*) solver) ->__failure = this;
-      std::cout << " fail from  : " << *this << std::endl;
+      //std::cout << " fail from  : " << *this << std::endl;
        }
   return wiped;
 }
