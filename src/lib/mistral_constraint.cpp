@@ -2456,7 +2456,7 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
     	explanation[++bool_explanation_size] = encode_bound_literal(scope[0].id(),*min_t0_ptr,0 );
     	if(scope1->upperbounds[0] > *max_t1_ptr )
     	explanation[++bool_explanation_size] = encode_bound_literal(scope[1].id(),*max_t1_ptr,1 );
-    	bool_explanation_size-=2;
+    	bool_explanation_size--;
 
     	if( scope[2].set_domain(0) == FAIL_EVENT)
     	{
@@ -2487,7 +2487,7 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
     	explanation[++bool_explanation_size] = encode_bound_literal(scope[0].id(),*max_t0_ptr,1 );
     	if(scope1->lowerbounds[0] < *min_t1_ptr)
     	explanation[++bool_explanation_size] = encode_bound_literal(scope[1].id(),*min_t1_ptr,0 );
-    	bool_explanation_size-=2;
+    	bool_explanation_size--;
 /*
     	if (scope[2].id() == 797)
     	{
