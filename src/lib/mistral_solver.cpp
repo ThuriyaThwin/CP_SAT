@@ -38,7 +38,7 @@
 //#define _DEBUG_NOGOOD true //(statistics.num_filterings == 491)
 //#define _DEBUG_SEARCH true
 //#define _DEBUG_FD_NOGOOD true
-#define TRACKING_BOUND 1078
+//#define TRACKING_BOUND 1078
 //((statistics.num_filterings == 48212) || (statistics.num_filterings == 46738) || (statistics.num_filterings == 44368) || (statistics.num_filterings == 43659))
 
 //#define _DEBUG_RESTORE true
@@ -4903,7 +4903,7 @@ void Mistral::Solver::fdlearn_nogood(){
 //	else
 	{
 //#ifdef 	_DEBUG_FD_NOGOOD
-//		std::cout << " \n\n\n fdlearn_nogood \n Decisions size \n " ; // << decisions.size << " and the variables : \n        " << decisions << " \n and level = " << level << std::endl;
+		std::cout << " \n\n\n fdlearn_nogood : \n Decisions size" << decisions.size << " and the variables : \n        " << decisions << " \n and level = " << level << std::endl;
 //#endif
 		int size = Visited_lower_bound_variables .size;
 		//	std::cout << "size  Visited_lower_bound_variables \n " << size << std::endl;
@@ -5096,7 +5096,12 @@ void Mistral::Solver::fdlearn_nogood(){
 #ifdef 	_DEBUG_FD_NOGOOD
 							std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 #endif
-							if(		lvl)
+							if (x.get_size()>1)
+							{
+								std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+								exit(1);
+							}
+						if(		lvl)
 								if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
 									//Sould be done later!
 									/*
@@ -5189,6 +5194,12 @@ void Mistral::Solver::fdlearn_nogood(){
 
 									std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 #endif
+
+									if (x.get_size()>1)
+									{
+										std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+										exit(1);
+									}
 									if(		lvl)
 										if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
 											//Sould be done later!
