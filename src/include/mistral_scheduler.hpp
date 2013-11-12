@@ -669,7 +669,7 @@ namespace Mistral {
     int init_obj;
 #ifdef _CHECK_NOGOOD
     void check_nogood(Vector<Literal> & c);
-#endif;
+#endif
     virtual int get_lb() = 0;
     virtual int get_ub() = 0;
     virtual Variable get_objective_var() = 0;

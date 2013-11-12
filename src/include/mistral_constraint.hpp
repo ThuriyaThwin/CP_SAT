@@ -3454,6 +3454,7 @@ std::cout << "[" << std::setw(4) << id << "](" << name() << "): restore" << std:
 	  VariableRangeWithLearning* scope1;
 	  VariableRangeWithLearning* scope2;
 	  Literal explanation[4];
+	  int bool_explanation_size ;
   };
 
 

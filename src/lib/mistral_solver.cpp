@@ -5094,7 +5094,7 @@ void Mistral::Solver::fdlearn_nogood(){
 							lvl = assignment_level[get_id_boolean_variable(q)];
 
 #ifdef 	_DEBUG_FD_NOGOOD
-							std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+							std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
 #endif
 							if (x.get_size()>1)
 							{
@@ -5190,7 +5190,7 @@ void Mistral::Solver::fdlearn_nogood(){
 									lvl = assignment_level[get_id_boolean_variable(q)];
 
 #ifdef 	_DEBUG_FD_NOGOOD
-									std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+									std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " explanation comes from " << bound_explanation << std::endl;
 #endif
 
 									if (x.get_size()>1)

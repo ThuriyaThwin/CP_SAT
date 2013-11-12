@@ -2266,7 +2266,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 		//Works only for bound literals
 		if (!is_a_bound_literal(a))
 		{
-			end = &(explanation[2])+2;
+			end = &(explanation[2])+bool_explanation_size;
 			return &(explanation[2]);
 		}
 		else if (is_lower_bound(a))
@@ -2451,8 +2451,13 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
 
 //    	((Solver* ) solver) -> jsp_reason_for[scope[2].id()-((Solver* ) solver)->start_from] = this;
     	((Solver* ) solver) -> reason_for[scope[2].id()] = this;
-    	explanation[2] = encode_bound_literal(scope[0].id(),*min_t0_ptr,0 );
-    	explanation[3] = encode_bound_literal(scope[1].id(),*max_t1_ptr,1 );
+    	bool_explanation_size=1;
+    	if(scope0->lowerbounds[0] < *min_t0_ptr )
+    	explanation[++bool_explanation_size] = encode_bound_literal(scope[0].id(),*min_t0_ptr,0 );
+    	if(scope1->upperbounds[0] > *max_t1_ptr )
+    	explanation[++bool_explanation_size] = encode_bound_literal(scope[1].id(),*max_t1_ptr,1 );
+    	bool_explanation_size-=2;
+
     	if( scope[2].set_domain(0) == FAIL_EVENT)
     	{
     		wiped = FAILURE(2);
@@ -2477,9 +2482,29 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
 
 //        ((Solver* ) solver) -> jsp_reason_for[scope[2].id()-((Solver* ) solver)->start_from] = this;
     	((Solver* ) solver) -> reason_for[scope[2].id()] = this;
-    	explanation[2] = encode_bound_literal(scope[0].id(),*max_t0_ptr,1 );
-    	explanation[3] = encode_bound_literal(scope[1].id(),*min_t1_ptr,0 );
-
+    	bool_explanation_size=1;
+    	if(scope0->upperbounds[0] > *max_t0_ptr )
+    	explanation[++bool_explanation_size] = encode_bound_literal(scope[0].id(),*max_t0_ptr,1 );
+    	if(scope1->lowerbounds[0] < *min_t1_ptr)
+    	explanation[++bool_explanation_size] = encode_bound_literal(scope[1].id(),*min_t1_ptr,0 );
+    	bool_explanation_size-=2;
+/*
+    	if (scope[2].id() == 797)
+    	{
+    		std::cout << "First literal : "<< encode_bound_literal(scope[0].id(),*max_t0_ptr,1 ) << std::endl;
+    		std::cout << "Second literal : "<<  encode_bound_literal(scope[1].id(),*min_t1_ptr,0 )<< std::endl;
+    		std::cout << "scope[0].id() " <<scope[0].id() << std::endl;
+    		std::cout << "scope[1].id() " << scope[1].id() << std::endl;
+    		std::cout << "max_t0_ptr" << *max_t0_ptr << std::endl;
+    		std::cout << "min_t1_ptr " << *min_t1_ptr << std::endl;
+    		Literal a = encode_bound_literal(scope[1].id(),*min_t1_ptr,0 );
+    		if (is_a_bound_literal(a))
+    			std::cout << "is_a_bound_literal " <<std::endl;
+    		else
+    			std::cout << "NOOOOOOOOOOO " <<std::endl;
+    //		exit(1);
+    	}
+    	*/
     	if( scope[2].set_domain(1) == FAIL_EVENT)
     	  {
     	  wiped = FAILURE(2);
