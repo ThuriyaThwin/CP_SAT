@@ -37,7 +37,7 @@
 //#define _OLD_ true
 //#define _DEBUG_NOGOOD true //(statistics.num_filterings == 491)
 //#define _DEBUG_SEARCH true
-//#define _DEBUG_FD_NOGOOD true
+#define _DEBUG_FD_NOGOOD true
 //#define TRACKING_BOUND 1078
 //((statistics.num_filterings == 48212) || (statistics.num_filterings == 46738) || (statistics.num_filterings == 44368) || (statistics.num_filterings == 43659))
 
@@ -5189,9 +5189,7 @@ void Mistral::Solver::fdlearn_nogood(){
 									x = variables[get_id_boolean_variable(q)];
 									lvl = assignment_level[get_id_boolean_variable(q)];
 
-
 #ifdef 	_DEBUG_FD_NOGOOD
-
 									std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 #endif
 
