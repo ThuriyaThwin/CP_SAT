@@ -1657,10 +1657,11 @@ void SchedulingSolver::setup() {
 
 //We need this flag only when debugging specific bounds with dichotomy! just change them here
 #ifdef _DEBUG_SCHEDULER
+  // THIS DOESN'T WORK without learning
   if (params->FD_learning)
   {
-	  lb_C_max = 977;
-	  ub_C_max = 1548;
+	  lb_C_max = 1263;
+	  ub_C_max = 1405;
   }
 #endif
 
@@ -2847,7 +2848,7 @@ void SchedulingSolver::dichotomic_search()
 /*
     if (parameters.fd_learning)
     {
-    	//For each single nogood we create a new solvet with exactly the same parameters!
+    	//For each single nogood we create a new solver with exactly the same parameters!
     	for(int i=0; i<__nogoods.size; ++i) {
     		//		if(!nogood_origin[i])
     		{
@@ -3485,7 +3486,7 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c)
 	else
 		std::cout << " is a valid nogood !\n";
 	delete __solver;
-
+	params->FD_learning = 1;
 	/*if(__solver->propagate()) {
 		std::cout << " WRONG NOGOOD!!\n";
 		exit(1);
