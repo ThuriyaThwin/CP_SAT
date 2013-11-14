@@ -10,7 +10,7 @@ using namespace Mistral;
 
 //#define INFTY 0xffffff
 #define BIG 0xffff
-
+#define _DEBUG_SCHEDULER true
 #define DICHO 0
 #define BNB   1
 #define LNS   2
@@ -1654,6 +1654,13 @@ void SchedulingSolver::setup() {
 
   lb_C_max = (params->LBinit<0 ? data->getMakespanLowerBound() : params->LBinit);
   ub_C_max = (params->UBinit<0 ? data->getMakespanUpperBound(params->InitBound) : params->UBinit);
+
+//We need this flag only when debugging specific bounds with dichotomy! just change them here
+#ifdef _DEBUG_SCHEDULER
+  lb_C_max = 977;
+  ub_C_max = 1548;
+#endif
+
   if(params->Objective == "tardiness") {
     int max_due_date = data->getJobDueDate(0);
     for(int i=1; i<data->nJobs(); ++i) {
@@ -2903,7 +2910,10 @@ void SchedulingSolver::dichotomic_search()
 #endif
     for (int i= 0; i < base->learnt.size ; ++i)
     	base->remove(i);
-
+#ifdef _DEBUG_SCHEDULER
+	std::cout << " END _DEBUG_SCHEDULER! \n";
+exit(1);
+#endif
 
     ++iteration;
   } 
