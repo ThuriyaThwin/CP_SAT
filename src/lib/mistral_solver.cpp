@@ -5478,13 +5478,13 @@ void Mistral::Solver::fdlearn_nogood(){
 		{
 			std::cout << "graph_size : "  << graph_size  << std::endl;
 			std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
-
+/*
 			for (int i = 0; i< learnt_clause.size; ++i)
 			{
 				std::cout << "assignment level [i] = " << assignment_level[get_id_boolean_variable(learnt_clause[i])] << std::endl;
 			}
 			std::cout << "END! current level  "  << level << " \n and backtrack_level :     " << backtrack_level << std::endl;
-
+*/
 
 			((SchedulingSolver *) this)->	check_nogood(learnt_clause);
 			//	store_nogood(learnt_clause);

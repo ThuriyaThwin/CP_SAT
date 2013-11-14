@@ -10,7 +10,7 @@ using namespace Mistral;
 
 //#define INFTY 0xffffff
 #define BIG 0xffff
-#define _DEBUG_SCHEDULER true
+//#define _DEBUG_SCHEDULER true
 #define DICHO 0
 #define BNB   1
 #define LNS   2
@@ -1660,8 +1660,8 @@ void SchedulingSolver::setup() {
   // THIS DOESN'T WORK without learning
   if (params->FD_learning)
   {
-	  lb_C_max = 1263;
-	  ub_C_max = 1405;
+	  lb_C_max = 977;
+	  ub_C_max = 1548;
   }
 #endif
 
@@ -3422,13 +3422,13 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c)
 	StatisticList __stats;
 	__stats.start();
 	Instance __jsp(*params);
-	std::cout << std::endl;
-	__jsp.printStats(std::cout);
+//	std::cout << std::endl;
+//	__jsp.printStats(std::cout);
 	params->FD_learning = 0;
-	params->print(std::cout);
+//	params->print(std::cout);
 	SchedulingSolver *__solver;
 	if(params->Objective == "makespan") {
-		std::cout << "c Minimising Makespan" << std::endl;
+	//	std::cout << "c Minimising Makespan" << std::endl;
 		if(params->Type == "now") __solver = new No_wait_Model(__jsp, params, -1, 0);
 		else if(params->Type == "now2") {
 			//params.Type = "now";
@@ -3436,11 +3436,11 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c)
 		}
 		else __solver = new C_max_Model(&__jsp, params, &__stats);
 	} else if(params->Objective == "tardiness") {
-		std::cout << "c Minimising Tardiness" << std::endl;
+//		std::cout << "c Minimising Tardiness" << std::endl;
 		__solver = new L_sum_Model(__jsp, params, -1);
 	}
 	else {
-		std::cout << "c unknown objective, exiting" << std::endl;
+	//	std::cout << "c unknown objective, exiting" << std::endl;
 		exit(1);
 	}
 	__solver->consolidate();
@@ -3449,9 +3449,9 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c)
 	Vector<int> old_min, old_max;
 	old_max.clear();
 	old_min.clear();
-	std::cout << " check learnt nogood :  "<< c << " -- at node " << std::endl;
+	std::cout << " check learnt nogood :  "<< c << std::endl;
 
-	std::cout << " learnt nogood i.size :  "<< c.size  << std::endl;
+	std::cout << " learnt nogood size :  "<< c.size  << std::endl;
 
 	for(int j=0; j<c.size; ++j) {
 		int id =get_id_boolean_variable(c[j]);
@@ -3484,7 +3484,7 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c)
 		exit(1);
 	}
 	else
-		std::cout << " is a valid nogood !\n";
+		std::cout << " Is a valid nogood !\n" << std::endl;
 	delete __solver;
 	params->FD_learning = 1;
 	/*if(__solver->propagate()) {
