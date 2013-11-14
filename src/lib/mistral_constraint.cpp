@@ -2268,33 +2268,26 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 
 		if (!is_a_bound_literal(a))
 		{
-			/*
-			if (scope2->id==386)
+#ifdef _TRACKING_ATOM
+			if (scope2->id==_TRACKING_ATOM)
 			{
 				std::cout << " \n \n bool_explanation_size " << bool_explanation_size << std::endl;
-				std::cout << " \n \n scope2->id==774 " << scope2->id << std::endl;
-				std::cout << "literal " << explanation[2] << std::endl;
-				std::cout << "literal " << explanation[3] << std::endl;
-
-				std::cout << " \n \n We will send as an explanation :  " <<  std::endl;
-
+				std::cout << " \n \n scope2->id== " << scope2->id << std::endl;
+				std::cout << "literal " << explanation[4] << std::endl;
+				std::cout << "literal " << explanation[5] << std::endl;
+				std::cout << " \n \n We will send as an explanation (but check bool_explanation_size BEFORE) :  " <<  std::endl;
 	    		Literal q =explanation[4];
 	    		std::cout << "\n is_a_bound_literal  "<< std::endl;
 	    		std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
 	    		std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
 	    		std::cout << " var id is is "<< get_variable_from_literal(q) << std::endl;
-
-
 	    		q =explanation[5];
 	    		std::cout << "\n is_a_bound_literal  "<< std::endl;
 	    		std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
 	    		std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
 	    		std::cout << " var id "<< get_variable_from_literal(q) << std::endl;
-
-
-
 			}
-*/
+#endif
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 			if (bool_explanation_size <0)
@@ -2423,7 +2416,7 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
 
 	if(changed_idx == 2) {
 
-		bool_explanation_size=0;
+//		bool_explanation_size=0;
 #ifdef _DEBUG_RDISJUNCTIVE
 		std::cout << "  -> now it's a precedence" << std::endl;
 #endif
@@ -2478,7 +2471,7 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
 		}
 	} else {
 
-		bool_explanation_size=0;
+//		bool_explanation_size=0;
 #ifdef _DEBUG_RDISJUNCTIVE
 		std::cout << "  -> could it be a precedence? ("
 				<< *min_t0_ptr << " + " << processing_time[0]
