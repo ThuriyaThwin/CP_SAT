@@ -1657,8 +1657,11 @@ void SchedulingSolver::setup() {
 
 //We need this flag only when debugging specific bounds with dichotomy! just change them here
 #ifdef _DEBUG_SCHEDULER
-  lb_C_max = 977;
-  ub_C_max = 1548;
+  if (params->FD_learning)
+  {
+	  lb_C_max = 977;
+	  ub_C_max = 1548;
+  }
 #endif
 
   if(params->Objective == "tardiness") {
