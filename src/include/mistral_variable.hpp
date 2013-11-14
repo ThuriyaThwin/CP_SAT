@@ -1536,7 +1536,7 @@ namespace Mistral {
 		  upperbounds.clear();
 		  lower_bound_reasons.clear();
 		  upper_bound_reasons.clear();
-#ifdef _CHECK_NOGOOD
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 		  lowerbounds_levels.clear();
 		  upperbounds_levels.clear();
 #endif
@@ -1546,7 +1546,7 @@ namespace Mistral {
 		  upper_bound_reasons.add(NULL);
 		//  std::cout << "111NDDDDD \n \n " << std::endl;
 	//	  std::cout << "level  \n \n " << solver->level <<std::endl;
-#ifdef _CHECK_NOGOOD
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 		  lowerbounds_levels.add(0);
 		  upperbounds_levels.add(0);
 #endif
@@ -1580,7 +1580,7 @@ namespace Mistral {
 
 		  lowerbounds.add(lo);
 		  lower_bound_reasons.add(C);
-#ifdef _CHECK_NOGOOD
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 		  lowerbounds_levels.add(solver->level);
 #endif
 		  //  std::cout << "NEW LOWER BOUND \n \n " << std::endl;
@@ -1608,7 +1608,7 @@ namespace Mistral {
 		  max = up;
 		  upperbounds.add(up);
 		  upper_bound_reasons.add(C);
-#ifdef _CHECK_NOGOOD
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 		  upperbounds_levels.add(solver->level);
 #endif
 		  //	  std::cout << "NEW LOWER BOUND \n \n " << std::endl;
@@ -1638,7 +1638,7 @@ namespace Mistral {
 			  {
 				  lowerbounds.pop();
 				  lower_bound_reasons.pop();
-#ifdef _CHECK_NOGOOD
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 				  lowerbounds_levels.pop();
 #endif
 			  }
@@ -1657,7 +1657,7 @@ namespace Mistral {
 			  {
 				  upperbounds.pop();
 				  upper_bound_reasons.pop();
-#ifdef _CHECK_NOGOOD
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 				  upperbounds_levels.pop();
 #endif
 			  }
@@ -1676,7 +1676,7 @@ namespace Mistral {
 
 	  Vector<int> lowerbounds;
 	  Vector<int> upperbounds;
-#ifdef _CHECK_NOGOOD
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 	  Vector<int> lowerbounds_levels;
 	  Vector<int> upperbounds_levels;
 #endif

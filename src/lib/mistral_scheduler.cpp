@@ -2834,7 +2834,7 @@ void SchedulingSolver::dichotomic_search()
 
     // A module for checking learnt nogoods
 #ifdef _CHECK_NOGOOD
-
+/*
     if (parameters.fd_learning)
     {
     	//For each single nogood we create a new solvet with exactly the same parameters!
@@ -2892,12 +2892,14 @@ void SchedulingSolver::dichotomic_search()
     		}
     	}
     }
+    */
     nogood_origin.clear();
     nogood_clause.clear();
     __nogoods.clear();
     solution.clear();
     node_num.clear();
     atom.clear();
+
 #endif
     for (int i= 0; i < base->learnt.size ; ++i)
     	base->remove(i);
