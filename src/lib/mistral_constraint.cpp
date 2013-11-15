@@ -2265,6 +2265,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 		}
 	}
 	else {
+		//TODO Clean the code!
 
 		if (!is_a_bound_literal(a))
 		{
@@ -2276,34 +2277,34 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 				std::cout << "literal " << explanation[4] << std::endl;
 				std::cout << "literal " << explanation[5] << std::endl;
 				std::cout << " \n \n We will send as an explanation (but check bool_explanation_size BEFORE) :  " <<  std::endl;
-	    		Literal q =explanation[4];
-	    		std::cout << "\n is_a_bound_literal  "<< std::endl;
-	    		std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-	    		std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-	    		std::cout << " var id is is "<< get_variable_from_literal(q) << std::endl;
-	    		q =explanation[5];
-	    		std::cout << "\n is_a_bound_literal  "<< std::endl;
-	    		std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-	    		std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-	    		std::cout << " var id "<< get_variable_from_literal(q) << std::endl;
+				Literal q =explanation[4];
+				std::cout << "\n is_a_bound_literal  "<< std::endl;
+				std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+				std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+				std::cout << " var id is is "<< get_variable_from_literal(q) << std::endl;
+				q =explanation[5];
+				std::cout << "\n is_a_bound_literal  "<< std::endl;
+				std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+				std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+				std::cout << " var id "<< get_variable_from_literal(q) << std::endl;
 			}
 #endif
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 			if (bool_explanation_size <0)
-	  		{
-	  			std::cout << " Not sure if it's a real problem but .. bool_explanation_size <=0 \n " ;
-	  			exit (1);
-	  		}
+			{
+				std::cout << " Not sure if it's a real problem but .. bool_explanation_size <=0 \n " ;
+				exit (1);
+			}
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 			if (bool_explanation_size==2)
-	  		{	 			if (get_variable_from_literal(explanation[4]) == get_variable_from_literal(explanation[5]) )
-	 			{
-		 			std::cout << " \n \n \n                     explanation[4] ==    explanation[5]        THEY SHOULD BE DIFFERENT " << std::endl;
-	 				exit(1);
-	 			}
-	  		}
+			{	 			if (get_variable_from_literal(explanation[4]) == get_variable_from_literal(explanation[5]) )
+			{
+				std::cout << " \n \n \n                     explanation[4] ==    explanation[5]        THEY SHOULD BE DIFFERENT " << std::endl;
+				exit(1);
+			}
+			}
 #endif
 
 			end = &(explanation[4])+bool_explanation_size;
@@ -2311,9 +2312,16 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 		}
 		else if (is_lower_bound(a))
 		{
-			//		std::cout <<" 1 "  << std::endl;
+
 			if ( get_variable_from_literal(a) == scope[1].id())
 			{
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+				if (scope[2].get_min()==0)
+				{
+					std::cout << "scope[2]  should be assigned to 1" << std::endl;
+					exit(1);
+				}
+#endif
 				//TODO Change (Solver *) solver)->encode_b.. with the id of the variable in the class directly!
 				//ToDo Chenge get_value_from_literal. with a variable along all the code!
 				explanation[0] =  NOT (((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), 1));
@@ -2331,7 +2339,13 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 			else
 				if ( get_variable_from_literal(a) == scope[0].id())
 				{
-
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+					if (scope[2].get_max()==1)
+					{
+						std::cout << "scope[2]  should be assigned to 0" << std::endl;
+						exit(1);
+					}
+#endif
 					/*
 					std::cout << "scope 2 : " << scope[2] << std::endl;
 					std::cout << "scope 2 max: " << scope[2].get_max() << std::endl;
@@ -2359,13 +2373,27 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 						end = &(explanation[0])+2;
 					}
 				}
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+				else
+				{
+					std::cout << " NOT FOUND! " << std::endl;
+					exit(1);
+				}
+#endif
+
 		}
 		else
 		{
 			//		std::cout <<" 4 "  << std::endl;
 			if ( get_variable_from_literal(a) == scope[1].id())
 			{
-
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+				if (scope[2].get_max()==1)
+				{
+					std::cout << "scope[2]  should be assigned to 0" << std::endl;
+					exit(1);
+				}
+#endif
 				//			std::cout <<" 22 "  << std::endl;
 				explanation[0] = NOT( ((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), 0));
 				if (
@@ -2382,6 +2410,13 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 			else
 				if ( get_variable_from_literal(a) == scope[0].id())
 				{
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+					if (scope[2].get_min()==0)
+					{
+						std::cout << "scope[2]  should be assigned to 1" << std::endl;
+						exit(1);
+					}
+#endif
 					explanation[0] = NOT ( ((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), 1));
 					if (
 							(get_value_from_literal(a)+processing_time[0]) >=
@@ -2394,6 +2429,14 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 						end = &(explanation[0])+2;
 					}
 				}
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+			else
+				{
+					std::cout << " NOT FOUND! " << std::endl;
+					exit(1);
+				}
+#endif
+
 		}
 	}
 	return &(explanation[0]);
