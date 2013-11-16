@@ -10,7 +10,7 @@ using namespace Mistral;
 
 //#define INFTY 0xffffff
 #define BIG 0xffff
-//#define _DEBUG_SCHEDULER true
+#define _DEBUG_SCHEDULER true
 #define DICHO 0
 #define BNB   1
 #define LNS   2
@@ -1660,8 +1660,9 @@ void SchedulingSolver::setup() {
   // THIS DOESN'T WORK without learning
   if (params->FD_learning)
   {
-	  lb_C_max = 977;
-	  ub_C_max = 1548;
+	  //1120 to  1262 or 1228 to  1262
+	  lb_C_max = 1120;
+	  ub_C_max = 1262;
   }
 #endif
 
@@ -2733,7 +2734,16 @@ void SchedulingSolver::dichotomic_search()
   Vector<int> old_min, old_max;
   int id;
 #endif
-
+#ifdef _DEBUG_SCHEDULER
+  // THIS DOESN'T WORK without learning
+  //if (params->FD_learning)
+  {
+	  //1120 to  1262 or 1228 to  1262
+//	  minfsble = 1228;
+//	  maxfsble = 1262;
+  }
+//  objective = 1245
+#endif
   ////////// dichotomic search ///////////////
   while( //result == UNKNOWN && 
 	 minfsble<maxfsble && 
@@ -2746,6 +2756,9 @@ void SchedulingSolver::dichotomic_search()
     if(remaining_time < (2*params->NodeBase)) break;
     
     objective = (int)(floor(((double)minfsble + (double)maxfsble)/2));
+#ifdef _DEBUG_SCHEDULER
+    objective = 1245;
+#endif
     std::cout << "\n c +=========[ start dichotomic step ]=========+" << std::endl;
     //       setPropagsLimit(params->NodeCutoff);
     
@@ -2915,8 +2928,8 @@ void SchedulingSolver::dichotomic_search()
     for (int i= 0; i < base->learnt.size ; ++i)
     	base->remove(i);
 #ifdef _DEBUG_SCHEDULER
-	std::cout << " END _DEBUG_SCHEDULER! \n";
-exit(1);
+//	std::cout << " END _DEBUG_SCHEDULER! \n";
+//exit(1);
 #endif
 
     ++iteration;
