@@ -685,7 +685,12 @@ Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
     }
   }
 #endif
-
+  if (wiped != CONSISTENT)
+  {
+	  //  	  std::cout << "wiped == " << wiped << std::endl;
+	  ((Solver*) solver) ->__failure = this;
+	  //std::cout << " fail from  : " << *this << std::endl;
+  }
   return wiped;
 }
 

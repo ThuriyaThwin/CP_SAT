@@ -10,7 +10,7 @@ using namespace Mistral;
 
 //#define INFTY 0xffffff
 #define BIG 0xffff
-#define _DEBUG_SCHEDULER true
+//#define _DEBUG_SCHEDULER true
 #define DICHO 0
 #define BNB   1
 #define LNS   2
