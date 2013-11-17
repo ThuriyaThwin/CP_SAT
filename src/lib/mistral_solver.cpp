@@ -4903,9 +4903,9 @@ void Mistral::Solver::fdlearn_nogood(){
 //		simple_fdlearn_nogood();
 //	else
 	{
-//#ifdef 	_DEBUG_FD_NOGOOD
+#ifdef 	_DEBUG_FD_NOGOOD
 	//	std::cout << " \n\n\n fdlearn_nogood : \n Decisions size" << decisions.size << " and the variables : \n        " << decisions << " \n and level = " << level << std::endl;
-//#endif
+#endif
 		int size = Visited_lower_bound_variables .size;
 		//	std::cout << "size  Visited_lower_bound_variables \n " << size << std::endl;
 		while (size--)
@@ -4945,8 +4945,14 @@ void Mistral::Solver::fdlearn_nogood(){
 			current_explanation=__failure;
 		else
 			current_explanation= culprit.propagator;
-		//std::cout << " \n\n\n fdlearn_nogood \n "  << current_explanation  << std::endl;
 
+/*		if (culprit.propagator!=__failure)
+		{
+			std::cout << " culprit.propagator :  " <<culprit.propagator <<std::endl;
+			std::cout << " wheareas the real failure comes from " <<__failure <<std::endl;
+			exit(1);
+		}
+*/
 		//UNSAT!
 		if (current_explanation == NULL )
 		{
