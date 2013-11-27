@@ -4918,6 +4918,7 @@ void Mistral::Solver::fdlearn_nogood(){
 #ifdef 	_DEBUG_FD_NOGOOD
 	//	std::cout << " \n\n\n fdlearn_nogood : \n Decisions size" << decisions.size << " and the variables : \n        " << decisions << " \n and level = " << level << std::endl;
 #endif
+/*
 		int size = Visited_lower_bound_variables .size;
 		//	std::cout << "size  Visited_lower_bound_variables \n " << size << std::endl;
 		while (size--)
@@ -4938,7 +4939,7 @@ void Mistral::Solver::fdlearn_nogood(){
 
 		Visited_lower_bound_variables.clear() ;
 		Visited_upper_bound_variables.clear() ;
-
+*/
 
 
 		int pathC = 0, index = sequence.size-1;
@@ -4953,19 +4954,19 @@ void Mistral::Solver::fdlearn_nogood(){
 
 		// We start from the constraint that failed
 		Explanation *current_explanation ;
-		if (__failure)
-			current_explanation=__failure;
-		else
+//		if (__failure)
+//			current_explanation=__failure;
+//		else
 			current_explanation= culprit.propagator;
 
-//#ifdef _DEBUG_FAIL
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 		if (culprit.propagator!=__failure)
 		{
 			std::cout << " culprit.propagator :  " <<culprit.propagator <<std::endl;
 			std::cout << " wheareas the real failure comes from " <<__failure <<std::endl;
 			exit(1);
 		}
-//#endif
+#endif
 
 		//UNSAT!
 		if (current_explanation == NULL )
@@ -5543,8 +5544,9 @@ void Mistral::Solver::fdlearn_nogood(){
 			taboo_constraint = NULL;
 		}
 		visited.clear();
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 		__failure=NULL;
-
+#endif
 
 		//#ifdef _DEBUG
 		//		std::cout << "END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
@@ -7815,6 +7817,7 @@ void Mistral::Solver::set_fdlearning_on() {
 	//	parameters.jsp_backjump = true;
 	parameters.backjump = true;
 	parameters.fd_learning = true;
+	parameters.forgetfulness = 0.0;
 	__failure=NULL;
 	Vector< Variable >   bool_variables;
 	if(!base) {

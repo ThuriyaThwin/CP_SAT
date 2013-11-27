@@ -1660,9 +1660,9 @@ void SchedulingSolver::setup() {
   // THIS DOESN'T WORK without learning
   if (params->FD_learning)
   {
-	  //  911 to  1320
-	  lb_C_max = 911;
-	  ub_C_max = 1320;
+	  //  1117 to  1321
+	  lb_C_max = 1117;
+	  ub_C_max = 1321;
   }
 #endif
 
@@ -2925,10 +2925,15 @@ void SchedulingSolver::dichotomic_search()
     atom.clear();
 
 #endif
-    if (base)
-    for (int i= 0; i < base->learnt.size ; ++i)
-    	base->remove(i);
 
+    //TODO : Use Solver::forget() to forget? but it seems there is a problem!
+    if (base)
+    {
+    	int __size = base->learnt.size;
+    	while (__size--)
+//    for (int i= 0; i < base->learnt.size ; ++i)
+    	base->remove(__size);
+    }
 
     ++iteration;
   } 
@@ -3511,6 +3516,12 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c)
 	if(__result)
 	{
 		std::cout << " WRONG NOGOOD!!\n";
+//		params->LBinit = stats->lower_bound ;
+//		params->UBinit = obj;
+		std::cout << " Lower Bound  " << stats->lower_bound;
+		std::cout << " Upper Bound  " << obj ;
+		std::cout << std::endl;
+
 //		std::cout << " Lower Bound  " << __stats.lower_bound ;
 //		std::cout << " Upper Bound  " << __stats.upper_bound ;
 		exit(1);

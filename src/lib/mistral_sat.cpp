@@ -685,14 +685,20 @@ Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
     }
   }
 #endif
+
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
   if (wiped != CONSISTENT)
   {
 	  //  	  std::cout << "wiped == " << wiped << std::endl;
-	  ((Solver*) solver) ->__failure = this;
+	  ( (Solver*) solver) ->__failure = this;
 #ifdef _DEBUG_FAIL
-		std::cout << " fail : " << *this << std::endl;
+	  std::cout << " fail : " << *this << std::endl;
 #endif
   }
+#endif
+
+
   return wiped;
 }
 
