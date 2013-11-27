@@ -1660,9 +1660,9 @@ void SchedulingSolver::setup() {
   // THIS DOESN'T WORK without learning
   if (params->FD_learning)
   {
-	  // 911 to  1321
+	  //  911 to  1320
 	  lb_C_max = 911;
-	  ub_C_max = 1321;
+	  ub_C_max = 1320;
   }
 #endif
 
@@ -2757,7 +2757,7 @@ void SchedulingSolver::dichotomic_search()
     
     objective = (int)(floor(((double)minfsble + (double)maxfsble)/2));
 #ifdef _DEBUG_SCHEDULER
-    objective = 1245;
+    //objective = 1245;
 #endif
     std::cout << "\n c +=========[ start dichotomic step ]=========+" << std::endl;
     //       setPropagsLimit(params->NodeCutoff);
@@ -2928,10 +2928,7 @@ void SchedulingSolver::dichotomic_search()
     if (base)
     for (int i= 0; i < base->learnt.size ; ++i)
     	base->remove(i);
-#ifdef _DEBUG_SCHEDULER
-//	std::cout << " END _DEBUG_SCHEDULER! \n";
-//exit(1);
-#endif
+
 
     ++iteration;
   } 
@@ -3439,6 +3436,14 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c)
 //	std::cout << std::endl;
 //	__jsp.printStats(std::cout);
 	params->FD_learning = 0;
+
+//	std::cout << " \n\n c Lower Bound  " << stats->lower_bound ;
+//	std::cout << " c Upper Bound  " << stats->upper_bound ;
+    int obj  = (int)(floor(((double)stats->lower_bound  + (double)stats->upper_bound)/2));
+//	std::cout << " c obj  " << stats->upper_bound ;
+
+	params->LBinit = stats->lower_bound ;
+	params->UBinit = obj;
 //	params->print(std::cout);
 	SchedulingSolver *__solver;
 	if(params->Objective == "makespan") {
@@ -3465,7 +3470,7 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c)
 	old_min.clear();
 	std::cout << " check learnt nogood :  "<< c << std::endl;
 
-	std::cout << " learnt nogood size :  "<< c.size  << std::endl;
+//	std::cout << " learnt nogood size :  "<< c.size  << std::endl;
 
 	for(int j=0; j<c.size; ++j) {
 		int id =get_id_boolean_variable(c[j]);
@@ -3489,18 +3494,33 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c)
 
 	__solver->initialise_search(__solver->disjuncts, __heu, __pol);
 
+
+//    std::cout << std::left << std::setw(30) << " c | current real range" << ":"
+//	      << std::right << " " << std::setw(5) << __stats.lower_bound
+//	      << " to " << std::setw(5) << __stats.upper_bound << " |" << std::endl;
+    //std::cout << std::left << std::setw(30) << " c | current dichotomic range" << ":"
+	  //    << std::right << " " << std::setw(5) << minfsble
+	 //     << " to " << std::setw(5) << maxfsble << " |" << std::endl;
+    //std::cout << std::left << std::setw(30) << " c | target objective" << ":"
+	     // << std::right << std::setw(15) << objective << " |" << std::endl;
+
+
 	Outcome  __result= __solver->restart_search(0);
 
 	//	cout << s.statistics << endl;
 	if(__result)
 	{
 		std::cout << " WRONG NOGOOD!!\n";
+//		std::cout << " Lower Bound  " << __stats.lower_bound ;
+//		std::cout << " Upper Bound  " << __stats.upper_bound ;
 		exit(1);
 	}
 	else
 		std::cout << " Is a valid nogood !\n" << std::endl;
 	delete __solver;
 	params->FD_learning = 1;
+	params->LBinit = -1;
+	params->UBinit = -1 ;
 	/*if(__solver->propagate()) {
 		std::cout << " WRONG NOGOOD!!\n";
 		exit(1);
