@@ -3751,9 +3751,11 @@ bool Mistral::Solver::propagate()
 	}
       }
     }
-  
-
-    
+#ifdef _DEBUG_FAIL
+	if (wiped_idx != CONSISTENT)
+		std::cout << " 0 fail : " << culprit <<  " and its propagator is " << culprit.propagator << std::endl;
+#endif
+	if (IS_OK(wiped_idx))
     while(!assigned.empty()) {
       vidx = assigned.pop();
       for(trig = 0; trig<3; ++trig) {
@@ -3765,7 +3767,11 @@ bool Mistral::Solver::propagate()
 	}
       }
     }
-      
+#ifdef _DEBUG_FAIL
+	if (wiped_idx != CONSISTENT)
+		std::cout << " 1 fail : " << culprit <<  " and its propagator is " << culprit.propagator << std::endl;
+#endif
+
     if(IS_OK(wiped_idx) && !active_constraints.empty()) {
 
 #ifdef _DEBUG_AC
@@ -3828,6 +3834,12 @@ bool Mistral::Solver::propagate()
 #endif	
     
     } else if(active_variables.empty()) fix_point = true;
+
+#ifdef _DEBUG_FAIL
+    if (wiped_idx != CONSISTENT)
+		std::cout << " 2 fail : " << culprit <<  " and its propagator is " << culprit.propagator << std::endl;
+#endif
+
   }
   
   taboo_constraint = NULL;
@@ -4946,13 +4958,15 @@ void Mistral::Solver::fdlearn_nogood(){
 		else
 			current_explanation= culprit.propagator;
 
-/*		if (culprit.propagator!=__failure)
+//#ifdef _DEBUG_FAIL
+		if (culprit.propagator!=__failure)
 		{
 			std::cout << " culprit.propagator :  " <<culprit.propagator <<std::endl;
 			std::cout << " wheareas the real failure comes from " <<__failure <<std::endl;
 			exit(1);
 		}
-*/
+//#endif
+
 		//UNSAT!
 		if (current_explanation == NULL )
 		{

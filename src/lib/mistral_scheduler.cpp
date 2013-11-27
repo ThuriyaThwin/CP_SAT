@@ -1660,9 +1660,9 @@ void SchedulingSolver::setup() {
   // THIS DOESN'T WORK without learning
   if (params->FD_learning)
   {
-	  //1120 to  1262 or 1228 to  1262
-	  lb_C_max = 1120;
-	  ub_C_max = 1262;
+	  // 911 to  1321
+	  lb_C_max = 911;
+	  ub_C_max = 1321;
   }
 #endif
 

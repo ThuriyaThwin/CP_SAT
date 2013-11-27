@@ -2079,7 +2079,9 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintLess::propagate() {
       {
   //  	  std::cout << "wiped == " << wiped << std::endl;
     	  ((Solver*) solver) ->__failure = this;
-      //std::cout << " fail : " << *this << std::endl;
+#ifdef _DEBUG_FAIL
+		std::cout << " fail : " << *this << std::endl;
+#endif
       }
 
   return wiped;
@@ -2099,7 +2101,9 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintLess::propagate(const in
 	      {
 	  //  	  std::cout << "wiped == " << wiped << std::endl;
 	    	 ( (Solver*) solver) ->__failure = this;
-	      //std::cout << " fail : " << *this << std::endl;
+#ifdef _DEBUG_FAIL
+		std::cout << " fail : " << *this << std::endl;
+#endif
 	      }
 	return wiped;
 }
@@ -2673,7 +2677,9 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
 	{
 		//  	  std::cout << "wiped == " << wiped << std::endl;
 		((Solver*) solver) ->__failure = this;
-		//std::cout << " fail : " << *this << std::endl;
+#ifdef _DEBUG_FAIL
+		std::cout << " fail : " << *this << std::endl;
+#endif
 	}
 	return wiped;
 }
@@ -2725,7 +2731,9 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
        {
    //  	  std::cout << "wiped == " << wiped << std::endl;
      	  ((Solver*) solver) ->__failure = this;
-      //std::cout << " fail from  : " << *this << std::endl;
+#ifdef _DEBUG_FAIL
+		std::cout << " fail : " << *this << std::endl;
+#endif
        }
   return wiped;
 }
