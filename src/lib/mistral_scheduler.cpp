@@ -2925,6 +2925,7 @@ void SchedulingSolver::dichotomic_search()
     atom.clear();
 
 #endif
+    if (base)
     for (int i= 0; i < base->learnt.size ; ++i)
     	base->remove(i);
 #ifdef _DEBUG_SCHEDULER
