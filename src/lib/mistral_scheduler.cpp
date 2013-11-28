@@ -250,7 +250,7 @@ const char* ParameterList::int_ident[ParameterList::nia] =
   {"-ub", "-lb", "-check", "-seed", "-cutoff", "-dichotomy", 
    "-base", "-randomized", "-verbose", "-optimise", "-nogood", 
    "-dyncutoff", "-nodes", "-hlimit", "-init", "-neighbor", 
-   "-initstep", "-fixtasks", "-order", "-ngdt" , "-fdlearning"};
+   "-initstep", "-fixtasks", "-order", "-ngdt" , "-fdlearning" , "-forgetall"};
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
   {"-heuristic", "-restart", "-factor", "-decay", "-type", 
@@ -332,6 +332,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   OrderTasks = 1;
 
   FD_learning=0;
+  forgetall=1;
 
   if(Type == "osp") {
     Objective = "makespan";
@@ -394,6 +395,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[18] != NOVAL) OrderTasks  = int_param[18]; 
   if(int_param[19] != NOVAL) NgdType     = int_param[19]; 
   if(int_param[20] != NOVAL) FD_learning     = int_param[20];
+  if(int_param[20] != NOVAL) forgetall     = int_param[21];
 
   if(strcmp(str_param[0 ],"nil")) Heuristic  = str_param[0];
   if(strcmp(str_param[1 ],"nil")) Policy     = str_param[1];
@@ -432,6 +434,7 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | data file " << ":" << std::right << std::setw(15) << data_file_name << " |" << std::endl;
   os << std::left << std::setw(30) << " c | type " << ":" << std::right << std::setw(15) << Type << " |" << std::endl;
   os << std::left << std::setw(30) << " c | learning " << ":" << std::right << std::setw(15) << (FD_learning? "yes" : "no") << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | forget all clauses " << ":" << std::right << std::setw(15) << (forgetall? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | seed " << ":" << std::right << std::setw(15) << Seed << " |" << std::endl;
   os << std::left << std::setw(30) << " c | greedy iterations " << ":" << std::right << std::setw(15) << InitBound << " |" << std::endl;
   os << std::left << std::setw(30) << " c | use initial probe " << ":" << std::right << std::setw(15) << (InitStep ? "yes" : "no") << " |" << std::endl;
@@ -2681,7 +2684,7 @@ void SchedulingSolver::dichotomic_search()
 
   stats->lower_bound = get_lb();
   stats->upper_bound = get_ub();
-  
+  int current_learnClauses_size = 0, __size =0;
   int iteration = 1;
   
   int minfsble = stats->lower_bound;
@@ -2813,9 +2816,9 @@ void SchedulingSolver::dichotomic_search()
       
       //std::cout << std::left << std::setw(30) << " c new upper bound" << ":" << std::right << std::setw(20) << new_objective << " |" << std::endl;
       std::cout << std::left << std::setw(30) << " c | new upper bound" << ":" << std::right << std::setw(15) << new_objective << " |" << std::endl;
-      
+      current_learnClauses_size=base->learnt.size;
       //pool->getBestSolution()->print(std::cout);
-      
+
     } else {
 //s    	std::cout << " c NOT SAT! " ;
       new_objective = objective;
@@ -2926,15 +2929,33 @@ void SchedulingSolver::dichotomic_search()
 
 #endif
 
-    //TODO : Use Solver::forget() to forget? but it seems there is a problem!
+    //TODO : Use Solver::forget() to forget?
+    /* Forgetting Clauses :
+     * If the flag forgetAll is set to 1 then forget all clauses betweeen all dichotomy iterations
+     * Otehrwise, forget the newly learnt clauses iff. the result of the current dichotomy is UNSAT
+     */
+
     if (base)
     {
-    	int __size = base->learnt.size;
-    	while (__size--)
-//    for (int i= 0; i < base->learnt.size ; ++i)
-    	base->remove(__size);
-    }
+    	if (params->forgetall)
+    	{
+    		__size = base->learnt.size;
+    		while (__size--)
+    			base->remove(__size);
+    	}
+    	else{
+    		__size = base->learnt.size -current_learnClauses_size;
+    		//    	std::cout << "  base->learnt.size" << base->learnt.size << std::endl;
+    		//   	std::cout << " current_learnClauses_size" << current_learnClauses_size << std::endl;
+    		//  	std::cout << " __size " << __size << std::endl;
 
+    		while (__size--)
+    			base->remove(__size+current_learnClauses_size);
+    		// 	std::cout << "  \n \n \n " << std::endl;
+    		current_learnClauses_size=base->learnt.size;
+    	}
+    //	std::cout << " NEW  base->learnt.size" << base->learnt.size << std::endl;
+    }
     ++iteration;
   } 
   //   } else if( status == SAT ) {
