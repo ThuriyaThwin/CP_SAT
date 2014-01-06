@@ -1191,6 +1191,10 @@ public:
 
   inline int negate_literal (unsigned int literal) { return ( 0x7FFF & literal) ;}
 
+  inline bool is_a_latest_upper_bound (unsigned int literal) {return (literal >> 31) ;}
+  inline bool is_a_latest_lower_bound (unsigned int literal) {return 1- (literal >> 31) ;}
+  inline bool is_a_latest_bound_literal (unsigned int literal) {return (literal > 0x7FFF ) ;}
+
 
 }
 

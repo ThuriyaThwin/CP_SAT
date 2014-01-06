@@ -1551,6 +1551,8 @@ namespace Mistral {
 		  upperbounds_levels.add(0);
 #endif
 
+		  latest = false;
+
 //		  std::cout << "ENDDDDD \n \n " << std::endl;
 	  };
 	  Explanation* reason_for(Literal l);
@@ -1577,17 +1579,21 @@ namespace Mistral {
 		  save();
 
 		  min = lo;
-
-		  lowerbounds.add(lo);
-		  lower_bound_reasons.add(C);
+		  if (!latest)
+		  {
+			  lowerbounds.add(lo);
+			  lower_bound_reasons.add(C);
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-		  lowerbounds_levels.add(solver->level);
+			  lowerbounds_levels.add(solver->level);
 #endif
-		  //  std::cout << "NEW LOWER BOUND \n \n " << std::endl;
-		  //  std::cout << "lowerbounds"<< lowerbounds << std::endl;
-		  //	  std::cout << "lower_bound_reasons"<< lower_bound_reasons << std::endl;
-		  //	  int size =lowerbounds.size ;
-		  //	  std::cout << "size" << size<< std::endl;
+			  //  std::cout << "NEW LOWER BOUND \n \n " << std::endl;
+			  //  std::cout << "lowerbounds"<< lowerbounds << std::endl;
+			  //	  std::cout << "lower_bound_reasons"<< lower_bound_reasons << std::endl;
+			  //	  int size =lowerbounds.size ;
+			  //	  std::cout << "size" << size<< std::endl;
+		  }
+		  else
+			  LB_Explanation = C;
 
 		  if(min == max) lower_bound |= VALUE_EVENT;
 
@@ -1606,17 +1612,22 @@ namespace Mistral {
 		  save();
 
 		  max = up;
-		  upperbounds.add(up);
-		  upper_bound_reasons.add(C);
+		  if(!latest)
+		  {
+			  upperbounds.add(up);
+			  upper_bound_reasons.add(C);
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-		  upperbounds_levels.add(solver->level);
+			  upperbounds_levels.add(solver->level);
 #endif
-		  //	  std::cout << "NEW LOWER BOUND \n \n " << std::endl;
-		  //	  std::cout << "lowerbounds"<< lowerbounds << std::endl;
-		  //		  std::cout << "lower_bound_reasons"<< lower_bound_reasons << std::endl;
-		  //		  int size =lowerbounds.size ;
-		  //		  std::cout << "size" << size<< std::endl;
+			  //	  std::cout << "NEW LOWER BOUND \n \n " << std::endl;
+			  //	  std::cout << "lowerbounds"<< lowerbounds << std::endl;
+			  //		  std::cout << "lower_bound_reasons"<< lower_bound_reasons << std::endl;
+			  //		  int size =lowerbounds.size ;
+			  //		  std::cout << "size" << size<< std::endl;
 
+		  }
+		  else
+			  UB_Explanation = C;
 
 		  //HERE : How to backtrack ?
 		  if(max == min) upper_bound |= VALUE_EVENT;
@@ -1631,42 +1642,45 @@ namespace Mistral {
 		  trail_.pop();
 		  trail_.pop(max);
 		  trail_.pop(min);
-		  int size = lowerbounds.size;
-		  while(size--)
+		  if(!latest)
 		  {
-			  if(lowerbounds[size]>min)
+			  int size = lowerbounds.size;
+			  while(size--)
 			  {
-				  lowerbounds.pop();
-				  lower_bound_reasons.pop();
+				  if(lowerbounds[size]>min)
+				  {
+					  lowerbounds.pop();
+					  lower_bound_reasons.pop();
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-				  lowerbounds_levels.pop();
+					  lowerbounds_levels.pop();
 #endif
-			  }
-			  else
-			  {
+				  }
+				  else
+				  {
 
-			//	  std::cout << "restore lower is done Latest lowerbounds ==  "<< lowerbounds[size] <<std::endl;
-			//	  std::cout << "min ==  "<< min <<std::endl;
-				  break;
+					  //	  std::cout << "restore lower is done Latest lowerbounds ==  "<< lowerbounds[size] <<std::endl;
+					  //	  std::cout << "min ==  "<< min <<std::endl;
+					  break;
+				  }
 			  }
-		  }
-		  size = upperbounds.size;
-		  while(size--)
-		  {
-			  if(upperbounds[size]<max)
+			  size = upperbounds.size;
+			  while(size--)
 			  {
-				  upperbounds.pop();
-				  upper_bound_reasons.pop();
+				  if(upperbounds[size]<max)
+				  {
+					  upperbounds.pop();
+					  upper_bound_reasons.pop();
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-				  upperbounds_levels.pop();
+					  upperbounds_levels.pop();
 #endif
-			  }
-			  else
-			  {
+				  }
+				  else
+				  {
 
-			//	  std::cout << "restore lower is done Latest upperbounds ==  "<< upperbounds[size] <<std::endl;
-			//	  std::cout << "max ==  "<< max <<std::endl;
-				  break;
+					  //	  std::cout << "restore lower is done Latest upperbounds ==  "<< upperbounds[size] <<std::endl;
+					  //	  std::cout << "max ==  "<< max <<std::endl;
+					  break;
+				  }
 			  }
 		  }
 
@@ -1680,6 +1694,11 @@ namespace Mistral {
 	  Vector<int> lowerbounds_levels;
 	  Vector<int> upperbounds_levels;
 #endif
+
+	  //Reasoning about latest changes
+	  Explanation* LB_Explanation;
+	  Explanation* UB_Explanation;
+	  bool latest;
 
   private:
 	  Vector<Explanation*> lower_bound_reasons;
