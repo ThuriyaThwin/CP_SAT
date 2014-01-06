@@ -696,7 +696,6 @@ void makeACounterExample()
 		std::cout << "Z3L_" <<  Z3L_.get_solution_int_value() << std::endl;
 
 
-
 	}
 	else
 		cout << " UNSAT! " << endl;
@@ -706,8 +705,42 @@ void makeACounterExample()
 
 }
 
+//inline bool is_a_latest_upper_bound (Literal literal) {return 3 & (literal >> 30) ;}
+//inline bool is_a_latest_lower_bound (Literal literal) {return 2 & (literal >> 30) ;}
+//inline bool is_a_latest_bound_literal (Literal literal) {return  (literal >> 31) ;}
+//id_var should not exceed 30 bits ..
+//
+//inline Literal encode_latest_bound_literal (unsigned int id_variable,int sign) {return ( ((2+sign) << 30) | id_variable);}
+//inline int get_variable_from_latest_literal (Literal literal) { return ( 0x3FFFFFFF & literal) ;}
+
+void test_encode_latest_literal()
+{
+
+	int var = 31234730;
+
+	int sign = 0;
+
+	std::cout << "var " << var<< std::endl;
+	std::cout << "sign " << sign << std::endl;
+
+	Literal lit =encode_latest_bound_literal(var, sign) ;
 
 
+
+	std::cout << "literal " << lit << std::endl;
+
+	std::cout << " \n \n reverse sence : \n get var  " << get_variable_from_latest_literal(lit) << std::endl;
+	//std::cout << " get value  " << get_value_from_literal(lit) << std::endl;
+	//std::cout << " get sign  " << get_sign_from_literal(lit) << std::endl;
+
+//	if ( is_a_latest_upper_bound(lit))
+		std::cout << " is an upper bound   " << is_a_latest_upper_bound (lit) << std::endl;
+//	else
+		std::cout << " is a lower bound    " << is_a_latest_lower_bound(lit) << std::endl;
+
+
+
+}
 
 int main(int argc, char **argv)
 {
@@ -722,5 +755,8 @@ int main(int argc, char **argv)
 	//	test_pointer();
 	//	test_dynamic_cast();
 	// test_while2();
-	makeACounterExample();
+	//makeACounterExample();
+
+	test_encode_latest_literal();
+
 }

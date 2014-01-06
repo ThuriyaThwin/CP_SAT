@@ -779,8 +779,9 @@ namespace Mistral {
     int start_from;
     //Here we suppose we index first range variables then boolean variables, hence start_from should be equal to nb_range_variables. I'll be back later to that
     //   inline int get_id_boolean_variable (unsigned int literal ) {return (((literal-start_from) /2) + start_from) ;}
-    inline int get_id_boolean_variable (unsigned int literal ) {return ((literal /2) + start_from) ;}
-    inline unsigned int encode_boolean_variable_as_literal (unsigned int id_var, int sign) {return (((id_var - start_from)*2 ) + sign);}
+    inline int get_id_boolean_variable (Literal literal ) {return ((literal /2) + start_from) ;}
+    inline Literal encode_boolean_variable_as_literal (unsigned int id_var, int sign) {return (((id_var - start_from)*2 ) + sign);}
+   // inline Literal encode_boolean_variable_as_literal_alongsideLatest (unsigned int id_var, int sign) {return (((id_var - start_from)*2 ) + sign);}
     void treat_explanation(Explanation::iterator & lit, Explanation::iterator & stop, int& pathC );
 
     BranchingHeuristic *heuristic_factory(std::string var_ordering, std::string branching, const int randomness=1);
@@ -1191,10 +1192,12 @@ public:
 
   inline int negate_literal (unsigned int literal) { return ( 0x7FFF & literal) ;}
 
-  inline bool is_a_latest_upper_bound (unsigned int literal) {return (literal >> 31) ;}
-  inline bool is_a_latest_lower_bound (unsigned int literal) {return 1- (literal >> 31) ;}
-  inline bool is_a_latest_bound_literal (unsigned int literal) {return (literal > 0x7FFF ) ;}
-
+  //with latest bounds
+  inline bool is_a_latest_upper_bound (Literal literal) {return 2^(literal >> 30) ;}
+  inline bool is_a_latest_lower_bound (Literal literal) {return 3^(literal >> 30) ;}
+  inline bool is_a_latest_bound_literal (Literal literal) {return  (literal >> 31) ;}
+  inline Literal encode_latest_bound_literal (unsigned int id_variable,int sign) {return ( ((2+sign) << 30) | id_variable);}
+  inline int get_variable_from_latest_literal (Literal literal) { return ( 0x3FFFFFFF & literal) ;}
 
 }
 
