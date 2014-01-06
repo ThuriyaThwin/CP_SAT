@@ -2122,7 +2122,6 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 			exit(1);
 		}
 
-
 		if (upperbounds_levels.size -upperbounds.size )
 		{
 			std::cout << "upperbounds_levels size problem!" << std::endl;
