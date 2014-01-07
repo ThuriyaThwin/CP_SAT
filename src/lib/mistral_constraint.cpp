@@ -2173,17 +2173,17 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 
 Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(const Atom a, const int lvl, iterator& end){
 
-		std::cout <<" \n \n \ExplainedConstraintLess  get_reason_for "  << std::endl;
+//		std::cout <<" \n \n \ExplainedConstraintLess  get_reason_for "  << std::endl;
 
 	if(a == NULL_ATOM) {
 
-		std::cout << " fail YY  " << std::endl;
+	//	std::cout << " fail YY  " << std::endl;
 
 		explanation[0] = encode_bound_literal(scope[0].id(),scope[0].get_min(),0 ) ;
 		explanation[1] =  encode_bound_literal(scope[1].id(),scope[1].get_max(),1) ;
 		end = &(explanation[0])+2;
 	} else {
-		std::cout << " not fail  YY  " << std::endl;
+		//std::cout << " not fail  YY  " << std::endl;
 
 		if (is_lower_bound(a))
 		{
@@ -2212,7 +2212,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 			}
 	}
 
-	std::cout <<" \n \n \END?   get_reason_for "  << std::endl;
+	//std::cout <<" \n \n \END?   get_reason_for "  << std::endl;
 	return &(explanation[0]);
 
 }
@@ -2470,7 +2470,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 
 Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::get_reason_for(const Atom a, const int lvl, iterator& end){
 
-		std::cout <<" \n \n \nExplainedConstraintReifiedDisjunctive  get_reason_for "  << std::endl;
+	//	std::cout <<" \n \n \nExplainedConstraintReifiedDisjunctive  get_reason_for "  << std::endl;
 
 	if(a == NULL_ATOM) {
 		int tmp = -1;

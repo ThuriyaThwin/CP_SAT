@@ -5596,7 +5596,7 @@ void Mistral::Solver::learn_cycle_nogood(Literal * l) {
 	backtrack_level = level-1;
 	//	backtrack_level = level-2;
 
-	std::cout << "\nDO CYCLE " << std::endl;
+//	std::cout << "\nDO CYCLE " << std::endl;
 
 	//	std::cout << "decisions "  << decisions.size << " and the values : \n        " << decisions << std::endl;
 
@@ -5713,7 +5713,7 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 		//			current_explanation=__failure;
 		//		else
 		current_explanation= culprit.propagator;
-
+		visited.clear();
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 		if (culprit.propagator!=__failure)
 		{
@@ -5758,12 +5758,12 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 		visitedBounds.initialise(0, 2* variables.size , BitSet::empt);
 		bounds_under_exploration.initialise(0, 2* variables.size , BitSet::empt);
 
-		std::cout << "variables.size()" << variables.size <<  std::endl;
+	//	std::cout << "variables.size()" << variables.size <<  std::endl;
 
 		do {
 
 
-				std::cout << "\nDO " << std::endl;
+			//	std::cout << "\nDO " << std::endl;
 			//	std::cout << "a =  "<< a << std::endl;
 			//	std::cout << "PathC =  "<< pathC << std::endl;
 			//	std::cout << "CURRENT learnt_clause size "  << learnt_clause.size << " and the values : \n        " << learnt_clause << std::endl;
@@ -5835,7 +5835,7 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 					tmp = lit;
 					bound_literals_to_explore.clear();
 
-					std::cout << "\nDO 22333 " << std::endl;
+
 #ifdef 	_DEBUG_FD_NOGOOD
 					if (a==NULL_ATOM)
 						std::cout << " \n explaining a failure " << std::endl;
@@ -5853,7 +5853,7 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 						exit(1);
 					}
 #endif
-					std::cout << "\nDO 22333 " << std::endl;
+
 
 					while(tmp < stop) {
 						q = *tmp;
@@ -5944,12 +5944,12 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 						}
 					}
 
-					std::cout << "\n DO ZZZ " << std::endl;
+
 
 					while (bound_literals_to_explore.size)
 					{
 
-						std::cout << "\nWHILE " << std::endl;
+
 
 						//should be checked
 						q= bound_literals_to_explore.pop();
@@ -5969,14 +5969,9 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 						Literal* bound = &q;
 						bounds_under_exploration.clear();
 
-						std::cout << " BOUND =  " <<  bound << std::endl;
 
-						std::cout << "NULL =  =  " <<  NULL  << std::endl;
 						while (bound)
 						{
-
-							std::cout << " BOUND =  " <<  bound << std::endl;
-							std::cout << " *BOUND =  " << *bound << std::endl;
 
 							if (is_a_latest_lower_bound(*bound))
 							{
@@ -6001,52 +5996,31 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 								}
 							}
 
-							std::cout << " XX  " << std::endl;
 
-							std::cout << " BOUND =  " <<  bound << std::endl;
-							std::cout << " *BOUND =  " << *bound << std::endl;
 
 							bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_latest_literal(*bound)].range_domain)->reason_for(*bound) ;
 							graph_size++;
-							std::cout << " DEEEE  " << std::endl;
 
 							if (is_a_latest_lower_bound(*bound))
-							bounds_under_exploration.fast_add(get_variable_from_latest_literal(*bound));
+								bounds_under_exploration.fast_add(get_variable_from_latest_literal(*bound));
 							else
 								bounds_under_exploration.fast_add(variables.size + get_variable_from_latest_literal(*bound));
-
-
-							std::cout << " D  " << std::endl;
-
-
-							std::cout << " DE  " << std::endl;
 
 							if(bound_explanation)
 							{
 
-								std::cout << " YY  " << std::endl;
-								std::cout << " YY  " << std::endl;
-								std::cout << " YY  " << std::endl;
-								std::cout << " YY  " << std::endl;
-//#ifdef 	_DEBUG_FD_NOGOOD
+
+#ifdef 	_DEBUG_FD_NOGOOD
 								std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
-//#endif
+#endif
 								Explanation::iterator end_tmp_iterator;
 								//Note that we do not need the level here ! I should remove that later
 
-								std::cout << " 222KKKK YY  " << std::endl;
-
-								std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
-
 								Explanation::iterator start_tmp_iterator = bound_explanation->get_reason_for(*bound, level, end_tmp_iterator);
 								bound = NULL;
-								std::cout << " ZZZZZZZZZZZZZZZ YY  " << std::endl;
-								std::cout << " 222 YY  " << std::endl;
 
-								std::cout << " \n \n  end_tmp_iterator - start_tmp_iterator " << end_tmp_iterator - start_tmp_iterator << std::endl;
-								std::cout << "\nDO 222 " << std::endl;
 								if ((end_tmp_iterator - start_tmp_iterator ) > 2)
-										exit (1);
+									exit (1);
 
 								tmp = start_tmp_iterator;
 
@@ -6150,14 +6124,12 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 							}
 							else
 								bound = NULL;
-							std::cout << "BOUND =  " <<  bound << std::endl;
+
 						}
 
 						visitedBounds.union_with(bounds_under_exploration);
-				//		delete bound;
+						//		delete bound;
 					}
-
-					std::cout << "\nDO EEEEEEEEEEEE " << std::endl;
 				}
 			}
 
