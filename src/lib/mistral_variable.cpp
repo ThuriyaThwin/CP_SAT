@@ -1861,7 +1861,7 @@ bool Mistral::VariableRangeWithLearning::first_time_visited (bool is_a_lowerboun
 	else
 		return (latest_visited_upper_bound == INFTY);
 }
-
+/*
 bool Mistral::VariableRangeWithLearning::set_visited (unsigned int literal) {
 
 	if (is_lower_bound(literal))
@@ -1886,6 +1886,7 @@ bool Mistral::VariableRangeWithLearning::set_visited (unsigned int literal) {
 	}
 
 }
+*/
 
 Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) {
 	//	std::cout << "reason_for" << std::endl;

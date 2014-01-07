@@ -1567,7 +1567,7 @@ namespace Mistral {
 	  void initialise_latest_visited_lower_bounds () {latest_visited_lower_bound = -INFTY;}
 	  bool first_time_visited (bool is_a_lowerbound) ;
 
-	  bool set_visited(unsigned int literal);
+//	  bool set_visited(unsigned int literal);
 	  /// Remove all values strictly lower than l
 	  inline Event set_min(const int lo,  Explanation * C) {
 		  Event lower_bound = LB_EVENT;

@@ -2116,6 +2116,8 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintLess::propagate(const in
 }
 
 
+
+/*
 Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(const Atom a, const int lvl, iterator& end){
 
 	//	std::cout <<" \n \n \ExplainedConstraintLess  get_reason_for "  << std::endl;
@@ -2167,7 +2169,48 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 
 }
 
+*/
 
+Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(const Atom a, const int lvl, iterator& end){
+
+	//	std::cout <<" \n \n \ExplainedConstraintLess  get_reason_for "  << std::endl;
+
+	if(a == NULL_ATOM) {
+		explanation[0] = encode_bound_literal(scope[0].id(),scope[0].get_min(),0 ) ;
+		explanation[1] =  encode_bound_literal(scope[1].id(),scope[1].get_max(),1) ;
+		end = &(explanation[0])+2;
+	} else {
+		if (is_lower_bound(a))
+		{
+			if(get_variable_from_literal(a) == scope[1].id())
+			{
+
+					explanation[0] = encode_latest_bound_literal(scope[0].id(),0 ) ;
+					//	else
+					//		std::cout<< " c should be a problem here!! Wrong call for reason" << std::endl;
+
+					end = &(explanation[0])+1;
+
+			}
+		}
+		else
+			if(get_variable_from_literal(a) == scope[0].id())
+			{
+
+
+					explanation[0] = encode_latest_bound_literal(scope[1].id(),1 ) ;
+					//	else
+					//		std::cout<< " c should be a problem here!! Wrong call for reason" << std::endl;
+
+					end = &(explanation[0])+1;
+
+			}
+	}
+	return &(explanation[0]);
+
+}
+
+/*
 Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::get_reason_for(const Atom a, const int lvl, iterator& end){
 
 	//	std::cout <<" \n \n \nExplainedConstraintReifiedDisjunctive  get_reason_for "  << std::endl;
@@ -2330,19 +2373,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 						exit(1);
 					}
 #endif
-					/*
-					std::cout << "scope 2 : " << scope[2] << std::endl;
-					std::cout << "scope 2 max: " << scope[2].get_max() << std::endl;
-					std::cout << "scope 2 min: " << scope[2].get_min() << std::endl;
 
-					std::cout << "scope 1 : " << scope[1] << std::endl;
-					std::cout << "scope 1 max: " << scope[1].get_max() << std::endl;
-					std::cout << "scope 1 min: " << scope[1].get_min() << std::endl;
-
-					std::cout << "scope 0 : " << scope[0] << std::endl;
-					std::cout << "scope 0 max: " << scope[0].get_max() << std::endl;
-					std::cout << "scope 0 min: " << scope[0].get_min() << std::endl;
-					 */
 
 					explanation[0] =  NOT(((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), 0));
 					if ((get_value_from_literal(a)-processing_time[1]) <= scope1->lowerbounds[0])
@@ -2412,6 +2443,246 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 						explanation[1] = encode_bound_literal(scope[1].id(),get_value_from_literal(a)+processing_time[0],1 ) ;
 						end = &(explanation[0])+2;
 					}
+				}
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+			else
+				{
+					std::cout << " NOT FOUND! " << std::endl;
+					exit(1);
+				}
+#endif
+
+		}
+	}
+	return &(explanation[0]);
+
+}
+
+*/
+
+
+Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::get_reason_for(const Atom a, const int lvl, iterator& end){
+
+	//	std::cout <<" \n \n \nExplainedConstraintReifiedDisjunctive  get_reason_for "  << std::endl;
+
+	if(a == NULL_ATOM) {
+		int tmp = -1;
+		if (!scope[2].is_ground())
+		{
+			//ToDo better test using the tightest bound i.e. its explanation is NULL
+			if (
+					 scope[0].get_min() >
+			 (scope0->lowerbounds[0])
+			 )
+
+				 explanation[++tmp] = encode_bound_literal(scope[0].id(),scope[0].get_min(),0 ) ;
+			 if (
+					 scope[0].get_max() <
+					 scope0->upperbounds[0]
+			 )
+
+				 explanation[++tmp] =  encode_bound_literal(scope[0].id(),scope[0].get_max(),1) ;
+			 if (
+					 scope[1].get_min() >
+			 scope1->lowerbounds[0]
+			 )
+
+				 explanation[++tmp] = encode_bound_literal(scope[1].id(),scope[1].get_min(),0 ) ;
+
+			 if (
+					 scope[1].get_max() <
+					 scope1->upperbounds[0]
+			 )
+
+				 explanation[++tmp] =  encode_bound_literal(scope[1].id(),scope[1].get_max(),1) ;
+
+			 //	std::cout << "tmp = size?  : " << tmp << std::endl;
+
+			 end = &(explanation[0])+tmp+1;
+
+
+		}
+		else
+		{
+			explanation[++tmp] =  NOT (((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), scope[2].get_min()));
+			if(scope[2].get_min())
+			{
+				if (
+						scope[0].get_min() >
+				scope0->lowerbounds[0]
+				)
+
+					explanation[++tmp] = encode_bound_literal(scope[0].id(),scope[0].get_min(),0 ) ;
+
+				if (
+						scope[1].get_max() <
+						scope1->upperbounds[0]
+				)
+
+					explanation[++tmp] =  encode_bound_literal(scope[1].id(),scope[1].get_max(),1) ;
+			}
+			else
+			{
+				if (
+						scope[0].get_max() <
+						scope0->upperbounds[0]
+				)
+
+					explanation[++tmp] =  encode_bound_literal(scope[0].id(),scope[0].get_max(),1) ;
+
+				if (
+						scope[1].get_min() >
+				 scope1->lowerbounds[0]
+				)
+
+					explanation[++tmp] = encode_bound_literal(scope[1].id(),scope[1].get_min(),0 ) ;
+
+			}
+			end = &(explanation[0])+tmp+1;
+		}
+	}
+	else {
+		//TODO Clean the code!
+
+		if (!is_a_bound_literal(a))
+		{
+#ifdef _TRACKING_ATOM
+			if (scope2->id==_TRACKING_ATOM)
+			{
+				std::cout << " \n \n bool_explanation_size " << bool_explanation_size << std::endl;
+				std::cout << " \n \n scope2->id== " << scope2->id << std::endl;
+				std::cout << "literal " << explanation[4] << std::endl;
+				std::cout << "literal " << explanation[5] << std::endl;
+				std::cout << " \n \n We will send as an explanation (but check bool_explanation_size BEFORE) :  " <<  std::endl;
+				Literal q =explanation[4];
+				std::cout << "\n is_a_bound_literal  "<< std::endl;
+				std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+				std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+				std::cout << " var id is is "<< get_variable_from_literal(q) << std::endl;
+				q =explanation[5];
+				std::cout << "\n is_a_bound_literal  "<< std::endl;
+				std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+				std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+				std::cout << " var id "<< get_variable_from_literal(q) << std::endl;
+			}
+#endif
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+			if (bool_explanation_size <0)
+			{
+				std::cout << " Not sure if it's a real problem but .. bool_explanation_size <=0 \n " ;
+				exit (1);
+			}
+#endif
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+			if (bool_explanation_size==2)
+			{	 			if (get_variable_from_literal(explanation[4]) == get_variable_from_literal(explanation[5]) )
+			{
+				std::cout << " \n \n \n                     explanation[4] ==    explanation[5]        THEY SHOULD BE DIFFERENT " << std::endl;
+				exit(1);
+			}
+			}
+#endif
+
+			end = &(explanation[4])+bool_explanation_size;
+			return &(explanation[4]);
+		}
+		else if (is_lower_bound(a))
+		{
+
+			if ( get_variable_from_literal(a) == scope[1].id())
+			{
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+				if (scope[2].get_min()==0)
+				{
+					std::cout << "scope[2]  should be assigned to 1" << std::endl;
+					exit(1);
+				}
+#endif
+				//TODO Change (Solver *) solver)->encode_b.. with the id of the variable in the class directly!
+				//ToDo Chenge get_value_from_literal. with a variable along all the code!
+				explanation[0] =  NOT (((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), 1));
+
+					explanation[1] = encode_latest_bound_literal(scope[0].id(),0 ) ;
+					end = &(explanation[0])+2;
+			}
+			else
+				if ( get_variable_from_literal(a) == scope[0].id())
+				{
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+					if (scope[2].get_max()==1)
+					{
+						std::cout << "scope[2]  should be assigned to 0" << std::endl;
+						exit(1);
+					}
+#endif
+					/*
+					std::cout << "scope 2 : " << scope[2] << std::endl;
+					std::cout << "scope 2 max: " << scope[2].get_max() << std::endl;
+					std::cout << "scope 2 min: " << scope[2].get_min() << std::endl;
+
+					std::cout << "scope 1 : " << scope[1] << std::endl;
+					std::cout << "scope 1 max: " << scope[1].get_max() << std::endl;
+					std::cout << "scope 1 min: " << scope[1].get_min() << std::endl;
+
+					std::cout << "scope 0 : " << scope[0] << std::endl;
+					std::cout << "scope 0 max: " << scope[0].get_max() << std::endl;
+					std::cout << "scope 0 min: " << scope[0].get_min() << std::endl;
+					 */
+
+					explanation[0] =  NOT(((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), 0));
+
+					explanation[1] = encode_latest_bound_literal(scope[1].id() ,0 ) ;
+
+						//					std::cout << "explanation[0]: " << explanation[0] << std::endl;
+						//				std::cout << "explanation[1]: " << explanation[1] << std::endl;
+
+						end = &(explanation[0])+2;
+
+				}
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+				else
+				{
+					std::cout << " NOT FOUND! " << std::endl;
+					exit(1);
+				}
+#endif
+
+		}
+		else
+		{
+			//		std::cout <<" 4 "  << std::endl;
+			if ( get_variable_from_literal(a) == scope[1].id())
+			{
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+				if (scope[2].get_max()==1)
+				{
+					std::cout << "scope[2]  should be assigned to 0" << std::endl;
+					exit(1);
+				}
+#endif
+				//			std::cout <<" 22 "  << std::endl;
+				explanation[0] = NOT( ((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), 0));
+
+				explanation[1] = encode_latest_bound_literal(scope[0].id(),1 ) ;
+				end = &(explanation[0])+2;
+
+			}
+			else
+				if ( get_variable_from_literal(a) == scope[0].id())
+				{
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+					if (scope[2].get_min()==0)
+					{
+						std::cout << "scope[2]  should be assigned to 1" << std::endl;
+						exit(1);
+					}
+#endif
+					explanation[0] = NOT ( ((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), 1));
+
+					explanation[1] = encode_latest_bound_literal(scope[1].id(),1 ) ;
+					end = &(explanation[0])+2;
+
 				}
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 			else
