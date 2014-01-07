@@ -1551,7 +1551,7 @@ namespace Mistral {
 		  upperbounds_levels.add(0);
 #endif
 
-		  latest = false;
+		  latest = true;
 
 //		  std::cout << "ENDDDDD \n \n " << std::endl;
 	  };
