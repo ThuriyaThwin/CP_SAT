@@ -5680,6 +5680,15 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 
 		//	std::cout << "assignment.size " << assignment_level.size <<  std::endl;
 		//std::cout << "visited.size " << visited.size <<  std::endl;
+
+		BitSet visitedBounds;
+		BitSet bounds_under_exploration;
+
+		visitedBounds.initialise(0, 2* variables.size , BitSet::empt);
+		bounds_under_exploration.initialise(0, 2* variables.size , BitSet::empt);
+
+		std::cout << "variables.size()" << variables.size <<  std::endl;
+
 		do {
 
 

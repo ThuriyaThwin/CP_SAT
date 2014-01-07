@@ -293,17 +293,44 @@ void test_encode_literal()
 void test_pointer()
 {
 
-	int *  a = new int [5];
+	int *  aa = new int [5];
 	int size = 5;
+
+
+	int a = 3;
+	int * t = new int [3];
+
+	t[0]=0;
+	t[1]=1;
+	t[2]=2;
+
+	while (a--)
+	{
+		std::cout << " a : " << a << std::endl;
+	}
+	std::cout << " AFTER 1 : " << a << std::endl;
+
+	a=3;
+	while (a--)
+	{
+		std::cout << " a : " << a << std::endl;
+		std::cout << " t[a] : " << t[a] << std::endl;
+	}
+	std::cout << " AFTER 1 : " << a << std::endl;
+
+
+
+
+
 	while (size--)
 	{
-		a[size] = size;
-		std::cout << " a : " << a[size] << std::endl;
+		aa[size] = size;
+		std::cout << " a : " << aa[size] << std::endl;
 	}
 
 	std::cout << " XXX "  << std::endl;
 
-	int * b = & a[4];
+	int * b = & aa[4];
 	std::cout << " b : " << b << std::endl;
 	std::cout << " *b : " << *b << std::endl;
 	*b = 87;
@@ -315,7 +342,7 @@ void test_pointer()
 	size = 18;
 	while (size--)
 	{
-		std::cout << " a : " << a[size] << std::endl;
+		std::cout << " a : " << aa[size] << std::endl;
 	}
 
 }
@@ -733,14 +760,53 @@ void test_encode_latest_literal()
 	//std::cout << " get value  " << get_value_from_literal(lit) << std::endl;
 	//std::cout << " get sign  " << get_sign_from_literal(lit) << std::endl;
 
-//	if ( is_a_latest_upper_bound(lit))
-		std::cout << " is an upper bound   " << is_a_latest_upper_bound (lit) << std::endl;
-//	else
-		std::cout << " is a lower bound    " << is_a_latest_lower_bound(lit) << std::endl;
+	//	if ( is_a_latest_upper_bound(lit))
+	std::cout << " is an upper bound   " << is_a_latest_upper_bound (lit) << std::endl;
+	//	else
+	std::cout << " is a lower bound    " << is_a_latest_lower_bound(lit) << std::endl;
 
 
 
 }
+
+
+void  check_BitSet (){
+
+
+	BitSet visitedbound;
+
+	visitedbound.initialise(0,3,BitSet::empt);
+
+	std::cout << "visited " << std::endl;
+	std::cout << "visited " << 	visitedbound <<std::endl;
+	std::cout << "visited size " << 	visitedbound.size() <<std::endl;
+
+
+
+	//	i =
+	//	if (visitedbound.fast)
+	visitedbound.fast_add(2);
+
+	std::cout << "visited 721212 ? " << 	visitedbound.fast_contain(2) <<std::endl;
+
+	std::cout << "visited size " << 	visitedbound.size() <<std::endl;
+
+	std::cout << "visited 0 ? " << 	visitedbound.fast_contain(0) <<std::endl;
+	std::cout << "visited 1 ? " << 	visitedbound.fast_contain(1) <<std::endl;
+	std::cout << "visited 2 ? " << 	visitedbound.fast_contain(2) <<std::endl;
+	std::cout << "visited 3 ? " << 	visitedbound.fast_contain(3) <<std::endl;
+
+	visitedbound.clear();
+	std::cout << "After Clear size  " << 	visitedbound.size() <<std::endl;
+
+	std::cout << "visited 0 ? " << 	visitedbound.fast_contain(0) <<std::endl;
+	std::cout << "visited 1 ? " << 	visitedbound.fast_contain(1) <<std::endl;
+	std::cout << "visited 2 ? " << 	visitedbound.fast_contain(2) <<std::endl;
+	std::cout << "visited 3 ? " << 	visitedbound.fast_contain(3) <<std::endl;
+
+
+}
+
 
 int main(int argc, char **argv)
 {
@@ -757,6 +823,6 @@ int main(int argc, char **argv)
 	// test_while2();
 	//makeACounterExample();
 
-	test_encode_latest_literal();
-
+	//test_encode_latest_literal();
+	check_BitSet();
 }
