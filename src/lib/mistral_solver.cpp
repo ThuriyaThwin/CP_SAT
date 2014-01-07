@@ -5596,7 +5596,7 @@ void Mistral::Solver::learn_cycle_nogood(Literal * l) {
 	backtrack_level = level-1;
 	//	backtrack_level = level-2;
 
-//	std::cout << "\nDO CYCLE " << std::endl;
+	std::cout << "\nDO CYCLE " << std::endl;
 
 	//	std::cout << "decisions "  << decisions.size << " and the values : \n        " << decisions << std::endl;
 
@@ -5763,7 +5763,7 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 		do {
 
 
-			//	std::cout << "\nDO " << std::endl;
+				std::cout << "\nDO " << std::endl;
 			//	std::cout << "a =  "<< a << std::endl;
 			//	std::cout << "PathC =  "<< pathC << std::endl;
 			//	std::cout << "CURRENT learnt_clause size "  << learnt_clause.size << " and the values : \n        " << learnt_clause << std::endl;
@@ -5836,6 +5836,7 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 					bound_literals_to_explore.clear();
 
 
+					std::cout << "\n check  " << std::endl;
 #ifdef 	_DEBUG_FD_NOGOOD
 					if (a==NULL_ATOM)
 						std::cout << " \n explaining a failure " << std::endl;
@@ -5854,6 +5855,8 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 					}
 #endif
 
+
+					std::cout << "\n check22  " << std::endl;
 
 					while(tmp < stop) {
 						q = *tmp;
@@ -5946,10 +5949,12 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 
 
 
+					std::cout << "\n check33  " << std::endl;
 					while (bound_literals_to_explore.size)
 					{
 
 
+						std::cout << "\n while check33  " << std::endl;
 
 						//should be checked
 						q= bound_literals_to_explore.pop();
@@ -5970,9 +5975,11 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 						bounds_under_exploration.clear();
 
 
+						std::cout << "\n while 33333333  " << std::endl;
 						while (bound)
 						{
 
+							std::cout << "\n while X  " << std::endl;
 							if (is_a_latest_lower_bound(*bound))
 							{
 								if (visitedBounds.fast_contain(get_variable_from_latest_literal(*bound)))
@@ -5997,22 +6004,44 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 							}
 
 
+							std::cout << "\n while RR  " << std::endl;
 
 							bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_latest_literal(*bound)].range_domain)->reason_for(*bound) ;
 							graph_size++;
+
+							std::cout << "\n while qsdqsdqs  " << std::endl;
 
 							if (is_a_latest_lower_bound(*bound))
 								bounds_under_exploration.fast_add(get_variable_from_latest_literal(*bound));
 							else
 								bounds_under_exploration.fast_add(variables.size + get_variable_from_latest_literal(*bound));
 
+							std::cout << "\n while SSSSSSSSSSSSS  " << std::endl;
+
+						//	(variables[get_variable_from_latest_literal(*bound)].range_domain)->reason_for(*bound) ;
+
+							std::cout << " \n a : " << bound << std::endl;
+							std::cout << " \n a : " << *bound << std::endl;
+							std::cout << " \n get_variable_from_latest_literal(*bound)] : " << get_variable_from_latest_literal(*bound) << std::endl;
+							std::cout << " \n variables[get_variable_from_latest_literal(*bound)] : " << variables[get_variable_from_latest_literal(*bound)] << std::endl;
+
 							if(bound_explanation)
 							{
+								std::cout << "\n while qkjsldqkjsldjqks  " << std::endl;
+								std::cout << " \n \n  new explanation coming from : " << *bound_explanation << std::endl;
+								std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
+								std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
+								std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
+								std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
+								std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
+								std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
 
 
 #ifdef 	_DEBUG_FD_NOGOOD
 								std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
 #endif
+								std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
+
 								Explanation::iterator end_tmp_iterator;
 								//Note that we do not need the level here ! I should remove that later
 
