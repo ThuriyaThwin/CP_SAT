@@ -808,6 +808,36 @@ void  check_BitSet (){
 }
 
 
+
+void test_encode_latest_literal0()
+{
+
+	unsigned int var = 0;
+
+	int sign = 1;
+
+	std::cout << "var " << var<< std::endl;
+	std::cout << "sign " << sign << std::endl;
+
+	Literal lit =encode_latest_bound_literal(var, sign) ;
+
+
+
+	std::cout << "literal " << lit << std::endl;
+
+	std::cout << " \n \n reverse sence : \n get var  " << get_variable_from_latest_literal(lit) << std::endl;
+	//std::cout << " get value  " << get_value_from_literal(lit) << std::endl;
+	//std::cout << " get sign  " << get_sign_from_literal(lit) << std::endl;
+
+	//	if ( is_a_latest_upper_bound(lit))
+	std::cout << " is an upper bound   " << is_a_latest_upper_bound (lit) << std::endl;
+	//	else
+	std::cout << " is a lower bound    " << is_a_latest_lower_bound(lit) << std::endl;
+
+
+
+}
+
 int main(int argc, char **argv)
 {
 
@@ -824,5 +854,6 @@ int main(int argc, char **argv)
 	//makeACounterExample();
 
 	//test_encode_latest_literal();
-	check_BitSet();
+	//check_BitSet();
+	test_encode_latest_literal0();
 }

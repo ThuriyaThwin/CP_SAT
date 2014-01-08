@@ -1552,7 +1552,8 @@ namespace Mistral {
 #endif
 
 		  latest = true;
-
+		  LB_Explanation = NULL;
+		  UB_Explanation = NULL;
 //		  std::cout << "ENDDDDD \n \n " << std::endl;
 	  };
 	  Explanation* reason_for(Literal l);
