@@ -1579,6 +1579,12 @@ namespace Mistral {
 		  // first check if we can abort early
 		  if(max <  lo) return FAIL_EVENT;
 		  if(min >= lo) return NO_EVENT;
+		  if(trail_.back() != solver->level)
+			  if(latest)
+			  {
+				  explanation_trail.add(LB_Explanation);
+				  explanation_trail.add(UB_Explanation);
+			  }
 
 		  save();
 
@@ -1615,6 +1621,12 @@ namespace Mistral {
 		  // first check if we can abort early
 		  if(min >  up) return FAIL_EVENT;
 		  if(max <= up) return NO_EVENT;
+		  if(trail_.back() != solver->level)
+			  if(latest)
+			  {
+				  explanation_trail.add(LB_Explanation);
+				  explanation_trail.add(UB_Explanation);
+			  }
 
 		  save();
 
@@ -1643,7 +1655,7 @@ namespace Mistral {
 		  solver->trigger_event(id, upper_bound);
 		  return upper_bound;
 	  }
-
+/*
 	  inline void save() {
 		  if(trail_.back() != solver->level) {
 			  solver->save(id);
@@ -1658,6 +1670,7 @@ namespace Mistral {
 			  }
 		  }
 	  }
+*/
 
 	  inline Event restore() {
 
