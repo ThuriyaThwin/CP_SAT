@@ -1554,6 +1554,9 @@ namespace Mistral {
 		  latest = true;
 		  LB_Explanation = NULL;
 		  UB_Explanation = NULL;
+		  explanation_trail.add(LB_Explanation);
+		  explanation_trail.add(UB_Explanation);
+
 //		  std::cout << "ENDDDDD \n \n " << std::endl;
 	  };
 	  Explanation* reason_for(Literal l);
@@ -1593,8 +1596,11 @@ namespace Mistral {
 			  //	  int size =lowerbounds.size ;
 			  //	  std::cout << "size" << size<< std::endl;
 		  }
-		  else
+		  else{
+
 			  LB_Explanation = C;
+
+		  }
 
 		  if(min == max) lower_bound |= VALUE_EVENT;
 
@@ -1627,9 +1633,10 @@ namespace Mistral {
 			  //		  std::cout << "size" << size<< std::endl;
 
 		  }
-		  else
-			  UB_Explanation = C;
+		  else{
 
+			  UB_Explanation = C;
+		  }
 		  //HERE : How to backtrack ?
 		  if(max == min) upper_bound |= VALUE_EVENT;
 
@@ -1637,12 +1644,29 @@ namespace Mistral {
 		  return upper_bound;
 	  }
 
+	  inline void save() {
+		  if(trail_.back() != solver->level) {
+			  solver->save(id);
+			  trail_.add(min);
+			  trail_.add(max);
+			  trail_.add(solver->level);
+			  if(latest)
+			  {
+				  explanation_trail.add(LB_Explanation);
+				  explanation_trail.add(UB_Explanation);
+
+			  }
+		  }
+	  }
+
 	  inline Event restore() {
 
-		//  std::cout << "restore restore restore "<< std::endl;
+		  //  std::cout << "restore restore restore "<< std::endl;
 		  trail_.pop();
 		  trail_.pop(max);
 		  trail_.pop(min);
+
+
 		  if(!latest)
 		  {
 			  int size = lowerbounds.size;
@@ -1684,7 +1708,11 @@ namespace Mistral {
 				  }
 			  }
 		  }
-
+		  else
+		  {
+			  explanation_trail.pop(UB_Explanation);
+			  explanation_trail.pop(LB_Explanation);
+		  }
 		  return NO_EVENT;
 	  }
 
@@ -1700,6 +1728,9 @@ namespace Mistral {
 	  Explanation* LB_Explanation;
 	  Explanation* UB_Explanation;
 	  bool latest;
+
+
+	    Vector<Explanation* > explanation_trail;
 
   private:
 	  Vector<Explanation*> lower_bound_reasons;
