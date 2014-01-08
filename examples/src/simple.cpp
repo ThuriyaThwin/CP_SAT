@@ -774,8 +774,31 @@ void  check_BitSet (){
 
 
 	BitSet visitedbound;
+	BitSet visitedbound22;
 
 	visitedbound.initialise(0,3,BitSet::empt);
+	visitedbound22.initialise(0,1023);
+	visitedbound22.extend(6);
+
+	std::cout << "visited22 " << std::endl;
+	std::cout << "visited 22" << 	visitedbound22 <<std::endl;
+	std::cout << "visited 22 size " << 	visitedbound22.size() <<std::endl;
+
+	visitedbound22.fast_add(3);
+
+	std::cout << "AFTERRRR  " << std::endl;
+	std::cout << "visited 22" << 	visitedbound22 <<std::endl;
+	std::cout << "visited 22 size " << 	visitedbound22.size() <<std::endl;
+
+
+	visitedbound22.clear();
+
+
+
+	std::cout << "AFTERRRR  " << std::endl;
+	std::cout << "visited 22" << 	visitedbound22 <<std::endl;
+	std::cout << "visited 22 size " << 	visitedbound22.size() <<std::endl;
+
 
 	std::cout << "visited " << std::endl;
 	std::cout << "visited " << 	visitedbound <<std::endl;
@@ -787,9 +810,11 @@ void  check_BitSet (){
 	//	if (visitedbound.fast)
 	visitedbound.fast_add(2);
 
-	std::cout << "visited 721212 ? " << 	visitedbound.fast_contain(2) <<std::endl;
+	std::cout << "visited 2 ? " << 	visitedbound.fast_contain(2) <<std::endl;
 
+	visitedbound.fast_add(1);
 	std::cout << "visited size " << 	visitedbound.size() <<std::endl;
+	std::cout << "visited  " << 	visitedbound <<std::endl;
 
 	std::cout << "visited 0 ? " << 	visitedbound.fast_contain(0) <<std::endl;
 	std::cout << "visited 1 ? " << 	visitedbound.fast_contain(1) <<std::endl;
@@ -854,6 +879,6 @@ int main(int argc, char **argv)
 	//makeACounterExample();
 
 	//test_encode_latest_literal();
-	//check_BitSet();
-	test_encode_latest_literal0();
+	check_BitSet();
+//	test_encode_latest_literal0();
 }

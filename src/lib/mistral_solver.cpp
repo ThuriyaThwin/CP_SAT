@@ -37,7 +37,7 @@
 //#define _OLD_ true
 //#define _DEBUG_NOGOOD true //(statistics.num_filterings == 491)
 //#define _DEBUG_SEARCH true
-#define _DEBUG_FD_NOGOOD true
+//#define _DEBUG_FD_NOGOOD true
 //#define _TRACKING_BOUND 1078
 //#define _TRACKING_ATOM 368
 //((statistics.num_filterings == 48212) || (statistics.num_filterings == 46738) || (statistics.num_filterings == 44368) || (statistics.num_filterings == 43659))
@@ -4911,7 +4911,7 @@ void Mistral::Solver::simple_fdlearn_nogood() {
 
 void Mistral::Solver::fdlearn_nogood(){
 
-
+	propagate_literal_in_learnt_clause= true;
 //	if (level < 3)
 //		simple_fdlearn_nogood();
 //	else
@@ -5593,6 +5593,7 @@ void Mistral::Solver::fdlearn_nogood(){
 
 void Mistral::Solver::learn_cycle_nogood(Literal * l) {
 
+	propagate_literal_in_learnt_clause = true;
 	backtrack_level = level-1;
 	//	backtrack_level = level-2;
 
@@ -5620,32 +5621,32 @@ void Mistral::Solver::learn_cycle_nogood(Literal * l) {
 #endif
 
 
-	if( learnt_clause.size != 1 ) {
+  if( learnt_clause.size != 1 ) {
 
-		// if(lit_activity) {
-		//   int i=learnt_clause.size;
-		//   while(i--) {
-		// 	var_activity[UNSIGNED(learnt_clause[i])] += parameters.activity_increment;
-		//   }
-		// }
+	  // if(lit_activity) {
+	  //   int i=learnt_clause.size;
+	  //   while(i--) {
+	  // 	var_activity[UNSIGNED(learnt_clause[i])] += parameters.activity_increment;
+	  //   }
+	  // }
 
 
-		base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
-		//add_clause( learnt, learnt_clause, stats.learnt_avg_size );
-		//reason[UNSIGNED(p)] = base->learnt.back();
+	  base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
+	  //add_clause( learnt, learnt_clause, stats.learnt_avg_size );
+	  //reason[UNSIGNED(p)] = base->learnt.back();
 
-		// EXPL
-		//base->reason_for[UNSIGNED(p)] = base->learnt.back();
+	  // EXPL
+	  //base->reason_for[UNSIGNED(p)] = base->learnt.back();
 
-		//base->reason_for[UNSIGNED(p)] = base->learnt.back();
-		//reason_for[UNSIGNED(p)] = base;
-		//taboo_constraint = base;
+	  //base->reason_for[UNSIGNED(p)] = base->learnt.back();
+	  //reason_for[UNSIGNED(p)] = base;
+	  //taboo_constraint = base;
 
-		taboo_constraint = (ConstraintImplementation*)(base->learnt.back());
-		//reason_for[UNSIGNED(p)].store_reason_for_change(VALUE_EVENT, base->learnt.back());
-	} else {
-		taboo_constraint = NULL;
-	}
+	  taboo_constraint = (ConstraintImplementation*)(base->learnt.back());
+	  //reason_for[UNSIGNED(p)].store_reason_for_change(VALUE_EVENT, base->learnt.back());
+  } else {
+	  taboo_constraint = NULL;
+  }
 
 	//	      deduction = decisions.back();
 	//	      deduction.invert();
@@ -5666,6 +5667,7 @@ void Mistral::Solver::learn_cycle_nogood(Literal * l) {
 void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 
 
+	propagate_literal_in_learnt_clause = true;
 	//	if (level < 3)
 	//		simple_fdlearn_nogood();
 	//	else
@@ -5698,12 +5700,13 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 
 
 		int pathC = 0, index = sequence.size-1;
-		Literal p=0, q;
+		Literal p=0, q, under_exploration;
 		Atom a = NULL_ATOM;
 		Variable x;
 		int lvl;
 		Explanation::iterator tmp;
 		Vector<Literal> bound_literals_to_explore;
+		Vector<unsigned int> to_explore;
 		// double *lit_activity = base->lit_activity.stack_;
 		// double *var_activity = base->var_activity.stack_;
 
@@ -5754,12 +5757,15 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 
 		BitSet visitedBounds;
 		BitSet bounds_under_exploration;
+		BitSet will_not_be_explored;
 
 		visitedBounds.initialise(0, 2* variables.size , BitSet::empt);
 		bounds_under_exploration.initialise(0, 2* variables.size , BitSet::empt);
+		will_not_be_explored.initialise(0, variables.size , BitSet::empt);
+
 
 		//	std::cout << "variables.size()" << variables.size <<  std::endl;
-		std::cout << " \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n   " << std::endl;
+		//std::cout << " \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n   " << std::endl;
 		do {
 
 
@@ -5821,6 +5827,8 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 					 */
 				}
 				else{
+					if ( a==NULL_ATOM || will_not_be_explored.fast_contain(a)){
+
 
 #ifdef _CHECK_NOGOOD
 					// std::cout << (int*)current_explanation << " " ;
@@ -5834,7 +5842,8 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 					graph_size++;
 					tmp = lit;
 					bound_literals_to_explore.clear();
-
+					if (a!=NULL_ATOM)
+					under_exploration == encode_boolean_variable_as_literal(a,variables[a].get_min());
 
 #ifdef 	_DEBUG_FD_NOGOOD
 					if (a==NULL_ATOM)
@@ -5918,6 +5927,7 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 #endif
 							//todo should be search_root!
 							if(	lvl)
+								if ( !will_not_be_explored.fast_contain(get_id_boolean_variable(q)))
 								if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
 									//Sould be done later!
 									/*
@@ -5934,6 +5944,7 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 										//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 										// we'll need to replace 'a' by its parents since its level is too high
 										++pathC;
+										to_explore.add(get_id_boolean_variable(q));
 									} else {
 										// q's level is below the current level, we are not expending it further
 										learnt_clause.add(q);
@@ -6001,7 +6012,6 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 
 							bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_latest_literal(*bound)].range_domain)->reason_for(*bound) ;
 							graph_size++;
-
 
 
 							if (is_a_latest_lower_bound(*bound))
@@ -6102,37 +6112,54 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 #endif
 										//todo we should start from search_route
 										if(		lvl)
-											if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
-												//Sould be done later!
-												/*
+										{
+											if ( !will_not_be_explored.fast_contain(get_id_boolean_variable(q))) {
+												if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
+													//Sould be done later!
+													/*
 															if(lit_activity) {
 																//lit_activity[q] += 0.5 * parameters.activity_increment;
 																lit_activity[NOT(q)] += // 0.5 *
 																		parameters.activity_increment;
 																var_activity[get_id_boolean_variable(q)] += parameters.activity_increment;
 															}
-												 */
-												visited.fast_add(get_id_boolean_variable(q));
+													 */
+													visited.fast_add(get_id_boolean_variable(q));
 
-												if(lvl >= level) {
-													// we'll need to replace 'a' by its parents since its level is too high
-													/*											std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+													if(lvl >= level) {
+														// we'll need to replace 'a' by its parents since its level is too high
+														/*											std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 																		std::cout << " s.t. explanation coming from : " << bound_explanation << std::endl;
 																		std::cout << "\n explaination comes from  "<< old << std::endl;
 																		std::cout << "which corresponds to " << std::endl;
 																		std::cout << " Range variable id : "<< get_variable_from_literal(old) << std::endl;
 																		std::cout << " is a " << (is_lower_bound(old) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(old) << std::endl;
 																		std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(old)].get_domain() << std::endl;
-													 */
-													++pathC;
-												} else {
-													// q's level is below the current level, we are not expending it further
-													learnt_clause.add(q);
+														 */
 
-													if(lvl > backtrack_level)
-														backtrack_level = lvl;
+														++pathC;
+
+														to_explore.add(get_id_boolean_variable(q));
+
+													} else {
+														// q's level is below the current level, we are not expending it further
+														learnt_clause.add(q);
+
+														if(lvl > backtrack_level)
+															backtrack_level = lvl;
+													}
 												}
+												else if	(a != NULL_ATOM )
+													if (under_exploration == q)
+													{
+														//stop exploration immediately and keep it in will_not_be_explored
+														will_not_be_explored.fast_add(get_id_boolean_variable(q));
+														learnt_clause.add(q);
+
+														// TODO remove all unnecessary literals
+													}
 											}
+										}
 									}
 								}
 							}
@@ -6145,10 +6172,16 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 						//		delete bound;
 					}
 				}
+				}
 			}
 
 			//			if( pathC > 0 )
 			//check index!
+	//		pathC++;
+	//		do{
+	//			pathC --;
+
+			/*
 			while(!visited.fast_contain(sequence[++index].id())) {
 
 				//	std::cout << " c new index " <<  index << std::endl;
@@ -6164,10 +6197,28 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 #endif
 
 			};
+			*/
+
+	//		}while (will_not_be_explored.fast_contain(sequence[index].id()));
 
 			//		std::cout << "GOT IT ! " << std::endl;
-			if( pathC > 0 ) {
-				x = sequence[index];
+
+
+			if (to_explore.size)
+			{
+				to_explore.pop(a);
+				if (reason_for[a] == NULL)
+				{
+					if (to_explore.size){
+						to_explore.add(to_explore[0]);
+						to_explore[0]=a;
+						to_explore.pop(a);
+					}
+				}
+
+				x = variables[a];
+//			if( pathC > 0 ) {
+		//		x = sequence[index];
 				a = x.id();
 				//  p = ((2*a) | (x.get_min()));
 				p= encode_boolean_variable_as_literal(x.id(),x.get_min() );
@@ -6182,8 +6233,8 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 				//std::cout << " explore the variable x " << x << std::endl;
 						std::cout << " pathC " << pathC << std::endl;
 				 */
-			}
-			if( pathC > 0 ) {
+		//	}
+	//		if( pathC > 0 ) {
 
 				// there are still atoms to expend, we start with 'a'
 
@@ -6194,8 +6245,9 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 
 				//		current_explanation = jsp_reason_for[a-start_from];
 				visited.fast_add(a);
+	//		}
 			}
-			else if (pathC==0)
+			else //if (pathC==0)
 			{
 				//TODO check if we can have paTHC=0 + give explanation in a failure on ExplainedContDisjunctioReif
 				std::cout << "\n \n \n PatyhC == 0 !!!!! " << pathC << std::endl;
@@ -6281,7 +6333,7 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 
 				}
 			}
-			else
+	/*		else
 			{
 				//	if (pathC !=1)
 				{
@@ -6289,10 +6341,11 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 					exit(1);
 				}
 			}
-
+*/
 
 			//		std::cout << "latest before while =" << pathC << std::endl;
-		} while( --pathC );
+	//	} while( --pathC );
+		} while( to_explore.size );
 
 		//		std::cout << "after while !!!!! " << std::endl;
 		//		std::cout << "\n p =" << p << std::endl;
@@ -6378,6 +6431,9 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 		__failure=NULL;
 #endif
+
+		if (will_not_be_explored.size())
+			propagate_literal_in_learnt_clause = false;
 
 		//#ifdef _DEBUG
 		//		std::cout << "END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
@@ -6516,10 +6572,11 @@ Mistral::Outcome Mistral::Solver::branch_right() {
     	//fdlearn_nogood();
     	fdlearn_nogood_using_only_latest_bounds();
 #endif
-
-    	Literal p = learnt_clause[0];
+    	if (propagate_literal_in_learnt_clause)
+    	{   	Literal p = learnt_clause[0];
     	deduction = Decision(variables[get_id_boolean_variable(p)], Decision::REMOVAL, NOT(SIGN(p)));
-    	// 	std::cout << "endl learning ?  "  << std::endl;
+    	}
+// 	std::cout << "endl learning ?  "  << std::endl;
     	//  	std::cout << "decisions "  << decisions.size << " and the values : \n        " << decisions << std::endl;
 
     	//    	backtrack_level = level-1;

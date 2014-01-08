@@ -773,6 +773,7 @@ namespace Mistral {
     void fdlearn_nogood();
     void fdlearn_nogood_using_only_latest_bounds();
     void learn_cycle_nogood(Literal * l);
+    bool propagate_literal_in_learnt_clause;
     //Data Structures needed with jsp_learn_nogood
     Vector<VariableRangeWithLearning*> Visited_lower_bound_variables ;
     Vector<VariableRangeWithLearning*> Visited_upper_bound_variables ;
