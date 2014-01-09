@@ -37,7 +37,7 @@
 //#define _OLD_ true
 //#define _DEBUG_NOGOOD true //(statistics.num_filterings == 491)
 //#define _DEBUG_SEARCH true
-//#define _DEBUG_FD_NOGOOD true
+#define _DEBUG_FD_NOGOOD true
 //#define _TRACKING_BOUND 1078
 //#define _TRACKING_ATOM 368
 //((statistics.num_filterings == 48212) || (statistics.num_filterings == 46738) || (statistics.num_filterings == 44368) || (statistics.num_filterings == 43659))
@@ -4841,6 +4841,7 @@ void Mistral::Solver::learn_nogood() {
 
 void Mistral::Solver::simple_fdlearn_nogood() {
 
+	propagate_literal_in_learnt_clause= true;
 	backtrack_level = level-1;
 	//	backtrack_level = level-2;
 
@@ -5673,6 +5674,8 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 	//	else
 	{
 #ifdef 	_DEBUG_FD_NOGOOD
+		std::cout << " \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n   " << std::endl;
+
 		//	std::cout << " \n\n\n fdlearn_nogood : \n Decisions size" << decisions.size << " and the variables : \n        " << decisions << " \n and level = " << level << std::endl;
 #endif
 		/*
@@ -5765,7 +5768,8 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 
 
 		//	std::cout << "variables.size()" << variables.size <<  std::endl;
-		//std::cout << " \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n   " << std::endl;
+
+
 		do {
 
 
@@ -6568,9 +6572,9 @@ Mistral::Outcome Mistral::Solver::branch_right() {
 
     	//      learn_nogood();
 
-//    		simple_fdlearn_nogood();
+    	simple_fdlearn_nogood();
     	//fdlearn_nogood();
-    	fdlearn_nogood_using_only_latest_bounds();
+    	//fdlearn_nogood_using_only_latest_bounds();
 #endif
     	if (propagate_literal_in_learnt_clause)
     	{   	Literal p = learnt_clause[0];
