@@ -1392,58 +1392,76 @@ void makeACounterExampleLearningwithClausesandrevisitingAdisjunction3JOBS()
 {
 
 
-	Variable X1LB_(0,100);
-	Variable X1UB_(0,100);
+	Variable X1LB_(0,10000);
+	Variable X1UB_(0,10000);
 
-	Variable X2LB_(0,100);
-	Variable X2UB_(0,100);
+	Variable X2LB_(0,10000);
+	Variable X2UB_(0,10000);
 
-	Variable X3LB_(0,100);
-	Variable X3UB_(0,100);
+	Variable X3LB_(0,10000);
+	Variable X3UB_(0,10000);
 
-	Variable X4LB_(0,100);
-	Variable X4UB_(0,100);
+	Variable X4LB_(0,10000);
+	Variable X4UB_(0,10000);
 
-	Variable X5LB_(0,100);
-	Variable X5UB_(0,100);
-
-
-	Variable Y1LB_(0,100);
-	Variable Y1UB_(0,100);
-
-	Variable Y2LB_(0,100);
-	Variable Y2UB_(0,100);
-
-	Variable Y3LB_(0,100);
-	Variable Y3UB_(0,100);
-
-	Variable Y4LB_(0,100);
-	Variable Y4UB_(0,100);
-
-	Variable Y5LB_(0,100);
-	Variable Y5UB_(0,100);
+	Variable X5LB_(0,10000);
+	Variable X5UB_(0,10000);
 
 
-	Variable Z1LB_(0,100);
-	Variable Z1UB_(0,100);
+	Variable Y1LB_(0,10000);
+	Variable Y1UB_(0,10000);
 
-	Variable Z2LB_(0,100);
-	Variable Z2UB_(0,100);
+	Variable Y2LB_(0,10000);
+	Variable Y2UB_(0,10000);
 
-	Variable Z3LB_(0,100);
-	Variable Z3UB_(0,100);
+	Variable Y3LB_(0,10000);
+	Variable Y3UB_(0,10000);
 
-	Variable Z4LB_(0,100);
-	Variable Z4UB_(0,100);
+	Variable Y4LB_(0,10000);
+	Variable Y4UB_(0,10000);
 
-	Variable Z5LB_(0,100);
-	Variable Z5UB_(0,100);
+	Variable Y5LB_(0,10000);
+	Variable Y5UB_(0,10000);
+
+
+	Variable Z1LB_(0,10000);
+	Variable Z1UB_(0,10000);
+
+	Variable Z2LB_(0,10000);
+	Variable Z2UB_(0,10000);
+
+	Variable Z3LB_(0,10000);
+	Variable Z3UB_(0,10000);
+
+	Variable Z4LB_(0,10000);
+	Variable Z4UB_(0,10000);
+
+	Variable Z5LB_(0,10000);
+	Variable Z5UB_(0,10000);
 
 
 
-	Variable KX4(1,10);
-	Variable KZ3(1,10);
-	Variable KZ4(1,10);
+	Variable KZ3(1,100);
+	Variable KX4(2,2);
+	Variable KZ4(2,2);
+
+	Variable KZ1(2,2);
+	Variable KZ2(2,2);
+	Variable KZ5(2,2);
+
+	Variable KX1(2,2);
+	Variable KX2(2,2);
+	Variable KX3(2,2);
+	Variable KX5(2,2);
+
+	Variable KY1(2,2);
+	Variable KY2(2,2);
+	Variable KY3(2,2);
+	Variable KY4(2,2);
+	Variable KY5(2,2);
+
+
+
 
 
 	Solver s;
@@ -1471,18 +1489,18 @@ void makeACounterExampleLearningwithClausesandrevisitingAdisjunction3JOBS()
 	make_Domain_Consistency(&s, &Z5LB_,&Z5UB_);
 
 
-	make_precedence(&s,&X1LB_, &X2LB_, &X1UB_, &X2UB_, 2);
-	make_precedence(&s,&X2LB_, &X3LB_, &X2UB_, &X3UB_, 2);
-	make_precedence(&s,&X3LB_, &X4LB_, &X3UB_, &X4UB_, 2);
+	make_precedence(&s,&X1LB_, &X2LB_, &X1UB_, &X2UB_, &KX1);
+	make_precedence(&s,&X2LB_, &X3LB_, &X2UB_, &X3UB_, &KX2);
+	make_precedence(&s,&X3LB_, &X4LB_, &X3UB_, &X4UB_, &KX3);
 	make_precedence(&s,&X4LB_, &X5LB_, &X4UB_, &X5UB_, &KX4);
 
-	make_precedence(&s,&Y2LB_, &Y1LB_, &Y2UB_, &Y1UB_, 2);
-	make_precedence(&s,&Y1LB_, &Y3LB_, &Y1UB_, &Y3UB_, 2);
-	make_precedence(&s,&Y3LB_, &Y4LB_, &Y3UB_, &Y4UB_, 2);
-	make_precedence(&s,&Y4LB_, &Y5LB_, &Y4UB_, &Y5UB_, 2);
+	make_precedence(&s,&Y2LB_, &Y1LB_, &Y2UB_, &Y1UB_, &KY2);
+	make_precedence(&s,&Y1LB_, &Y3LB_, &Y1UB_, &Y3UB_, &KY1);
+	make_precedence(&s,&Y3LB_, &Y4LB_, &Y3UB_, &Y4UB_, &KY3);
+	make_precedence(&s,&Y4LB_, &Y5LB_, &Y4UB_, &Y5UB_, &KY4);
 
-	make_precedence(&s,&Z1LB_, &Z2LB_, &Z1UB_, &Z2UB_, 2);
-	make_precedence(&s,&Z2LB_, &Z3LB_, &Z2UB_, &Z3UB_, 2);
+	make_precedence(&s,&Z1LB_, &Z2LB_, &Z1UB_, &Z2UB_, &KZ1);
+	make_precedence(&s,&Z2LB_, &Z3LB_, &Z2UB_, &Z3UB_,  &KZ2);
 	make_precedence(&s,&Z3LB_, &Z4LB_, &Z3UB_, &Z4UB_, &KZ3);
 	make_precedence(&s,&Z4LB_, &Z5LB_, &Z4UB_, &Z5UB_, &KZ4);
 
@@ -1491,25 +1509,25 @@ void makeACounterExampleLearningwithClausesandrevisitingAdisjunction3JOBS()
 	//make_precedence(&s,&Y3LB_, &X4LB_, &Y3UB_, &X4UB_, 2);
 
 	//Disjunctions :
-	make_disjunction(&s, &X1LB_,&Y1LB_, &X1UB_, &Y1UB_,2, 2);
-	make_disjunction(&s, &X1LB_,&Z1LB_, &X1UB_, &Z1UB_,2, 2);
-	make_disjunction(&s, &Z1LB_,&Y1LB_, &Z1UB_, &Z1UB_,2, 2);
+	make_disjunction(&s, &X1LB_,&Y1LB_, &X1UB_, &Y1UB_,&KX1, &KY1);
+	make_disjunction(&s, &X1LB_,&Z1LB_, &X1UB_, &Z1UB_,&KX1, &KZ1);
+	make_disjunction(&s, &Z1LB_,&Y1LB_, &Z1UB_, &Y1UB_,&KZ1, &KY1);
 
 	make_disjunction(&s, &X2LB_,&Y2LB_, &X2UB_, &Y2UB_,2, 2);
 	make_disjunction(&s, &X2LB_,&Z2LB_, &X2UB_, &Z2UB_,2, 2);
-	make_disjunction(&s, &Z2LB_,&Y2LB_, &Z2UB_, &Z2UB_,2, 2);
+	make_disjunction(&s, &Z2LB_,&Y2LB_, &Z2UB_, &Y2UB_,2, 2);
 
 	make_disjunction(&s, &X3LB_,&Y3LB_, &X3UB_, &Y3UB_,2, 2);
 	make_disjunction(&s, &X3LB_,&Z3LB_, &X3UB_, &Z3UB_,2, &KZ3);
-	make_disjunction(&s, &Z3LB_,&Y3LB_, &Z3UB_, &Z3UB_,&KZ3, 2);
+	make_disjunction(&s, &Z3LB_,&Y3LB_, &Z3UB_, &Y3UB_,&KZ3, 2);
 
 	make_disjunction(&s, &X4LB_,&Y4LB_, &X4UB_, &Y4UB_,&KX4, 2);
 	make_disjunction(&s, &X4LB_,&Z4LB_, &X4UB_, &Z4UB_,&KX4, &KZ4);
-	make_disjunction(&s, &Z4LB_,&Y4LB_, &Z4UB_, &Z4UB_,&KZ4, 2);
+	make_disjunction(&s, &Z4LB_,&Y4LB_, &Z4UB_, &Y4UB_,&KZ4, 2);
 
 	make_disjunction(&s, &X5LB_,&Y5LB_, &X5UB_, &Y5UB_,2, 2);
 	make_disjunction(&s, &X5LB_,&Z5LB_, &X5UB_, &Z5UB_,2, 2);
-	make_disjunction(&s, &Z5LB_,&Y5LB_, &Z5UB_, &Z5UB_,2, 2);
+	make_disjunction(&s, &Z5LB_,&Y5LB_, &Z5UB_, &Y5UB_,2, 2);
 
 
 
@@ -1585,9 +1603,14 @@ void makeACounterExampleLearningwithClausesandrevisitingAdisjunction3JOBS()
 
 	//make precedence Z3 < z4
 
-	make_precedence(&s, &Z3LB_,&Z4LB_, &Z3UB_new, &Z4UB_new,&KZ3);
+//	make_precedence(&s, &Z3LB_,&Z4LB_, &Z3UB_new, &Z4UB_new,&KZ3);
+
+	//s.add(Z4UB_new >= (Z3UB_new + KZ3));
 
 	s.add ((Z4UB_new -Z3UB_new) == KZ3);
+	//s.add (Z3UB_new >= (Z4UB_ -KZ3));
+
+
 	s.add (Z3UB_new < Z3LB_);
 
 	std:: cout << s << std::endl;
