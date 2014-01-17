@@ -863,6 +863,852 @@ void test_encode_latest_literal0()
 
 }
 
+
+//1 <= 2
+void make_precedence(Solver *s, Variable *lb1, Variable *lb2, Variable *ub1, Variable *ub2,int k )
+{
+
+	s->add((*lb2) >= ((*lb1) + k));
+	s->add((*ub2) >= ((*ub1) + k));
+
+
+}
+void make_precedence(Solver *s, Variable *lb1, Variable *lb2, Variable *ub1, Variable *ub2,Variable * k )
+{
+
+	s->add((*lb2) >= ((*lb1) + (*k)));
+	s->add((*ub2) >= ((*ub1) + (*k)));
+
+
+}
+void make_disjunction(Solver *s, Variable *lb1,  Variable *lb2,  Variable *ub1, Variable *ub2,  int k1, int k2)
+{
+
+	s->add((*ub1) >= ((*lb2) + k2));
+	s->add((*ub2) >= ((*lb1) + k1));
+
+}
+
+
+
+
+void make_disjunction(Solver *s, Variable *lb1,  Variable *lb2,  Variable *ub1, Variable *ub2,  Variable * k1, Variable * k2)
+{
+
+	s->add((*ub1) >= ((*lb2) + (*k2)));
+	s->add((*ub2) >= ((*lb1) + (*k1)));
+
+}
+
+
+
+void make_disjunction(Solver *s, Variable *lb1,  Variable *lb2,  Variable *ub1, Variable *ub2,  Variable * k1, int k2)
+{
+
+	s->add((*ub1) >= ((*lb2) + k2));
+	s->add((*ub2) >= ((*lb1) + (*k1)));
+
+}
+
+
+void make_disjunction(Solver *s, Variable *lb1,  Variable *lb2,  Variable *ub1, Variable *ub2,  int k1, Variable * k2)
+{
+
+	s->add((*ub1) >= ((*lb2) + (*k2)));
+	s->add((*ub2) >= ((*lb1) + k1));
+
+}
+void make_Domain_Consistency(Solver *s, Variable *l, Variable *u)
+{
+	s->add((*l) <= (*u));
+}
+
+void make_lowerbound_propagation(Solver *s, Variable *newlb, Variable *oldlb)
+{
+	s->add((*newlb) >= (*oldlb));
+}
+void make_upperbound_propagation(Solver *s, Variable *newub, Variable *oldub)
+{
+
+	s->add((*newub) <= (*oldub));
+}
+
+
+
+void makeACounterExampleLearningwithClausesandrevisitingAdisjunction()
+{
+	/*
+
+	std::cout << "\n \n makeACounterExample" << std::endl;
+
+	Variable X1L(0,100);
+	Variable X1U(0,100);
+	Variable X2L(0,100);
+	Variable X2U(0,100);
+	Variable X3L(0,100);
+	Variable X3U(0,100);
+
+	Variable Y1L(0,100);
+	Variable Y1U(0,100);
+	Variable Y2L(0,100);
+	Variable Y2U(0,100);
+	Variable Y3L(0,100);
+	Variable Y3U(0,100);
+
+	Variable Z1L(0,100);
+	Variable Z1U(0,100);
+	Variable Z2L(0,100);
+	Variable Z2U(0,100);
+	Variable Z3L(0,100);
+	Variable Z3U(0,100);
+
+	Variable Kx1(1,100);
+	Variable Kx2(1,100);
+	Variable Kx3(1,100);
+
+	Variable Ky1(1,100);
+	Variable Ky2(1,100);
+	Variable Ky3(1,100);
+
+	Variable Kz1(1,100);
+	Variable Kz2(1,100);
+	Variable Kz3(1,100);
+
+
+	//New variables :
+	Variable X2U_(0,100);
+	Variable X1L_(0,100);
+	Variable Y1U_(0,100);
+	Variable Y2L_(0,100);
+
+
+	Variable Y3U_(0,100);
+	Variable X3U_(0,100);
+
+	Variable Z1L_(0,100);
+	Variable Z2L_(0,100);
+	Variable Z3L_(0,100);
+
+
+
+
+	Solver s;
+	//	s.parameters.verbosity =88;
+	//	s.add(X<= (Y+2));
+	//	s.add(Z <=(Y+1));
+	//s.add(X!=Z);
+	//s.add(F!=A);
+
+	//Bounds constraints
+	s.add(X1L <=X1U);
+	s.add(X2L <=X2U);
+	s.add(X3L <=X3U);
+
+	s.add(Y1L <=Y1U);
+	s.add(Y2L <=Y2U);
+	s.add(Y3L <=Y3U);
+
+	s.add(Z1L <=Z1U);
+	s.add(Z2L <=Z2U);
+	s.add(Z3L <=Z3U);
+
+
+	//Sequencing constraints
+	s.add(X2L >= (X1L + Kx1));
+	s.add(X2U >= (X1U + Kx1));
+
+	s.add(X3L >= (X2L + Kx2));
+	s.add(X3U >= (X2U + Kx2));
+
+	s.add(Y1L >= (Y2L + Ky2));
+	s.add(Y1U >= (Y2U + Ky2));
+
+	s.add(Y3L >= (Y1L + Ky1));
+	s.add(Y3U >= (Y1U + Ky1));
+
+	//On Z
+	s.add(Z2L >= (Z1L + Kz1));
+	s.add(Z2U >= (Z1U + Kz1));
+
+	s.add(Z1L >= (Z3L + Kz3));
+	s.add(Z1U >= (Z3U + Kz3));
+
+
+
+	//Disjunctions
+
+	//Decided ones :
+
+	s.add(X1L >= (Z1L + Kz1));
+	s.add(X1U >= (Z1U + Kz1));
+
+	s.add(Y2L >= (Z2L + Kz2));
+	s.add(Y2U >= (Z2U + Kz2));
+
+	s.add(X3L >= (Y3L + Ky3));
+	s.add(X3U >= (Y3U + Ky3));
+
+	//Not decided yet
+
+	s.add(X1U >= (Y1L + Ky1));
+	s.add(Y1U >= (X1L + Kx1));
+
+	s.add(X2U >= (Y2L + Ky2));
+	s.add(Y2U >= (X2L + Kx2));
+
+	s.add(Z3U >= (X3L + Kx3));
+	s.add(X3U >= (Z3L + Kz3));
+
+	s.add(Z3U >= (Y3L + Ky3));
+	s.add(Y3U >= (Z3L + Kz3));
+
+
+	s.add(Z2U >= (X2L + Kx2));
+	s.add(X2U >= (Z2L + Kz2));
+
+	s.add(Z1U >= (Y1L + Ky1));
+	s.add(Y1U >= (Z1L + Kz1));
+
+
+	// new
+	s.add (X2U_ <= X2U);
+	s.add (X1L_ >=  X1L);
+	s.add (Y1U_ <= Y1U );
+	s.add ( Y2L_ >= Y2L);
+
+	s.add (Y3U_ <= Y3U );
+	s.add (X3U_ <= X3U );
+
+	s.add (Z1L_>=Z1L);
+	s.add ( Z2L_>= Z2L);
+	s.add ( Z3L_ >= Z3L);
+
+
+	//domain consistency
+
+	s.add (X2U_ >= X2L);
+	s.add (X1L_ <=  X1U);
+	s.add (Y1U_ >= Y1L );
+	s.add ( Y2L_ <= Y2U);
+
+	s.add (Y3U_ >= Y3L );
+	s.add (X3U_ >= X3L );
+
+	s.add (Z1L_ <=  Z1U);
+	s.add ( Z2L_ <=  Z2U);
+	s.add ( Z3L_ <= Z3U);
+
+
+	// Propagated Sequencing Constraints
+
+	//	s.add(Y3L_ >= (Y1L_ + Ky1));
+	s.add(Y3U_ >= (Y1U_ + Ky1));
+	//	s.add(Y3L_ >= (Y1L_ + Ky1));
+	s.add(X3U_ >= (X2U_ + Kx2));
+
+
+	s.add(X1L_ >= (Z1L_ + Kz1));
+	s.add(Y2L_ >= (Z2L_ + Kz2));
+
+	s.add(Z2L_ >= (Z1L_ + Kz1));
+
+	s.add(Z1L_ >= (Z3L_ + Kz3));
+
+
+
+	//Fail on x2> y2
+	s.add (X2U_ < (Y2L_ + Ky2)) ;
+	//Fail on (x_1 < y_1
+	s.add (Y1U_ < (X1L_ + Kx2)) ;
+
+
+	//Propagate the new decision
+
+	s.add(Z3U >= (X3U_ + Kx3));
+	s.add(Z3L_ >= (X3L + Kx3));
+
+
+
+	std:: cout << s << std::endl;
+
+	Outcome result = s.depth_first_search();
+
+	//	cout << " X  result: " << result << endl;
+	//std:: cout << s << std::endl;
+
+	//	std:: cout << X.get_solution_int_value() << std::endl;
+	//	std:: cout << Y.get_solution_int_value() << std::endl;
+	//	std:: cout << Z.get_solution_int_value() << std::endl;
+
+	if(result)
+	{
+		Solution solx( s.variables);
+		//		cout << "  solution Found " << solx << endl;
+		cout << "  solution Found " << endl;
+		cout << endl;
+
+
+		cout << " Kx :  "<< endl;
+		cout << endl;
+		cout << endl;
+
+		std:: cout << Kx1.get_solution_int_value() << std::endl;
+		std:: cout << Kx2.get_solution_int_value() << std::endl;
+		std:: cout << Kx3.get_solution_int_value() << std::endl;
+
+		cout << endl;
+		std:: cout << Ky1.get_solution_int_value() << std::endl;
+		std:: cout << Ky2.get_solution_int_value() << std::endl;
+		std:: cout << Ky3.get_solution_int_value() << std::endl;
+
+		cout << endl;
+		std:: cout << Kz1.get_solution_int_value() << std::endl;
+		std:: cout << Kz2.get_solution_int_value() << std::endl;
+		std:: cout << Kz3.get_solution_int_value() << std::endl;
+
+		cout << "\n  X :  "<< endl;
+		cout << endl;
+		cout << endl;
+
+		std:: cout << X1L.get_solution_int_value() << std::endl;
+		std:: cout << X1U.get_solution_int_value() << std::endl;
+
+		std:: cout << X2L.get_solution_int_value() << std::endl;
+		std:: cout << X2U.get_solution_int_value() << std::endl;
+		std:: cout << X3L.get_solution_int_value() << std::endl;
+		std:: cout << X3U.get_solution_int_value() << std::endl;
+
+		cout << "\n Y :  "<< endl;
+		cout << endl;
+		cout << endl;
+
+		std:: cout << Y1L.get_solution_int_value() << std::endl;
+		std:: cout << Y1U.get_solution_int_value() << std::endl;
+		std:: cout << Y2L.get_solution_int_value() << std::endl;
+		std:: cout << Y2U.get_solution_int_value() << std::endl;
+		std:: cout << Y3L.get_solution_int_value() << std::endl;
+		std:: cout << Y3U.get_solution_int_value() << std::endl;
+
+		cout << " \n Z :  "<< endl;
+		cout << endl;
+		cout << endl;
+
+		std:: cout << Z1L.get_solution_int_value() << std::endl;
+		std:: cout << Z1U.get_solution_int_value() << std::endl;
+		std:: cout << Z2L.get_solution_int_value() << std::endl;
+		std:: cout << Z2U.get_solution_int_value() << std::endl;
+		std:: cout << Z3L.get_solution_int_value() << std::endl;
+		std:: cout << Z3U.get_solution_int_value() << std::endl;
+
+
+
+
+		cout << " \n The new values  :  "<< endl;
+		cout << endl;
+		cout << endl;
+
+		std::cout << "X2U_" << X2U_.get_solution_int_value() << std::endl;
+		std::cout << "X1L_" <<  X1L_.get_solution_int_value() << std::endl;
+		std::cout << "Y1U_" <<  Y1U_.get_solution_int_value() << std::endl;
+		std::cout << "Y2L_" <<  Y2L_.get_solution_int_value() << std::endl;
+
+		cout << " \n less important :  "<< endl;
+		cout << endl;
+		cout << endl;
+
+		std::cout << "Y3U_" <<  Y3U_.get_solution_int_value() << std::endl;
+		std::cout << "X3U_" <<  X3U_.get_solution_int_value() << std::endl;
+		std::cout << "Z1L_" <<  Z1L_.get_solution_int_value() << std::endl;
+		std::cout << "Z2L_" <<  Z2L_.get_solution_int_value() << std::endl;
+		std::cout << "Z3L_" <<  Z3L_.get_solution_int_value() << std::endl;
+
+
+	}
+	else
+		cout << " UNSAT! " << endl;
+
+	//	cout << s.statistics << endl;
+
+
+	 */
+
+	Variable X1LB_(0,100);
+	Variable X1UB_(0,100);
+
+	Variable X2LB_(0,100);
+	Variable X2UB_(0,100);
+
+	Variable X3LB_(0,100);
+	Variable X3UB_(0,100);
+
+	Variable X4LB_(0,100);
+	Variable X4UB_(0,100);
+
+	Variable X5LB_(0,100);
+	Variable X5UB_(0,100);
+
+
+	Variable Y1LB_(0,100);
+	Variable Y1UB_(0,100);
+
+	Variable Y2LB_(0,100);
+	Variable Y2UB_(0,100);
+
+	Variable Y3LB_(0,100);
+	Variable Y3UB_(0,100);
+
+	Variable Y4LB_(0,100);
+	Variable Y4UB_(0,100);
+
+	Variable Y5LB_(0,100);
+	Variable Y5UB_(0,100);
+
+
+
+
+
+	Solver s;
+
+	//Default Graph:
+
+	make_Domain_Consistency(&s, &X1LB_,&X1UB_);
+	make_Domain_Consistency(&s, &X2LB_,&X2UB_);
+	make_Domain_Consistency(&s, &X3LB_,&X3UB_);
+	make_Domain_Consistency(&s, &X4LB_,&X4UB_);
+	make_Domain_Consistency(&s, &X5LB_,&X5UB_);
+
+
+	make_Domain_Consistency(&s, &Y1LB_,&Y1UB_);
+	make_Domain_Consistency(&s, &Y2LB_,&Y2UB_);
+	make_Domain_Consistency(&s, &Y3LB_,&Y3UB_);
+	make_Domain_Consistency(&s, &Y4LB_,&Y4UB_);
+	make_Domain_Consistency(&s, &Y5LB_,&Y5UB_);
+
+
+
+
+	make_precedence(&s,&X1LB_, &X2LB_, &X1UB_, &X2UB_, 2);
+	make_precedence(&s,&X2LB_, &X3LB_, &X2UB_, &X3UB_, 2);
+	make_precedence(&s,&X3LB_, &X4LB_, &X3UB_, &X4UB_, 2);
+	make_precedence(&s,&X4LB_, &X5LB_, &X4UB_, &X5UB_, 2);
+
+	make_precedence(&s,&Y1LB_, &Y2LB_, &Y1UB_, &Y2UB_, 2);
+	make_precedence(&s,&Y2LB_, &Y3LB_, &Y2UB_, &Y3UB_, 2);
+	make_precedence(&s,&Y3LB_, &Y4LB_, &Y3UB_, &Y4UB_, 2);
+	make_precedence(&s,&Y4LB_, &Y5LB_, &Y4UB_, &Y5UB_, 2);
+
+	//Decided disjunction :
+	make_precedence(&s,&Y3LB_, &X4LB_, &Y3UB_, &X4UB_, 2);
+
+	//Disjunctions :
+	make_disjunction(&s, &X1LB_,&Y1LB_, &X1UB_, &Y1UB_,2, 2);
+	make_disjunction(&s, &X2LB_,&Y2LB_, &X1UB_, &Y1UB_,2, 2);
+	make_disjunction(&s, &X1LB_,&Y1LB_, &X1UB_, &Y1UB_,2, 2);
+	make_disjunction(&s, &X1LB_,&Y1LB_, &X1UB_, &Y1UB_,2, 2);
+
+
+
+
+	std:: cout << s << std::endl;
+
+	Outcome result = s.depth_first_search();
+
+	//	cout << " X  result: " << result << endl;
+	//std:: cout << s << std::endl;
+
+	//	std:: cout << X.get_solution_int_value() << std::endl;
+	//	std:: cout << Y.get_solution_int_value() << std::endl;
+	//	std:: cout << Z.get_solution_int_value() << std::endl;
+
+	if(result)
+	{
+
+
+		cout << "\n  X :  "<< endl;
+		cout << endl;
+		cout << endl;
+
+		std:: cout << X1LB_.get_solution_int_value() << std::endl;
+		std:: cout << X1UB_.get_solution_int_value() << std::endl;
+
+		std:: cout << X2LB_.get_solution_int_value() << std::endl;
+		std:: cout << X2UB_.get_solution_int_value() << std::endl;
+
+		std:: cout << X3LB_.get_solution_int_value() << std::endl;
+		std:: cout << X3UB_.get_solution_int_value() << std::endl;
+
+		std:: cout << X4LB_.get_solution_int_value() << std::endl;
+		std:: cout << X4UB_.get_solution_int_value() << std::endl;
+
+		std:: cout << X5LB_.get_solution_int_value() << std::endl;
+		std:: cout << X5UB_.get_solution_int_value() << std::endl;
+
+
+
+		cout << "\n \n  Y :  "<< endl;
+		cout << endl;
+		cout << endl;
+
+		std:: cout << Y1LB_.get_solution_int_value() << std::endl;
+		std:: cout << Y1UB_.get_solution_int_value() << std::endl;
+
+		std:: cout << Y2LB_.get_solution_int_value() << std::endl;
+		std:: cout << Y2UB_.get_solution_int_value() << std::endl;
+
+		std:: cout << Y3LB_.get_solution_int_value() << std::endl;
+		std:: cout << Y3UB_.get_solution_int_value() << std::endl;
+
+		std:: cout << Y4LB_.get_solution_int_value() << std::endl;
+		std:: cout << Y4UB_.get_solution_int_value() << std::endl;
+
+		std:: cout << Y5LB_.get_solution_int_value() << std::endl;
+		std:: cout << Y5UB_.get_solution_int_value() << std::endl;
+
+
+
+
+
+
+	}
+	else
+		cout << "\n  UNSAT :  "<< endl;
+
+
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+void makeACounterExampleLearningwithClausesandrevisitingAdisjunction3JOBS()
+{
+
+
+	Variable X1LB_(0,100);
+	Variable X1UB_(0,100);
+
+	Variable X2LB_(0,100);
+	Variable X2UB_(0,100);
+
+	Variable X3LB_(0,100);
+	Variable X3UB_(0,100);
+
+	Variable X4LB_(0,100);
+	Variable X4UB_(0,100);
+
+	Variable X5LB_(0,100);
+	Variable X5UB_(0,100);
+
+
+	Variable Y1LB_(0,100);
+	Variable Y1UB_(0,100);
+
+	Variable Y2LB_(0,100);
+	Variable Y2UB_(0,100);
+
+	Variable Y3LB_(0,100);
+	Variable Y3UB_(0,100);
+
+	Variable Y4LB_(0,100);
+	Variable Y4UB_(0,100);
+
+	Variable Y5LB_(0,100);
+	Variable Y5UB_(0,100);
+
+
+	Variable Z1LB_(0,100);
+	Variable Z1UB_(0,100);
+
+	Variable Z2LB_(0,100);
+	Variable Z2UB_(0,100);
+
+	Variable Z3LB_(0,100);
+	Variable Z3UB_(0,100);
+
+	Variable Z4LB_(0,100);
+	Variable Z4UB_(0,100);
+
+	Variable Z5LB_(0,100);
+	Variable Z5UB_(0,100);
+
+
+
+	Variable KX4(1,10);
+	Variable KZ3(1,10);
+	Variable KZ4(1,10);
+
+
+	Solver s;
+
+	//Default Graph:
+
+	make_Domain_Consistency(&s, &X1LB_,&X1UB_);
+	make_Domain_Consistency(&s, &X2LB_,&X2UB_);
+	make_Domain_Consistency(&s, &X3LB_,&X3UB_);
+	make_Domain_Consistency(&s, &X4LB_,&X4UB_);
+	make_Domain_Consistency(&s, &X5LB_,&X5UB_);
+
+
+	make_Domain_Consistency(&s, &Y1LB_,&Y1UB_);
+	make_Domain_Consistency(&s, &Y2LB_,&Y2UB_);
+	make_Domain_Consistency(&s, &Y3LB_,&Y3UB_);
+	make_Domain_Consistency(&s, &Y4LB_,&Y4UB_);
+	make_Domain_Consistency(&s, &Y5LB_,&Y5UB_);
+
+
+	make_Domain_Consistency(&s, &Z1LB_,&Z1UB_);
+	make_Domain_Consistency(&s, &Z2LB_,&Z2UB_);
+	make_Domain_Consistency(&s, &Z3LB_,&Z3UB_);
+	make_Domain_Consistency(&s, &Z4LB_,&Z4UB_);
+	make_Domain_Consistency(&s, &Z5LB_,&Z5UB_);
+
+
+	make_precedence(&s,&X1LB_, &X2LB_, &X1UB_, &X2UB_, 2);
+	make_precedence(&s,&X2LB_, &X3LB_, &X2UB_, &X3UB_, 2);
+	make_precedence(&s,&X3LB_, &X4LB_, &X3UB_, &X4UB_, 2);
+	make_precedence(&s,&X4LB_, &X5LB_, &X4UB_, &X5UB_, &KX4);
+
+	make_precedence(&s,&Y2LB_, &Y1LB_, &Y2UB_, &Y1UB_, 2);
+	make_precedence(&s,&Y1LB_, &Y3LB_, &Y1UB_, &Y3UB_, 2);
+	make_precedence(&s,&Y3LB_, &Y4LB_, &Y3UB_, &Y4UB_, 2);
+	make_precedence(&s,&Y4LB_, &Y5LB_, &Y4UB_, &Y5UB_, 2);
+
+	make_precedence(&s,&Z1LB_, &Z2LB_, &Z1UB_, &Z2UB_, 2);
+	make_precedence(&s,&Z2LB_, &Z3LB_, &Z2UB_, &Z3UB_, 2);
+	make_precedence(&s,&Z3LB_, &Z4LB_, &Z3UB_, &Z4UB_, &KZ3);
+	make_precedence(&s,&Z4LB_, &Z5LB_, &Z4UB_, &Z5UB_, &KZ4);
+
+
+	//Decided disjunction :
+	//make_precedence(&s,&Y3LB_, &X4LB_, &Y3UB_, &X4UB_, 2);
+
+	//Disjunctions :
+	make_disjunction(&s, &X1LB_,&Y1LB_, &X1UB_, &Y1UB_,2, 2);
+	make_disjunction(&s, &X1LB_,&Z1LB_, &X1UB_, &Z1UB_,2, 2);
+	make_disjunction(&s, &Z1LB_,&Y1LB_, &Z1UB_, &Z1UB_,2, 2);
+
+	make_disjunction(&s, &X2LB_,&Y2LB_, &X2UB_, &Y2UB_,2, 2);
+	make_disjunction(&s, &X2LB_,&Z2LB_, &X2UB_, &Z2UB_,2, 2);
+	make_disjunction(&s, &Z2LB_,&Y2LB_, &Z2UB_, &Z2UB_,2, 2);
+
+	make_disjunction(&s, &X3LB_,&Y3LB_, &X3UB_, &Y3UB_,2, 2);
+	make_disjunction(&s, &X3LB_,&Z3LB_, &X3UB_, &Z3UB_,2, &KZ3);
+	make_disjunction(&s, &Z3LB_,&Y3LB_, &Z3UB_, &Z3UB_,&KZ3, 2);
+
+	make_disjunction(&s, &X4LB_,&Y4LB_, &X4UB_, &Y4UB_,&KX4, 2);
+	make_disjunction(&s, &X4LB_,&Z4LB_, &X4UB_, &Z4UB_,&KX4, &KZ4);
+	make_disjunction(&s, &Z4LB_,&Y4LB_, &Z4UB_, &Z4UB_,&KZ4, 2);
+
+	make_disjunction(&s, &X5LB_,&Y5LB_, &X5UB_, &Y5UB_,2, 2);
+	make_disjunction(&s, &X5LB_,&Z5LB_, &X5UB_, &Z5UB_,2, 2);
+	make_disjunction(&s, &Z5LB_,&Y5LB_, &Z5UB_, &Z5UB_,2, 2);
+
+
+
+
+	//new lower/upperbounds :
+
+
+	Variable Y1LB_NEW(0,100);
+	Variable Y3LB_NEW(0,100);
+	Variable Y4LB_NEW(0,100);
+
+	Variable X4UB_new(0,100);
+	Variable X3UB_new(0,100);
+	Variable X2UB_new(0,100);
+
+	Variable Z4UB_new(0,100);
+	Variable Z3UB_new(0,100);
+
+	//Make propagation :
+
+	make_lowerbound_propagation(&s, &Y1LB_NEW, &Y1LB_);
+	make_lowerbound_propagation(&s, &Y3LB_NEW, &Y3LB_);
+	make_lowerbound_propagation(&s, &Y4LB_NEW, &Y4LB_);
+
+	make_upperbound_propagation(&s, &X4UB_new , &X4UB_);
+	make_upperbound_propagation(&s, &X3UB_new , &X3UB_);
+	make_upperbound_propagation(&s, &X2UB_new , &X2UB_);
+	make_upperbound_propagation(&s, &Z4UB_new , &Z4UB_);
+	make_upperbound_propagation(&s, &Z3UB_new , &Z3UB_);
+
+
+	make_Domain_Consistency(&s,&Y1LB_NEW, &Y1UB_ );
+	make_Domain_Consistency(&s,&Y3LB_NEW, &Y3UB_ );
+	make_Domain_Consistency(&s,&Y4LB_NEW, &Y4UB_ );
+
+	make_Domain_Consistency(&s,&X4LB_, &X4UB_new );
+	make_Domain_Consistency(&s,&X3LB_, &X3UB_new );
+	make_Domain_Consistency(&s,&X2LB_, &X2UB_new );
+	make_Domain_Consistency(&s,&Z4LB_, &Z4UB_new );
+
+	//DOMAIN FAILURE ON Z3!
+	//make_Domain_Consistency(&s,&Z3LB_, &Z3UB_new );
+
+	//Execute propagation :
+
+	make_precedence(&s, &X4LB_, &Z4LB_, &X4UB_new, &Z4UB_,&KX4);
+
+	//make_precedence X4 X3 X2
+
+	make_precedence(&s,&X2LB_, &X3LB_, &X2UB_new, &X3UB_new, 2);
+	make_precedence(&s,&X3LB_, &X4LB_, &X3UB_new, &X4UB_new, 2);
+
+	//make precedence on Y 1 3 4
+
+	make_precedence(&s,&Y1LB_NEW, &Y3LB_NEW, &Y1UB_, &Y3UB_, 2);
+	make_precedence(&s,&Y3LB_NEW, &Y4LB_NEW, &Y3UB_, &Y4UB_, 2);
+
+
+	//Propagate the two disjunctions!x2 -y2 and x1-y1
+
+	// X2 < Y2
+	s.add ((X2UB_new - Y2LB_) < 2);
+	make_precedence(&s,&X2LB_, &Y2LB_, &X2UB_new, &Y2UB_, 2);
+
+	//X1 < Y1
+	make_precedence(&s,&X1LB_, &Y1LB_NEW, &X1UB_, &Y1UB_, 2);
+
+
+	//Propagate the two disjunction Z4 -Y4
+
+	s.add ((Z4UB_ - Y4LB_NEW) < 2);
+	make_precedence(&s,&Z4LB_, &Y4LB_NEW, &Z4UB_new, &Y4UB_, &KZ4);
+
+	//make precedence Z3 < z4
+
+	make_precedence(&s, &Z3LB_,&Z4LB_, &Z3UB_new, &Z4UB_new,&KZ3);
+
+	s.add ((Z4UB_new -Z3UB_new) == KZ3);
+	s.add (Z3UB_new < Z3LB_);
+
+	std:: cout << s << std::endl;
+
+	Outcome result = s.depth_first_search();
+
+	//	cout << " X  result: " << result << endl;
+	//std:: cout << s << std::endl;
+
+	//	std:: cout << X.get_solution_int_value() << std::endl;
+	//	std:: cout << Y.get_solution_int_value() << std::endl;
+	//	std:: cout << Z.get_solution_int_value() << std::endl;
+
+	if(result)
+	{
+
+
+		cout << "\n  X :  "<< endl;
+		cout << endl;
+		cout << endl;
+
+		std:: cout << X1LB_.get_solution_int_value() << std::endl;
+		std:: cout << X1UB_.get_solution_int_value() << std::endl;
+
+		std:: cout << X2LB_.get_solution_int_value() << std::endl;
+		std:: cout << X2UB_.get_solution_int_value() << std::endl;
+
+		std:: cout << X3LB_.get_solution_int_value() << std::endl;
+		std:: cout << X3UB_.get_solution_int_value() << std::endl;
+
+		std:: cout << X4LB_.get_solution_int_value() << std::endl;
+		std:: cout << X4UB_.get_solution_int_value() << std::endl;
+
+		std:: cout << X5LB_.get_solution_int_value() << std::endl;
+		std:: cout << X5UB_.get_solution_int_value() << std::endl;
+
+
+
+		cout << "\n \n  Y :  "<< endl;
+		cout << endl;
+		cout << endl;
+
+
+		std:: cout << Y2LB_.get_solution_int_value() << std::endl;
+		std:: cout << Y2UB_.get_solution_int_value() << std::endl;
+
+		std:: cout << Y1LB_.get_solution_int_value() << std::endl;
+		std:: cout << Y1UB_.get_solution_int_value() << std::endl;
+
+		std:: cout << Y3LB_.get_solution_int_value() << std::endl;
+		std:: cout << Y3UB_.get_solution_int_value() << std::endl;
+
+		std:: cout << Y4LB_.get_solution_int_value() << std::endl;
+		std:: cout << Y4UB_.get_solution_int_value() << std::endl;
+
+		std:: cout << Y5LB_.get_solution_int_value() << std::endl;
+		std:: cout << Y5UB_.get_solution_int_value() << std::endl;
+
+
+
+
+
+		cout << "\n \n  z :  "<< endl;
+		cout << endl;
+		cout << endl;
+
+		std:: cout << Z1LB_.get_solution_int_value() << std::endl;
+		std:: cout << Z1UB_.get_solution_int_value() << std::endl;
+
+		std:: cout << Z2LB_.get_solution_int_value() << std::endl;
+		std:: cout << Z2UB_.get_solution_int_value() << std::endl;
+
+		std:: cout << Z3LB_.get_solution_int_value() << std::endl;
+		std:: cout << Z3UB_.get_solution_int_value() << std::endl;
+
+		std:: cout << Z4LB_.get_solution_int_value() << std::endl;
+		std:: cout << Z4UB_.get_solution_int_value() << std::endl;
+
+		std:: cout << Z5LB_.get_solution_int_value() << std::endl;
+		std:: cout << Z5UB_.get_solution_int_value() << std::endl;
+
+
+
+
+		cout << "\n \n  NEW VALUES !  :  "<< endl;
+		cout << endl;
+		cout << endl;
+		cout << endl;
+
+		cout << " Variable Y1LB_NEW(0,100);"<< Y1LB_NEW .get_solution_int_value() <<  endl;
+		cout << "Variable Y3LB_NEW(0,100);"<<Y3LB_NEW.get_solution_int_value() << endl;
+		cout << "Variable Y4LB_NEW(0,100);"<< Y4LB_NEW.get_solution_int_value() <<endl;
+
+		cout << "Variable X4UB_new(0,100);"<< X4UB_new.get_solution_int_value() <<endl;
+		cout << "Variable X3UB_new(0,100);"<< X3UB_new.get_solution_int_value() <<endl;
+		cout << "Variable X2UB_new(0,100);"<< X2UB_new.get_solution_int_value() <<endl;
+
+		cout << "Variable Z4UB_new(0,100); "<<Z4UB_new .get_solution_int_value() <<endl;
+		cout << "Variable Z3UB_new(0,100); "<<Z3UB_new .get_solution_int_value() <<endl;
+
+
+
+		cout << "\n \n  NEW VALUES !THE VALUES of KX4 KZ3 and KZ4  :  "<< endl;
+		cout << endl;
+		cout << endl;
+		cout << endl;
+
+		cout << ""<<KX4 .get_solution_int_value() <<endl;
+		cout << "Variable  "<<KZ3 .get_solution_int_value() <<endl;
+		cout << "Variable  "<<KZ4 .get_solution_int_value() <<endl;
+
+
+
+	}
+	else
+		cout << "\n  UNSAT :  "<< endl;
+
+}
+
+
+
 int main(int argc, char **argv)
 {
 
@@ -880,5 +1726,10 @@ int main(int argc, char **argv)
 
 	//test_encode_latest_literal();
 	check_BitSet();
-//	test_encode_latest_literal0();
+	//	test_encode_latest_literal0();
+
+	//makeACounterExampleLearningwithClausesandrevisitingAdisjunction();
+	makeACounterExampleLearningwithClausesandrevisitingAdisjunction3JOBS();
+
+
 }
