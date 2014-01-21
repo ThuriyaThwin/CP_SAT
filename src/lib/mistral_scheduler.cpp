@@ -2816,7 +2816,8 @@ void SchedulingSolver::dichotomic_search()
       
       //std::cout << std::left << std::setw(30) << " c new upper bound" << ":" << std::right << std::setw(20) << new_objective << " |" << std::endl;
       std::cout << std::left << std::setw(30) << " c | new upper bound" << ":" << std::right << std::setw(15) << new_objective << " |" << std::endl;
-      current_learnClauses_size=base->learnt.size;
+      if (base)
+    	  current_learnClauses_size=base->learnt.size;
       //pool->getBestSolution()->print(std::cout);
 
     } else {

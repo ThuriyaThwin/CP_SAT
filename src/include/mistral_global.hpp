@@ -151,6 +151,8 @@ namespace Mistral {
 //#define _CHECK_NOGOOD true
 //#define _VERIFY_BEHAVIOUR_WHEN_LEARNING true
   //#define   _DEBUG_FAIL true
+//  #define latest_bounds_learning true
+
 #define NORESTART 0
 #define GEOMETRIC 1
 #define LUBY 2

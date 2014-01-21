@@ -1907,9 +1907,11 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 	//	std::cout << "upperbounds reasons .size "<< upper_bound_reasons.size << std::endl;
 
 	//Needed for debugging : tracking upper bound _TRACKING_BOUND; One can change it to track lowerbounds (just uncomment the if statement)!
-
+#ifdef latest_bounds_learning
 	if (!latest)
 	{
+#endif
+
 #if _TRACKING_BOUND
 
 		if ((get_value_from_literal(l) ==_TRACKING_BOUND) && !(is_lower_bound(l)))
@@ -2228,6 +2230,7 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 		std::cout << "END ? " << std::endl;
 		exit(1);
 		//	return lower_bound_reasons[0];
+#ifdef latest_bounds_learning
 	}
 
 	else
@@ -2235,6 +2238,8 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 			return LB_Explanation;
 		else
 			return UB_Explanation;
+#endif
+
 }
 
 

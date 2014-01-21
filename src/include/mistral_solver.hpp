@@ -771,9 +771,11 @@ namespace Mistral {
     //FD learning
     void simple_fdlearn_nogood();
     void fdlearn_nogood();
+#ifdef latest_bounds_learning
+    bool propagate_literal_in_learnt_clause;
     void fdlearn_nogood_using_only_latest_bounds();
     void learn_cycle_nogood(Literal * l);
-    bool propagate_literal_in_learnt_clause;
+#endif
     //Data Structures needed with jsp_learn_nogood
     Vector<VariableRangeWithLearning*> Visited_lower_bound_variables ;
     Vector<VariableRangeWithLearning*> Visited_upper_bound_variables ;
@@ -1185,7 +1187,7 @@ public:
   //The next 16 bits for values : --> biggest value is 65535.
   //the last 4 bits are for the variable_id : biggest variable_id is 32767.
 
-  /*
+#ifndef latest_bounds_learning
   inline unsigned int encode_bound_literal (int id_variable, int value,int sign) {return ( (sign << 31) | (value << 15)   | id_variable);}
   inline int get_variable_from_literal (unsigned int literal) { return ( 0x7FFF & literal) ;}
   inline int get_value_from_literal (unsigned int literal) {return ( (literal & 0x7FFFFFFF) >> 15);}
@@ -1193,12 +1195,12 @@ public:
   inline bool is_upper_bound (unsigned int literal) {return (literal >> 31) ;}
   inline bool is_lower_bound (unsigned int literal) {return 1- (literal >> 31) ;}
   inline bool is_a_bound_literal (unsigned int literal) {return (literal > 0x7FFF ) ;}
-*/
+#endif
 
  // inline int negate_literal (unsigned int literal) { return ( 0x7FFF & literal) ;}
 
   //with latest bounds
-
+#ifdef latest_bounds_learning
   inline bool is_a_latest_upper_bound (Literal literal) {return 2^(literal >> 30) ;}
   inline bool is_a_latest_lower_bound (Literal literal) {return 3^(literal >> 30) ;}
   inline bool is_a_latest_bound_literal (Literal literal) {return  (literal >> 31) ;}
@@ -1213,7 +1215,7 @@ public:
   inline int get_variable_from_literal (Literal literal) { return ( 0x3FFFFFFF & literal) ;}
 
   inline int get_value_from_literal (unsigned int literal) {return ( (literal & 0x7FFFFFFF) >> 15);}
-
+#endif
 
 }
 

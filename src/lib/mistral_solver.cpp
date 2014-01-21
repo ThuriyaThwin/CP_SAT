@@ -37,7 +37,7 @@
 //#define _OLD_ true
 //#define _DEBUG_NOGOOD true //(statistics.num_filterings == 491)
 //#define _DEBUG_SEARCH true
-#define _DEBUG_FD_NOGOOD true
+//#define _DEBUG_FD_NOGOOD true
 //#define _TRACKING_BOUND 1078
 //#define _TRACKING_ATOM 368
 //((statistics.num_filterings == 48212) || (statistics.num_filterings == 46738) || (statistics.num_filterings == 44368) || (statistics.num_filterings == 43659))
@@ -4840,8 +4840,10 @@ void Mistral::Solver::learn_nogood() {
 
 
 void Mistral::Solver::simple_fdlearn_nogood() {
-
+#ifdef latest_bounds_learning
 	propagate_literal_in_learnt_clause= true;
+#endif
+
 	backtrack_level = level-1;
 	//	backtrack_level = level-2;
 
@@ -4911,8 +4913,10 @@ void Mistral::Solver::simple_fdlearn_nogood() {
 }
 
 void Mistral::Solver::fdlearn_nogood(){
-
+#ifdef latest_bounds_learning
 	propagate_literal_in_learnt_clause= true;
+#endif
+
 //	if (level < 3)
 //		simple_fdlearn_nogood();
 //	else
@@ -5591,10 +5595,11 @@ void Mistral::Solver::fdlearn_nogood(){
 	}
 }
 
-
+#ifdef latest_bounds_learning
 void Mistral::Solver::learn_cycle_nogood(Literal * l) {
-
+#ifdef latest_bounds_learning
 	propagate_literal_in_learnt_clause = true;
+#endif
 	backtrack_level = level-1;
 	//	backtrack_level = level-2;
 
@@ -5663,12 +5668,14 @@ void Mistral::Solver::learn_cycle_nogood(Literal * l) {
 
 	//	std::cout << "endl no_recursive\n "  << std::endl;
 }
-
-
+#endif
+#ifdef latest_bounds_learning
 void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 
-
+#ifdef latest_bounds_learning
 	propagate_literal_in_learnt_clause = true;
+#endif
+
 	//	if (level < 3)
 	//		simple_fdlearn_nogood();
 	//	else
@@ -6480,6 +6487,8 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 		//exit(1);
 	}
 }
+#endif
+
 
 void Mistral::Solver::forget() {
 
@@ -6570,16 +6579,27 @@ Mistral::Outcome Mistral::Solver::branch_right() {
 
 #else
 
-    	//      learn_nogood();
 
-    	simple_fdlearn_nogood();
-    	//fdlearn_nogood();
-    	//fdlearn_nogood_using_only_latest_bounds();
+
+
+#ifdef latest_bounds_learning
+    	fdlearn_nogood_using_only_latest_bounds();
+#else
+//    	simple_fdlearn_nogood();
+    fdlearn_nogood();
+    	//      learn_nogood();
 #endif
+
+#endif
+#ifdef latest_bounds_learning
     	if (propagate_literal_in_learnt_clause)
-    	{   	Literal p = learnt_clause[0];
+    	{
+#endif
+    		Literal p = learnt_clause[0];
     	deduction = Decision(variables[get_id_boolean_variable(p)], Decision::REMOVAL, NOT(SIGN(p)));
+#ifdef latest_bounds_learning
     	}
+#endif
 // 	std::cout << "endl learning ?  "  << std::endl;
     	//  	std::cout << "decisions "  << decisions.size << " and the values : \n        " << decisions << std::endl;
 

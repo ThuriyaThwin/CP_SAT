@@ -1551,11 +1551,17 @@ namespace Mistral {
 		  upperbounds_levels.add(0);
 #endif
 
+#ifdef latest_bounds_learning
 		  latest = true;
+#endif
+
 		  LB_Explanation = NULL;
 		  UB_Explanation = NULL;
+
+#ifdef latest_bounds_learning
 		  explanation_trail.add(LB_Explanation);
 		  explanation_trail.add(UB_Explanation);
+#endif
 
 //		  std::cout << "ENDDDDD \n \n " << std::endl;
 	  };
@@ -1579,18 +1585,21 @@ namespace Mistral {
 		  // first check if we can abort early
 		  if(max <  lo) return FAIL_EVENT;
 		  if(min >= lo) return NO_EVENT;
+#ifdef latest_bounds_learning
 		  if(trail_.back() != solver->level)
 			  if(latest)
 			  {
 				  explanation_trail.add(LB_Explanation);
 				  explanation_trail.add(UB_Explanation);
 			  }
-
+#endif
 		  save();
 
 		  min = lo;
+#ifdef latest_bounds_learning
 		  if (!latest)
 		  {
+#endif
 			  lowerbounds.add(lo);
 			  lower_bound_reasons.add(C);
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
@@ -1601,12 +1610,14 @@ namespace Mistral {
 			  //	  std::cout << "lower_bound_reasons"<< lower_bound_reasons << std::endl;
 			  //	  int size =lowerbounds.size ;
 			  //	  std::cout << "size" << size<< std::endl;
-		  }
+#ifdef latest_bounds_learning
+			  }
 		  else{
 
 			  LB_Explanation = C;
 
 		  }
+#endif
 
 		  if(min == max) lower_bound |= VALUE_EVENT;
 
@@ -1621,18 +1632,21 @@ namespace Mistral {
 		  // first check if we can abort early
 		  if(min >  up) return FAIL_EVENT;
 		  if(max <= up) return NO_EVENT;
+#ifdef latest_bounds_learning
 		  if(trail_.back() != solver->level)
 			  if(latest)
 			  {
 				  explanation_trail.add(LB_Explanation);
 				  explanation_trail.add(UB_Explanation);
 			  }
-
+#endif
 		  save();
 
 		  max = up;
+#ifdef latest_bounds_learning
 		  if(!latest)
 		  {
+#endif
 			  upperbounds.add(up);
 			  upper_bound_reasons.add(C);
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
@@ -1644,11 +1658,14 @@ namespace Mistral {
 			  //		  int size =lowerbounds.size ;
 			  //		  std::cout << "size" << size<< std::endl;
 
+#ifdef latest_bounds_learning
 		  }
 		  else{
 
 			  UB_Explanation = C;
 		  }
+#endif
+
 		  //HERE : How to backtrack ?
 		  if(max == min) upper_bound |= VALUE_EVENT;
 
@@ -1679,9 +1696,10 @@ namespace Mistral {
 		  trail_.pop(max);
 		  trail_.pop(min);
 
-
+#ifdef latest_bounds_learning
 		  if(!latest)
 		  {
+#endif
 			  int size = lowerbounds.size;
 			  while(size--)
 			  {
@@ -1720,12 +1738,15 @@ namespace Mistral {
 					  break;
 				  }
 			  }
+#ifdef latest_bounds_learning
 		  }
 		  else
 		  {
 			  explanation_trail.pop(UB_Explanation);
 			  explanation_trail.pop(LB_Explanation);
 		  }
+#endif
+
 		  return NO_EVENT;
 	  }
 
@@ -1740,10 +1761,12 @@ namespace Mistral {
 	  //Reasoning about latest changes
 	  Explanation* LB_Explanation;
 	  Explanation* UB_Explanation;
+
+
+#ifdef latest_bounds_learning
 	  bool latest;
-
-
 	    Vector<Explanation* > explanation_trail;
+#endif
 
   private:
 	  Vector<Explanation*> lower_bound_reasons;
