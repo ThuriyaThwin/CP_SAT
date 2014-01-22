@@ -1935,7 +1935,9 @@ void SchedulingSolver::setup() {
 //  std::cout << *this << std::endl;
 }
 
-SchedulingSolver::~SchedulingSolver() {}
+SchedulingSolver::~SchedulingSolver() {
+	delete pool;
+}
 
 
 // void No_wait_Model::setup(Instance& inst, ParameterList *params, const int max_makespan) {

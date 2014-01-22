@@ -106,7 +106,7 @@ int main( int argc, char** argv )
 
   // delete mod
   // delete model;
-
+  delete solver;
 }
   
 
