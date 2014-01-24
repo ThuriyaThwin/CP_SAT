@@ -5192,7 +5192,7 @@ void Mistral::Solver::fdlearn_nogood(){
 #ifdef _TRACKING_BOUND
 						Literal old = q;
 #endif
-
+/*
 						if ( static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->first_time_visited(is_lower_bound(q)) )
 						{
 							if (is_lower_bound(q))
@@ -5200,7 +5200,7 @@ void Mistral::Solver::fdlearn_nogood(){
 							else
 								Visited_upper_bound_variables.add(static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain));
 						}
-
+*/
 						bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->reason_for(q) ;
 						graph_size++;
 #ifdef 	_DEBUG_FD_NOGOOD
@@ -5858,7 +5858,7 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 #ifdef _TRACKING_BOUND
 						Literal old = q;
 #endif
-
+/*
 						if ( static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->first_time_visited(is_lower_bound(q)) )
 						{
 							if (is_lower_bound(q))
@@ -5866,7 +5866,7 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 							else
 								Visited_upper_bound_variables.add(static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain));
 						}
-
+*/
 						bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->reason_for(q) ;
 						graph_size++;
 #ifdef 	_DEBUG_FD_NOGOOD
@@ -9402,6 +9402,8 @@ void Mistral::Solver::set_fdlearning_on() {
 	visitedUpperBounds.initialise(0, start_from +1 , BitSet::empt);
 	visitedLowerBounds.initialise(0,  start_from +1 ,BitSet::empt);
 	bounds_under_exploration.initialise(0,  start_from +1 , BitSet::empt);
+	visitedUpperBoundvalues = new unsigned int [start_from +1 ];
+	visitedLowerBoundvalues = new unsigned int [start_from +1 ];
 
 
 	__failure=NULL;

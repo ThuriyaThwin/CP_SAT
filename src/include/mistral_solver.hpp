@@ -783,8 +783,8 @@ namespace Mistral {
     void learn_cycle_nogood(Literal * l);
 #endif
     //Data Structures needed with jsp_learn_nogood
-    Vector<VariableRangeWithLearning*> Visited_lower_bound_variables ;
-    Vector<VariableRangeWithLearning*> Visited_upper_bound_variables ;
+//    Vector<VariableRangeWithLearning*> Visited_lower_bound_variables ;
+//    Vector<VariableRangeWithLearning*> Visited_upper_bound_variables ;
     //start_from is the index of the first boolean variable in the sequence
     int start_from;
     //Here we suppose we index first range variables then boolean variables, hence start_from should be equal to nb_range_variables. I'll be back later to that
