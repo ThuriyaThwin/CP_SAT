@@ -2028,21 +2028,6 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 		{
 
 
-			//	if(latest_visited_upper_bound <= get_value_from_literal(l))
-			{
-
-				//		std::cout << "return NULL because the upper bound is already visited" << std::endl;
-				//		return NULL;
-			}
-			/*
-		std::cout << "no"<< std::endl;
-		std::cout << "l"<< l << std::endl;
-		std::cout << "value"<< get_value_from_literal(l) << std::endl;
-		std::cout << "upperbounds"<< upperbounds << std::endl;
-		std::cout << "upper_bound_reasons"<< upper_bound_reasons << std::endl;
-
-		std::cout << "upper_bound_reasons size"<< upper_bound_reasons.size << std::endl;
-			 */
 			size =upperbounds.size ;
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 			if (get_value_from_literal(l) < upperbounds[size-1])
@@ -2054,150 +2039,6 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 			while (size --)
 				if(upperbounds[size]> get_value_from_literal(l))
 				{
-
-
-#if _TRACKING_BOUND
-
-		if ((get_value_from_literal(l) ==_TRACKING_BOUND) && !(is_lower_bound(l)))
-			//		if ((get_value_from_literal(l) ==_TRACKING_BOUND) && (is_lower_bound(l)))
-		{
-			std::cout << " \n \n \n   \n                    tarcking bound : " << std::endl;
-			std::cout << "literal" << l << std::endl;
-			display(std::cout);
-			std::cout << " \n max " << max << std::endl;
-			std::cout << " \n min " << min << std::endl;
-			std::cout << "variable" << std::endl;
-			std::cout << "value" << get_value_from_literal(l) << std::endl;
-			std::cout << "lowerbounds "<< lowerbounds << std::endl;
-			std::cout << "upperbounds"<< upperbounds << std::endl;
-			std::cout << "upperbounds reasons "<< upper_bound_reasons << std::endl;
-			std::cout << "upperbounds reasons .size "<< upper_bound_reasons.size << std::endl;
-			std::cout << "lowerbounds reasons "<< lower_bound_reasons << std::endl;
-			std::cout << "lowerbounds reasons .size "<< lwoer_bound_reasons.size << std::endl;
-		}
-#endif
-
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-		for (int i=1; i < upperbounds_levels.size; ++i)
-			if (upperbounds_levels[i-1]>upperbounds_levels[i])
-			{
-				std::cout << "upperbounds_levels not ordered" << std::endl;
-				exit(1);
-			}
-
-		for (int i=1; i < lowerbounds_levels.size; ++i)
-			if (lowerbounds_levels[i-1]>lowerbounds_levels[i])
-			{
-				std::cout << "lowerbounds_levels not ordered" << std::endl;
-				exit(1);
-			}
-
-
-		for (int i=1; i < lowerbounds.size; ++i)
-			if (lowerbounds[i-1]>lowerbounds[i])
-			{
-				//			std::cout << "lowerbounds not ordered" << std::endl;
-				exit(1);
-			}
-
-		for (int i=1; i < upperbounds.size; ++i)
-			if (upperbounds[i-1]<upperbounds[i])
-			{
-				//			std::cout << "upperbounds not ordered" << std::endl;
-				exit(1);
-			}
-
-		if (upper_bound_reasons.size-upperbounds.size )
-		{
-			std::cout << "upperbounds size problem!" << std::endl;
-			exit(1);
-		}
-
-		if (lower_bound_reasons.size -lowerbounds.size )
-		{
-			std::cout << "lowerbounds size problem!" << std::endl;
-			exit(1);
-		}
-
-		if (lowerbounds_levels.size -lowerbounds.size )
-		{
-			std::cout << "lowerbounds_levels size problem!" << std::endl;
-			exit(1);
-		}
-
-		if (upperbounds_levels.size -upperbounds.size )
-		{
-			std::cout << "upperbounds_levels size problem!" << std::endl;
-			exit(1);
-		}
-#endif
-		int size;
-		if (is_lower_bound(l))
-		{
-			//	if	(latest_visited_lower_bound >= get_value_from_literal(l))
-			{
-
-				//		std::cout << "return NULL because the lower bound is already visited" << std::endl;
-				//		return NULL;
-			}
-			//		std::cout << "yes"<< std::endl;
-			//		std::cout << "l"<< l << std::endl;
-			//		std::cout << "lowerbounds "<< lowerbounds << std::endl;
-			//		std::cout << "lower_bound_reasons"<< lower_bound_reasons << std::endl;
-			size =lowerbounds.size ;
-
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-			if (get_value_from_literal(l) > lowerbounds[size-1])
-			{
-				std::cout << "We are explaining a future lower bound! The value to explain is " << get_value_from_literal(l)  << " while the history of lower bounds : "<< lowerbounds << std::endl;
-				exit(1);
-			}
-#endif
-			//		std::cout << "size" << size<< std::endl;
-			while (size --)
-				if(lowerbounds[size]< get_value_from_literal(l))
-				{
-
-					//			std::cout << " c lower bound found! " << std::endl;
-					//			if (upper_bound_reasons[size+1] == NULL)
-					//				std::cout << "c return NULL " << std::endl;
-					//			else
-					//				std::cout << " c return lowerbounds reason_for --> " << *lower_bound_reasons[size+1] << std::endl;
-					//	latest_visited_lower_bound = lowerbounds[size+1];
-					return lower_bound_reasons[size+1];
-				}
-		}
-		else
-		{
-
-
-			//	if(latest_visited_upper_bound <= get_value_from_literal(l))
-			{
-
-				//		std::cout << "return NULL because the upper bound is already visited" << std::endl;
-				//		return NULL;
-			}
-			/*
-		std::cout << "no"<< std::endl;
-		std::cout << "l"<< l << std::endl;
-		std::cout << "value"<< get_value_from_literal(l) << std::endl;
-		std::cout << "upperbounds"<< upperbounds << std::endl;
-		std::cout << "upper_bound_reasons"<< upper_bound_reasons << std::endl;
-
-		std::cout << "upper_bound_reasons size"<< upper_bound_reasons.size << std::endl;
-			 */
-			size =upperbounds.size ;
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-			if (get_value_from_literal(l) < upperbounds[size-1])
-			{
-				std::cout << "We are explaining a future upper bound! The value to explain is " << get_value_from_literal(l)  << " while the history of upper bounds : "<< upperbounds << std::endl;
-				exit(1);
-			}
-#endif
-			while (size --)
-				if(upperbounds[size]> get_value_from_literal(l))
-				{
-
 					//			std::cout << "c upperbound found" << size<< std::endl;
 					//			if (upper_bound_reasons[size+1] == NULL)
 					//				std::cout << "c return NULL " << std::endl;
@@ -2208,25 +2049,7 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 					//		latest_visited_upper_bound = upperbounds[size+1];
 					return upper_bound_reasons[size+1];
 				}
-
 		}
-
-		std::cout << "END ? " << std::endl;
-		exit(1);
-		//	return lower_bound_reasons[0];
-			//			std::cout << "c upperbound found" << size<< std::endl;
-					//			if (upper_bound_reasons[size+1] == NULL)
-					//				std::cout << "c return NULL " << std::endl;
-					//			else
-
-					//					std::cout <<" c return upperbounds reason_for --> " << *upper_bound_reasons[size+1] << std::endl;
-
-					//		latest_visited_upper_bound = upperbounds[size+1];
-					return upper_bound_reasons[size+1];
-				}
-
-		}
-
 		std::cout << "END ? " << std::endl;
 		exit(1);
 		//	return lower_bound_reasons[0];
