@@ -771,6 +771,12 @@ namespace Mistral {
     //FD learning
     void simple_fdlearn_nogood();
     void fdlearn_nogood();
+    void fdimprovedlearn_nogood();
+	BitSet visitedUpperBounds;
+	BitSet visitedLowerBounds;
+	BitSet bounds_under_exploration;
+	unsigned int * visitedUpperBoundvalues;
+	unsigned int * visitedLowerBoundvalues;
 #ifdef latest_bounds_learning
     bool propagate_literal_in_learnt_clause;
     void fdlearn_nogood_using_only_latest_bounds();
@@ -786,6 +792,9 @@ namespace Mistral {
     inline int get_id_boolean_variable (Literal literal ) {return ((literal /2) + start_from) ;}
     inline Literal encode_boolean_variable_as_literal (unsigned int id_var, int sign) {return (((id_var - start_from)*2 ) + sign);}
    // inline Literal encode_boolean_variable_as_literal_alongsideLatest (unsigned int id_var, int sign) {return (((id_var - start_from)*2 ) + sign);}
+    inline int get_index_of_variable(int var) {return (var>start_from ? start_from : var); }
+    inline int get_varID_from_index(int index) {return (index<start_from ? index : variables.size -1); }
+
     void treat_explanation(Explanation::iterator & lit, Explanation::iterator & stop, int& pathC );
 
     BranchingHeuristic *heuristic_factory(std::string var_ordering, std::string branching, const int randomness=1);
