@@ -5615,7 +5615,7 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 
 
 		int pathC = 0, index = sequence.size-1;
-		Literal p=0, q;
+		Literal p=0, q, to_be_explored;
 		Atom a = NULL_ATOM;
 		Variable x;
 		int lvl;
@@ -5854,9 +5854,9 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 					while (bound_literals_to_explore.size)
 					{
 						//should be checked
-						q= bound_literals_to_explore.pop();
+						to_be_explored= bound_literals_to_explore.pop();
 #ifdef _TRACKING_BOUND
-						Literal old = q;
+						Literal old = to_be_explored;
 #endif
 /*
 						if ( static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->first_time_visited(is_lower_bound(q)) )
@@ -5867,27 +5867,28 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 								Visited_upper_bound_variables.add(static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain));
 						}
 */
-						bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->reason_for(q) ;
+						bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
 						graph_size++;
+
+
 #ifdef 	_DEBUG_FD_NOGOOD
-						std::cout << "\n we will explain "<< q << std::endl;
+						std::cout << "\n we will explain "<< to_be_explored << std::endl;
 						std::cout << "which corresponds to " << std::endl;
-						std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-						std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-						std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+						std::cout << " Range variable id : "<< get_variable_from_literal(to_be_explored) << std::endl;
+						std::cout << " is a " << (is_lower_bound(to_be_explored) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+						std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(to_be_explored)].get_domain() << std::endl;
 #endif
-						if(bound_explanation)
-						{
+						while (bound_explanation){
 
 #ifdef 	_DEBUG_FD_NOGOOD
 							std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
 #endif
 							Explanation::iterator end_tmp_iterator;
 							//Note that we do not need the level here ! I should remove that later
-							Explanation::iterator start_tmp_iterator = bound_explanation->get_reason_for(q, level, end_tmp_iterator);
+							Explanation::iterator start_tmp_iterator = bound_explanation->get_reason_for(to_be_explored, level, end_tmp_iterator);
 
 							tmp = start_tmp_iterator;
-
+							bound_explanation = NULL;
 							while(tmp < end_tmp_iterator) {
 								q = *tmp;
 								++tmp;
@@ -5932,7 +5933,9 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 #endif
 
-									bound_literals_to_explore.add(q);
+									to_be_explored = q;
+									bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
+
 								}
 								else
 								{
