@@ -5649,6 +5649,8 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 		}
 		Explanation *bound_explanation;
 
+		int is_lb , var , val;
+
 		visitedUpperBounds.clear();
 		visitedLowerBounds.clear();
 		bounds_under_exploration.clear();
@@ -5807,7 +5809,45 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 							std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
 							std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 #endif
-							bound_literals_to_explore.add(q);
+				//			bound_literals_to_explore.add(q);
+
+					//		bound_literals_to_explore.add(q);
+							to_be_explored=q;
+							is_lb = is_lower_bound(to_be_explored);
+
+							if (is_lb)
+							{
+								var = get_variable_from_literal(to_be_explored);
+								val = get_value_from_literal(to_be_explored);
+								if (visitedLowerBounds.fast_contain(get_index_of_variable(var))){
+									if (visitedLowerBoundvalues[get_index_of_variable(var)] < val)
+										//bound_explanation= NULL;
+										//				bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
+										bound_literals_to_explore.add(q);
+								}
+								else
+									bound_literals_to_explore.add(q);
+							}
+							else
+							{
+								var = get_variable_from_literal(to_be_explored);
+								val = get_value_from_literal(to_be_explored);
+								if (visitedUpperBounds.fast_contain(get_index_of_variable(var))){
+									if (visitedUpperBoundvalues[get_index_of_variable(var)]>val)
+										bound_literals_to_explore.add(q);
+								}
+								else
+									bound_literals_to_explore.add(q);
+
+
+
+							}
+
+
+
+
+
+
 						}
 						else{
 							x = variables[get_id_boolean_variable(q)];
@@ -5853,6 +5893,9 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 					}
 					while (bound_literals_to_explore.size)
 					{
+
+						bounds_under_exploration.clear();
+
 						//should be checked
 						to_be_explored= bound_literals_to_explore.pop();
 #ifdef _TRACKING_BOUND
@@ -5867,9 +5910,15 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 								Visited_upper_bound_variables.add(static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain));
 						}
 */
-						bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
-						graph_size++;
 
+
+
+//						std::cout << " \n \n \n  \n \n \n  \n \n \n  \n \n \n  VISITED" <<visitedLowerBounds << std::endl;
+//						std::cout << " \n \n \n  \n \n \n  \n \n \n  \n \n \n  VISITED" <<visitedUpperBounds << std::endl;
+
+						bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
+
+						is_lb = is_lower_bound(to_be_explored);
 
 #ifdef 	_DEBUG_FD_NOGOOD
 						std::cout << "\n we will explain "<< to_be_explored << std::endl;
@@ -5879,6 +5928,12 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 						std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(to_be_explored)].get_domain() << std::endl;
 #endif
 						while (bound_explanation){
+							graph_size++;
+
+							var = get_variable_from_literal(to_be_explored);
+							val = get_value_from_literal(to_be_explored);
+							bounds_under_exploration.fast_add(get_index_of_variable(var));
+							boundvalues_under_exploration[get_index_of_variable(var)] = val;
 
 #ifdef 	_DEBUG_FD_NOGOOD
 							std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
@@ -5934,8 +5989,39 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 #endif
 
 									to_be_explored = q;
-									bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
 
+
+									if (is_lb)
+									{
+										var = get_variable_from_literal(to_be_explored);
+										val = get_value_from_literal(to_be_explored);
+										if (visitedLowerBounds.fast_contain(get_index_of_variable(var))){
+											if (visitedLowerBoundvalues[get_index_of_variable(var)]>= val)
+												bound_explanation= NULL;
+									//			bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
+
+											else
+												bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
+										}
+										else bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
+
+									}
+									else
+									{
+										var = get_variable_from_literal(to_be_explored);
+										val = get_value_from_literal(to_be_explored);
+										if (visitedUpperBounds.fast_contain(get_index_of_variable(var))){
+											if (visitedUpperBoundvalues[get_index_of_variable(var)]<= val)
+												bound_explanation= NULL;
+								//				bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
+
+											else
+												bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
+										}
+										else bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
+
+
+									}
 								}
 								else
 								{
@@ -5988,7 +6074,70 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 								}
 							}
 						}
+						if( !bounds_under_exploration.empty() )
+						{
+							//	std::cout << "bounds_under_exploration \n \n  " << bounds_under_exploration << std::endl;
 
+							if (is_lb)
+							{
+
+								//		for (int i = 0; i< bounds_under_exploration.size() ; ++i )
+								//			visitedLowerBoundvalues[bounds_under_exploration[i]] = boundvalues_under_exploration[bounds_under_exploration[i]];
+
+								/*
+
+								int last = NOVAL, cur=bounds_under_exploration.min(), aft;
+
+								//bool flag=false;
+								do{
+									aft = bounds_under_exploration.next(cur);
+
+									if(aft != cur+1 || cur != last+1)
+										visitedLowerBoundvalues[(int)cur] = boundvalues_under_exploration[(int)cur];
+
+									//	std::cout << "bounds_under_exploration de i ? " <<	(int)cur <<std::endl;
+									last = cur;
+									cur = aft;
+								} while( cur != NOVAL && cur != last );
+								 */
+								for (int i = 0; i< (start_from +1) ; ++i )
+									if (bounds_under_exploration.fast_contain(i))
+										visitedLowerBoundvalues[i] = boundvalues_under_exploration[i];
+
+								visitedLowerBounds.union_with(bounds_under_exploration);
+
+							}
+							else
+							{
+
+								//		for (int i = 0; i< bounds_under_exploration.size() ; ++i )
+								//			visitedUpperBoundvalues[bounds_under_exploration[i]] = boundvalues_under_exploration[bounds_under_exploration[i]];
+								/*
+								int last = NOVAL, cur=bounds_under_exploration.min(), aft;
+
+								//bool flag=false;
+								do{
+									aft = bounds_under_exploration.next(cur);
+
+									if(aft != cur+1 || cur != last+1)
+										visitedUpperBoundvalues[(int)cur] = boundvalues_under_exploration[(int)cur];
+
+									//	std::cout << "bounds_under_exploration de i ? " <<	(int)cur <<std::endl;
+									last = cur;
+									cur = aft;
+								} while( cur != NOVAL && cur != last );
+								 */
+								for (int i = 0; i< (start_from +1) ; ++i )
+									if (bounds_under_exploration.fast_contain(i))
+										visitedUpperBoundvalues[i] = boundvalues_under_exploration[i];
+
+
+								visitedUpperBounds.union_with(bounds_under_exploration);
+
+
+							}
+							bounds_under_exploration.clear();
+						}
 					}
 
 				}
@@ -6136,10 +6285,10 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 					exit(1);
 				}
 			}
-
-
 			//		std::cout << "latest before while =" << pathC << std::endl;
 		} while( --pathC );
+
+//		std::cout << " \n \n \n  \n \n \n  \n \n \n  \n \n \n  " << std::endl;
 
 		//		std::cout << "after while !!!!! " << std::endl;
 		//		std::cout << "\n p =" << p << std::endl;
@@ -9407,6 +9556,7 @@ void Mistral::Solver::set_fdlearning_on() {
 	bounds_under_exploration.initialise(0,  start_from +1 , BitSet::empt);
 	visitedUpperBoundvalues = new unsigned int [start_from +1 ];
 	visitedLowerBoundvalues = new unsigned int [start_from +1 ];
+	boundvalues_under_exploration = new unsigned int [start_from +1 ];
 
 
 	__failure=NULL;

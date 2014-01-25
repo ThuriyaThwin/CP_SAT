@@ -777,6 +777,7 @@ namespace Mistral {
 	BitSet bounds_under_exploration;
 	unsigned int * visitedUpperBoundvalues;
 	unsigned int * visitedLowerBoundvalues;
+	unsigned int * boundvalues_under_exploration;
 #ifdef latest_bounds_learning
     bool propagate_literal_in_learnt_clause;
     void fdlearn_nogood_using_only_latest_bounds();
