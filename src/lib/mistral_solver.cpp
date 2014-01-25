@@ -5820,7 +5820,7 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 								var = get_variable_from_literal(to_be_explored);
 								val = get_value_from_literal(to_be_explored);
 								if (visitedLowerBounds.fast_contain(get_index_of_variable(var))){
-									if (visitedLowerBoundvalues[get_index_of_variable(var)] < val)
+									//if (visitedLowerBoundvalues[get_index_of_variable(var)] < val)
 										//bound_explanation= NULL;
 										//				bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
 										bound_literals_to_explore.add(q);
@@ -5833,7 +5833,7 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 								var = get_variable_from_literal(to_be_explored);
 								val = get_value_from_literal(to_be_explored);
 								if (visitedUpperBounds.fast_contain(get_index_of_variable(var))){
-									if (visitedUpperBoundvalues[get_index_of_variable(var)]>val)
+						//			if (visitedUpperBoundvalues[get_index_of_variable(var)]>val)
 										bound_literals_to_explore.add(q);
 								}
 								else
@@ -5998,7 +5998,7 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 										if (visitedLowerBounds.fast_contain(get_index_of_variable(var))){
 											if (visitedLowerBoundvalues[get_index_of_variable(var)]>= val)
 												bound_explanation= NULL;
-									//			bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
+											//	bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
 
 											else
 												bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
@@ -6013,7 +6013,7 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 										if (visitedUpperBounds.fast_contain(get_index_of_variable(var))){
 											if (visitedUpperBoundvalues[get_index_of_variable(var)]<= val)
 												bound_explanation= NULL;
-								//				bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
+											//	bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
 
 											else
 												bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
