@@ -772,6 +772,10 @@ namespace Mistral {
     void simple_fdlearn_nogood();
     void fdlearn_nogood();
     void fdimprovedlearn_nogood();
+    void learn_withoutClosingPropagation();
+	Vector<Literal> graph_premise ;
+	Vector<Literal> graph_implied;
+
 	BitSet visitedUpperBounds;
 	BitSet visitedLowerBounds;
 	BitSet bounds_under_exploration;
