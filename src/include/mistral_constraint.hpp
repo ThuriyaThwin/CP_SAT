@@ -5024,6 +5024,87 @@ std::cout << "[" << std::setw(4) << id << "](" << name() << "): restore" << std:
   };
 
 
+  /***********************************************
+   * DomainFaithfulnessConstraint (lazy encoding of bound literals).
+   ***********************************************/
+  /*! \class DomainFaithfulness
+    \brief  lazy encoding of bound literals).
+  */
+
+  struct __boundLiteral
+  {
+      int value;
+      Variable x;
+
+      __boundLiteral(int k, const Variable& _x) : value(k), x(_x) {}
+
+      __boundLiteral() {}
+
+      bool operator < (const __boundLiteral& bound) const
+      {
+          return (value < bound.value);
+      }
+      bool operator > (const __boundLiteral& bound) const
+      {
+          return (value > bound.value);
+      }
+  };
+
+
+  std::ostream& operator<< (std::ostream& os, const __boundLiteral & x) ;
+
+
+  class DomainFaithfulnessConstraint : public GlobalConstraint {
+
+  public:
+
+
+	 // Vector<__boundLiteral> lb;
+	  Vector<__boundLiteral> ub;
+	  VariableRangeWithLearning * _x;
+	  DomainFaithfulnessConstraint() : GlobalConstraint() { //priority = 2;?
+	  }
+	  DomainFaithfulnessConstraint(Vector< Variable >& scp);
+	  DomainFaithfulnessConstraint(Variable x){
+		  scope.add(x);
+		  _x =   static_cast<VariableRangeWithLearning*>(x.range_domain) ;
+		  _x-> domainConstraint = this;
+
+	//		 lb.clear();
+			 ub.clear();
+
+		  //	  solver->DomainFaithfulnessList.resize( x.id() +1);
+		  //	  solver->DomainFaithfulnessList[x.id()] = this;
+	  }
+
+
+
+	  void extend_scope(Variable x, int value);
+	  virtual Constraint clone() { return Constraint(new DomainFaithfulnessConstraint(scope)); }
+	  virtual void initialise();
+	  virtual void mark_domain();
+	  virtual int idempotent() { return 1;}
+	  virtual int postponed() { return 1;}
+	  virtual int pushed() { return 1;}
+	  virtual ~DomainFaithfulnessConstraint();
+	  //@}
+
+	  /**@name Solving*/
+	  //@{
+	  virtual int check( const int* sol ) const ;
+	  virtual PropagationOutcome propagate();
+	  //virtual PropagationOutcome propagate(const int changed_idx, const Event evt);
+	  //virtual RewritingOutcome rewrite();
+	  //@}
+
+	  /**@name Miscellaneous*/
+	  //@{
+	  virtual std::ostream& display(std::ostream&) const ;
+	  virtual std::string name() const { return "{DomainFaithfulnessConstraint}"; }
+	  //@}
+
+  };
+
 
 
   std::ostream& operator<< (std::ostream& os, const Constraint& x);

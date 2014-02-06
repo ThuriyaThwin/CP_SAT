@@ -1525,6 +1525,8 @@ namespace Mistral {
     }
   };
 
+
+  class DomainFaithfulnessConstraint;
   class VariableRangeWithLearning : public VariableRange {
 
   public:
@@ -1576,6 +1578,7 @@ namespace Mistral {
 	  void initialise_latest_visited_upper_bounds () {latest_visited_upper_bound = INFTY;}
 	  void initialise_latest_visited_lower_bounds () {latest_visited_lower_bound = -INFTY;}
 	  bool first_time_visited (bool is_a_lowerbound) ;
+	  DomainFaithfulnessConstraint* domainConstraint;
 
 //	  bool set_visited(unsigned int literal);
 	  /// Remove all values strictly lower than l
@@ -3230,6 +3233,26 @@ namespace Mistral {
   };
 
   Variable Parity(Vector< Variable >& args, const int l=0);
+
+
+  class DomainFaithfulnessExpression : public Expression {
+
+  public:
+
+    int spin;
+    int offset;
+
+    DomainFaithfulnessExpression(Variable X);
+    virtual ~DomainFaithfulnessExpression();
+
+    virtual void extract_constraint(Solver*);
+    virtual void extract_variable(Solver*);
+    //virtual void extract_predicate(Solver*);
+    virtual const char* get_name() const;
+
+  };
+
+  Variable DomainFaithfulness(Variable X);
 
 
   class BoolSumExpression : public Expression {

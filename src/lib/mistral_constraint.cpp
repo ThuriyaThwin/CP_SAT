@@ -14099,6 +14099,205 @@ std::ostream& Mistral::ConstraintCliqueNotEqual::display(std::ostream& os) const
 }
 
 
+
+
+/**********************************************
+ * DomainFaithfulnessConstraint
+ **********************************************/
+
+
+Mistral::DomainFaithfulnessConstraint::DomainFaithfulnessConstraint(Vector< Variable >& scp)
+: GlobalConstraint(scp) { //priority = 2;
+
+	if (scp.size == 1){
+		_x =   static_cast<VariableRangeWithLearning*>(scp[0].range_domain) ;
+	_x-> domainConstraint = this;
+	}
+	else
+	{
+		std::cout << "_not supported yet    \n ";
+		exit(1);
+	}
+	//lb.clear();
+	ub.clear();
+
+}
+
+
+void Mistral::DomainFaithfulnessConstraint::initialise() {
+  ConstraintImplementation::initialise();
+  for(unsigned int i=0; i<scope.size; ++i) {
+    trigger_on(_VALUE_, scope[i]);
+  }
+  GlobalConstraint::initialise();
+  //GlobalConstraint::set_idempotent(true);
+}
+
+void Mistral::DomainFaithfulnessConstraint::mark_domain() {
+  for(unsigned int i=scope.size; i;) {
+    //get_solver()->mark_non_convex(scope[i].id());
+    get_solver()->forbid(scope[--i].id(), LIST_VAR);
+  }
+}
+
+Mistral::DomainFaithfulnessConstraint::~DomainFaithfulnessConstraint()
+{
+#ifdef _DEBUG_MEMORY
+	  std::cout << "c delete DomainFaithfulnessConstraint constraint" << std::endl;
+#endif
+}
+
+
+
+
+Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
+	PropagationOutcome wiped = CONSISTENT;
+
+	std::cout << " \n propagate DomainFaithfulnessConstraint \n ub " <<  ub << std::endl;
+
+	int _lb = scope[0].get_min();
+	int _ub = scope[0].get_max();
+	int index_lb = ub.size +1 , index_ub = -2, latestindex_lb, latestindex_ub;
+
+
+	//Use the current lb to enforce bound literals to be false
+	for (int i = 0; i< ub.size ; ++i)
+		if (ub[i].value >= _lb){
+			index_lb =i;
+			break;
+		}
+		else
+			if( ub[i].x.set_domain(0) == FAIL_EVENT) {
+				for (int j=1; j< scope.size ; ++j)
+					if (scope[j].id()== ub[i].x.id())
+					{
+						wiped = FAILURE(j);
+						//	break; ?
+					}
+			}
+
+	std::cout << " index_lb " << index_lb <<std::endl;
+	if (index_lb < ub.size)
+		std::cout << " index_lb " << ub[index_lb] <<std::endl;
+
+	//Use the current ub to enforce bound literals to be true
+
+
+	int idx = ub.size;
+
+	while (idx--){
+		if (ub[idx].value < _ub ){
+			index_ub = idx;
+			break;
+		}
+		else
+			if( ub[idx].x.set_domain(1) == FAIL_EVENT) {
+				for (int j=1; j< scope.size ; ++j)
+					if (scope[j].id()== ub[idx].x.id()){
+						wiped = FAILURE(j);
+						break;
+					}
+			}
+
+		//latestindex_lb = index_lb -1;
+		//latestindex_ub = index_ub +1;
+
+	}
+
+
+	std::cout << " index_ub " << index_ub <<std::endl;
+	if (index_lb >= 0 )
+		std::cout << " index_ub " << ub[index_ub] <<std::endl;
+
+	latestindex_lb = index_lb -1;
+	latestindex_ub = index_ub +1;
+
+
+	for (int i = index_lb; i< ub.size ; ++i)
+		if (ub[i].x.is_ground())
+			if (!ub[i].x.get_min())
+				latestindex_lb = i;
+
+
+
+	idx = index_ub +1;
+	while (idx--){
+		if (ub[idx].x.is_ground())
+			if (ub[idx].x.get_min())
+				latestindex_ub = idx;
+	}
+
+
+
+	std::cout << " latestindex_lb " << latestindex_lb <<std::endl;
+	if (latestindex_lb < ub.size)
+		std::cout << " latestindex_lb " << ub[latestindex_lb] <<std::endl;
+	std::cout << " latestindex_ub " << latestindex_ub <<std::endl;
+
+	if (latestindex_ub >= 0 &&  latestindex_ub < ub.size)
+		std::cout << " latestindex_ub " << ub[latestindex_ub] <<std::endl;
+
+
+	for (int i = index_lb ; i <latestindex_lb ;  ++i)
+		if( ub[i].x.set_domain(0) == FAIL_EVENT) {
+			for (int j=1; j< scope.size ; ++j)
+				if (scope[j].id()== ub[i].x.id())
+					wiped = FAILURE(j);
+		}
+
+
+	idx = index_ub - latestindex_ub +1;
+	while (idx--){
+		if( ub[index_ub-idx].x.set_domain(1) == FAIL_EVENT) {
+			for (int j=1; j< scope.size ; ++j)
+				if (scope[j].id()== ub[index_ub-idx].x.id())
+					wiped = FAILURE(j);
+		}
+	}
+
+
+	if (latestindex_lb >= index_lb && latestindex_lb < ub.size )
+		if(_x->set_min(ub[latestindex_lb].value +1  ,this ) == FAIL_EVENT) wiped = FAILURE(0);
+
+	if (latestindex_ub <= index_ub && latestindex_ub >=0 )
+		if(_x->set_max(ub[latestindex_ub].value ,this ) == FAIL_EVENT) wiped = FAILURE(0);
+
+
+	return wiped;;
+}
+
+int Mistral::DomainFaithfulnessConstraint::check( const int* s ) const
+{
+  return 0;
+}
+
+std::ostream& Mistral::DomainFaithfulnessConstraint::display(std::ostream& os) const {
+  os << "DomainFaithfulnessConstraint(" << scope[0] << " : " /*.get_var()*/ ;
+  for(unsigned int i=1; i<scope.size; ++i)
+    os << ", " << scope[i]/*.get_var()*/;
+  os << ")" ; //<< events << " " << event_type;
+  return os;
+}
+
+
+
+void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable x, int value){
+
+	ub.add(__boundLiteral(value,x));
+	ub.sort();
+	scope.add(x);
+	trigger_on(_VALUE_, scope[scope.size -1]);
+}
+
+
+
+std::ostream& Mistral::operator<< (std::ostream& os, const Mistral::__boundLiteral & x) {
+	 os << x.value << "--" << x.x.id() ;
+	return os;
+}
+
+
+
 /**********************************************
  * Multi-AtMostSeqCard Constraint 
  **********************************************/

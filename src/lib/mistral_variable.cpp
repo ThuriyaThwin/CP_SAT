@@ -4297,6 +4297,37 @@ Mistral::Variable Mistral::ExplainedPrecedence(Variable X, const int d, Variable
 
 
 
+Mistral::DomainFaithfulnessExpression::DomainFaithfulnessExpression(Variable X)
+  : Expression(X) { }
+
+Mistral::DomainFaithfulnessExpression::~DomainFaithfulnessExpression() {
+#ifdef _DEBUG_MEMORY
+  std::cout << "c delete precedence expression" << std::endl;
+#endif
+}
+
+void Mistral::DomainFaithfulnessExpression::extract_constraint(Solver *s) {
+    s->add(Constraint(new DomainFaithfulnessConstraint(children)));// , (BINARY|IDEMPOTENT)
+}
+
+void Mistral::DomainFaithfulnessExpression::extract_variable(Solver *s) {
+	  std::cerr << "Error: DomainFaithfulnessExpression constraint can't yet be used as a predicate" << std::endl;
+}
+
+const char* Mistral::DomainFaithfulnessExpression::get_name() const {
+  return "DomainFaithfulnessExpression";
+}
+
+Mistral::Variable Mistral::DomainFaithfulness(Variable X)
+{
+  Variable exp(new DomainFaithfulnessExpression(X));
+  return exp;
+}
+
+
+
+
+
 Mistral::Variable Mistral::Variable::operator<(Variable x) {
   Variable exp(new PrecedenceExpression(*this,x,1));
   return exp;
