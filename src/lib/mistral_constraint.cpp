@@ -195,7 +195,7 @@ bool Mistral::ConstraintImplementation::is_triggered_on(const int i, const int t
   // 	    << (int*)(&(get_solver()->constraint_graph[_scope[i].id()].on[t])) 
   // 	    << (on[i] >= &(get_solver()->constraint_graph[_scope[i].id()].on[t]) ? " yes" : " no") << std::endl;
 
-  
+
 
 
   return( on[i] >= &(get_solver()->constraint_graph[_scope[i].id()].on[t]) );
@@ -14111,7 +14111,7 @@ Mistral::DomainFaithfulnessConstraint::DomainFaithfulnessConstraint(Vector< Vari
 
 	if (scp.size == 1){
 		_x =   static_cast<VariableRangeWithLearning*>(scp[0].range_domain) ;
-	_x-> domainConstraint = this;
+		_x-> domainConstraint = this;
 	}
 	else
 	{
@@ -14120,30 +14120,157 @@ Mistral::DomainFaithfulnessConstraint::DomainFaithfulnessConstraint(Vector< Vari
 	}
 	//lb.clear();
 	ub.clear();
-
+	eager_explanations.clear();
+	eager_explanations.add(NULL_ATOM);
 }
 
 
 void Mistral::DomainFaithfulnessConstraint::initialise() {
-  ConstraintImplementation::initialise();
-  for(unsigned int i=0; i<scope.size; ++i) {
-    trigger_on(_VALUE_, scope[i]);
-  }
-  GlobalConstraint::initialise();
-  //GlobalConstraint::set_idempotent(true);
+	ConstraintImplementation::initialise();
+	for(unsigned int i=0; i<scope.size; ++i) {
+		trigger_on(_VALUE_, scope[i]);
+	}
+	GlobalConstraint::initialise();
+	//GlobalConstraint::set_idempotent(true);
 }
 
+
+void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable x, int value){
+
+	ub.add(__boundLiteral(value,x));
+	ub.sort();
+	scope.add(x);
+	trigger_on(_VALUE_, scope[scope.size -1]);
+	eager_explanations.add(NULL_ATOM);
+
+
+	Event * tmp_event_type = new Event[on.size];
+	int * tmp_solution = new int[scope.size];
+	Constraint* tmpself = new Constraint[on.size];
+	int*  tmpindex = new int[on.size];
+
+
+	for(unsigned int i=0; i<on.size; ++i)
+		tmp_event_type[i] = tmp_event_type[i];
+
+	delete [] event_type;
+	event_type = tmp_event_type;
+
+
+	for(unsigned int i=0; i<on.size; ++i)
+		tmp_solution[i] = solution[i];
+
+	delete [] solution;
+	solution = tmp_solution;
+
+
+	for(unsigned int i=0; i<on.size; ++i)
+		tmpself[i] = self[i];
+
+	delete [] self;
+	self = tmpself;
+
+	for(unsigned int i=0; i<on.size; ++i)
+		tmpindex[i] = index[i];
+
+	delete [] index;
+	index = tmpindex;
+
+
+	// changes and active?
+	//	changes.initialise(0, scope.size-1, scope.size, false);
+	//	active.initialise(solver, 0, on.size-1, on.size, true);
+
+
+	//	active.extend(on.size);
+	//	active.reversible_add(on.size-1);
+
+	//	std::fill(index+on.size-1, index_+on.size, -1);
+
+
+	// First we go through the variables to check whether they are ground.
+	// If so, we "desactivate" the corresponding var index.
+	// Also, if there is only one active variable and the constraint enforces nfc1, we do not post it at all.
+
+	/*
+	//check nb_actives!!
+	int nb_actives = on.size;
+//  for(unsigned int i=0; i<on.size; ++i) {
+  int i = on.size -1;
+  index[i] = -1;
+    self[i] = Constraint(this, i|type);
+    //??
+
+   // if(_scope[i].is_ground()) {
+   //   --nb_actives;
+   //   desactivate(i);
+   // }
+
+//  }
+
+  // Now we post the constraint on the active variables (provided that there are at least 2)
+ // if(!enforce_nfc1 || nb_actives>1) {
+    Constraint c;
+
+//    for(unsigned int i=0; i<on.size; ++i) {
+      //if(!(_scope[i].is_ground())) {
+      //std::cout << _scope[i] << " "  << (on[i] != NULL) << " " << _scope[i].get_min() << ".." << _scope[i].get_max() << std::endl;
+    i = on.size -1;
+      if(on[i]) {
+
+        c = self[i];
+	c.data |= POSTED;
+
+//	solver->save( c );
+
+
+	//un_relax_from(i);
+	check_and_un_relax_from(i);
+      }
+ //   }
+ // }
+
+	 */
+
+	//  with post :
+
+
+	// save
+	//  solver->save( Constraint(this, type|POSTED) );
+	//solver->save( Constraint(this, type|2) );
+
+	//      active.fill(); ??
+	//      for(int i=on.size; --i>=0;) {
+	//HERE
+	//int i = on.size -1;
+
+	//	 active.initialise(solver, 0, on.size-1, on.size, true);
+	//HERE
+	//self[i] = Constraint(this, i|type);
+	/*if(scope[i].is_ground()) {
+		active.reversible_remove(i);
+		index[i] = -1;
+	} else {
+	 */
+	//HEHE
+	//index[i] = on[i]->post(self[i]);
+	//}
+	//    }
+}
+
+
+
 void Mistral::DomainFaithfulnessConstraint::mark_domain() {
-  for(unsigned int i=scope.size; i;) {
-    //get_solver()->mark_non_convex(scope[i].id());
-    get_solver()->forbid(scope[--i].id(), LIST_VAR);
-  }
+	for(unsigned int i=scope.size; i;) {
+		//get_solver()->mark_non_convex(scope[i].id());
+		get_solver()->forbid(scope[--i].id(), LIST_VAR);
+	}
 }
 
 Mistral::DomainFaithfulnessConstraint::~DomainFaithfulnessConstraint()
 {
 #ifdef _DEBUG_MEMORY
-	  std::cout << "c delete DomainFaithfulnessConstraint constraint" << std::endl;
+	std::cout << "c delete DomainFaithfulnessConstraint constraint" << std::endl;
 #endif
 }
 
@@ -14167,14 +14294,35 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 			break;
 		}
 		else
-			if( ub[i].x.set_domain(0) == FAIL_EVENT) {
-				for (int j=1; j< scope.size ; ++j)
-					if (scope[j].id()== ub[i].x.id())
-					{
-						wiped = FAILURE(j);
-						//	break; ?
-					}
+			if(!ub[i].x.is_ground())
+			{
+				if( ub[i].x.set_domain(0) == FAIL_EVENT) {
+					for (int j=1; j< scope.size ; ++j)
+						if (scope[j].id()== ub[i].x.id())
+						{
+							wiped = FAILURE(j);
+							//	break; ?
+						}
+				}
+				else{
+					for (int j = 0; j< scope.size; ++j)
+						if ( scope[j].id() == ub[i].x.id()){
+							eager_explanations[j]=encode_bound_literal(scope[0].id(), _lb, 0);
+							break;
+						}
+				}
 			}
+			else{
+				if( ub[i].x.set_domain(0) == FAIL_EVENT) {
+					for (int j=1; j< scope.size ; ++j)
+						if (scope[j].id()== ub[i].x.id())
+						{
+							wiped = FAILURE(j);
+							//	break; ?
+						}
+				}
+			}
+
 
 	std::cout << " index_lb " << index_lb <<std::endl;
 	if (index_lb < ub.size)
@@ -14191,13 +14339,29 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 			break;
 		}
 		else
-			if( ub[idx].x.set_domain(1) == FAIL_EVENT) {
-				for (int j=1; j< scope.size ; ++j)
-					if (scope[j].id()== ub[idx].x.id()){
-						wiped = FAILURE(j);
-						break;
-					}
+			if(!ub[idx].x.is_ground()){
+				if( ub[idx].x.set_domain(1) == FAIL_EVENT) {
+					for (int j=1; j< scope.size ; ++j)
+						if (scope[j].id()== ub[idx].x.id()){
+							wiped = FAILURE(j);
+							break;
+						}
+				}
+				else
+					for (int j = 0; j< scope.size; ++j)
+						if ( scope[j].id() == ub[idx].x.id()){
+							eager_explanations[j]=encode_bound_literal(scope[0].id(), _ub, 1);
+							break;
+						}
 			}
+			else
+				if( ub[idx].x.set_domain(1) == FAIL_EVENT) {
+					for (int j=1; j< scope.size ; ++j)
+						if (scope[j].id()== ub[idx].x.id()){
+							wiped = FAILURE(j);
+							break;
+						}
+				}
 
 		//latestindex_lb = index_lb -1;
 		//latestindex_ub = index_ub +1;
@@ -14236,15 +14400,34 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 	if (latestindex_ub >= 0 &&  latestindex_ub < ub.size)
 		std::cout << " latestindex_ub " << ub[latestindex_ub] <<std::endl;
-
+	Literal tmp;
+	if (latestindex_lb < ub.size)
+		tmp = 	2*  ub[latestindex_lb].x.id() +1;
 
 	for (int i = index_lb ; i <latestindex_lb ;  ++i)
-		if( ub[i].x.set_domain(0) == FAIL_EVENT) {
-			for (int j=1; j< scope.size ; ++j)
-				if (scope[j].id()== ub[i].x.id())
-					wiped = FAILURE(j);
+		if(!ub[i].x.is_ground()){
+			if( ub[i].x.set_domain(0) == FAIL_EVENT) {
+				for (int j=1; j< scope.size ; ++j)
+					if (scope[j].id()== ub[i].x.id())
+						wiped = FAILURE(j);
+			}
+			else
+				for (int j = 0; j< scope.size; ++j)
+					if ( scope[j].id() == ub[i].x.id()){
+						eager_explanations[j]=tmp;
+						break;
+					}
 		}
+		else
+			if( ub[i].x.set_domain(0) == FAIL_EVENT) {
+				for (int j=1; j< scope.size ; ++j)
+					if (scope[j].id()== ub[i].x.id())
+						wiped = FAILURE(j);
+			}
 
+
+	if (latestindex_ub >= 0 &&  latestindex_ub < ub.size)
+		tmp = 	2*  ub[latestindex_ub].x.id();
 
 	idx = index_ub - latestindex_ub +1;
 	while (idx--){
@@ -14253,6 +14436,12 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 				if (scope[j].id()== ub[index_ub-idx].x.id())
 					wiped = FAILURE(j);
 		}
+		else
+			for (int j = 0; j< scope.size; ++j)
+				if ( scope[j].id() == ub[index_ub-idx].x.id()){
+					eager_explanations[j]=tmp;
+					break;
+				}
 	}
 
 
@@ -14268,31 +14457,69 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 int Mistral::DomainFaithfulnessConstraint::check( const int* s ) const
 {
-  return 0;
+	return 0;
 }
 
 std::ostream& Mistral::DomainFaithfulnessConstraint::display(std::ostream& os) const {
-  os << "DomainFaithfulnessConstraint(" << scope[0] << " : " /*.get_var()*/ ;
-  for(unsigned int i=1; i<scope.size; ++i)
-    os << ", " << scope[i]/*.get_var()*/;
-  os << ")" ; //<< events << " " << event_type;
-  return os;
+	os << "DomainFaithfulnessConstraint(" << scope[0] << " : " /*.get_var()*/ ;
+	for(unsigned int i=1; i<scope.size; ++i)
+		os << ", " << scope[i]/*.get_var()*/;
+	os << ")" ; //<< events << " " << event_type;
+	return os;
 }
 
 
 
-void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable x, int value){
 
-	ub.add(__boundLiteral(value,x));
-	ub.sort();
-	scope.add(x);
-	trigger_on(_VALUE_, scope[scope.size -1]);
+
+
+Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason_for(const Atom a, const int lvl, iterator& end){
+
+	std::cout <<" \n \n \DomainFaithfulnessConstraint  get_reason_for "  << std::endl;
+
+	if(a == NULL_ATOM) {
+		/*
+		int tmp = -1;
+		explanation[++tmp] = encode_bound_literal(scope[0].id(),scope[0].get_min(),0 ) ;
+		explanation[++tmp] =  encode_bound_literal(scope[0].id(),scope[0].get_max(),1) ;
+		end = &(explanation[0])+tmp+1;
+		 */
+		std::cout <<" \n \n \Failure : NOT YET "  << std::endl;
+		exit(1);
+	}
+	else
+	{
+
+		if (is_a_bound_literal(a)){
+			std::cout <<" \n \n \Failure : NOT YET "  << std::endl;
+			exit(1);
+		}
+
+		//		int id = a/2 ;
+		int id = a ;
+
+		for (int i = 0 ; i < scope.size; ++i)
+			if (scope[i].id() == id) {
+				explanation[0] = eager_explanations[i];
+				break;
+			}
+
+		/*
+		for int (i= 1 ; i< scope.size ; ++i)
+				if (  == scope[0].id())
+					explanation[0] = NOT ( ((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), 1));
+		explanation[1] = encode_bound_literal(scope[1].id(),get_value_from_literal(a)+processing_time[0],1 ) ;
+		end = &(explanation[0])+2;
+		 */
+		end = &(explanation[0])+1;
+	}
+	return &(explanation[0]);
+
 }
-
 
 
 std::ostream& Mistral::operator<< (std::ostream& os, const Mistral::__boundLiteral & x) {
-	 os << x.value << "--" << x.x.id() ;
+	os << x.value << "--" << x.x.id() ;
 	return os;
 }
 

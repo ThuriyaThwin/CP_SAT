@@ -5070,9 +5070,11 @@ std::cout << "[" << std::setw(4) << id << "](" << name() << "): restore" << std:
 		  _x =   static_cast<VariableRangeWithLearning*>(x.range_domain) ;
 		  _x-> domainConstraint = this;
 
-	//		 lb.clear();
-			 ub.clear();
+		  //		 lb.clear();
+		  ub.clear();
 
+		  eager_explanations.clear();
+		  eager_explanations.add(NULL_ATOM);
 		  //	  solver->DomainFaithfulnessList.resize( x.id() +1);
 		  //	  solver->DomainFaithfulnessList[x.id()] = this;
 	  }
@@ -5102,6 +5104,17 @@ std::cout << "[" << std::setw(4) << id << "](" << name() << "): restore" << std:
 	  virtual std::ostream& display(std::ostream&) const ;
 	  virtual std::string name() const { return "{DomainFaithfulnessConstraint}"; }
 	  //@}
+
+
+
+	  virtual bool explained() { return true; }
+	  virtual iterator get_reason_for(const Atom a, const int lvl, iterator& end);
+	  //virtual iterator get_bound_reason_for(const Literal l, iterator& end);
+
+	  Literal explanation[2];
+
+	  Vector<Literal> eager_explanations;
+
 
   };
 
