@@ -773,6 +773,7 @@ namespace Mistral {
     void fdlearn_nogood();
     void fdimprovedlearn_nogood();
     void learn_withoutClosingPropagation();
+    void learn_with_lazygeneration();
 	Vector<Literal> graph_premise ;
 	Vector<Literal> graph_implied;
 

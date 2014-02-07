@@ -14177,6 +14177,15 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable x, int value){
 	index = tmpindex;
 
 
+
+
+	int i = on.size -1;
+	self[i] = Constraint(this, i|type);
+	index[i] = on[i]->post(self[i]);
+
+
+
+
 	// changes and active?
 	//	changes.initialise(0, scope.size-1, scope.size, false);
 	//	active.initialise(solver, 0, on.size-1, on.size, true);
@@ -14475,8 +14484,22 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 	return wiped;;
 }
 
-int Mistral::DomainFaithfulnessConstraint::check( const int* s ) const
-{
+int Mistral::DomainFaithfulnessConstraint::check( const int* s ) const {
+
+	int v = s[0];
+	int value;
+
+	for (int i = 1 ; i < scope.size ; ++i)
+		for (int j = 0; j < ub.size; ++j)
+			if (ub[j].x.id() == scope [i].id()){
+				value = ub[j].value;
+				if (s[i] && v > value)
+					return 1;
+				if (!s[i] && v < value)
+					return 1 ;
+				break;
+			}
+
 	return 0;
 }
 

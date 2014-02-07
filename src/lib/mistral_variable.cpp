@@ -1854,6 +1854,32 @@ int Mistral::VariableImplementation::assigned_at_last_level() const {
   return ((Solver*)solver)->assignment_level[id] == solver->level;
 }
 
+bool Mistral::VariableRangeWithLearning::should_be_learnt (Literal q) {
+	int previsouslevel;
+
+	int value = get_value_from_literal(q);
+	if (is_lower_bound(q)){
+		previsouslevel = trail_[trail_.size - 3];
+		return (value <= previsouslevel);
+
+	}
+	else{
+		previsouslevel = trail_[trail_.size - 2];
+
+		return (value >= previsouslevel);
+	}
+
+	/*
+	  previsouslevel_lb;
+	  int previsouslevel_ub;
+		solver->save(id);
+		trail_.add(min);
+		trail_.add(max);
+		trail_.add(solver->level);
+	 */
+
+}
+
 
 bool Mistral::VariableRangeWithLearning::first_time_visited (bool is_a_lowerbound) {
 	if (is_a_lowerbound)

@@ -1579,6 +1579,8 @@ namespace Mistral {
 	  void initialise_latest_visited_lower_bounds () {latest_visited_lower_bound = -INFTY;}
 	  bool first_time_visited (bool is_a_lowerbound) ;
 	  DomainFaithfulnessConstraint* domainConstraint;
+	  bool should_be_learnt(Literal q);
+
 
 //	  bool set_visited(unsigned int literal);
 	  /// Remove all values strictly lower than l
