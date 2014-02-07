@@ -14450,26 +14450,26 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 	tmpclause.add (tmp);
 
-   Clause *cl = (Clause*)(Clause::Array_new(tmpclause));
+	Clause *cl = (Clause*)(Clause::Array_new(tmpclause));
 
 
 
-   if (latestindex_lb >= index_lb && latestindex_lb < ub.size )
-	   //		if(_x->set_min(ub[latestindex_lb].value +1  ,this ) == FAIL_EVENT) wiped = FAILURE(0);
-	   if(_x->set_min(ub[latestindex_lb].value +1  ,cl ) == FAIL_EVENT) wiped = FAILURE(0);
+	if (latestindex_lb >= index_lb && latestindex_lb < ub.size )
+		//		if(_x->set_min(ub[latestindex_lb].value +1  ,this ) == FAIL_EVENT) wiped = FAILURE(0);
+		if(_x->set_min(ub[latestindex_lb].value +1  ,cl ) == FAIL_EVENT) wiped = FAILURE(0);
 
-   tmpclause.clear();
+	tmpclause.clear();
 
 	if (latestindex_ub >= 0 &&  latestindex_ub < ub.size)
 		tmp = 	2*  ub[latestindex_ub].x.id();
 
-   tmpclause.add(tmp);
+	tmpclause.add(tmp);
 
-   cl = (Clause*)(Clause::Array_new(tmpclause));
+	cl = (Clause*)(Clause::Array_new(tmpclause));
 
-   if (latestindex_ub <= index_ub && latestindex_ub >=0 )
-	   //	if(_x->set_max(ub[latestindex_ub].value ,this ) == FAIL_EVENT) wiped = FAILURE(0);
-	   if(_x->set_max(ub[latestindex_ub].value ,cl ) == FAIL_EVENT) wiped = FAILURE(0);
+	if (latestindex_ub <= index_ub && latestindex_ub >=0 )
+		//	if(_x->set_max(ub[latestindex_ub].value ,this ) == FAIL_EVENT) wiped = FAILURE(0);
+		if(_x->set_max(ub[latestindex_ub].value ,cl ) == FAIL_EVENT) wiped = FAILURE(0);
 
 
 	return wiped;;
