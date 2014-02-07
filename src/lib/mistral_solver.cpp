@@ -2109,8 +2109,8 @@ Mistral::Solver::~Solver() {
   std::cout << "c delete solver" << std::endl;
 #endif
 
-  delete[] visitedUpperBoundvalues;
-  delete[] visitedLowerBoundvalues;
+//  delete[] visitedUpperBoundvalues;
+//  delete[] visitedLowerBoundvalues;
 
   delete heuristic;
   delete policy;

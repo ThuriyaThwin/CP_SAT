@@ -101,10 +101,10 @@ void Mistral::IntStack::extend_list()
   
   int* new_list = new int[list_capacity];
   memcpy(new_list, list_, (list_capacity-increment)*sizeof(int));
-  
+
   // for(unsigned int i=0; i<list_capacity-increment; ++i)
   //  	new_list[i] = list_[i];
-  
+
   delete [] list_;
   list_ = new_list;
 }

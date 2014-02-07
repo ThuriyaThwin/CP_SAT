@@ -14176,15 +14176,31 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable x, int value){
 	delete [] index;
 	index = tmpindex;
 
+	if (changes.list_capacity < on.size)
+		changes.extend_list();
+
+	if (events.list_capacity < on.size)
+		events.extend_list();
 
 
+	std::cout <<" \n \n active.extend_list() ?  "  << std::endl;
+
+//	std::cout <<" \n \n active.extend_list() ?  "  << std::endl;
+	//std::cout <<"  active ?  "  << active <<std::endl;
+	std::cout <<"  active.list_capacity() ?  "  << active.list_capacity <<std::endl;
+	std::cout <<"  on.size?  "  << on.size << std::endl;
+
+	if (active.list_capacity < on.size)
+		active.extend_list();
+
+	std::cout << "  done  "  << std::endl;
 
 	int i = on.size -1;
 	self[i] = Constraint(this, i|type);
 	index[i] = on[i]->post(self[i]);
 
 
-
+	//	changes.size
 
 	// changes and active?
 	//	changes.initialise(0, scope.size-1, scope.size, false);
@@ -14265,6 +14281,9 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable x, int value){
 	//index[i] = on[i]->post(self[i]);
 	//}
 	//    }
+
+	std::cout << " end extend_scope " << std::endl;
+
 }
 
 
