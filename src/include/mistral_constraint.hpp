@@ -5117,8 +5117,6 @@ std::cout << "[" << std::setw(4) << id << "](" << name() << "): restore" << std:
 	  Literal explanation[2];
 
 	  Vector<Literal> eager_explanations;
-	  Vector<Literal> failure_explanation;
-
 
   };
 
