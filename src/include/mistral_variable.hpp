@@ -1580,7 +1580,7 @@ namespace Mistral {
 	  bool first_time_visited (bool is_a_lowerbound) ;
 	  DomainFaithfulnessConstraint* domainConstraint;
 	  bool should_be_learnt(Literal q);
-
+	  int level_of(int val, bool lb) ;
 
 //	  bool set_visited(unsigned int literal);
 	  /// Remove all values strictly lower than l

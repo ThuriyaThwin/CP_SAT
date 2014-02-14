@@ -410,6 +410,8 @@ Mistral::ConstraintClauseBase::ConstraintClauseBase(Vector< Variable >& scp, boo
   : GlobalConstraint(scp), fd_variables(__fd_variables), start_from(st_from) {
   conflict = NULL;
   priority = 1;
+  if (__fd_variables)
+	  enforce_nfc1 = false;
 }
 
 void Mistral::ConstraintClauseBase::mark_domain() {
@@ -494,6 +496,72 @@ void Mistral::ConstraintClauseBase::add(Variable x) {
   
   //reason = solver->reason.stack_;
 }
+
+
+
+
+void Mistral::ConstraintClauseBase::extend_scope(Variable x){
+
+	scope.add(x);
+
+	Event * tmp_event_type = new Event[scope.size];
+	int * tmp_solution = new int[scope.size];
+	Constraint* tmpself = new Constraint[scope.size];
+	int*  tmpindex = new int[scope.size];
+
+	for(unsigned int i=0; i<on.size; ++i)
+		tmp_event_type[i] = event_type[i];
+
+	delete [] event_type;
+	event_type = tmp_event_type;
+
+	event_type[scope.size-1] = NO_EVENT;
+
+	for(unsigned int i=0; i<on.size; ++i)
+		tmp_solution[i] = solution[i];
+
+	delete [] solution;
+	solution = tmp_solution;
+	solution [scope.size-1]  = 0;
+
+
+
+	for(unsigned int i=0; i<on.size; ++i)
+		tmpself[i] = self[i];
+
+	delete [] self;
+	self = tmpself;
+
+	for(unsigned int i=0; i<on.size; ++i)
+		tmpindex[i] = index[i];
+
+	delete [] index;
+	index = tmpindex;
+
+	if (changes.list_capacity < scope.size)
+		changes.extend_list();
+
+	changes[scope.size] = false;
+
+
+	events.size = changes.size;
+	events.index_capacity = changes.index_capacity;
+	events.list_capacity = changes.list_capacity;
+	events.list_ = changes.list_;
+	events.index_ = changes.index_;
+	events.start_ = changes.start_;
+
+	int i = scope.size -1;
+	self[i] = Constraint(this, i|type);
+	trigger_on(_VALUE_, scope[scope.size -1]);
+	index[i] = on[i]->post(self[i]);
+
+
+}
+
+
+
+
 
 void Mistral::ConstraintClauseBase::add( Vector < Literal >& clause, double activity_increment ) {
  if(clause.size > 1) {

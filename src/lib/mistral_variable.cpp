@@ -1881,6 +1881,54 @@ bool Mistral::VariableRangeWithLearning::should_be_learnt (Literal q) {
 }
 
 
+int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
+	int previsouslevel, idx;
+
+	std::cout << "debug level_of"<< std::endl;
+	std::cout << "trail "<< trail_ << std::endl;
+
+	if (lb){
+		std::cout << " is lb "<< std::endl;
+
+		idx = trail_.size -3 ;
+		do{
+			idx-=3;
+			previsouslevel = trail_[idx];
+		}while (val <= previsouslevel);
+
+		idx+=3;
+		std::cout << " will return  "<< trail_[idx+2] << std::endl;
+
+		return trail_[idx+2];
+
+	}
+	else{
+		std::cout << " is UB "<<  std::endl;
+
+		idx = trail_.size -2 ;
+		do{
+			idx-=3;
+			previsouslevel = trail_[idx];
+		}while (val >= previsouslevel);
+		idx+=3;
+
+		std::cout << " will return  "<< trail_[idx+1] << std::endl;
+		return trail_[idx+1];
+
+	}
+
+	/*
+	  previsouslevel_lb;
+	  int previsouslevel_ub;
+		solver->save(id);
+		trail_.add(min);
+		trail_.add(max);
+		trail_.add(solver->level);
+	 */
+
+}
+
+
 bool Mistral::VariableRangeWithLearning::first_time_visited (bool is_a_lowerbound) {
 	if (is_a_lowerbound)
 		return (latest_visited_lower_bound == -INFTY);

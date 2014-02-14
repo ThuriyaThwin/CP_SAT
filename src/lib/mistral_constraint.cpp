@@ -2798,6 +2798,7 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
 
 		if( *min_t0_ptr + processing_time[0] > *max_t1_ptr ) {
 
+			//TODO  not necessary?
 			((Solver* ) solver) -> reason_for[scope[2].id()] = this;
 			bool_explanation_size=3;
 			if(scope0->lowerbounds[0] < *min_t0_ptr )
@@ -14136,9 +14137,21 @@ void Mistral::DomainFaithfulnessConstraint::initialise() {
 	//GlobalConstraint::set_idempotent(true);
 }
 
+// if a variable alreagy exist then return its id, otherwise return false
 
-void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable x, int value){
 
+int Mistral::DomainFaithfulnessConstraint::value_exist(int value){
+
+	for(unsigned int i=0; i<ub.size; ++i)
+		if (ub[i].value == value)
+			return ub[i].x.id();
+	return -1;
+
+}
+
+
+
+void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value){
 
 	ub.add(__boundLiteral(value,x));
 	ub.sort();
@@ -14155,7 +14168,7 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable x, int value){
 
 
 	for(unsigned int i=0; i<on.size; ++i)
-		tmp_event_type[i] = tmp_event_type[i];
+		tmp_event_type[i] = event_type[i];
 
 	delete [] event_type;
 	event_type = tmp_event_type;
@@ -14204,6 +14217,7 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable x, int value){
 	self[i] = Constraint(this, i|type);
 	trigger_on(_VALUE_, scope[scope.size -1]);
 	index[i] = on[i]->post(self[i]);
+
 }
 
 

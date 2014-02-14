@@ -349,6 +349,8 @@ namespace Mistral {
     		return(a == NULL_ATOM ? conflict->get_reason_for(a, lvl, end) : reason_for[a-start_from]->get_reason_for(a-start_from, lvl, end));
     }
 
+    void extend_scope(Variable x);
+
     /**@name Miscellaneous*/
     //@{  
 
