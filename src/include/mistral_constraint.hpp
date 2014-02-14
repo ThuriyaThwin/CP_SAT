@@ -5075,6 +5075,9 @@ std::cout << "[" << std::setw(4) << id << "](" << name() << "): restore" << std:
 
 		  eager_explanations.clear();
 		  eager_explanations.add(NULL_ATOM);
+		  enforce_nfc1 = false;
+
+
 		  //	  solver->DomainFaithfulnessList.resize( x.id() +1);
 		  //	  solver->DomainFaithfulnessList[x.id()] = this;
 	  }

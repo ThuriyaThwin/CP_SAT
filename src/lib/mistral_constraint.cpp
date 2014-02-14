@@ -14122,6 +14122,9 @@ Mistral::DomainFaithfulnessConstraint::DomainFaithfulnessConstraint(Vector< Vari
 	ub.clear();
 	eager_explanations.clear();
 	eager_explanations.add(NULL_ATOM);
+
+	enforce_nfc1 = false;
+
 }
 
 
@@ -14137,17 +14140,19 @@ void Mistral::DomainFaithfulnessConstraint::initialise() {
 
 void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable x, int value){
 
+
 	ub.add(__boundLiteral(value,x));
 	ub.sort();
 	scope.add(x);
-	trigger_on(_VALUE_, scope[scope.size -1]);
+
+
 	eager_explanations.add(NULL_ATOM);
 
 
-	Event * tmp_event_type = new Event[on.size];
+	Event * tmp_event_type = new Event[scope.size];
 	int * tmp_solution = new int[scope.size];
-	Constraint* tmpself = new Constraint[on.size];
-	int*  tmpindex = new int[on.size];
+	Constraint* tmpself = new Constraint[scope.size];
+	int*  tmpindex = new int[scope.size];
 
 
 	for(unsigned int i=0; i<on.size; ++i)
@@ -14156,12 +14161,15 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable x, int value){
 	delete [] event_type;
 	event_type = tmp_event_type;
 
+	event_type[scope.size-1] = NO_EVENT;
 
 	for(unsigned int i=0; i<on.size; ++i)
 		tmp_solution[i] = solution[i];
 
 	delete [] solution;
 	solution = tmp_solution;
+	solution [scope.size-1]  = 0;
+
 
 
 	for(unsigned int i=0; i<on.size; ++i)
@@ -14176,114 +14184,27 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable x, int value){
 	delete [] index;
 	index = tmpindex;
 
-	if (changes.list_capacity < on.size)
+	if (changes.list_capacity < scope.size)
 		changes.extend_list();
 
-	if (events.list_capacity < on.size)
-		events.extend_list();
-
-
-	std::cout <<" \n \n active.extend_list() ?  "  << std::endl;
-
-//	std::cout <<" \n \n active.extend_list() ?  "  << std::endl;
-	//std::cout <<"  active ?  "  << active <<std::endl;
-	std::cout <<"  active.list_capacity() ?  "  << active.list_capacity <<std::endl;
-	std::cout <<"  on.size?  "  << on.size << std::endl;
-
-	if (active.list_capacity < on.size)
-		active.extend_list();
-
-	std::cout << "  done  "  << std::endl;
-
-	int i = on.size -1;
-	self[i] = Constraint(this, i|type);
-	index[i] = on[i]->post(self[i]);
-
-
-	//	changes.size
-
-	// changes and active?
-	//	changes.initialise(0, scope.size-1, scope.size, false);
-	//	active.initialise(solver, 0, on.size-1, on.size, true);
-
-
-	//	active.extend(on.size);
-	//	active.reversible_add(on.size-1);
-
-	//	std::fill(index+on.size-1, index_+on.size, -1);
-
-
-	// First we go through the variables to check whether they are ground.
-	// If so, we "desactivate" the corresponding var index.
-	// Also, if there is only one active variable and the constraint enforces nfc1, we do not post it at all.
+	changes[scope.size] = false;
 
 	/*
-	//check nb_actives!!
-	int nb_actives = on.size;
-//  for(unsigned int i=0; i<on.size; ++i) {
-  int i = on.size -1;
-  index[i] = -1;
-    self[i] = Constraint(this, i|type);
-    //??
+	if (events.list_capacity < scope.size)
+		events.extend_list();
+	}*/
 
-   // if(_scope[i].is_ground()) {
-   //   --nb_actives;
-   //   desactivate(i);
-   // }
+	events.size = changes.size;
+	events.index_capacity = changes.index_capacity;
+	events.list_capacity = changes.list_capacity;
+	events.list_ = changes.list_;
+	events.index_ = changes.index_;
+	events.start_ = changes.start_;
 
-//  }
-
-  // Now we post the constraint on the active variables (provided that there are at least 2)
- // if(!enforce_nfc1 || nb_actives>1) {
-    Constraint c;
-
-//    for(unsigned int i=0; i<on.size; ++i) {
-      //if(!(_scope[i].is_ground())) {
-      //std::cout << _scope[i] << " "  << (on[i] != NULL) << " " << _scope[i].get_min() << ".." << _scope[i].get_max() << std::endl;
-    i = on.size -1;
-      if(on[i]) {
-
-        c = self[i];
-	c.data |= POSTED;
-
-//	solver->save( c );
-
-
-	//un_relax_from(i);
-	check_and_un_relax_from(i);
-      }
- //   }
- // }
-
-	 */
-
-	//  with post :
-
-
-	// save
-	//  solver->save( Constraint(this, type|POSTED) );
-	//solver->save( Constraint(this, type|2) );
-
-	//      active.fill(); ??
-	//      for(int i=on.size; --i>=0;) {
-	//HERE
-	//int i = on.size -1;
-
-	//	 active.initialise(solver, 0, on.size-1, on.size, true);
-	//HERE
-	//self[i] = Constraint(this, i|type);
-	/*if(scope[i].is_ground()) {
-		active.reversible_remove(i);
-		index[i] = -1;
-	} else {
-	 */
-	//HEHE
-	//index[i] = on[i]->post(self[i]);
-	//}
-	//    }
-
-	std::cout << " end extend_scope " << std::endl;
-
+	int i = scope.size -1;
+	self[i] = Constraint(this, i|type);
+	trigger_on(_VALUE_, scope[scope.size -1]);
+	index[i] = on[i]->post(self[i]);
 }
 
 
@@ -14304,6 +14225,8 @@ Mistral::DomainFaithfulnessConstraint::~DomainFaithfulnessConstraint()
 
 
 Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
+	if (scope.size==1)
+		return CONSISTENT;
 	PropagationOutcome wiped = CONSISTENT;
 
 	std::cout << " \n propagate DomainFaithfulnessConstraint \n ub " <<  ub << std::endl;
