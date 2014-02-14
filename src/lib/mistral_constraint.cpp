@@ -42,7 +42,7 @@
 //#define _DEBUG_REASONRIWBS (get_solver()->statistics.num_filterings == 10037)
 //#define _DEBUG_WEIGHTEDBOOLSUM (id == 102)
 //#define _DEBUG_CLIQUENOTEQUAL true
-
+  #define _DEBUG_DOMAINFAITHFULNESS true
 
 std::ostream& Mistral::operator<< (std::ostream& os, const Mistral::Constraint& x) {
   return x.display(os);
@@ -14231,7 +14231,9 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 		return CONSISTENT;
 	PropagationOutcome wiped = CONSISTENT;
 
-	//	std::cout << " \n propagate DomainFaithfulnessConstraint \n ub " <<  ub << std::endl;
+#ifdef	_DEBUG_DOMAINFAITHFULNESS
+	std::cout << " \n propagate DomainFaithfulnessConstraint \n ub " <<  ub << std::endl;
+#endif
 
 	int _lb = scope[0].get_min();
 	int _ub = scope[0].get_max();
@@ -14283,10 +14285,12 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 			}
 		}
 
-	/*	std::cout << " index_lb " << index_lb <<std::endl;
+
+#ifdef	_DEBUG_DOMAINFAITHFULNESS
+	std::cout << " index_lb " << index_lb <<std::endl;
 	if (index_lb < ub.size)
 		std::cout << " index_lb " << ub[index_lb] <<std::endl;
-	 */
+#endif
 
 	//Use the current ub to enforce bound literals to be true
 
@@ -14336,11 +14340,12 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 	}
 
-/*
+
+#ifdef	_DEBUG_DOMAINFAITHFULNESS
 	std::cout << " index_ub " << index_ub <<std::endl;
 	if (index_lb >= 0 )
 		std::cout << " index_ub " << ub[index_ub] <<std::endl;
-*/
+#endif
 
 	latestindex_lb = index_lb -1;
 	latestindex_ub = index_ub +1;
@@ -14361,7 +14366,8 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 	}
 
 
-/*
+
+#ifdef	_DEBUG_DOMAINFAITHFULNESS
 	std::cout << " latestindex_lb " << latestindex_lb <<std::endl;
 	if (latestindex_lb < ub.size)
 		std::cout << " latestindex_lb " << ub[latestindex_lb] <<std::endl;
@@ -14369,7 +14375,9 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 	if (latestindex_ub >= 0 &&  latestindex_ub < ub.size)
 		std::cout << " latestindex_ub " << ub[latestindex_ub] <<std::endl;
-*/
+#endif
+
+
 	Literal tmp;
 	if (latestindex_lb < ub.size)
 		tmp = 	2*  ub[latestindex_lb].x.id() +1;
@@ -14378,7 +14386,7 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 		if(!ub[i].x.is_ground()){
 			if( ub[i].x.set_domain(0) == FAIL_EVENT) {
 				std::cout << " c not possible! " << std::endl;
-			exit(1);
+				exit(1);
 				for (int j=1; j< scope.size ; ++j)
 					if (scope[j].id()== ub[i].x.id())
 						wiped = FAILURE(j);
@@ -14402,6 +14410,7 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 		tmp = 	2*  ub[latestindex_ub].x.id();
 
 	idx = index_ub - latestindex_ub +1;
+	if (idx)
 	while (idx--){
 
 		if(!ub[index_ub-idx].x.is_ground()){
@@ -14423,7 +14432,7 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 					}
 		}
 		else
-			if( ub[idx].x.set_domain(1) == FAIL_EVENT) {
+			if( ub[index_ub-idx].x.set_domain(1) == FAIL_EVENT) {
 				for (int j=1; j< scope.size ; ++j)
 					if (scope[j].id()== ub[index_ub-idx].x.id()){
 						wiped = FAILURE(j);
