@@ -14400,10 +14400,10 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 					if (scope[j].id()== ub[i].x.id()){
 						wiped = FAILURE(j);
 
-				explanation[0] = tmp;
-				tmp =  2* scope[j].id() ;
-				explanation[1] = tmp;
-				return wiped;
+						explanation[0] = tmp;
+						tmp =  2* scope[j].id() ;
+						explanation[1] = tmp;
+						return wiped;
 					}
 
 			}
@@ -14414,46 +14414,46 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 	idx = index_ub - latestindex_ub +1;
 	if (idx)
-	while (idx--){
+		while (idx--){
 
-		if(!ub[index_ub-idx].x.is_ground()){
-			if( ub[index_ub-idx].x.set_domain(1) == FAIL_EVENT) {
-				std::cout << " c not possible! " << std::endl;
-				exit(1);
+			if(!ub[index_ub-idx].x.is_ground()){
+				if( ub[index_ub-idx].x.set_domain(1) == FAIL_EVENT) {
+					std::cout << " c not possible! " << std::endl;
+					exit(1);
 
-				for (int j=1; j< scope.size ; ++j)
-					if (scope[j].id()== ub[idx].x.id()){
-						wiped = FAILURE(j);
+					for (int j=1; j< scope.size ; ++j)
+						if (scope[j].id()== ub[idx].x.id()){
+							wiped = FAILURE(j);
 
-					}
+						}
+				}
+				else
+					for (int j = 0; j< scope.size; ++j)
+						if ( scope[j].id() == ub[index_ub-idx].x.id()){
+							eager_explanations[j]=tmp;
+							break;
+						}
 			}
 			else
-				for (int j = 0; j< scope.size; ++j)
-					if ( scope[j].id() == ub[index_ub-idx].x.id()){
-						eager_explanations[j]=tmp;
-						break;
-					}
-		}
-		else
-			if( ub[index_ub-idx].x.set_domain(1) == FAIL_EVENT) {
-				for (int j=1; j< scope.size ; ++j)
-					if (scope[j].id()== ub[index_ub-idx].x.id()){
-						wiped = FAILURE(j);
+				if( ub[index_ub-idx].x.set_domain(1) == FAIL_EVENT) {
+					for (int j=1; j< scope.size ; ++j)
+						if (scope[j].id()== ub[index_ub-idx].x.id()){
+							wiped = FAILURE(j);
 
-						explanation[0] = tmp;
-						tmp =  2* scope[j].id() +1;
-						explanation[1] = tmp;
-						return wiped;
-					}
-			}
+							explanation[0] = tmp;
+							tmp =  2* scope[j].id() +1;
+							explanation[1] = tmp;
+							return wiped;
+						}
+				}
 
 
 
 
 
 
-		//old
-		/*
+			//old
+			/*
 		if( ub[index_ub-idx].x.set_domain(1) == FAIL_EVENT) {
 			for (int j=1; j< scope.size ; ++j)
 				if (scope[j].id()== ub[index_ub-idx].x.id())
@@ -14466,7 +14466,7 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 					break;
 				} */
 
-	}
+		}
 
 	//Preparing the explanation
 	Vector < Literal > tmpclause ;
@@ -14553,7 +14553,7 @@ std::ostream& Mistral::DomainFaithfulnessConstraint::display(std::ostream& os) c
 
 Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason_for(const Atom a, const int lvl, iterator& end){
 
-//	std::cout <<" \n \n \DomainFaithfulnessConstraint  get_reason_for "  << std::endl;
+	//	std::cout <<" \n \n \DomainFaithfulnessConstraint  get_reason_for "  << std::endl;
 
 	if(a == NULL_ATOM) {
 		/*
@@ -14562,8 +14562,8 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 		explanation[++tmp] =  encode_bound_literal(scope[0].id(),scope[0].get_max(),1) ;
 		end = &(explanation[0])+tmp+1;
 		 */
-//		std::cout <<" \n \n \Failure : NOT YET "  << std::endl;
-//		exit(1);
+		//		std::cout <<" \n \n \Failure : NOT YET "  << std::endl;
+		//		exit(1);
 
 		end = &(explanation[0])+2;
 

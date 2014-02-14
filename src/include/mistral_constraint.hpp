@@ -5059,7 +5059,7 @@ std::cout << "[" << std::setw(4) << id << "](" << name() << "): restore" << std:
   public:
 
 
-	 // Vector<__boundLiteral> lb;
+	  // Vector<__boundLiteral> lb;
 	  Vector<__boundLiteral> ub;
 	  VariableRangeWithLearning * _x;
 	  DomainFaithfulnessConstraint() : GlobalConstraint() { //priority = 2;?
