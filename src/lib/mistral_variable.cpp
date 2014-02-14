@@ -1857,6 +1857,7 @@ int Mistral::VariableImplementation::assigned_at_last_level() const {
 bool Mistral::VariableRangeWithLearning::should_be_learnt (Literal q) {
 	int previsouslevel;
 
+	std::cout << " should_be_learnt ? " << std::endl;
 	int value = get_value_from_literal(q);
 	if (is_lower_bound(q)){
 		previsouslevel = trail_[trail_.size - 3];
@@ -1893,7 +1894,15 @@ int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 		idx = trail_.size -3 ;
 		do{
 			idx-=3;
+			if (idx>=0)
 			previsouslevel = trail_[idx];
+			else{
+
+				std::cout << " will return  "<< trail_[2] << std::endl;
+				return trail_[2];
+			}
+
+
 		}while (val <= previsouslevel);
 
 		idx+=3;
@@ -1908,7 +1917,13 @@ int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 		idx = trail_.size -2 ;
 		do{
 			idx-=3;
-			previsouslevel = trail_[idx];
+			if (idx>=0)
+				previsouslevel = trail_[idx];
+			else{
+				std::cout << " will return  "<< trail_[2] << std::endl;
+				return trail_[2];
+			}
+
 		}while (val >= previsouslevel);
 		idx+=3;
 

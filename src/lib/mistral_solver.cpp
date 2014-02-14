@@ -37,7 +37,7 @@
 //#define _OLD_ true
 //#define _DEBUG_NOGOOD true //(statistics.num_filterings == 491)
 //#define _DEBUG_SEARCH true
-//#define _DEBUG_FD_NOGOOD true
+#define _DEBUG_FD_NOGOOD true
 //#define _DEBUG_SHOW_LEARNT_BOUNDS true
 //#define _TRACKING_BOUND 1078
 //#define _TRACKING_ATOM 368
@@ -9351,6 +9351,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 		}
 		Explanation *bound_explanation;
 		DomainFaithfulnessConstraint* dom_constraint;
+		VariableRangeWithLearning * tmp_VariableRangeWithLearning;
 		int is_lb , var , val;
 
 		visitedUpperBounds.clear();
@@ -9519,11 +9520,13 @@ void Mistral::Solver::learn_with_lazygeneration() {
 							is_lb = is_lower_bound(to_be_explored);
 							val = get_value_from_literal(to_be_explored);
 							var = get_variable_from_literal(to_be_explored);
+							tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
 
-							if(static_cast<VariableRangeWithLearning*>(variables[var].range_domain)->should_be_learnt(to_be_explored) )
+							if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
 							{
 
-								dom_constraint = static_cast<VariableRangeWithLearning*>(variables[var].range_domain)->domainConstraint;
+								std::cout << " yes!  ? " << std::endl;
+								dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
 								Variable tmp__(0,1);
 								var = dom_constraint->value_exist( val ) ;
 								if ( var< 0)
@@ -9537,7 +9540,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									tmp__= variables[var];
 								}
 
-								lvl = static_cast<VariableRangeWithLearning*>(variables[var].range_domain)->level_of(val,is_lb) ;
+								lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
 								//todo should be search_root!
 								if(	lvl)
 									if( !visited.fast_contain(tmp__.id()) ) {
@@ -9557,6 +9560,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 							}
 							else{
 
+								std::cout << " no!  ? " << std::endl;
 								if (is_lb)
 								{
 									//var = get_variable_from_literal(to_be_explored);
@@ -9568,7 +9572,6 @@ void Mistral::Solver::learn_with_lazygeneration() {
 #ifdef _DEBUG_SHOW_LEARNT_BOUNDS
 										else{
 											std::cout << " \n \n  Will not be explored  : " << std::endl;
-
 											std::cout << "  id : "<< get_variable_from_literal(q) << std::endl;
 											std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
 											std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
@@ -9764,11 +9767,12 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									is_lb = is_lower_bound(to_be_explored);
 									val = get_value_from_literal(to_be_explored);
 									var = get_variable_from_literal(to_be_explored);
-
-									if(static_cast<VariableRangeWithLearning*>(variables[var].range_domain)->should_be_learnt(to_be_explored) )
+									tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
+									if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
 									{
 
-										dom_constraint = static_cast<VariableRangeWithLearning*>(variables[var].range_domain)->domainConstraint;
+										std::cout << " yes!  ? " << std::endl;
+										dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
 										Variable tmp__(0,1);
 										var = dom_constraint->value_exist( val ) ;
 										if ( var< 0)
@@ -9781,8 +9785,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 										{
 											tmp__= variables[var];
 										}
-
-										lvl = static_cast<VariableRangeWithLearning*>(variables[var].range_domain)->level_of(val,is_lb) ;
+										lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
 										//todo should be search_root!
 										if(	lvl)
 											if( !visited.fast_contain(tmp__.id()) ) {
@@ -9802,7 +9805,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									}
 									else{
 
-
+										std::cout << " no!  ? " << std::endl;
 										if (is_lb)
 										{
 											var = get_variable_from_literal(to_be_explored);

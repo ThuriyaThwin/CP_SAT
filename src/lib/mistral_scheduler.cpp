@@ -1701,6 +1701,7 @@ void SchedulingSolver::setup() {
     	//Variable t(lb, ub);
     	Variable t(lb, ub,RANGE_VAR_WITHLEARNING);
     	tasks.add(t);
+    	add(DomainFaithfulness(t));
     }
     else
     {
@@ -1826,6 +1827,8 @@ void SchedulingSolver::setup() {
   {
 	  Variable x_cmax(lb_C_max, ub_C_max, RANGE_VAR_WITHLEARNING);
 	  C_max = x_cmax;
+	  add(DomainFaithfulness(C_max));
+
   }
   else
   {
