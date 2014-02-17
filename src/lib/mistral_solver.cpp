@@ -9546,6 +9546,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 								}
 
 								lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
+								assignment_level[var]=lvl;
 								//todo should be search_root!
 								if(	lvl)
 									if( !visited.fast_contain(tmp__.id()) ) {
@@ -9558,7 +9559,9 @@ void Mistral::Solver::learn_with_lazygeneration() {
 								var_activity[get_id_boolean_variable(q)] += parameters.activity_increment;
 							}
 										 */
-										visited.fast_add(tmp__.id());
+
+
+									//	visited.fast_add(tmp__.id());
 										learnt_clause.add(2*tmp__.id() + is_lb);
 										backtrack_level = lvl;
 									}
@@ -9790,6 +9793,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 											tmp__= variables[var];
 										}
 										lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
+										assignment_level[var] = lvl;
 										//todo should be search_root!
 										if(	lvl)
 											if( !visited.fast_contain(tmp__.id()) ) {
@@ -9802,7 +9806,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 														var_activity[get_id_boolean_variable(q)] += parameters.activity_increment;
 													}
 												 */
-												visited.fast_add(tmp__.id());
+											//	visited.fast_add(tmp__.id());
 												learnt_clause.add(2*tmp__.id() + is_lb);
 												backtrack_level = lvl;
 											}
@@ -9980,6 +9984,8 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 				}
 			}
+
+				std::cout << " c visited  " <<  visited << std::endl;
 
 			//			if( pathC > 0 )
 			//check index!

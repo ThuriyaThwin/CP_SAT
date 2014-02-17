@@ -1931,7 +1931,7 @@ void SchedulingSolver::setup() {
 //     add(depth == Sum(scope));
 //   }
 
-//		  std::cout << *this << std::endl;
+		  std::cout << *this << std::endl;
 }
 
 SchedulingSolver::~SchedulingSolver() {

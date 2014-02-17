@@ -2958,6 +2958,13 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
 
 
 Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::propagate() {
+
+	if (solver->level>0)
+		{
+	    std::cout << "  (solver->level>0) " << std::endl;
+		exit(1);
+
+		}
   PropagationOutcome wiped = CONSISTENT;
 //std::cout<< " ExplainedConstraintReifiedDisjunctive::propagate ! \n" << std::endl;
 //		exit(1);
