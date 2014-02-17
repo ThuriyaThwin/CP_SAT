@@ -2003,7 +2003,7 @@ void Mistral::Solver::initialise_search(Vector< Variable >& seq,
   //decisions.clear();
   for(unsigned int i=seq.size; i;) {
     Variable x = seq[--i].get_var();
-    if(!sequence.contain(x) && !(domain_types[x.id()]&REMOVED_VAR)) sequence.add(x);
+    if(!sequence.safe_contain(x) && !(domain_types[x.id()]&REMOVED_VAR)) sequence.add(x);
     if(x.is_ground()) sequence.remove(x);
   }
   num_search_variables = sequence.size;
@@ -3176,7 +3176,7 @@ Mistral::PropagationOutcome Mistral::Solver::propagate(Constraint c,
     
       var_evt = active_variables.pop_front();
 
-      if(ASSIGNED(var_evt.second) && sequence.contain(variables[var_evt.first])) {
+      if(ASSIGNED(var_evt.second) && sequence.safe_contain(variables[var_evt.first])) {
 	sequence.remove(variables[var_evt.first]);
 	last_solution_lb[var_evt.first] = last_solution_ub[var_evt.first] = variables[var_evt.first].get_value();
 	assignment_level[var_evt.first] = level;
@@ -3302,7 +3302,7 @@ Mistral::PropagationOutcome Mistral::Solver::checker_propagate(Constraint c,
       }
 #endif 
 
-      if(ASSIGNED(var_evt.second) && sequence.contain(variables[var_evt.first])) {
+      if(ASSIGNED(var_evt.second) && sequence.safe_contain(variables[var_evt.first])) {
 	sequence.remove(variables[var_evt.first]);
 	last_solution_lb[var_evt.first] = last_solution_ub[var_evt.first] = variables[var_evt.first].get_value();
 	assignment_level[var_evt.first] = level;
@@ -3473,7 +3473,7 @@ Mistral::PropagationOutcome Mistral::Solver::bound_checker_propagate(Constraint 
     
       var_evt = active_variables.pop_front();
 
-      if(ASSIGNED(var_evt.second) && sequence.contain(variables[var_evt.first])) {
+      if(ASSIGNED(var_evt.second) && sequence.safe_contain(variables[var_evt.first])) {
 	sequence.remove(variables[var_evt.first]);
 	last_solution_lb[var_evt.first] = last_solution_ub[var_evt.first] = variables[var_evt.first].get_value();
 	assignment_level[var_evt.first] = level;
@@ -3663,7 +3663,7 @@ bool Mistral::Solver::propagate()
       
 	assigned.add(vidx);
       
-	if(sequence.contain(variables[vidx]))
+	if(sequence.safe_contain(variables[vidx]))
 	  sequence.remove(variables[vidx]);
       
 	last_solution_lb[var_evt.first] = last_solution_ub[var_evt.first] = variables[var_evt.first].get_value();
@@ -3979,7 +3979,7 @@ void Mistral::Solver::fail() {
 // #endif      
 
 
-//       if(ASSIGNED(var_evt.second) && sequence.contain(variables[vidx])) {
+//       if(ASSIGNED(var_evt.second) && sequence.safe_contain(variables[vidx])) {
 // 	sequence.remove(variables[vidx]);
 // 	assignment_level[vidx] = level;
 //       }
@@ -4181,7 +4181,7 @@ void Mistral::Solver::fail() {
 // 	  ++c_iter;
 // 	  ++v_index;
 //       	}
-//       	if(sequence.contain(variables[var])) {
+//       	if(sequence.safe_contain(variables[var])) {
 //       	  sequence.remove(variables[var]);
 //       	  assignment_level[var] = level;
 //       	}
@@ -4345,7 +4345,7 @@ std::ostream& Mistral::Solver::display(std::ostream& os, const int current) {
   Vector<Variable> rem_vars;
   for(unsigned int i=0; i<variables.size; ++i) {
     if(!(domain_types[i] & REMOVED_VAR) 
-       && (current != 1 || sequence.contain(i))
+       && (current != 1 || sequence.safe_contain(i))
        && (current != 2 || !(variables[i].is_ground()))) {
 
       os << "  " << variables[i] << " in " << variables[i].get_domain() ; //<< "\n";
@@ -4433,7 +4433,7 @@ void Mistral::Solver::learn_nogood() {
   // while(!active_variables.empty()) {
   //   var_evt = active_variables.pop_front();
   //   vidx = var_evt.first;
-  //   if(ASSIGNED(var_evt.second) && sequence.contain(variables[vidx])) {
+  //   if(ASSIGNED(var_evt.second) && sequence.safe_contain(variables[vidx])) {
   //     sequence.remove(variables[vidx]);
   //     assignment_level[vidx] = level;
   //     assignment_order[vidx] = assignment_rank;
@@ -10287,7 +10287,7 @@ void Mistral::Solver::close_propagation() {
   while(!active_variables.empty()) {
     var_evt = active_variables.pop_front();
     vidx = var_evt.first;
-    if(ASSIGNED(var_evt.second) && sequence.contain(variables[vidx])) {
+    if(ASSIGNED(var_evt.second) && sequence.safe_contain(variables[vidx])) {
       sequence.remove(variables[vidx]);
       assignment_level[vidx] = level;
       assignment_order[vidx] = assignment_rank;
