@@ -12509,7 +12509,7 @@ void Mistral::Solver::set_fdlearning_on() {
 		bool_variables.clear();
 		//	std::cout << "Variables  : " << variables << std::endl;
 		//	std::cout << "start_from  : " << start_from << std::endl;
-		for (int i = start_from; i<  (variables.size -1 ) ; ++i)
+		for (int i = start_from; i< variables.size ; ++i)
 			bool_variables.add(variables[i]);
 
 		//	std::cout << "bool_variables  : " << bool_variables << std::endl;
