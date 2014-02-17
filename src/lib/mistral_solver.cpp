@@ -9400,6 +9400,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 				if(current_explanation == NULL) {
 					std::cout << "?? current_explanation == NULL "  << std::endl;
+					std::cout << "\n \n \n \n \n graphsize =  "<< graph_size << std::endl;
 					std::cout << "pathC =  "<< pathC << std::endl;
 					std::cout << "id of the variable =  "<< a << std::endl;
 					std::cout << " variable[id] =  "<< variables[a] << std::endl;
@@ -9451,7 +9452,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 					bounds_under_exploration.clear();
 					Explanation::iterator lit = current_explanation->get_reason_for(a, (a != NULL_ATOM ? assignment_level[a] : level), stop);
-					graph_size++;
+
 					tmp = lit;
 					bound_literals_to_explore.clear();
 
@@ -9473,6 +9474,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 					}
 #endif
 					while(tmp < stop) {
+						graph_size++;
 						q = *tmp;
 						++tmp;
 
@@ -9697,7 +9699,6 @@ void Mistral::Solver::learn_with_lazygeneration() {
 						std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(to_be_explored)].get_domain() << std::endl;
 #endif
 						while (bound_explanation){
-							graph_size++;
 
 							var = get_variable_from_literal(to_be_explored);
 							val = get_value_from_literal(to_be_explored);
@@ -9726,7 +9727,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 							while(tmp < end_tmp_iterator) {
 								q = *tmp;
 								++tmp;
-
+								graph_size++;
 								if (is_a_bound_literal(q))
 								{
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING

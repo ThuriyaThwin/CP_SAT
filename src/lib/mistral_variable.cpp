@@ -1857,17 +1857,43 @@ int Mistral::VariableImplementation::assigned_at_last_level() const {
 bool Mistral::VariableRangeWithLearning::should_be_learnt (Literal q) {
 	int previsouslevel;
 
-	std::cout << " should_be_learnt ? " << std::endl;
+//	std::cout << " should_be_learnt ? " << std::endl;
+
+//	std::cout << " previsouslevel lower value : " <<  trail_[trail_.size - 3] <<std::endl;
+//	std::cout << " previsouslevel upper value : " <<  trail_[trail_.size - 2] <<std::endl;
+//	std::cout << " previsouslevel level : " <<  trail_[trail_.size - 1] <<std::endl;
+
+
 	int value = get_value_from_literal(q);
-	if (is_lower_bound(q)){
-		previsouslevel = trail_[trail_.size - 3];
-		return (value <= previsouslevel);
 
+//	std::cout << " value :  " << value <<std::endl;
+//	std::cout << " is_lower_bound(q) :  " << is_lower_bound(q) <<std::endl;
+
+	int idx_level= trail_.size -4;
+	if (trail_[trail_.size - 1] != solver->level)
+	{
+		//	std::cout << " ERROR not the latest level! " << solver->level <<std::endl;
+		// std::cout << " trail_ " << trail_ <<std::endl;
+		//	exit(1);
+		idx_level+=3;
 	}
-	else{
-		previsouslevel = trail_[trail_.size - 2];
+	if (idx_level> 1) {
+		if (is_lower_bound(q)){
 
-		return (value >= previsouslevel);
+			previsouslevel = trail_[idx_level -2];
+			return (value <= previsouslevel);
+
+		}
+		else{
+			previsouslevel = trail_[idx_level-1];
+
+			return (value >= previsouslevel);
+		}
+	}
+	else
+	{
+		std::cout << " CHECK IT OUT !" << solver->level <<std::endl;
+		exit(1);
 	}
 
 	/*
