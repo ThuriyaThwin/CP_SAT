@@ -1711,8 +1711,18 @@ void SchedulingSolver::setup() {
 
   }
 
+  if (params->FD_learning)
+  {
+	  Variable x_cmax(lb_C_max, ub_C_max, RANGE_VAR_WITHLEARNING);
+	  C_max = x_cmax;
+	  add(DomainFaithfulness(C_max));
 
-
+  }
+  else
+  {
+	  Variable x_cmax(lb_C_max, ub_C_max);
+	  C_max = x_cmax;
+  }
 
   // precedence constraints
   for(i=0; i<data->nJobs(); ++i) 
@@ -1823,20 +1833,6 @@ void SchedulingSolver::setup() {
 //   //exit(1);
 
 
-  if (params->FD_learning)
-  {
-	  Variable x_cmax(lb_C_max, ub_C_max, RANGE_VAR_WITHLEARNING);
-	  C_max = x_cmax;
-	  add(DomainFaithfulness(C_max));
-
-  }
-  else
-  {
-	  Variable x_cmax(lb_C_max, ub_C_max);
-	  C_max = x_cmax;
-  }
-
-
   for(i=0; i<data->nJobs(); ++i) {
     ti = data->getLastTaskofJob(i);
 
@@ -1935,7 +1931,7 @@ void SchedulingSolver::setup() {
 //     add(depth == Sum(scope));
 //   }
 
-//  std::cout << *this << std::endl;
+//		  std::cout << *this << std::endl;
 }
 
 SchedulingSolver::~SchedulingSolver() {
