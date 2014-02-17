@@ -5029,25 +5029,25 @@ std::cout << "[" << std::setw(4) << id << "](" << name() << "): restore" << std:
    ***********************************************/
   /*! \class DomainFaithfulness
     \brief  lazy encoding of bound literals).
-  */
+   */
 
   struct __boundLiteral
   {
-      int value;
-      Variable x;
+	  int value;
+	  Variable x;
 
-      __boundLiteral(int k, const Variable& _x) : value(k), x(_x) {}
+	  __boundLiteral(int k, const Variable& _x) : value(k), x(_x) {}
 
-      __boundLiteral() {}
+	  __boundLiteral() {}
 
-      bool operator < (const __boundLiteral& bound) const
-      {
-          return (value < bound.value);
-      }
-      bool operator > (const __boundLiteral& bound) const
-      {
-          return (value > bound.value);
-      }
+	  bool operator < (const __boundLiteral& bound) const
+	  {
+		  return (value < bound.value);
+	  }
+	  bool operator > (const __boundLiteral& bound) const
+	  {
+		  return (value > bound.value);
+	  }
   };
 
 

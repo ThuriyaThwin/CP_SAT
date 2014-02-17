@@ -1564,7 +1564,7 @@ namespace Mistral {
 		  explanation_trail.add(LB_Explanation);
 		  explanation_trail.add(UB_Explanation);
 #endif
-
+		  domainConstraint = NULL;
 //		  std::cout << "ENDDDDD \n \n " << std::endl;
 	  };
 	  Explanation* reason_for(Literal l);
