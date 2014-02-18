@@ -794,13 +794,16 @@ namespace Mistral {
 //    Vector<VariableRangeWithLearning*> Visited_upper_bound_variables ;
     //start_from is the index of the first boolean variable in the sequence
     int start_from;
+    int initial_variablesize;
     //Here we suppose we index first range variables then boolean variables, hence start_from should be equal to nb_range_variables. I'll be back later to that
     //   inline int get_id_boolean_variable (unsigned int literal ) {return (((literal-start_from) /2) + start_from) ;}
     inline int get_id_boolean_variable (Literal literal ) {return ((literal /2) + start_from) ;}
     inline Literal encode_boolean_variable_as_literal (unsigned int id_var, int sign) {return (((id_var - start_from)*2 ) + sign);}
    // inline Literal encode_boolean_variable_as_literal_alongsideLatest (unsigned int id_var, int sign) {return (((id_var - start_from)*2 ) + sign);}
-    inline int get_index_of_variable(int var) {return (var>start_from ? start_from : var); }
-    inline int get_varID_from_index(int index) {return (index<start_from ? index : variables.size -1); }
+    //inline int get_index_of_variable(int var) {return (var>start_from ? start_from : var); }
+    inline int get_index_of_variable(int var) {return var; }
+//    inline int get_varID_from_index(int index) {return (index<start_from ? index : variables.size -1); }
+    inline int get_varID_from_index(int index) {return index;}
 
     void treat_explanation(Explanation::iterator & lit, Explanation::iterator & stop, int& pathC );
 

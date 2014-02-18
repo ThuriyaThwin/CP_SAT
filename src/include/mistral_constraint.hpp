@@ -5084,7 +5084,7 @@ std::cout << "[" << std::setw(4) << id << "](" << name() << "): restore" << std:
 
 
 
-	  void extend_scope(Variable & x, int value);
+	  void extend_scope(Variable & x, int value, int isub, int level);
 	  int value_exist(int value);
 	  virtual Constraint clone() { return Constraint(new DomainFaithfulnessConstraint(scope)); }
 	  virtual void initialise();

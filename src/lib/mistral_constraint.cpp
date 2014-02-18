@@ -14158,15 +14158,16 @@ int Mistral::DomainFaithfulnessConstraint::value_exist(int value){
 
 
 
-void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value){
+void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value , int isub, int level){
 
 	ub.add(__boundLiteral(value,x));
 	ub.sort();
 	scope.add(x);
 
+	Literal virtual_literal = encode_bound_literal(scope[0].id(), value, isub);
+//	dom_constraint->eager_explanations[dom_constraint->eager_explanations.size -1]
 
-	eager_explanations.add(NULL_ATOM);
-
+	eager_explanations.add(virtual_literal);
 
 	Event * tmp_event_type = new Event[scope.size];
 	int * tmp_solution = new int[scope.size];
@@ -14224,6 +14225,10 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value)
 	self[i] = Constraint(this, i|type);
 	trigger_on(_VALUE_, scope[scope.size -1]);
 	index[i] = on[i]->post(self[i]);
+
+	//backtrackable??? add lvl!
+
+
 
 }
 
@@ -14315,7 +14320,7 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 
 	int idx = ub.size;
-
+	if (idx>0)
 	while (idx--){
 		if (ub[idx].value < _ub ){
 			index_ub = idx;
@@ -14362,7 +14367,7 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 #ifdef	_DEBUG_DOMAINFAITHFULNESS
 	std::cout << " index_ub " << index_ub <<std::endl;
-	if (index_lb >= 0 )
+	if (index_ub >= 0 )
 		std::cout << " index_ub " << ub[index_ub] <<std::endl;
 #endif
 
@@ -14378,6 +14383,7 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 
 	idx = index_ub +1;
+	if (idx>0)
 	while (idx--){
 		if (ub[idx].x.is_ground())
 			if (ub[idx].x.get_min())

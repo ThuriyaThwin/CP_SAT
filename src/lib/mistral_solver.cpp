@@ -9611,19 +9611,25 @@ void Mistral::Solver::learn_with_lazygeneration() {
 								dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
 								Variable tmp__(0,1);
 								var = dom_constraint->value_exist( val ) ;
+
+								lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
 								if ( var< 0)
 								{
 									//add(tmp__);
 									tmp__.lazy_initialise(this);
-									dom_constraint->extend_scope(tmp__ , val);
+									dom_constraint->extend_scope(tmp__ , val,!is_lb, lvl);
 									base->extend_scope(tmp__);
+									tmp__.set_min(!is_lb);
+									assignment_level[tmp__.id()] = lvl;
+									reason_for[tmp__.id()] = dom_constraint;
+
+
 								}
 								else
 								{
 									tmp__= variables[var];
 								}
 
-								lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
 								assignment_level[var]=lvl;
 								//todo should be search_root!
 								if(	lvl)
@@ -9864,18 +9870,24 @@ void Mistral::Solver::learn_with_lazygeneration() {
 										dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
 										Variable tmp__(0,1);
 										var = dom_constraint->value_exist( val ) ;
+										lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
 										if ( var< 0)
 										{
 											//add(tmp__);
 											tmp__.lazy_initialise(this);
-											dom_constraint->extend_scope(tmp__ , val);
+											dom_constraint->extend_scope(tmp__ , val, !is_lb, lvl);
 											base->extend_scope(tmp__);
+
+											//backtrackable?
+											tmp__.set_min(!is_lb);
+											assignment_level[tmp__.id()] = lvl;
+											reason_for[tmp__.id()] = dom_constraint;
 										}
 										else
 										{
 											tmp__= variables[var];
 										}
-										lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
+
 										assignment_level[var] = lvl;
 										//todo should be search_root!
 										if(	lvl)
@@ -12598,6 +12610,8 @@ void Mistral::Solver::set_fdlearning_on() {
 	boundvalues_under_exploration = new unsigned int [start_from +1 ];
 	graph_premise.initialise(10000);
 	graph_implied.initialise(10000);
+
+	initial_variablesize= variables.size;
 
 	__failure=NULL;
 	Vector< Variable >   bool_variables;
