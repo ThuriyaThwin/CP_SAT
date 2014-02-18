@@ -37,7 +37,7 @@
 //#define _OLD_ true
 //#define _DEBUG_NOGOOD true //(statistics.num_filterings == 491)
 //#define _DEBUG_SEARCH true
-//#define _DEBUG_FD_NOGOOD true
+#define _DEBUG_FD_NOGOOD true
 //#define _DEBUG_SHOW_LEARNT_BOUNDS true
 //#define _TRACKING_BOUND 1078
 //#define _TRACKING_ATOM 368
@@ -9640,8 +9640,12 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 
 									//	visited.fast_add(tmp__.id());
-										learnt_clause.add(2*tmp__.id() + is_lb);
-										backtrack_level = lvl;
+
+										//learnt_clause.add(encode_bool2*tmp__.id() + is_lb);
+										learnt_clause.add(encode_boolean_variable_as_literal(tmp__.id(), is_lb));
+
+										if(lvl > backtrack_level)
+											backtrack_level = lvl;
 									}
 							}
 							else{
@@ -9886,8 +9890,12 @@ void Mistral::Solver::learn_with_lazygeneration() {
 													}
 												 */
 											//	visited.fast_add(tmp__.id());
-												learnt_clause.add(2*tmp__.id() + is_lb);
-												backtrack_level = lvl;
+											//	learnt_clause.add(2*tmp__.id() + is_lb);
+											//	backtrack_level = lvl;
+												learnt_clause.add(encode_boolean_variable_as_literal(tmp__.id(), is_lb));
+												if(lvl > backtrack_level)
+													backtrack_level = lvl;
+
 											}
 									}
 									else{

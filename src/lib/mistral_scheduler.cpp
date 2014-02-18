@@ -1845,7 +1845,7 @@ void SchedulingSolver::setup() {
 
   if (params->FD_learning)
   {
-	  start_from = tasks.size;
+	  start_from = tasks.size +1;
 	  set_fdlearning_on();
   }
 
