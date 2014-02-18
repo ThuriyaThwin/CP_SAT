@@ -602,6 +602,7 @@ namespace Mistral {
     /*!@name Declarations*/
     //@{
     int declare(Variable x);
+    int lazy_declare(Variable x);
     /// add a variable (prior to search!!!)
     void add(Variable x);
     void remove(Variable x);

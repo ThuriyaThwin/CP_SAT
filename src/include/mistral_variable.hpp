@@ -1930,6 +1930,7 @@ namespace Mistral {
     }
     void initialise(const Variable& x);
     void initialise(Solver *s, const int level=0);
+    void lazy_initialise(Solver *s, const int level=0);
     //    void initialise(Solver *s);
 
     Event setValue( const int val );    

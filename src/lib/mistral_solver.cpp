@@ -1458,6 +1458,83 @@ int Mistral::Solver::declare(Variable x) {
 }
 
 
+
+//Exactly the same as  declare but using variable_lazy_initialise.
+
+int Mistral::Solver::lazy_declare(Variable x) {
+
+#ifdef _DEBUG_BUILD
+  std::cout << "declare the variable " ; //<< x << std::endl;
+#endif
+
+
+
+  if(x.domain_type > DYN_VAR) booleans.add(&x);
+
+  // add the variables to the set of vars
+  active_variables.declare(variables.size);
+
+  x.variable->initialise(this);
+  //x.variable->id = variables.size;
+  //x.variable->solver = this;
+  visited.extend(variables.size);
+  variables.add(x);
+
+  //declared_variables.add(x);
+  assignment_level.add(INFTY);
+  assignment_order.add(INFTY);
+  //reason.add(NULL);
+  //EXPL
+  reason_for.add(NULL);
+  //reason_index.add(-1);
+  domain_types.add(DYN_VAR|(x.is_range() ? RANGE_VAR : 0));
+
+  last_solution_lb.add(-INFTY);
+  last_solution_ub.add( INFTY);
+
+  ConstraintTriggerArray array;
+  bool extend_struct = (constraint_graph.capacity == constraint_graph.size);
+  constraint_graph.add(array);
+  if(extend_struct) {
+    constraint_graph.add(array);
+    for(int i = constraint_graph.size-1; i>=0; --i) {
+      for(int j = 0; j<3; ++j) {
+	for(int k = constraint_graph[i].on[j].size-1; k>=0; --k) {
+	  constraint_graph[i].on[j][k].re_link_to(&constraint_graph[i].on[j]);
+	}
+      }
+    }
+  }
+  constraint_graph.back().initialise(4);
+
+
+  // while(lit_activity.capacity < 2*variables.size)
+  //   lit_activity.extendStack();
+  // while(var_activity.capacity < variable.size)
+  //   var_activity.extendStack();
+
+  // lit_activity.add(0);
+  // lit_activity.add(0);
+  // var_activity.add(0);
+
+
+
+  notify_add_variable();
+
+  //std::cout << x.get_domain() << std::endl;
+
+
+
+
+#ifdef _DEBUG_BUILD
+  std::cout << x << " in " << x.get_domain() << std::endl;
+#endif
+
+  return variables.size-1;
+}
+
+
+
 // void Mistral::Solver::add(Constraint* c) { 
 //   for()
 // }
@@ -9536,7 +9613,8 @@ void Mistral::Solver::learn_with_lazygeneration() {
 								var = dom_constraint->value_exist( val ) ;
 								if ( var< 0)
 								{
-									add(tmp__);
+									//add(tmp__);
+									tmp__.lazy_initialise(this);
 									dom_constraint->extend_scope(tmp__ , val);
 									base->extend_scope(tmp__);
 								}
@@ -9784,7 +9862,8 @@ void Mistral::Solver::learn_with_lazygeneration() {
 										var = dom_constraint->value_exist( val ) ;
 										if ( var< 0)
 										{
-											add(tmp__);
+											//add(tmp__);
+											tmp__.lazy_initialise(this);
 											dom_constraint->extend_scope(tmp__ , val);
 											base->extend_scope(tmp__);
 										}

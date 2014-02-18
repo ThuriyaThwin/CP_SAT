@@ -396,6 +396,88 @@ void Mistral::Variable::initialise(Solver *s, const int level) {
 }
 
 
+//Exactly the same as  initialise but without branching on this varible. That is, we will not declare the variable in sequence!
+void Mistral::Variable::lazy_initialise(Solver *s, const int level) {
+
+  //std::cout << "call initialise on " << *this << std::endl;
+
+#ifdef _DEBUG_BUILD
+  for(int i=0; i<level; ++i) std::cout << "  " ;
+  std::cout << "initialise " << *this << std::endl;
+#endif
+
+
+  if(domain_type == EXPRESSION) {
+
+    if(!expression->is_initialised()) {
+
+#ifdef _DEBUG_BUILD
+      for(int i=0; i<=level; ++i) std::cout << "  " ;
+      std::cout << "beg init " << expression->get_name();
+      //display(std::cout);
+      std::cout << std::endl;
+#endif
+
+      for(unsigned int i=0; i<expression->children.size; ++i) {
+	expression->children[i].initialise(s, level+1);
+      }
+
+      if(level == 0 && !expression->children.empty()) {
+
+#ifdef _DEBUG_BUILD
+	std::cout << "-> constraint!" << std::endl;
+#endif
+	expression->extract_constraint(s);
+      } else {
+
+#ifdef _DEBUG_BUILD
+	for(int i=0; i<=level; ++i) std::cout << "  " ;
+	std::cout << "-> predicate! (extract var)" << std::endl;
+#endif
+
+	expression->extract_variable(s);
+
+	// SELF CHANGE
+	Variable X = expression->_self;
+	expression->id = (X.domain_type == CONST_VAR ? -2 : X.id());
+	expression->solver = s;
+
+#ifdef _DEBUG_BUILD
+	for(int i=0; i<=level; ++i) std::cout << "  " ;
+	std::cout << " extracted " << X << " -> predicate " << std::endl;
+#endif
+
+	expression->extract_predicate(s);//);
+
+      }
+
+#ifdef _DEBUG_BUILD
+      for(int i=0; i<=level; ++i) std::cout << "  " ;
+      std::cout << "end init " ;
+      display(std::cout);
+      std::cout << std::endl;
+#endif
+
+      s->expression_store.add(expression);
+    }
+  } else {
+    if(domain_type != CONST_VAR && variable->solver != s) {
+
+#ifdef _DEBUG_BUILD
+      for(int i=0; i<=level; ++i) std::cout << "  " ;
+      std::cout << "add variable " ;
+      display(std::cout);
+      std::cout << " to the model" << std::endl;
+#endif
+
+      s->declare(this->get_var());
+      //s->declare(*this);//->get_var());
+     // s->sequence.declare(*this);
+    }
+  }
+}
+
+
 
 Mistral::Event Mistral::Variable::setValue( const int val ) 
 {
