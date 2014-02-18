@@ -14295,7 +14295,8 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 							Literal	tmp = 	encode_bound_literal( scope[0].id() , _lb , 0) ;
 							explanation[0] = tmp;
-							tmp =  2* scope[j].id() ;
+							tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(scope[j].id(), 0));
+//							tmp =  2* scope[j].id() ;
 							explanation[1] = tmp;
 							return wiped;
 						}
@@ -14345,7 +14346,8 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 							Literal	tmp = 	encode_bound_literal(scope[0].id() , _ub, 1);
 							explanation[0] = tmp;
-							tmp =  2* scope[j].id() +1;
+							tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(scope[j].id(), 1));
+							//tmp =  2* scope[j].id() +1;
 							explanation[1] = tmp;
 							return wiped;
 						}
@@ -14422,7 +14424,8 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 						wiped = FAILURE(j);
 
 						explanation[0] = tmp;
-						tmp =  2* scope[j].id() ;
+						tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(scope[j].id(), 0));
+						//tmp =  2* scope[j].id() ;
 						explanation[1] = tmp;
 						return wiped;
 					}
@@ -14462,7 +14465,8 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 							wiped = FAILURE(j);
 
 							explanation[0] = tmp;
-							tmp =  2* scope[j].id() +1;
+							tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(scope[j].id(), 1));
+							//tmp =  2* scope[j].id() +1;
 							explanation[1] = tmp;
 							return wiped;
 						}
@@ -14508,7 +14512,8 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 			tmp = 	encode_bound_literal(scope[0].id() , _ub, 1);
 			explanation[0] = tmp;
-			tmp = 	2*  ub[latestindex_lb].x.id() +1;
+			tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(ub[latestindex_lb].x.id() ,1));
+			//tmp = 	2*  ub[latestindex_lb].x.id() +1;
 			explanation[1] = tmp;
 			return wiped;
 		}
@@ -14530,10 +14535,10 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 			tmp = 	encode_bound_literal(scope[0].id() , _lb, 0);
 			explanation[0] = tmp;
-			tmp = 	2*  ub[latestindex_ub].x.id();
+			tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(ub[latestindex_ub].x.id() ,0));
+//			tmp = 	2*  ub[latestindex_ub].x.id();
 			explanation[1] = tmp;
 			return wiped;
-
 		}
 
 
