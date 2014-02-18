@@ -9432,6 +9432,8 @@ void Mistral::Solver::learn_with_lazygeneration() {
 		Explanation *bound_explanation;
 		DomainFaithfulnessConstraint* dom_constraint;
 		VariableRangeWithLearning * tmp_VariableRangeWithLearning;
+		Vector<unsigned int> boolean_bound_literals_to_explore;
+		boolean_bound_literals_to_explore.clear();
 		int is_lb , var , val;
 
 		visitedUpperBounds.clear();
@@ -9732,6 +9734,9 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									if(lvl >= level) {
 										//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 										// we'll need to replace 'a' by its parents since its level is too high
+										if (get_id_boolean_variable(q)>=initial_variablesize){
+											boolean_bound_literals_to_explore.add(get_id_boolean_variable(q));
+										}
 										++pathC;
 									} else {
 										// q's level is below the current level, we are not expending it further
@@ -10005,6 +10010,9 @@ void Mistral::Solver::learn_with_lazygeneration() {
 												std::cout << " is a " << (is_lower_bound(old) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(old) << std::endl;
 												std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(old)].get_domain() << std::endl;
 												 */
+												if (get_id_boolean_variable(q)>=initial_variablesize){
+													boolean_bound_literals_to_explore.add(get_id_boolean_variable(q));
+												}
 												++pathC;
 											} else {
 												// q's level is below the current level, we are not expending it further
@@ -10088,6 +10096,15 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 			//			if( pathC > 0 )
 			//check index!
+
+			if (boolean_bound_literals_to_explore.size){
+				boolean_bound_literals_to_explore.pop(a);
+				p= encode_boolean_variable_as_literal(a,variables[a].get_min() );
+				lvl = assignment_level[a];
+				current_explanation = reason_for[a];
+			}
+
+			else{
 			while(!visited.fast_contain(sequence[++index].id())) {
 
 				//	std::cout << " c new index " <<  index << std::endl;
@@ -10227,6 +10244,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 					std::cout << "PatyhC < 0 !!!!! " << pathC << std::endl;
 					exit(1);
 				}
+			}
 			}
 			//		std::cout << "latest before while =" << pathC << std::endl;
 		} while( --pathC );
