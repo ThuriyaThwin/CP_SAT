@@ -37,7 +37,7 @@
 //#define _OLD_ true
 //#define _DEBUG_NOGOOD true //(statistics.num_filterings == 491)
 //#define _DEBUG_SEARCH true
-#define _DEBUG_FD_NOGOOD true
+//#define _DEBUG_FD_NOGOOD true
 //#define _DEBUG_SHOW_LEARNT_BOUNDS true
 //#define _TRACKING_BOUND 1078
 //#define _TRACKING_ATOM 368
@@ -9607,7 +9607,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 							if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
 							{
 
-								std::cout << " yes!  ? " << std::endl;
+							//	std::cout << " yes!  ? " << std::endl;
 								dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
 								Variable tmp__(0,1);
 								var = dom_constraint->value_exist( val ) ;
@@ -9646,7 +9646,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 							}
 							else{
 
-								std::cout << " no!  ? " << std::endl;
+						//		std::cout << " no!  ? " << std::endl;
 								if (is_lb)
 								{
 									//var = get_variable_from_literal(to_be_explored);
@@ -9856,7 +9856,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
 									{
 
-										std::cout << " yes!  ? " << std::endl;
+									//	std::cout << " yes!  ? " << std::endl;
 										dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
 										Variable tmp__(0,1);
 										var = dom_constraint->value_exist( val ) ;
@@ -9892,7 +9892,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									}
 									else{
 
-										std::cout << " no!  ? " << std::endl;
+									//	std::cout << " no!  ? " << std::endl;
 										if (is_lb)
 										{
 											var = get_variable_from_literal(to_be_explored);
@@ -10064,7 +10064,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 				}
 			}
 
-				std::cout << " c visited  " <<  visited << std::endl;
+			//	std::cout << " c visited  " <<  visited << std::endl;
 
 			//			if( pathC > 0 )
 			//check index!
@@ -10236,7 +10236,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 			std::cout << " ) " << (backtrack_level<level-1 ? "-backjump" : "") << std::endl;
 		}
 #endif
-
+		std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
 		//exit(1);
 #ifdef 	_DEBUG_FD_NOGOOD
 		std::cout << " c END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;

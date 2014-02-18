@@ -1998,20 +1998,20 @@ bool Mistral::VariableRangeWithLearning::should_be_learnt (Literal q) {
 int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 	int previsouslevel, idx;
 
-	std::cout << "debug level_of"<< std::endl;
-	std::cout << "trail "<< trail_ << std::endl;
+	//	std::cout << "debug level_of"<<  val << std::endl;
+	//	std::cout << "trail "<< trail_ << std::endl;
 
 	if (lb){
-		std::cout << " is lb "<< std::endl;
+		//		std::cout << " is lb "<< std::endl;
 
 		idx = trail_.size -3 ;
 		do{
 			idx-=3;
 			if (idx>=0)
-			previsouslevel = trail_[idx];
+				previsouslevel = trail_[idx];
 			else{
 
-				std::cout << " will return  "<< trail_[2] << std::endl;
+				//				std::cout << " will return  "<< trail_[2] << std::endl;
 				return trail_[2];
 			}
 
@@ -2019,13 +2019,13 @@ int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 		}while (val <= previsouslevel);
 
 		idx+=3;
-		std::cout << " will return  "<< trail_[idx+2] << std::endl;
+		//		std::cout << " will return  "<< trail_[idx+2] << std::endl;
 
 		return trail_[idx+2];
 
 	}
 	else{
-		std::cout << " is UB "<<  std::endl;
+		//		std::cout << " is UB "<<  std::endl;
 
 		idx = trail_.size -2 ;
 		do{
@@ -2033,14 +2033,14 @@ int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 			if (idx>=0)
 				previsouslevel = trail_[idx];
 			else{
-				std::cout << " will return  "<< trail_[2] << std::endl;
+				//			std::cout << " will return  "<< trail_[2] << std::endl;
 				return trail_[2];
 			}
 
 		}while (val >= previsouslevel);
 		idx+=3;
 
-		std::cout << " will return  "<< trail_[idx+1] << std::endl;
+		//	std::cout << " will return  "<< trail_[idx+1] << std::endl;
 		return trail_[idx+1];
 
 	}
