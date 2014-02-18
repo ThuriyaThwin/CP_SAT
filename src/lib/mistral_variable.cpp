@@ -419,7 +419,7 @@ void Mistral::Variable::lazy_initialise(Solver *s, const int level) {
 #endif
 
       for(unsigned int i=0; i<expression->children.size; ++i) {
-	expression->children[i].initialise(s, level+1);
+	expression->children[i].lazy_initialise(s, level+1);
       }
 
       if(level == 0 && !expression->children.empty()) {
@@ -435,7 +435,12 @@ void Mistral::Variable::lazy_initialise(Solver *s, const int level) {
 	std::cout << "-> predicate! (extract var)" << std::endl;
 #endif
 
-	expression->extract_variable(s);
+	//replace extract_variable :
+	//expression->extract_variable(s);
+	//with
+	expression->_self.lazy_initialise(s, 1);
+	expression-> _self = expression->_self.get_var();
+
 
 	// SELF CHANGE
 	Variable X = expression->_self;
