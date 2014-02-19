@@ -5231,7 +5231,7 @@ void Mistral::Solver::fdlearn_nogood(){
 							std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-							if (x.get_size()>1)
+							if ((x.get_size()>1) && (x.id() < initial_variablesize))
 							{
 								std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 								exit(1);
@@ -5357,7 +5357,7 @@ void Mistral::Solver::fdlearn_nogood(){
 									std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " explanation comes from " << bound_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-									if (x.get_size()>1)
+									if ((x.get_size()>1) && (x.id() < initial_variablesize))
 									{
 										std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 										exit(1);
@@ -5949,7 +5949,7 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 							std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-							if (x.get_size()>1)
+							if (((x.get_size()>1)) && (x.id() < initial_variablesize))
 							{
 								std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 								exit(1);
@@ -6164,7 +6164,7 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 									std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " explanation comes from " << bound_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-									if (x.get_size()>1)
+									if ((x.get_size()>1) && (x.id() < initial_variablesize) )
 									{
 										std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 										exit(1);
@@ -6942,7 +6942,7 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 							std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-							if (x.get_size()>1)
+							if ((x.get_size()>1) && (x.id() < initial_variablesize) )
 							{
 								std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 								exit(1);
@@ -7259,7 +7259,7 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 									std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " explanation comes from " << bound_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-									if (x.get_size()>1)
+									if ((x.get_size()>1) && (x.id() < initial_variablesize) )
 									{
 										std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 										exit(1);
@@ -7982,7 +7982,7 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 							std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-							if (x.get_size()>1)
+							if ((x.get_size()>1) && (x.id() < initial_variablesize))
 							{
 								std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 								exit(1);
@@ -8167,7 +8167,7 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 										std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " explanation comes from " << bound_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-										if (x.get_size()>1)
+										if ((x.get_size()>1) && (x.id() < initial_variablesize))
 										{
 											std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 											exit(1);
@@ -8487,7 +8487,7 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 							std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-							if (x.get_size()>1)
+							if ((x.get_size()>1) && (x.id() < initial_variablesize))
 							{
 								std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 								exit(1);
@@ -8695,7 +8695,7 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 										std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " explanation comes from " << bound_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-										if (x.get_size()>1)
+										if ((x.get_size()>1) && (x.id() < initial_variablesize))
 										{
 											std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 											exit(1);
@@ -9621,7 +9621,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									tmp__.lazy_initialise(this);
 									dom_constraint->extend_scope(tmp__ , val,!is_lb, lvl);
 									base->extend_scope(tmp__);
-									tmp__.set_domain(!is_lb);
+								//	tmp__.set_domain(!is_lb);
 									assignment_level[tmp__.id()] = lvl;
 									reason_for[tmp__.id()] = dom_constraint;
 
@@ -9711,7 +9711,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 							std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-							if (x.get_size()>1)
+							if ((x.get_size()>1) && (x.id() < initial_variablesize))
 							{
 								std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 								exit(1);
@@ -9884,7 +9884,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 											base->extend_scope(tmp__);
 
 											//backtrackable?
-											tmp__.set_domain(!is_lb);
+											//tmp__.set_domain(!is_lb);
 											assignment_level[tmp__.id()] = lvl;
 											reason_for[tmp__.id()] = dom_constraint;
 										}
@@ -9980,7 +9980,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " explanation comes from " << bound_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-									if (x.get_size()>1)
+									if ((x.get_size()>1) && (x.id() < initial_variablesize) )
 									{
 										std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 										exit(1);
