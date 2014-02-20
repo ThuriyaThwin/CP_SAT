@@ -502,13 +502,52 @@ void Mistral::ConstraintClauseBase::add(Variable x) {
 
 void Mistral::ConstraintClauseBase::extend_scope(Variable x){
 
-	scope.add(x);
+//	scope.add(x);
+
+	//add(x);
+	/*
+		if (is_watched_by.capacity < (2*scope.size))
+			is_watched_by.extendStack();
+		if (reason_for.capacity < (scope.size))
+			reason_for.extendStack();
+	*/
+	  unsigned int idx = x.id()-start_from;
+	  if(idx == scope.size) {
+	    scope.add(x);
+	    reason_for.add(NULL);
+
+	  } else if(idx > scope.size) {
+
+		  std::cout << "idx > scope.size)" << std::endl;
+		  exit(1);
+
+	    while(scope.capacity <= idx)
+	      scope.extendStack();
+	    scope[idx] = x;
+
+	    while(reason_for.capacity <= idx)
+	      reason_for.extendStack();
+	    reason_for[idx] = NULL;
+
+	    // while(is_watched_by.capacity <= 2*idx)
+	    //   is_watched_by.extendStack();
+	    // while(lit_activity.capacity <= 2*idx)
+	    //   lit_activity.extendStack();
+	    // while(var_activity.capacity <= idx)
+	    //   var_activity.extendStack();
+	  }
+
+	  while(is_watched_by.capacity <= 2*idx)
+	    is_watched_by.extendStack();
+	  // while(lit_activity.capacity <= 2*idx)
+	  //   lit_activity.extendStack();
+	  // while(var_activity.capacity <= idx)
+	  //   var_activity.extendStack();
+
+	  //reason = solver->reason.stack_;
 
 
-	if (is_watched_by.capacity < (2*scope.size))
-		is_watched_by.extendStack();
-	if (reason_for.capacity < (scope.size))
-		reason_for.extendStack();
+
 
 	Event * tmp_event_type = new Event[scope.size];
 	int * tmp_solution = new int[scope.size];
