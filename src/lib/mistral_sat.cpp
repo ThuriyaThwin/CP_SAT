@@ -504,6 +504,12 @@ void Mistral::ConstraintClauseBase::extend_scope(Variable x){
 
 	scope.add(x);
 
+
+	if (is_watched_by.capacity < (2*scope.size))
+		is_watched_by.extendStack();
+	if (reason_for.capacity < (scope.size))
+		reason_for.extendStack();
+
 	Event * tmp_event_type = new Event[scope.size];
 	int * tmp_solution = new int[scope.size];
 	Constraint* tmpself = new Constraint[scope.size];
