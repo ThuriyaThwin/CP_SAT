@@ -14163,6 +14163,8 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 	ub.add(__boundLiteral(value,x));
 	ub.sort();
 	scope.add(x);
+	_scope.add(x);
+	consolidate_var(scope.size -1);
 
 	Literal virtual_literal = encode_bound_literal(scope[0].id(), value, isub);
 //	dom_constraint->eager_explanations[dom_constraint->eager_explanations.size -1]
