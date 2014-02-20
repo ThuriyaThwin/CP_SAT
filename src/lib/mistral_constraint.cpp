@@ -42,7 +42,7 @@
 //#define _DEBUG_REASONRIWBS (get_solver()->statistics.num_filterings == 10037)
 //#define _DEBUG_WEIGHTEDBOOLSUM (id == 102)
 //#define _DEBUG_CLIQUENOTEQUAL true
-  #define _DEBUG_DOMAINFAITHFULNESS true
+  //#define _DEBUG_DOMAINFAITHFULNESS true
 
 std::ostream& Mistral::operator<< (std::ostream& os, const Mistral::Constraint& x) {
   return x.display(os);

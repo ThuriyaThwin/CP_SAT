@@ -630,9 +630,9 @@ void Mistral::ConstraintQueue::declare(Constraint c, Solver *s) {
     int new_cardinality = (new_max_p-new_min_p+1);
     Queue *aux_triggers = triggers;
 
-	std::cout << " new_cardinality ?" << new_cardinality << std::endl;
+	//std::cout << " new_cardinality ?" << new_cardinality << std::endl;
     triggers = new Queue[new_cardinality];
-	std::cout << " allocated ?" << std::endl;
+	//std::cout << " allocated ?" << std::endl;
     triggers -= new_min_p;
     for(int i=min_priority; i<min_priority+cardinality; ++i) {
       triggers[i] = aux_triggers[i];

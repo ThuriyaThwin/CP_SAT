@@ -551,7 +551,7 @@ void Mistral::ConstraintClauseBase::extend_scope(Variable x){
 
 	  //reason = solver->reason.stack_;
 
-
+	  consolidate_var(scope.size -1);
 
 
 	Event * tmp_event_type = new Event[scope.size];
