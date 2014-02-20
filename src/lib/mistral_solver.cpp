@@ -5231,7 +5231,7 @@ void Mistral::Solver::fdlearn_nogood(){
 							std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-							if ((x.get_size()>1) && (x.id() < initial_variablesize))
+							if ((x.get_size()>1) )
 							{
 								std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 								exit(1);
@@ -5357,7 +5357,7 @@ void Mistral::Solver::fdlearn_nogood(){
 									std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " explanation comes from " << bound_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-									if ((x.get_size()>1) && (x.id() < initial_variablesize))
+									if ((x.get_size()>1) )
 									{
 										std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 										exit(1);
@@ -5949,7 +5949,7 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 							std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-							if (((x.get_size()>1)) && (x.id() < initial_variablesize))
+							if (((x.get_size()>1)) )
 							{
 								std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 								exit(1);
@@ -6164,7 +6164,7 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 									std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " explanation comes from " << bound_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-									if ((x.get_size()>1) && (x.id() < initial_variablesize) )
+									if ((x.get_size()>1) )
 									{
 										std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 										exit(1);
@@ -6942,7 +6942,7 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 							std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-							if ((x.get_size()>1) && (x.id() < initial_variablesize) )
+							if ((x.get_size()>1) )
 							{
 								std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 								exit(1);
@@ -7259,7 +7259,7 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 									std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " explanation comes from " << bound_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-									if ((x.get_size()>1) && (x.id() < initial_variablesize) )
+									if ((x.get_size()>1) )
 									{
 										std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 										exit(1);
@@ -7982,7 +7982,7 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 							std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-							if ((x.get_size()>1) && (x.id() < initial_variablesize))
+							if ((x.get_size()>1) )
 							{
 								std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 								exit(1);
@@ -8167,7 +8167,7 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 										std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " explanation comes from " << bound_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-										if ((x.get_size()>1) && (x.id() < initial_variablesize))
+										if ((x.get_size()>1) )
 										{
 											std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 											exit(1);
@@ -8487,7 +8487,7 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 							std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-							if ((x.get_size()>1) && (x.id() < initial_variablesize))
+							if ((x.get_size()>1) )
 							{
 								std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 								exit(1);
@@ -8695,7 +8695,7 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 										std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " explanation comes from " << bound_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-										if ((x.get_size()>1) && (x.id() < initial_variablesize))
+										if ((x.get_size()>1) )
 										{
 											std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 											exit(1);
@@ -9621,9 +9621,116 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									tmp__.lazy_initialise(this);
 									dom_constraint->extend_scope(tmp__ , val,!is_lb, lvl);
 									base->extend_scope(tmp__);
-								//	tmp__.set_domain(!is_lb);
+									//	tmp__.set_domain(!is_lb);
 									assignment_level[tmp__.id()] = lvl;
 									reason_for[tmp__.id()] = dom_constraint;
+
+									//		std::cout << "\n \n \n \n \n \n lvl " << lvl << std::endl;
+									//		std::cout << "tmp__.id() " << tmp__.id() << std::endl;
+									//		std::cout << "current level = " << level << std::endl;
+									//		std::cout << "trail_.size = " << trail_.size << std::endl;
+
+
+									//int last_index =trail_.size -5;
+
+									//tmp__.set_domain(!is_lb);
+									*(tmp__.expression->get_self().bool_domain)  = (1+ (!is_lb));
+									int index___ = level - lvl;
+									int index___0 = 1;
+									//			std::cout << "index" << index___ << std::endl;
+									//			std::cout << "init saved_vars size" << saved_vars.size << std::endl;
+
+									int saved_vars_size_at_level =  saved_vars.size;
+
+									/*
+									std::cout << " \n before : trail = " << trail_ << std::endl;
+									while(index___){
+
+										std::cout << "index" << index___ << std::endl;
+										saved_vars_size_at_level = trail_[trail_.size - (5*index___)];
+										std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
+										//std::cout << "saved_vars at that element" << saved_vars[saved_vars_size_at_level-1] << std::endl;
+										std::cout << " should be changed " << saved_vars[saved_vars_size_at_level] << std::endl;
+										std::cout << "-2 " << saved_vars[saved_vars_size_at_level-2] << std::endl;
+										std::cout << "-1 " << saved_vars[saved_vars_size_at_level-1] << std::endl;
+										std::cout << "0 " << saved_vars[saved_vars_size_at_level] << std::endl;
+										std::cout << "1 " << saved_vars[saved_vars_size_at_level+1] << std::endl;
+
+										--index___;
+									}
+
+									std::cout << "LAST saved_vars.size  : " << saved_vars.size << std::endl;
+									saved_vars_size_at_level = saved_vars.size;
+									//std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
+									//std::cout << " should be changed " << saved_vars[saved_vars_size_at_level] << std::endl;
+									std::cout << "-2 " << saved_vars[saved_vars.size -2] << std::endl;
+									std::cout << "-1 " << saved_vars[saved_vars.size-1] << std::endl;
+
+									 */
+
+									index___ = level - lvl;
+
+
+									saved_vars.add(saved_vars[trail_[trail_.size -5]]);
+									/*	while(index___){
+
+										std::cout << "index" << index___ << std::endl;
+										saved_vars_size_at_level = trail_[trail_.size - (5*index___)];
+										std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
+										trail_[trail_.size - (5*index___)]++;
+										--index___;
+									}
+									 */
+
+									while(index___0 < index___){
+
+										//						std::cout << "index" << index___0 << std::endl;
+										saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
+
+										saved_vars[saved_vars_size_at_level] = saved_vars[trail_[trail_.size - (5*(index___0+1))]];
+
+										//												std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
+										trail_[trail_.size - (5*index___0)]++;
+										++index___0;
+									}
+
+									//		std::cout << "index" << index___0 << std::endl;
+									saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
+
+									saved_vars[saved_vars_size_at_level] =  tmp__.id();
+
+									//												std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
+									trail_[trail_.size - (5*index___0)]++;
+									//	++index___0;
+
+									index___ = level - lvl;
+
+									/*
+									std::cout << " \n \n  new  : trail = " << trail_ << std::endl;
+									while(index___){
+
+										std::cout << "index" << index___ << std::endl;
+										saved_vars_size_at_level = trail_[trail_.size - (5*index___)];
+										std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
+										//std::cout << " should be changed " << saved_vars[saved_vars_size_at_level] << std::endl;
+										std::cout << "-2 " << saved_vars[saved_vars_size_at_level-2] << std::endl;
+										std::cout << "-1 " << saved_vars[saved_vars_size_at_level-1] << std::endl;
+										std::cout << "0 " << saved_vars[saved_vars_size_at_level] << std::endl;
+										std::cout << "1 " << saved_vars[saved_vars_size_at_level+1] << std::endl;
+
+
+										--index___;
+									}
+
+									std::cout << "\n LAST saved_vars.size  : " << saved_vars.size << std::endl;
+									saved_vars_size_at_level = saved_vars.size;
+									//std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
+									//std::cout << " should be changed " << saved_vars[saved_vars_size_at_level] << std::endl;
+									std::cout << "-2 " << saved_vars[saved_vars.size -2] << std::endl;
+									std::cout << "-1 " << saved_vars[saved_vars.size-1] << std::endl;
+									//std::cout << "0 " << saved_vars[saved_vars_size_at_level] << std::endl;
+									//std::cout << "1 " << saved_vars[saved_vars_size_at_level+1] << std::endl;
+									 */
 
 
 								}
@@ -9711,7 +9818,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 							std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-							if ((x.get_size()>1) && (x.id() < initial_variablesize))
+							if ((x.get_size()>1) )
 							{
 								std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 								exit(1);
@@ -9887,6 +9994,115 @@ void Mistral::Solver::learn_with_lazygeneration() {
 											//tmp__.set_domain(!is_lb);
 											assignment_level[tmp__.id()] = lvl;
 											reason_for[tmp__.id()] = dom_constraint;
+
+											//		std::cout << "\n \n \n \n \n \n lvl " << lvl << std::endl;
+											//		std::cout << "tmp__.id() " << tmp__.id() << std::endl;
+											//		std::cout << "current level = " << level << std::endl;
+											//		std::cout << "trail_.size = " << trail_.size << std::endl;
+
+
+											//int last_index =trail_.size -5;
+
+											//tmp__.set_domain(!is_lb);
+											*(tmp__.expression->get_self().bool_domain)  = (1+ (!is_lb));
+											int index___ = level - lvl;
+											int index___0 = 1;
+											//			std::cout << "index" << index___ << std::endl;
+											//			std::cout << "init saved_vars size" << saved_vars.size << std::endl;
+
+											int saved_vars_size_at_level =  saved_vars.size;
+
+											/*
+											std::cout << " \n before : trail = " << trail_ << std::endl;
+											while(index___){
+
+												std::cout << "index" << index___ << std::endl;
+												saved_vars_size_at_level = trail_[trail_.size - (5*index___)];
+												std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
+												//std::cout << "saved_vars at that element" << saved_vars[saved_vars_size_at_level-1] << std::endl;
+												std::cout << " should be changed " << saved_vars[saved_vars_size_at_level] << std::endl;
+												std::cout << "-2 " << saved_vars[saved_vars_size_at_level-2] << std::endl;
+												std::cout << "-1 " << saved_vars[saved_vars_size_at_level-1] << std::endl;
+												std::cout << "0 " << saved_vars[saved_vars_size_at_level] << std::endl;
+												std::cout << "1 " << saved_vars[saved_vars_size_at_level+1] << std::endl;
+
+												--index___;
+											}
+
+											std::cout << "LAST saved_vars.size  : " << saved_vars.size << std::endl;
+											saved_vars_size_at_level = saved_vars.size;
+											//std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
+											//std::cout << " should be changed " << saved_vars[saved_vars_size_at_level] << std::endl;
+											std::cout << "-2 " << saved_vars[saved_vars.size -2] << std::endl;
+											std::cout << "-1 " << saved_vars[saved_vars.size-1] << std::endl;
+
+											 */
+
+											index___ = level - lvl;
+
+
+											saved_vars.add(saved_vars[trail_[trail_.size -5]]);
+											/*	while(index___){
+
+												std::cout << "index" << index___ << std::endl;
+												saved_vars_size_at_level = trail_[trail_.size - (5*index___)];
+												std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
+												trail_[trail_.size - (5*index___)]++;
+												--index___;
+											}
+											 */
+
+											while(index___0 < index___){
+
+												//						std::cout << "index" << index___0 << std::endl;
+												saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
+
+												saved_vars[saved_vars_size_at_level] = saved_vars[trail_[trail_.size - (5*(index___0+1))]];
+
+												//												std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
+												trail_[trail_.size - (5*index___0)]++;
+												++index___0;
+											}
+
+											//		std::cout << "index" << index___0 << std::endl;
+											saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
+
+											saved_vars[saved_vars_size_at_level] =  tmp__.id();
+
+											//												std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
+											trail_[trail_.size - (5*index___0)]++;
+											//	++index___0;
+
+											index___ = level - lvl;
+
+											/*
+											std::cout << " \n \n  new  : trail = " << trail_ << std::endl;
+											while(index___){
+
+												std::cout << "index" << index___ << std::endl;
+												saved_vars_size_at_level = trail_[trail_.size - (5*index___)];
+												std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
+												//std::cout << " should be changed " << saved_vars[saved_vars_size_at_level] << std::endl;
+												std::cout << "-2 " << saved_vars[saved_vars_size_at_level-2] << std::endl;
+												std::cout << "-1 " << saved_vars[saved_vars_size_at_level-1] << std::endl;
+												std::cout << "0 " << saved_vars[saved_vars_size_at_level] << std::endl;
+												std::cout << "1 " << saved_vars[saved_vars_size_at_level+1] << std::endl;
+
+
+												--index___;
+											}
+
+											std::cout << "\n LAST saved_vars.size  : " << saved_vars.size << std::endl;
+											saved_vars_size_at_level = saved_vars.size;
+											//std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
+											//std::cout << " should be changed " << saved_vars[saved_vars_size_at_level] << std::endl;
+											std::cout << "-2 " << saved_vars[saved_vars.size -2] << std::endl;
+											std::cout << "-1 " << saved_vars[saved_vars.size-1] << std::endl;
+											//std::cout << "0 " << saved_vars[saved_vars_size_at_level] << std::endl;
+											//std::cout << "1 " << saved_vars[saved_vars_size_at_level+1] << std::endl;
+											 */
+
+
 										}
 										else
 										{
@@ -9980,7 +10196,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " explanation comes from " << bound_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-									if ((x.get_size()>1) && (x.id() < initial_variablesize) )
+									if ((x.get_size()>1) )
 									{
 										std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 										exit(1);
