@@ -9382,7 +9382,7 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 
 
 void Mistral::Solver::learn_with_lazygeneration() {
-
+	//std::cout << "start " << std::endl;
 #ifdef latest_bounds_learning
 	propagate_literal_in_learnt_clause= true;
 #endif
@@ -10591,6 +10591,9 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 		//exit(1);
 	}
+
+	//std::cout << "end " << std::endl;
+
 }
 
 void Mistral::Solver::forget() {

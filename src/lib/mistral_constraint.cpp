@@ -14303,8 +14303,18 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 							Literal	tmp = 	encode_bound_literal( scope[0].id() , _lb , 0) ;
 							explanation[0] = tmp;
 							tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(scope[j].id(), 0));
-//							tmp =  2* scope[j].id() ;
+							//							tmp =  2* scope[j].id() ;
 							explanation[1] = tmp;
+
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+							//  	  std::cout << "wiped == " << wiped << std::endl;
+							( (Solver*) solver) ->__failure = this;
+#ifdef _DEBUG_FAIL
+							std::cout << " fail : " << *this << std::endl;
+#endif
+#endif
+
 							return wiped;
 						}
 				}
@@ -14323,48 +14333,57 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 	int idx = ub.size;
 	if (idx>0)
-	while (idx--){
-		if (ub[idx].value < _ub ){
-			index_ub = idx;
-			break;
-		}
-		else{
-			if(!ub[idx].x.is_ground()){
-				if( ub[idx].x.set_domain(1) == FAIL_EVENT) {
-					for (int j=1; j< scope.size ; ++j)
-						if (scope[j].id()== ub[idx].x.id()){
-							wiped = FAILURE(j);
-							std::cout << " c not possible! " << std::endl;
-							exit(1);
-						}
+		while (idx--){
+			if (ub[idx].value < _ub ){
+				index_ub = idx;
+				break;
+			}
+			else{
+				if(!ub[idx].x.is_ground()){
+					if( ub[idx].x.set_domain(1) == FAIL_EVENT) {
+						for (int j=1; j< scope.size ; ++j)
+							if (scope[j].id()== ub[idx].x.id()){
+								wiped = FAILURE(j);
+								std::cout << " c not possible! " << std::endl;
+								exit(1);
+							}
+					}
+					else
+						for (int j = 0; j< scope.size; ++j)
+							if ( scope[j].id() == ub[idx].x.id()){
+								eager_explanations[j]=encode_bound_literal(scope[0].id(), _ub, 1);
+								break;
+							}
 				}
 				else
-					for (int j = 0; j< scope.size; ++j)
-						if ( scope[j].id() == ub[idx].x.id()){
-							eager_explanations[j]=encode_bound_literal(scope[0].id(), _ub, 1);
-							break;
-						}
+					if( ub[idx].x.set_domain(1) == FAIL_EVENT) {
+						for (int j=1; j< scope.size ; ++j)
+							if (scope[j].id()== ub[idx].x.id()){
+								wiped = FAILURE(j);
+
+								Literal	tmp = 	encode_bound_literal(scope[0].id() , _ub, 1);
+								explanation[0] = tmp;
+								tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(scope[j].id(), 1));
+								//tmp =  2* scope[j].id() +1;
+								explanation[1] = tmp;
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+								//  	  std::cout << "wiped == " << wiped << std::endl;
+								( (Solver*) solver) ->__failure = this;
+#ifdef _DEBUG_FAIL
+								std::cout << " fail : " << *this << std::endl;
+#endif
+#endif
+
+
+								return wiped;
+							}
+					}
 			}
-			else
-				if( ub[idx].x.set_domain(1) == FAIL_EVENT) {
-					for (int j=1; j< scope.size ; ++j)
-						if (scope[j].id()== ub[idx].x.id()){
-							wiped = FAILURE(j);
 
-							Literal	tmp = 	encode_bound_literal(scope[0].id() , _ub, 1);
-							explanation[0] = tmp;
-							tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(scope[j].id(), 1));
-							//tmp =  2* scope[j].id() +1;
-							explanation[1] = tmp;
-							return wiped;
-						}
-				}
+			//latestindex_lb = index_lb -1;
+			//latestindex_ub = index_ub +1;
+
 		}
-
-		//latestindex_lb = index_lb -1;
-		//latestindex_ub = index_ub +1;
-
-	}
 
 
 #ifdef	_DEBUG_DOMAINFAITHFULNESS
@@ -14386,11 +14405,11 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 	idx = index_ub +1;
 	if (idx>0)
-	while (idx--){
-		if (ub[idx].x.is_ground())
-			if (ub[idx].x.get_min())
-				latestindex_ub = idx;
-	}
+		while (idx--){
+			if (ub[idx].x.is_ground())
+				if (ub[idx].x.get_min())
+					latestindex_ub = idx;
+		}
 
 
 
@@ -14435,6 +14454,13 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 						tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(scope[j].id(), 0));
 						//tmp =  2* scope[j].id() ;
 						explanation[1] = tmp;
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+						//  	  std::cout << "wiped == " << wiped << std::endl;
+						( (Solver*) solver) ->__failure = this;
+#ifdef _DEBUG_FAIL
+						std::cout << " fail : " << *this << std::endl;
+#endif
+#endif
 						return wiped;
 					}
 
@@ -14476,6 +14502,13 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 							tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(scope[j].id(), 1));
 							//tmp =  2* scope[j].id() +1;
 							explanation[1] = tmp;
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+							//  	  std::cout << "wiped == " << wiped << std::endl;
+							( (Solver*) solver) ->__failure = this;
+#ifdef _DEBUG_FAIL
+							std::cout << " fail : " << *this << std::endl;
+#endif
+#endif
 							return wiped;
 						}
 				}
@@ -14523,6 +14556,14 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 			tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(ub[latestindex_lb].x.id() ,1));
 			//tmp = 	2*  ub[latestindex_lb].x.id() +1;
 			explanation[1] = tmp;
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+			//  	  std::cout << "wiped == " << wiped << std::endl;
+			( (Solver*) solver) ->__failure = this;
+#ifdef _DEBUG_FAIL
+			std::cout << " fail : " << *this << std::endl;
+#endif
+#endif
+
 			return wiped;
 		}
 
@@ -14544,8 +14585,15 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 			tmp = 	encode_bound_literal(scope[0].id() , _lb, 0);
 			explanation[0] = tmp;
 			tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(ub[latestindex_ub].x.id() ,0));
-//			tmp = 	2*  ub[latestindex_ub].x.id();
+			//			tmp = 	2*  ub[latestindex_ub].x.id();
 			explanation[1] = tmp;
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+			//  	  std::cout << "wiped == " << wiped << std::endl;
+			( (Solver*) solver) ->__failure = this;
+#ifdef _DEBUG_FAIL
+			std::cout << " fail : " << *this << std::endl;
+#endif
+#endif
 			return wiped;
 		}
 

@@ -517,9 +517,10 @@ void Mistral::ConstraintClauseBase::extend_scope(Variable x){
 	    _scope.add(x);
 	    reason_for.add(NULL);
 
-	  } else if(idx > scope.size) {
+	  } else {
+		  //if(idx > scope.size) {
 
-		  std::cout << "idx > scope.size)" << std::endl;
+		  std::cout << "idx > scope.size) ? " << std::endl;
 		  exit(1);
 
 		  while(scope.capacity <= idx)
