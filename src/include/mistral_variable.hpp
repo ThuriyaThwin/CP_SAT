@@ -2987,6 +2987,34 @@ namespace Mistral {
   Variable ReifiedDisjunctive(Variable X, Variable Y, const int px, const int py);
   
 
+
+  class ReifiedDisjunctiveExpressionGlobal : public Expression {
+
+  public:
+
+    int processing_time[2];
+
+    ReifiedDisjunctiveExpressionGlobal(Variable X,
+  				 Variable Y,
+  				 const int p0=1,
+  				 const int p1=1);
+
+    virtual ~ReifiedDisjunctiveExpressionGlobal();
+
+    virtual void extract_constraint(Solver*);
+    virtual void extract_variable(Solver*);
+    virtual void extract_predicate(Solver*);
+    virtual const char* get_name() const;
+
+  };
+
+  Variable ReifiedDisjunctiveGlobal(Variable X, Variable Y, const int px, const int py);
+
+
+
+
+
+
   class ExplainedReifiedDisjunctiveExpression : public ReifiedDisjunctiveExpression {
 
   public:
