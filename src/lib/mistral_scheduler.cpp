@@ -1807,8 +1807,8 @@ void SchedulingSolver::setup() {
 				data->getDuration(tj)
 				+(data->hasSetupTime() ? data->getSetupTime(k,tj,ti) : 0) ) );
 	else
-	//	disjuncts.add( ReifiedDisjunctive( tasks[ti],
-		disjuncts.add( ReifiedDisjunctiveGlobal( tasks[ti],
+		disjuncts.add( ReifiedDisjunctive( tasks[ti],
+		//disjuncts.add( ReifiedDisjunctiveGlobal( tasks[ti],
 				tasks[tj],
 
 				data->getDuration(ti)

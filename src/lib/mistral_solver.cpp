@@ -10692,10 +10692,10 @@ Mistral::Outcome Mistral::Solver::branch_right() {
     	fdlearn_nogood_using_only_latest_bounds();
 #else
 //    	simple_fdlearn_nogood();
-    //fdlearn_nogood();
+    fdlearn_nogood();
     	//fdimprovedlearn_nogood();
     	//learn_withoutClosingPropagation();
-    	learn_with_lazygeneration();
+    	//learn_with_lazygeneration();
     	//      learn_nogood();
 #endif
 
