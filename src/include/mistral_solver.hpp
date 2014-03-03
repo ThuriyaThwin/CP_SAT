@@ -772,6 +772,8 @@ namespace Mistral {
     //FD learning
     void simple_fdlearn_nogood();
     void fdlearn_nogood();
+    //fdlearn_nogood without using sequence to select the nextliteral to explore
+    void fdlearn_nogood_nosequence();
     void fdimprovedlearn_nogood();
     void learn_withoutClosingPropagation();
     void learn_with_lazygeneration();
