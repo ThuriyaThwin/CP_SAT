@@ -1477,7 +1477,7 @@ int Mistral::Solver::lazy_declare(Variable x) {
   x.variable->initialise(this);
   //x.variable->id = variables.size;
   //x.variable->solver = this;
-  visited.extend(variables.size);
+  //visited.extend(variables.size);
   variables.add(x);
 
   //declared_variables.add(x);
@@ -10002,8 +10002,10 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 #endif
 
 
+//based on fdlearn_nogood_nosequence
 void Mistral::Solver::learn_with_lazygeneration() {
-	//std::cout << "start " << std::endl;
+//		std::cout << " \n\n\n fdlearn_ " << std::endl;
+
 #ifdef latest_bounds_learning
 	propagate_literal_in_learnt_clause= true;
 #endif
@@ -10015,6 +10017,28 @@ void Mistral::Solver::learn_with_lazygeneration() {
 #ifdef 	_DEBUG_FD_NOGOOD
 		//	std::cout << " \n\n\n fdlearn_nogood : \n Decisions size" << decisions.size << " and the variables : \n        " << decisions << " \n and level = " << level << std::endl;
 #endif
+		/*
+		int size = Visited_lower_bound_variables .size;
+		//	std::cout << "size  Visited_lower_bound_variables \n " << size << std::endl;
+		while (size--)
+		{
+			//static_cast<VariableRangeWithLearning*>(&variables[size])->initialise_latest_visited_lower_bounds() ;
+			//static_cast<VariableRangeWithLearning*>(variables[size].range_domain)->initialise_latest_visited_lower_bounds() ;
+			Visited_lower_bound_variables[size]->initialise_latest_visited_lower_bounds() ;
+		}
+		size = Visited_upper_bound_variables .size;
+
+		//	std::cout << "size  Visited_upper_bound_variables \n " << size << std::endl;
+		while (size--)
+		{
+			//static_cast<VariableRangeWithLearning*>(&variables[size])->initialise_latest_visited_upper_bounds() ;
+			//static_cast<VariableRangeWithLearning*>(variables[size].range_domain)->initialise_latest_visited_upper_bounds();
+			Visited_upper_bound_variables[size]->initialise_latest_visited_upper_bounds() ;
+		}
+
+		Visited_lower_bound_variables.clear() ;
+		Visited_upper_bound_variables.clear() ;
+		 */
 
 
 		int pathC = 0, index = sequence.size-1;
@@ -10024,6 +10048,21 @@ void Mistral::Solver::learn_with_lazygeneration() {
 		int lvl;
 		Explanation::iterator tmp;
 		Vector<Literal> bound_literals_to_explore;
+
+
+
+		visited.extend(variables.size);
+		bool is_lb ;
+		int val ;
+		int var ;
+		VariableRangeWithLearning* tmp_VariableRangeWithLearning ;
+		DomainFaithfulnessConstraint* dom_constraint ;
+
+
+		//instead of using sequence we will use this vector to select the next literal to explore
+
+		Vector <unsigned int > boolean_vairables_to_explore;
+
 		// double *lit_activity = base->lit_activity.stack_;
 		// double *var_activity = base->var_activity.stack_;
 
@@ -10051,15 +10090,6 @@ void Mistral::Solver::learn_with_lazygeneration() {
 			exit (1);
 		}
 		Explanation *bound_explanation;
-		DomainFaithfulnessConstraint* dom_constraint;
-		VariableRangeWithLearning * tmp_VariableRangeWithLearning;
-		Vector<unsigned int> boolean_bound_literals_to_explore;
-		boolean_bound_literals_to_explore.clear();
-		int is_lb , var , val;
-
-		visitedUpperBounds.clear();
-		visitedLowerBounds.clear();
-		bounds_under_exploration.clear();
 
 		// Variable *scope = culprit.get_scope();
 		// int arity = culprit.arity();
@@ -10079,6 +10109,8 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 		//	std::cout << "assignment.size " << assignment_level.size <<  std::endl;
 		//std::cout << "visited.size " << visited.size <<  std::endl;
+
+		boolean_vairables_to_explore.clear();
 		do {
 
 
@@ -10100,7 +10132,6 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 				if(current_explanation == NULL) {
 					std::cout << "?? current_explanation == NULL "  << std::endl;
-					std::cout << "\n \n \n \n \n graphsize =  "<< graph_size << std::endl;
 					std::cout << "pathC =  "<< pathC << std::endl;
 					std::cout << "id of the variable =  "<< a << std::endl;
 					std::cout << " variable[id] =  "<< variables[a] << std::endl;
@@ -10150,9 +10181,8 @@ void Mistral::Solver::learn_with_lazygeneration() {
 					store_reason(current_explanation, a);
 #endif
 
-					bounds_under_exploration.clear();
 					Explanation::iterator lit = current_explanation->get_reason_for(a, (a != NULL_ATOM ? assignment_level[a] : level), stop);
-
+					graph_size++;
 					tmp = lit;
 					bound_literals_to_explore.clear();
 
@@ -10174,7 +10204,6 @@ void Mistral::Solver::learn_with_lazygeneration() {
 					}
 #endif
 					while(tmp < stop) {
-						graph_size++;
 						q = *tmp;
 						++tmp;
 
@@ -10218,9 +10247,8 @@ void Mistral::Solver::learn_with_lazygeneration() {
 							std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
 							std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 #endif
-							//			bound_literals_to_explore.add(q);
 
-							//		bound_literals_to_explore.add(q);
+
 							to_be_explored=q;
 							is_lb = is_lower_bound(to_be_explored);
 							val = get_value_from_literal(to_be_explored);
@@ -10230,7 +10258,6 @@ void Mistral::Solver::learn_with_lazygeneration() {
 							if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
 							{
 
-							//	std::cout << " yes!  ? " << std::endl;
 								dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
 								Variable tmp__(0,1);
 								var = dom_constraint->value_exist( val ) ;
@@ -10246,112 +10273,37 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									assignment_level[tmp__.id()] = lvl;
 									reason_for[tmp__.id()] = dom_constraint;
 
-									//		std::cout << "\n \n \n \n \n \n lvl " << lvl << std::endl;
-									//		std::cout << "tmp__.id() " << tmp__.id() << std::endl;
-									//		std::cout << "current level = " << level << std::endl;
-									//		std::cout << "trail_.size = " << trail_.size << std::endl;
 
-
-									//int last_index =trail_.size -5;
-
-									//tmp__.set_domain(!is_lb);
 									*(tmp__.expression->get_self().bool_domain)  = (1+ (!is_lb));
 									int index___ = level - lvl;
 									int index___0 = 1;
-									//			std::cout << "index" << index___ << std::endl;
-									//			std::cout << "init saved_vars size" << saved_vars.size << std::endl;
 
 									int saved_vars_size_at_level =  saved_vars.size;
 
-									/*
-									std::cout << " \n before : trail = " << trail_ << std::endl;
-									while(index___){
-
-										std::cout << "index" << index___ << std::endl;
-										saved_vars_size_at_level = trail_[trail_.size - (5*index___)];
-										std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
-										//std::cout << "saved_vars at that element" << saved_vars[saved_vars_size_at_level-1] << std::endl;
-										std::cout << " should be changed " << saved_vars[saved_vars_size_at_level] << std::endl;
-										std::cout << "-2 " << saved_vars[saved_vars_size_at_level-2] << std::endl;
-										std::cout << "-1 " << saved_vars[saved_vars_size_at_level-1] << std::endl;
-										std::cout << "0 " << saved_vars[saved_vars_size_at_level] << std::endl;
-										std::cout << "1 " << saved_vars[saved_vars_size_at_level+1] << std::endl;
-
-										--index___;
-									}
-
-									std::cout << "LAST saved_vars.size  : " << saved_vars.size << std::endl;
-									saved_vars_size_at_level = saved_vars.size;
-									//std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
-									//std::cout << " should be changed " << saved_vars[saved_vars_size_at_level] << std::endl;
-									std::cout << "-2 " << saved_vars[saved_vars.size -2] << std::endl;
-									std::cout << "-1 " << saved_vars[saved_vars.size-1] << std::endl;
-
-									 */
 
 									index___ = level - lvl;
 
 
 									saved_vars.add(saved_vars[trail_[trail_.size -5]]);
-									/*	while(index___){
 
-										std::cout << "index" << index___ << std::endl;
-										saved_vars_size_at_level = trail_[trail_.size - (5*index___)];
-										std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
-										trail_[trail_.size - (5*index___)]++;
-										--index___;
-									}
-									 */
 
 									while(index___0 < index___){
 
-										//						std::cout << "index" << index___0 << std::endl;
 										saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
 
 										saved_vars[saved_vars_size_at_level] = saved_vars[trail_[trail_.size - (5*(index___0+1))]];
 
-										//												std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
 										trail_[trail_.size - (5*index___0)]++;
 										++index___0;
 									}
 
-									//		std::cout << "index" << index___0 << std::endl;
 									saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
 
 									saved_vars[saved_vars_size_at_level] =  tmp__.id();
 
-									//												std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
 									trail_[trail_.size - (5*index___0)]++;
-									//	++index___0;
 
 									index___ = level - lvl;
-
-									/*
-									std::cout << " \n \n  new  : trail = " << trail_ << std::endl;
-									while(index___){
-
-										std::cout << "index" << index___ << std::endl;
-										saved_vars_size_at_level = trail_[trail_.size - (5*index___)];
-										std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
-										//std::cout << " should be changed " << saved_vars[saved_vars_size_at_level] << std::endl;
-										std::cout << "-2 " << saved_vars[saved_vars_size_at_level-2] << std::endl;
-										std::cout << "-1 " << saved_vars[saved_vars_size_at_level-1] << std::endl;
-										std::cout << "0 " << saved_vars[saved_vars_size_at_level] << std::endl;
-										std::cout << "1 " << saved_vars[saved_vars_size_at_level+1] << std::endl;
-
-
-										--index___;
-									}
-
-									std::cout << "\n LAST saved_vars.size  : " << saved_vars.size << std::endl;
-									saved_vars_size_at_level = saved_vars.size;
-									//std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
-									//std::cout << " should be changed " << saved_vars[saved_vars_size_at_level] << std::endl;
-									std::cout << "-2 " << saved_vars[saved_vars.size -2] << std::endl;
-									std::cout << "-1 " << saved_vars[saved_vars.size-1] << std::endl;
-									//std::cout << "0 " << saved_vars[saved_vars_size_at_level] << std::endl;
-									//std::cout << "1 " << saved_vars[saved_vars_size_at_level+1] << std::endl;
-									 */
 
 
 								}
@@ -10366,16 +10318,16 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									if( !visited.fast_contain(tmp__.id()) ) {
 										//Sould be done later!
 										/*
-							if(lit_activity) {
-								//lit_activity[q] += 0.5 * parameters.activity_increment;
-								lit_activity[NOT(q)] += // 0.5 *
-										parameters.activity_increment;
-								var_activity[get_id_boolean_variable(q)] += parameters.activity_increment;
-							}
+												if(lit_activity) {
+													//lit_activity[q] += 0.5 * parameters.activity_increment;
+													lit_activity[NOT(q)] += // 0.5 *
+															parameters.activity_increment;
+													var_activity[get_id_boolean_variable(q)] += parameters.activity_increment;
+												}
 										 */
 
 
-									//	visited.fast_add(tmp__.id());
+										//	visited.fast_add(tmp__.id());
 
 										//learnt_clause.add(encode_bool2*tmp__.id() + is_lb);
 										learnt_clause.add(encode_boolean_variable_as_literal(tmp__.id(), is_lb));
@@ -10384,52 +10336,8 @@ void Mistral::Solver::learn_with_lazygeneration() {
 											backtrack_level = lvl;
 									}
 							}
-							else{
-
-						//		std::cout << " no!  ? " << std::endl;
-								if (is_lb)
-								{
-									//var = get_variable_from_literal(to_be_explored);
-									//val = get_value_from_literal(to_be_explored);
-									if (visitedLowerBounds.fast_contain(get_index_of_variable(var))){
-										if (visitedLowerBoundvalues[get_index_of_variable(var)] < val)
-											bound_literals_to_explore.add(q);
-
-#ifdef _DEBUG_SHOW_LEARNT_BOUNDS
-										else{
-											std::cout << " \n \n  Will not be explored  : " << std::endl;
-											std::cout << "  id : "<< get_variable_from_literal(q) << std::endl;
-											std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-											std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-										}
-#endif
-									}
-									else
-										bound_literals_to_explore.add(q);
-								}
-								else
-								{
-									//var = get_variable_from_literal(to_be_explored);
-									//val = get_value_from_literal(to_be_explored);
-									if (visitedUpperBounds.fast_contain(get_index_of_variable(var))){
-										if (visitedUpperBoundvalues[get_index_of_variable(var)]>val)
-											bound_literals_to_explore.add(q);
-#ifdef _DEBUG_SHOW_LEARNT_BOUNDS
-										else{
-											std::cout << " \n \n  Will not be explored  : " << std::endl;
-
-											std::cout << "  id : "<< get_variable_from_literal(q) << std::endl;
-											std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-											std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-										}
-#endif
-									}
-									else
-										bound_literals_to_explore.add(q);
-
-								}
-							}
-
+							else
+								bound_literals_to_explore.add(q);
 						}
 						else{
 							x = variables[get_id_boolean_variable(q)];
@@ -10462,10 +10370,9 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									if(lvl >= level) {
 										//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 										// we'll need to replace 'a' by its parents since its level is too high
-										if (get_id_boolean_variable(q)>=initial_variablesize){
-											boolean_bound_literals_to_explore.add(get_id_boolean_variable(q));
-										}
 										++pathC;
+										boolean_vairables_to_explore.add(get_id_boolean_variable(q));
+
 									} else {
 										// q's level is below the current level, we are not expending it further
 										learnt_clause.add(q);
@@ -10478,13 +10385,10 @@ void Mistral::Solver::learn_with_lazygeneration() {
 					}
 					while (bound_literals_to_explore.size)
 					{
-
-						bounds_under_exploration.clear();
-
 						//should be checked
-						to_be_explored= bound_literals_to_explore.pop();
+						q= bound_literals_to_explore.pop();
 #ifdef _TRACKING_BOUND
-						Literal old = to_be_explored;
+						Literal old = q;
 #endif
 						/*
 						if ( static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->first_time_visited(is_lower_bound(q)) )
@@ -10495,63 +10399,31 @@ void Mistral::Solver::learn_with_lazygeneration() {
 								Visited_upper_bound_variables.add(static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain));
 						}
 						 */
-
-
-
-						//						std::cout << " \n \n \n  \n \n \n  \n \n \n  \n \n \n  VISITED" <<visitedLowerBounds << std::endl;
-						//						std::cout << " \n \n \n  \n \n \n  \n \n \n  \n \n \n  VISITED" <<visitedUpperBounds << std::endl;
-
-						bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
-
-						is_lb = is_lower_bound(to_be_explored);
-
-#ifdef _DEBUG_SHOW_LEARNT_BOUNDS
-
-						std::cout << "\n \n  we will explain "<< to_be_explored << std::endl;
-						//std::cout << "which corresponds to " << std::endl;
-						std::cout << " id : "<< get_variable_from_literal(to_be_explored) << std::endl;
-						std::cout << " is a " << (is_lower_bound(to_be_explored) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(to_be_explored) << std::endl;
-						std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(to_be_explored)].get_domain() << std::endl;
-
-#endif
-
+						bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->reason_for(q) ;
+						graph_size++;
 #ifdef 	_DEBUG_FD_NOGOOD
-						std::cout << "\n we will explain "<< to_be_explored << std::endl;
+						std::cout << "\n we will explain "<< q << std::endl;
 						std::cout << "which corresponds to " << std::endl;
-						std::cout << " Range variable id : "<< get_variable_from_literal(to_be_explored) << std::endl;
-						std::cout << " is a " << (is_lower_bound(to_be_explored) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(to_be_explored) << std::endl;
-						std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(to_be_explored)].get_domain() << std::endl;
+						std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+						std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+						std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 #endif
-						while (bound_explanation){
-
-							var = get_variable_from_literal(to_be_explored);
-							val = get_value_from_literal(to_be_explored);
-							bounds_under_exploration.fast_add(get_index_of_variable(var));
-							boundvalues_under_exploration[get_index_of_variable(var)] = val;
-
-
-#ifdef _DEBUG_SHOW_LEARNT_BOUNDS
-							std::cout << " \n \n  We will explain  : " << std::endl;
-							std::cout << "  id : "<< get_variable_from_literal(to_be_explored) << std::endl;
-							std::cout << " is a " << (is_lower_bound(to_be_explored) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(to_be_explored) << std::endl;
-							std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(to_be_explored)].get_domain() << std::endl;
-#endif
-
-
+						if(bound_explanation)
+						{
 
 #ifdef 	_DEBUG_FD_NOGOOD
 							std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
 #endif
 							Explanation::iterator end_tmp_iterator;
 							//Note that we do not need the level here ! I should remove that later
-							Explanation::iterator start_tmp_iterator = bound_explanation->get_reason_for(to_be_explored, level, end_tmp_iterator);
+							Explanation::iterator start_tmp_iterator = bound_explanation->get_reason_for(q, level, end_tmp_iterator);
 
 							tmp = start_tmp_iterator;
-							bound_explanation = NULL;
+
 							while(tmp < end_tmp_iterator) {
 								q = *tmp;
 								++tmp;
-								graph_size++;
+
 								if (is_a_bound_literal(q))
 								{
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
@@ -10591,137 +10463,64 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
 									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 #endif
+
+
+
 									to_be_explored=q;
 									is_lb = is_lower_bound(to_be_explored);
 									val = get_value_from_literal(to_be_explored);
 									var = get_variable_from_literal(to_be_explored);
 									tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
+
 									if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
 									{
 
-									//	std::cout << " yes!  ? " << std::endl;
 										dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
 										Variable tmp__(0,1);
 										var = dom_constraint->value_exist( val ) ;
+
 										lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
 										if ( var< 0)
 										{
 											//add(tmp__);
 											tmp__.lazy_initialise(this);
-											dom_constraint->extend_scope(tmp__ , val, !is_lb, lvl);
+											dom_constraint->extend_scope(tmp__ , val,!is_lb, lvl);
 											base->extend_scope(tmp__);
-
-											//backtrackable?
-											//tmp__.set_domain(!is_lb);
+											//	tmp__.set_domain(!is_lb);
 											assignment_level[tmp__.id()] = lvl;
 											reason_for[tmp__.id()] = dom_constraint;
 
-											//		std::cout << "\n \n \n \n \n \n lvl " << lvl << std::endl;
-											//		std::cout << "tmp__.id() " << tmp__.id() << std::endl;
-											//		std::cout << "current level = " << level << std::endl;
-											//		std::cout << "trail_.size = " << trail_.size << std::endl;
 
-
-											//int last_index =trail_.size -5;
-
-											//tmp__.set_domain(!is_lb);
 											*(tmp__.expression->get_self().bool_domain)  = (1+ (!is_lb));
 											int index___ = level - lvl;
 											int index___0 = 1;
-											//			std::cout << "index" << index___ << std::endl;
-											//			std::cout << "init saved_vars size" << saved_vars.size << std::endl;
 
 											int saved_vars_size_at_level =  saved_vars.size;
 
-											/*
-											std::cout << " \n before : trail = " << trail_ << std::endl;
-											while(index___){
-
-												std::cout << "index" << index___ << std::endl;
-												saved_vars_size_at_level = trail_[trail_.size - (5*index___)];
-												std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
-												//std::cout << "saved_vars at that element" << saved_vars[saved_vars_size_at_level-1] << std::endl;
-												std::cout << " should be changed " << saved_vars[saved_vars_size_at_level] << std::endl;
-												std::cout << "-2 " << saved_vars[saved_vars_size_at_level-2] << std::endl;
-												std::cout << "-1 " << saved_vars[saved_vars_size_at_level-1] << std::endl;
-												std::cout << "0 " << saved_vars[saved_vars_size_at_level] << std::endl;
-												std::cout << "1 " << saved_vars[saved_vars_size_at_level+1] << std::endl;
-
-												--index___;
-											}
-
-											std::cout << "LAST saved_vars.size  : " << saved_vars.size << std::endl;
-											saved_vars_size_at_level = saved_vars.size;
-											//std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
-											//std::cout << " should be changed " << saved_vars[saved_vars_size_at_level] << std::endl;
-											std::cout << "-2 " << saved_vars[saved_vars.size -2] << std::endl;
-											std::cout << "-1 " << saved_vars[saved_vars.size-1] << std::endl;
-
-											 */
 
 											index___ = level - lvl;
 
 
 											saved_vars.add(saved_vars[trail_[trail_.size -5]]);
-											/*	while(index___){
 
-												std::cout << "index" << index___ << std::endl;
-												saved_vars_size_at_level = trail_[trail_.size - (5*index___)];
-												std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
-												trail_[trail_.size - (5*index___)]++;
-												--index___;
-											}
-											 */
 
 											while(index___0 < index___){
 
-												//						std::cout << "index" << index___0 << std::endl;
 												saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
 
 												saved_vars[saved_vars_size_at_level] = saved_vars[trail_[trail_.size - (5*(index___0+1))]];
 
-												//												std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
 												trail_[trail_.size - (5*index___0)]++;
 												++index___0;
 											}
 
-											//		std::cout << "index" << index___0 << std::endl;
 											saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
 
 											saved_vars[saved_vars_size_at_level] =  tmp__.id();
 
-											//												std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
 											trail_[trail_.size - (5*index___0)]++;
-											//	++index___0;
 
 											index___ = level - lvl;
-
-											/*
-											std::cout << " \n \n  new  : trail = " << trail_ << std::endl;
-											while(index___){
-
-												std::cout << "index" << index___ << std::endl;
-												saved_vars_size_at_level = trail_[trail_.size - (5*index___)];
-												std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
-												//std::cout << " should be changed " << saved_vars[saved_vars_size_at_level] << std::endl;
-												std::cout << "-2 " << saved_vars[saved_vars_size_at_level-2] << std::endl;
-												std::cout << "-1 " << saved_vars[saved_vars_size_at_level-1] << std::endl;
-												std::cout << "0 " << saved_vars[saved_vars_size_at_level] << std::endl;
-												std::cout << "1 " << saved_vars[saved_vars_size_at_level+1] << std::endl;
-
-
-												--index___;
-											}
-
-											std::cout << "\n LAST saved_vars.size  : " << saved_vars.size << std::endl;
-											saved_vars_size_at_level = saved_vars.size;
-											//std::cout << "saved_vars_size_at_level" << saved_vars_size_at_level << std::endl;
-											//std::cout << " should be changed " << saved_vars[saved_vars_size_at_level] << std::endl;
-											std::cout << "-2 " << saved_vars[saved_vars.size -2] << std::endl;
-											std::cout << "-1 " << saved_vars[saved_vars.size-1] << std::endl;
-											//std::cout << "0 " << saved_vars[saved_vars_size_at_level] << std::endl;
-											//std::cout << "1 " << saved_vars[saved_vars_size_at_level+1] << std::endl;
-											 */
 
 
 										}
@@ -10730,83 +10529,32 @@ void Mistral::Solver::learn_with_lazygeneration() {
 											tmp__= variables[var];
 										}
 
-										assignment_level[var] = lvl;
+										assignment_level[var]=lvl;
 										//todo should be search_root!
 										if(	lvl)
 											if( !visited.fast_contain(tmp__.id()) ) {
 												//Sould be done later!
 												/*
-													if(lit_activity) {
-														//lit_activity[q] += 0.5 * parameters.activity_increment;
-														lit_activity[NOT(q)] += // 0.5 *
-																parameters.activity_increment;
-														var_activity[get_id_boolean_variable(q)] += parameters.activity_increment;
-													}
+														if(lit_activity) {
+															//lit_activity[q] += 0.5 * parameters.activity_increment;
+															lit_activity[NOT(q)] += // 0.5 *
+																	parameters.activity_increment;
+															var_activity[get_id_boolean_variable(q)] += parameters.activity_increment;
+														}
 												 */
-											//	visited.fast_add(tmp__.id());
-											//	learnt_clause.add(2*tmp__.id() + is_lb);
-											//	backtrack_level = lvl;
+
+
+												//	visited.fast_add(tmp__.id());
+
+												//learnt_clause.add(encode_bool2*tmp__.id() + is_lb);
 												learnt_clause.add(encode_boolean_variable_as_literal(tmp__.id(), is_lb));
+
 												if(lvl > backtrack_level)
 													backtrack_level = lvl;
-
 											}
 									}
-									else{
-
-									//	std::cout << " no!  ? " << std::endl;
-										if (is_lb)
-										{
-											var = get_variable_from_literal(to_be_explored);
-											val = get_value_from_literal(to_be_explored);
-											if (visitedLowerBounds.fast_contain(get_index_of_variable(var))){
-												if (visitedLowerBoundvalues[get_index_of_variable(var)]>= val)
-												{
-													bound_explanation= NULL;
-													//	bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
-
-#ifdef _DEBUG_SHOW_LEARNT_BOUNDS
-													std::cout << " \n \n  Will not be explored  : " << std::endl;
-
-													std::cout << "  id : "<< get_variable_from_literal(q) << std::endl;
-													std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-													std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-#endif
-												}
-
-												else
-													bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
-											}
-											else bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
-
-										}
-										else
-										{
-											var = get_variable_from_literal(to_be_explored);
-											val = get_value_from_literal(to_be_explored);
-											if (visitedUpperBounds.fast_contain(get_index_of_variable(var))){
-												if (visitedUpperBoundvalues[get_index_of_variable(var)]<= val)
-												{
-													bound_explanation= NULL;
-													//	bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
-
-#ifdef _DEBUG_SHOW_LEARNT_BOUNDS
-													std::cout << " \n \n  Will not be explored  : " << std::endl;
-
-													std::cout << "  id : "<< get_variable_from_literal(q) << std::endl;
-													std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-													std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-#endif
-												}
-
-												else
-													bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
-											}
-											else bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
-
-
-										}
-									}
+									else
+										bound_literals_to_explore.add(q);
 								}
 								else
 								{
@@ -10847,10 +10595,9 @@ void Mistral::Solver::learn_with_lazygeneration() {
 												std::cout << " is a " << (is_lower_bound(old) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(old) << std::endl;
 												std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(old)].get_domain() << std::endl;
 												 */
-												if (get_id_boolean_variable(q)>=initial_variablesize){
-													boolean_bound_literals_to_explore.add(get_id_boolean_variable(q));
-												}
 												++pathC;
+												boolean_vairables_to_explore.add(get_id_boolean_variable(q));
+
 											} else {
 												// q's level is below the current level, we are not expending it further
 												learnt_clause.add(q);
@@ -10862,86 +10609,14 @@ void Mistral::Solver::learn_with_lazygeneration() {
 								}
 							}
 						}
-						if( !bounds_under_exploration.empty() )
-						{
-							//	std::cout << "bounds_under_exploration \n \n  " << bounds_under_exploration << std::endl;
 
-							if (is_lb)
-							{
-
-								//		for (int i = 0; i< bounds_under_exploration.size() ; ++i )
-								//			visitedLowerBoundvalues[bounds_under_exploration[i]] = boundvalues_under_exploration[bounds_under_exploration[i]];
-
-								/*
-
-								int last = NOVAL, cur=bounds_under_exploration.min(), aft;
-
-								//bool flag=false;
-								do{
-									aft = bounds_under_exploration.next(cur);
-
-									if(aft != cur+1 || cur != last+1)
-										visitedLowerBoundvalues[(int)cur] = boundvalues_under_exploration[(int)cur];
-
-									//	std::cout << "bounds_under_exploration de i ? " <<	(int)cur <<std::endl;
-									last = cur;
-									cur = aft;
-								} while( cur != NOVAL && cur != last );
-								 */
-								for (int i = 0; i< (start_from +1) ; ++i )
-									if (bounds_under_exploration.fast_contain(i))
-										visitedLowerBoundvalues[i] = boundvalues_under_exploration[i];
-
-								visitedLowerBounds.union_with(bounds_under_exploration);
-
-							}
-							else
-							{
-
-								//		for (int i = 0; i< bounds_under_exploration.size() ; ++i )
-								//			visitedUpperBoundvalues[bounds_under_exploration[i]] = boundvalues_under_exploration[bounds_under_exploration[i]];
-								/*
-								int last = NOVAL, cur=bounds_under_exploration.min(), aft;
-
-								//bool flag=false;
-								do{
-									aft = bounds_under_exploration.next(cur);
-
-									if(aft != cur+1 || cur != last+1)
-										visitedUpperBoundvalues[(int)cur] = boundvalues_under_exploration[(int)cur];
-
-									//	std::cout << "bounds_under_exploration de i ? " <<	(int)cur <<std::endl;
-									last = cur;
-									cur = aft;
-								} while( cur != NOVAL && cur != last );
-								 */
-								for (int i = 0; i< (start_from +1) ; ++i )
-									if (bounds_under_exploration.fast_contain(i))
-										visitedUpperBoundvalues[i] = boundvalues_under_exploration[i];
-
-								visitedUpperBounds.union_with(bounds_under_exploration);
-
-							}
-							bounds_under_exploration.clear();
-						}
 					}
 
 				}
 			}
-
-			//	std::cout << " c visited  " <<  visited << std::endl;
-
+/*
 			//			if( pathC > 0 )
 			//check index!
-
-			if (boolean_bound_literals_to_explore.size){
-				boolean_bound_literals_to_explore.pop(a);
-				p= encode_boolean_variable_as_literal(a,variables[a].get_min() );
-				lvl = assignment_level[a];
-				current_explanation = reason_for[a];
-			}
-
-			else{
 			while(!visited.fast_contain(sequence[++index].id())) {
 
 				//	std::cout << " c new index " <<  index << std::endl;
@@ -10957,10 +10632,25 @@ void Mistral::Solver::learn_with_lazygeneration() {
 #endif
 
 			};
+*/
 
-			//		std::cout << "GOT IT ! " << std::endl;
-			if( pathC > 0 ) {
-				x = sequence[index];
+
+
+			if (boolean_vairables_to_explore.size>0)
+			{
+				boolean_vairables_to_explore.pop(a);
+				if (reason_for[a] == NULL)
+				{
+					if (boolean_vairables_to_explore.size){
+						boolean_vairables_to_explore.add(boolean_vairables_to_explore[0]);
+						boolean_vairables_to_explore[0]=a;
+						boolean_vairables_to_explore.pop(a);
+					}
+				}
+
+				x = variables[a];
+//			if( pathC > 0 ) {
+		//		x = sequence[index];
 				a = x.id();
 				//  p = ((2*a) | (x.get_min()));
 				p= encode_boolean_variable_as_literal(x.id(),x.get_min() );
@@ -10975,8 +10665,8 @@ void Mistral::Solver::learn_with_lazygeneration() {
 				//std::cout << " explore the variable x " << x << std::endl;
 						std::cout << " pathC " << pathC << std::endl;
 				 */
-			}
-			if( pathC > 0 ) {
+		//	}
+	//		if( pathC > 0 ) {
 
 				// there are still atoms to expend, we start with 'a'
 
@@ -10987,106 +10677,17 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 				//		current_explanation = jsp_reason_for[a-start_from];
 				visited.fast_add(a);
+	//		}
 			}
-			else if (pathC==0)
+			else //if (pathC==0)
 			{
 				//TODO check if we can have paTHC=0 + give explanation in a failure on ExplainedContDisjunctioReif
 				std::cout << "\n \n \n PatyhC == 0 !!!!! " << pathC << std::endl;
 				exit(1);
-				//		std::cout << "backtrack level =" << backtrack_level << std::endl;
-				//		std::cout << "level =" << level << std::endl;
-
-				//				std::cout << "learnt_clause =" << learnt_clause << std::endl;
-				int bts=0, found =0, bts_value=0;
-				int index__ =0;
-				for (int i = 1; i< learnt_clause.size; ++i)
-				{
-					//				std::cout << "assignment level [i] = " << assignment_level[get_id_boolean_variable(learnt_clause[i])] << std::endl;
-					if (assignment_level[get_id_boolean_variable(learnt_clause[i])]==backtrack_level)
-					{
-						index__=i;
-						bts++;
-						//			std::cout << "[i] =" << i << std::endl;
-						//			std::cout << "learnt_clause[i] =" << learnt_clause[i] << std::endl;
-						x = variables[get_id_boolean_variable(learnt_clause[i])];
-						a = get_id_boolean_variable(learnt_clause[i]);
-						//			std::cout << " a =" << a  << std::endl;
-						//			std::cout << " x =" << x  << std::endl;
-
-						//  p = ((2*a) | (x.get_min()));
-						p= encode_boolean_variable_as_literal(x.id(),x.get_min() );
-
-						//		std::cout << " p here =" << p  << std::endl;
-
-						//		p = ((2*a) | (x.get_min())) + start_from;
-						lvl = assignment_level[a];
-
-						//		std::cout << " explore the variable x " << x << std::endl;
-						//		std::cout << " assignment level of x " << lvl << std::endl;
-						//std::cout << " explore the variable x " << x << std::endl;
-						//		std::cout << " pathC " << pathC << std::endl;
-						current_explanation = reason_for[a];
-						if (current_explanation!=NULL)
-						{
-							visited.fast_add(a);
-							pathC++;
-							found=1;
-							learnt_clause.remove(i);
-							//			std::cout << " current_explanation " << current_explanation << std::endl;
-
-
-							break;
-						}
-					}
-					else
-						if(bts_value < assignment_level[get_id_boolean_variable(learnt_clause[i])])
-							bts_value=assignment_level[get_id_boolean_variable(learnt_clause[i])];
-				}
-
-				//	std::cout << "bts =" << bts << std::endl;
-				//	std::cout << "new pathC =" << pathC << std::endl;
-				backtrack_level=bts_value;
-
-				//		std::cout << "backtrack_level" << backtrack_level << std::endl;
-				//learnt_clause.remove()
-				if (!bts)
-					exit(1);
-
-				if (!pathC)
-				{
-					//	x = sequence[index];
-					//	a = x.id();
-
-					//p= encode_boolean_variable_as_literal(x.id(),x.get_min() );
-
-					//lvl = assignment_level[a];
-
-					//			std::cout << "\n \n \n before !! " << p << std::endl;
-
-					//	p= NOT(learnt_clause[index__]);
-					//			std::cout << "\n \n \n after !! " << p << std::endl;
-					//					p= learnt_clause[index__];
-					//learnt_clause[0]=NOT(learnt_clause[index__]);
-					learnt_clause.remove(index__);
-					pathC=1;
-
-					//			std::cout << " get out" << std::endl;
-
-				}
 			}
-			else
-			{
-				//	if (pathC !=1)
-				{
-					std::cout << "PatyhC < 0 !!!!! " << pathC << std::endl;
-					exit(1);
-				}
-			}
-			}
+
 			//		std::cout << "latest before while =" << pathC << std::endl;
-		} while( --pathC );
-
-		//		std::cout << " \n \n \n  \n \n \n  \n \n \n  \n \n \n  " << std::endl;
+		} while( boolean_vairables_to_explore.size );
 
 		//		std::cout << "after while !!!!! " << std::endl;
 		//		std::cout << "\n p =" << p << std::endl;
@@ -11111,7 +10712,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 			std::cout << " ) " << (backtrack_level<level-1 ? "-backjump" : "") << std::endl;
 		}
 #endif
-		std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
+
 		//exit(1);
 #ifdef 	_DEBUG_FD_NOGOOD
 		std::cout << " c END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
@@ -11212,9 +10813,6 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 		//exit(1);
 	}
-
-	//std::cout << "end " << std::endl;
-
 }
 
 void Mistral::Solver::forget() {
@@ -11314,10 +10912,11 @@ Mistral::Outcome Mistral::Solver::branch_right() {
 #else
 //    	simple_fdlearn_nogood();
     //fdlearn_nogood();
-    fdlearn_nogood_nosequence();
+    //fdlearn_nogood_nosequence();
     	//fdimprovedlearn_nogood();
     	//learn_withoutClosingPropagation();
-    	//learn_with_lazygeneration();
+      //this should be the one..
+    	learn_with_lazygeneration();
     	//      learn_nogood();
 #endif
 
@@ -13958,3 +13557,5 @@ void Mistral::Solver::check_nogoods() {
   }
 }
 #endif
+
+
