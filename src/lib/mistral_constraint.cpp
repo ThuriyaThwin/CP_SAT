@@ -14397,7 +14397,8 @@ Mistral::DomainFaithfulnessConstraint::DomainFaithfulnessConstraint(Vector< Vari
 void Mistral::DomainFaithfulnessConstraint::initialise() {
 	ConstraintImplementation::initialise();
 	for(unsigned int i=0; i<scope.size; ++i) {
-		trigger_on(_VALUE_, scope[i]);
+		//trigger_on(_VALUE_, scope[i]);
+		trigger_on(_RANGE_, scope[i]);
 	}
 	GlobalConstraint::initialise();
 	//GlobalConstraint::set_idempotent(true);
