@@ -475,7 +475,8 @@ void Mistral::Variable::lazy_initialise(Solver *s, const int level) {
       std::cout << " to the model" << std::endl;
 #endif
 
-      s->declare(this->get_var());
+//      s->declare(this->get_var());
+      s->lazy_declare(this->get_var());
       //s->declare(*this);//->get_var());
      // s->sequence.declare(*this);
     }

@@ -1477,7 +1477,7 @@ int Mistral::Solver::lazy_declare(Variable x) {
   x.variable->initialise(this);
   //x.variable->id = variables.size;
   //x.variable->solver = this;
-  //visited.extend(variables.size);
+  visited.extend(variables.size);
   variables.add(x);
 
   //declared_variables.add(x);
@@ -10051,7 +10051,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 
 
-		visited.extend(variables.size);
+	//	visited.extend(variables.size);
 		bool is_lb ;
 		int val ;
 		int var ;
@@ -10312,6 +10312,32 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									tmp__= variables[var];
 								}
 
+
+								if ( assignment_level[ tmp__.id() ] != lvl)
+								{
+									std::cout << " ERROR : \n assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
+									std::cout << " lvl " <<  lvl << std::endl;
+									std::cout << " \n \n VVV tmp__ Domain " << tmp__.get_domain() << std::endl;
+									std::cout << " tmp__.id() " << tmp__.id() << std::endl;
+									std::cout << " var  " << var<< std::endl;
+									std::cout << " reason_for[var] " << reason_for[ tmp__.id() ] << std::endl;
+									std::cout << " assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
+									std::cout << " lvl " <<  lvl << std::endl;
+
+									std::cout << " current level  " <<  level << std::endl;
+
+									exit (1);
+
+								}
+								if (! tmp__.is_ground())
+								{
+									std::cout << " ERROR : \n not ground !! " << std::endl;
+									//std::cout << " lvl " <<  lvl << std::endl;
+									exit (1);
+
+								}
+
+
 								assignment_level[var]=lvl;
 								//todo should be search_root!
 								if(	lvl)
@@ -10528,6 +10554,33 @@ void Mistral::Solver::learn_with_lazygeneration() {
 										{
 											tmp__= variables[var];
 										}
+
+
+
+										if ( assignment_level[ tmp__.id() ] != lvl)
+										{
+											std::cout << " ERROR : \n assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
+											std::cout << " lvl " <<  lvl << std::endl;
+											std::cout << " \n \n VVV tmp__ Domain " << tmp__.get_domain() << std::endl;
+											std::cout << " tmp__.id() " << tmp__.id() << std::endl;
+											std::cout << " var  " << var<< std::endl;
+											std::cout << " reason_for[var] " << reason_for[ tmp__.id() ] << std::endl;
+											std::cout << " assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
+											std::cout << " lvl " <<  lvl << std::endl;
+
+											std::cout << " current level  " <<  level << std::endl;
+
+											exit (1);
+
+										}
+										if (! tmp__.is_ground())
+										{
+											std::cout << " ERROR : \n not ground !! " << std::endl;
+											//std::cout << " lvl " <<  lvl << std::endl;
+											exit (1);
+
+										}
+
 
 										assignment_level[var]=lvl;
 										//todo should be search_root!
@@ -10810,6 +10863,9 @@ void Mistral::Solver::learn_with_lazygeneration() {
 		//   }
 
 		//return decision;
+
+
+	//	std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
 
 		//exit(1);
 	}
