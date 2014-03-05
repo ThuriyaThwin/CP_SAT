@@ -14481,7 +14481,16 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 	events.list_capacity = changes.list_capacity;
 	events.list_ = changes.list_;
 	events.index_ = changes.index_;
-	events.start_ = changes.start_;
+//	events.start_ = changes.start_;
+
+
+	if (events.start_){
+	std::cout << "start_ " << events.start_ << std::endl;
+	std::cout << "exit start_ " << *events.start_ << std::endl;
+
+	exit(1);
+	}
+
 
 	int i = scope.size -1;
 	self[i] = Constraint(this, i|type);
