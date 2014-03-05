@@ -42,8 +42,8 @@
 //#define _DEBUG_REASONRIWBS (get_solver()->statistics.num_filterings == 10037)
 //#define _DEBUG_WEIGHTEDBOOLSUM (id == 102)
 //#define _DEBUG_CLIQUENOTEQUAL true
-  #define _DEBUG_DOMAINFAITHFULNESS true
-//  #define _DEBUG_DOMAINFAITHFULNESS ((scope[0].id() == 56) && (solver->level == 30))
+//  #define _DEBUG_DOMAINFAITHFULNESS true
+  #define _DEBUG_DOMAINFAITHFULNESS ((scope[0].id() == 109) && (solver->level == 23))
 
 
 std::ostream& Mistral::operator<< (std::ostream& os, const Mistral::Constraint& x) {
