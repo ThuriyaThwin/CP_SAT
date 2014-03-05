@@ -10260,7 +10260,10 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 								dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
 								Variable tmp__(0,1);
-								var = dom_constraint->value_exist( val ) ;
+								if (!is_lb)
+									var = dom_constraint->value_exist( val ) ;
+								else
+									var = dom_constraint->value_exist( val-1 ) ;
 
 								lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
 								if ( var< 0)
@@ -10503,14 +10506,17 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 										dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
 										Variable tmp__(0,1);
-										var = dom_constraint->value_exist( val ) ;
+										if (!is_lb)
+											var = dom_constraint->value_exist( val ) ;
+										else
+											var = dom_constraint->value_exist( val-1 ) ;
 
 										lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
 										if ( var< 0)
 										{
 											//add(tmp__);
 											tmp__.lazy_initialise(this);
-											dom_constraint->extend_scope(tmp__ , val,!is_lb, lvl);
+											dom_constraint->extend_scope(tmp__ , val - is_lb,!is_lb, lvl);
 											base->extend_scope(tmp__);
 											//	tmp__.set_domain(!is_lb);
 											assignment_level[tmp__.id()] = lvl;

@@ -42,8 +42,8 @@
 //#define _DEBUG_REASONRIWBS (get_solver()->statistics.num_filterings == 10037)
 //#define _DEBUG_WEIGHTEDBOOLSUM (id == 102)
 //#define _DEBUG_CLIQUENOTEQUAL true
-//  #define _DEBUG_DOMAINFAITHFULNESS true
-  #define _DEBUG_DOMAINFAITHFULNESS ((scope[0].id() == 58) && (solver->level == 28))
+  #define _DEBUG_DOMAINFAITHFULNESS true
+//  #define _DEBUG_DOMAINFAITHFULNESS ((scope[0].id() == 56) && (solver->level == 30))
 
 
 std::ostream& Mistral::operator<< (std::ostream& os, const Mistral::Constraint& x) {
@@ -14411,9 +14411,17 @@ void Mistral::DomainFaithfulnessConstraint::initialise() {
 
 int Mistral::DomainFaithfulnessConstraint::value_exist(int value){
 
+//	if (value== 253)
+//	std::cout << " \n value_exist?  \n ub :  " <<  ub << std::endl;
+
 	for(unsigned int i=0; i<ub.size; ++i)
 		if (ub[i].value == value)
 			return ub[i].x.id();
+
+//	if (value== 253)
+//	std::cout << " \n NO ?  \n ub :  " <<  ub << std::endl;
+
+
 	return -1;
 
 }
@@ -14428,7 +14436,8 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 	_scope.add(x);
 	consolidate_var(scope.size -1);
 
-	Literal virtual_literal = encode_bound_literal(scope[0].id(), value, isub);
+	//value =
+	Literal virtual_literal = encode_bound_literal(scope[0].id(), value + (!isub), isub);
 //	dom_constraint->eager_explanations[dom_constraint->eager_explanations.size -1]
 
 	eager_explanations.add(virtual_literal);
