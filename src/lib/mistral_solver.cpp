@@ -10270,7 +10270,9 @@ void Mistral::Solver::learn_with_lazygeneration() {
 								{
 									//add(tmp__);
 									tmp__.lazy_initialise(this);
-									dom_constraint->extend_scope(tmp__ , val,!is_lb, lvl);
+//								dom_constraint->extend_scope(tmp__ , val,!is_lb, lvl);
+
+									dom_constraint->extend_scope(tmp__ , val - is_lb,!is_lb, lvl);
 									base->extend_scope(tmp__);
 									//	tmp__.set_domain(!is_lb);
 									assignment_level[tmp__.id()] = lvl;
