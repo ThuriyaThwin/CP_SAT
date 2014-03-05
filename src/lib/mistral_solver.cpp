@@ -10338,7 +10338,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 								}
 
 
-								assignment_level[var]=lvl;
+								//assignment_level[var]=lvl;
 								//todo should be search_root!
 								if(	lvl)
 									if( !visited.fast_contain(tmp__.id()) ) {
@@ -10582,7 +10582,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 										}
 
 
-										assignment_level[var]=lvl;
+										//assignment_level[var]=lvl;
 										//todo should be search_root!
 										if(	lvl)
 											if( !visited.fast_contain(tmp__.id()) ) {

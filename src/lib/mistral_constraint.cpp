@@ -14375,7 +14375,7 @@ std::ostream& Mistral::ConstraintCliqueNotEqual::display(std::ostream& os) const
 
 Mistral::DomainFaithfulnessConstraint::DomainFaithfulnessConstraint(Vector< Variable >& scp)
 : GlobalConstraint(scp) { //priority = 2;
-	  priority = 1;
+	  priority = 2;
 	if (scp.size == 1){
 		_x =   static_cast<VariableRangeWithLearning*>(scp[0].range_domain) ;
 		_x-> domainConstraint = this;
