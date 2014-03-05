@@ -42,7 +42,9 @@
 //#define _DEBUG_REASONRIWBS (get_solver()->statistics.num_filterings == 10037)
 //#define _DEBUG_WEIGHTEDBOOLSUM (id == 102)
 //#define _DEBUG_CLIQUENOTEQUAL true
-  //#define _DEBUG_DOMAINFAITHFULNESS true
+//  #define _DEBUG_DOMAINFAITHFULNESS true
+  #define _DEBUG_DOMAINFAITHFULNESS ((scope[0].id() == 58) && (solver->level == 28))
+
 
 std::ostream& Mistral::operator<< (std::ostream& os, const Mistral::Constraint& x) {
   return x.display(os);
@@ -14526,7 +14528,19 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 	PropagationOutcome wiped = CONSISTENT;
 
 #ifdef	_DEBUG_DOMAINFAITHFULNESS
+	if (_DEBUG_DOMAINFAITHFULNESS){
 	std::cout << " \n propagate DomainFaithfulnessConstraint \n ub " <<  ub << std::endl;
+	std::cout << " \n propagate DomainFaithfulnessConstraint \n id =  " <<  scope[0].id() << std::endl;
+
+	std::cout << " \n \n variables domains : \n " << std::endl;
+
+	for (int i = 0; i< scope.size; ++i)
+	{
+		std::cout << scope[i] <<" :  " << scope[i].get_domain() << std::endl;
+
+	}
+
+	}
 #endif
 
 	int _lb = scope[0].get_min();
@@ -14592,9 +14606,11 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 
 #ifdef	_DEBUG_DOMAINFAITHFULNESS
+	if (_DEBUG_DOMAINFAITHFULNESS){
 	std::cout << " index_lb " << index_lb <<std::endl;
 	if (index_lb < ub.size)
 		std::cout << " index_lb " << ub[index_lb] <<std::endl;
+}
 #endif
 
 	//Use the current ub to enforce bound literals to be true
@@ -14656,9 +14672,11 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 
 #ifdef	_DEBUG_DOMAINFAITHFULNESS
+	if (_DEBUG_DOMAINFAITHFULNESS){
 	std::cout << " index_ub " << index_ub <<std::endl;
 	if (index_ub >= 0 )
 		std::cout << " index_ub " << ub[index_ub] <<std::endl;
+	}
 #endif
 
 	latestindex_lb = index_lb -1;
@@ -14683,6 +14701,7 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 
 #ifdef	_DEBUG_DOMAINFAITHFULNESS
+	if (_DEBUG_DOMAINFAITHFULNESS){
 	std::cout << " latestindex_lb " << latestindex_lb <<std::endl;
 	if (latestindex_lb < ub.size)
 		std::cout << " latestindex_lb " << ub[latestindex_lb] <<std::endl;
@@ -14690,6 +14709,7 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 	if (latestindex_ub >= 0 &&  latestindex_ub < ub.size)
 		std::cout << " latestindex_ub " << ub[latestindex_ub] <<std::endl;
+	}
 #endif
 
 
@@ -14865,6 +14885,24 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 #endif
 			return wiped;
 		}
+
+
+#ifdef	_DEBUG_DOMAINFAITHFULNESS
+	if (_DEBUG_DOMAINFAITHFULNESS){
+	std::cout << " \n At the end :  DomainFaithfulnessConstraint \n ub " <<  ub << std::endl;
+
+
+	std::cout << " \n \n variables domains : \n " << std::endl;
+
+	for (int i = 0; i< scope.size; ++i)
+	{
+		std::cout << scope[i] <<" :  " << scope[i].get_domain() << std::endl;
+
+	}
+
+	std::cout << " \n \n\n " << std::endl;
+	}
+#endif
 
 
 	return wiped;
