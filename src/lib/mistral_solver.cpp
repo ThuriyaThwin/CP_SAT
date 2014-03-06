@@ -10004,7 +10004,7 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 
 //based on fdlearn_nogood_nosequence
 void Mistral::Solver::learn_with_lazygeneration() {
-//		std::cout << " \n\n\n fdlearn_ " << std::endl;
+		//std::cout << " \n\n\n fdlearn_ " << std::endl;
 
 #ifdef latest_bounds_learning
 	propagate_literal_in_learnt_clause= true;

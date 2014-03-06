@@ -1997,6 +1997,9 @@ bool Mistral::VariableRangeWithLearning::should_be_learnt (Literal q) {
 
 
 int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
+
+
+	/*
 	int previsouslevel, idx;
 
 	//	std::cout << "debug level_of"<<  val << std::endl;
@@ -2046,6 +2049,9 @@ int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 
 	}
 
+	*/
+
+
 	/*
 	  previsouslevel_lb;
 	  int previsouslevel_ub;
@@ -2054,6 +2060,58 @@ int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 		trail_.add(max);
 		trail_.add(solver->level);
 	 */
+
+
+
+
+
+		int size;
+		if (lb)
+		{
+
+			size =lowerbounds.size ;
+
+
+			while (size --)
+				if(lowerbounds[size]< val)
+				{
+
+					//			std::cout << " c lower bound found! " << std::endl;
+					//			if (upper_bound_reasons[size+1] == NULL)
+					//				std::cout << "c return NULL " << std::endl;
+					//			else
+					//				std::cout << " c return lowerbounds reason_for --> " << *lower_bound_reasons[size+1] << std::endl;
+					//	latest_visited_lower_bound = lowerbounds[size+1];
+					return lower_bound_levels[size+1];
+				}
+		}
+		else
+		{
+
+
+			size =upperbounds.size ;
+
+			while (size --)
+				if(upperbounds[size]> val)
+				{
+					//			std::cout << "c upperbound found" << size<< std::endl;
+					//			if (upper_bound_reasons[size+1] == NULL)
+					//				std::cout << "c return NULL " << std::endl;
+					//			else
+
+					//					std::cout <<" c return upperbounds reason_for --> " << *upper_bound_reasons[size+1] << std::endl;
+
+					//		latest_visited_upper_bound = upperbounds[size+1];
+					return upper_bound_levels[size+1];
+				}
+		}
+		std::cout << "END ? " << std::endl;
+		exit(1);
+		//	return lower_bound_reasons[0];
+
+
+
+
 
 }
 

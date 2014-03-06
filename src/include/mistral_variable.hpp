@@ -1538,6 +1538,8 @@ namespace Mistral {
 		  upperbounds.clear();
 		  lower_bound_reasons.clear();
 		  upper_bound_reasons.clear();
+		  lower_bound_levels.clear();
+		  upper_bound_levels.clear();
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 		  lowerbounds_levels.clear();
 		  upperbounds_levels.clear();
@@ -1546,6 +1548,8 @@ namespace Mistral {
 		  upperbounds.add(ub);
 		  lower_bound_reasons.add(NULL);
 		  upper_bound_reasons.add(NULL);
+		  lower_bound_levels.add(-1);
+		  upper_bound_levels.add(-1);
 		//  std::cout << "111NDDDDD \n \n " << std::endl;
 	//	  std::cout << "level  \n \n " << solver->level <<std::endl;
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
@@ -1607,6 +1611,7 @@ namespace Mistral {
 #endif
 			  lowerbounds.add(lo);
 			  lower_bound_reasons.add(C);
+			  lower_bound_levels.add(solver->level);
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 			  lowerbounds_levels.add(solver->level);
 #endif
@@ -1654,6 +1659,7 @@ namespace Mistral {
 #endif
 			  upperbounds.add(up);
 			  upper_bound_reasons.add(C);
+			  upper_bound_levels.add(solver->level);
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 			  upperbounds_levels.add(solver->level);
 #endif
@@ -1712,6 +1718,7 @@ namespace Mistral {
 				  {
 					  lowerbounds.pop();
 					  lower_bound_reasons.pop();
+					  lower_bound_levels.pop();
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 					  lowerbounds_levels.pop();
 #endif
@@ -1731,6 +1738,7 @@ namespace Mistral {
 				  {
 					  upperbounds.pop();
 					  upper_bound_reasons.pop();
+					  upper_bound_levels.pop();
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 					  upperbounds_levels.pop();
 #endif
@@ -1774,8 +1782,10 @@ namespace Mistral {
 #endif
 
   private:
-	  Vector<Explanation*> lower_bound_reasons;
-	  Vector<Explanation*> upper_bound_reasons;
+		  Vector<Explanation*> lower_bound_reasons;
+		  Vector<Explanation*> upper_bound_reasons;
+		  Vector<int> lower_bound_levels;
+		  Vector<int> upper_bound_levels;
 	  int latest_visited_lower_bound ;
 	  int latest_visited_upper_bound ;
 
