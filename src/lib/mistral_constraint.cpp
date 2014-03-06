@@ -44,7 +44,7 @@
 //#define _DEBUG_CLIQUENOTEQUAL true
 //  #define _DEBUG_DOMAINFAITHFULNESS true
 //  #define _DEBUG_DOMAINFAITHFULNESS ((scope[0].id() == 109) && (solver->level == 23))
-#define _DEBUG_DOMAINFAITHFULNESS_CHECK ((scope[0].id() == 11) && (scope[0].get_max() == 734))
+//#define _DEBUG_DOMAINFAITHFULNESS_CHECK ((scope[0].id() == 11) && (scope[0].get_max() == 734))
 
 
 std::ostream& Mistral::operator<< (std::ostream& os, const Mistral::Constraint& x) {
@@ -14931,12 +14931,13 @@ int Mistral::DomainFaithfulnessConstraint::check( const int* s ) const {
 
 	}
 #endif
-
+/*
 	for (int i = 0 ; i < scope.size ; ++i)
 		if (s[i]!= scope[i].get_min()){
 			std::cout << " \n \n error s[i]!= scope[i].get_min() \n " << std::endl;
 			exit(1);
 		}
+*/
 
 	int v = s[0];
 	int value;
