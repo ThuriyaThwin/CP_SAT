@@ -1943,7 +1943,7 @@ int Mistral::VariableImplementation::assigned_at_last_level() const {
 }
 
 bool Mistral::VariableRangeWithLearning::should_be_learnt (Literal q) {
-	int previsouslevel;
+
 
 //	std::cout << " should_be_learnt ? " << std::endl;
 
@@ -1953,7 +1953,18 @@ bool Mistral::VariableRangeWithLearning::should_be_learnt (Literal q) {
 
 
 	int value = get_value_from_literal(q);
+	bool islb = is_lower_bound(q);
+	int __level = level_of(value, islb);
+/*
+	std::cout << " \n \n should_be_learnt ? " << std::endl;
 
+	std::cout << " level : " <<  solver->level <<std::endl;
+	std::cout << " __level of literal : " <<  __level <<std::endl;
+	std::cout << " should be learnt ? " <<  (__level < solver->level) <<std::endl;
+*/
+	return (__level < solver->level) ;
+
+/*
 //	std::cout << " value :  " << value <<std::endl;
 //	std::cout << " is_lower_bound(q) :  " << is_lower_bound(q) <<std::endl;
 
@@ -1983,7 +1994,7 @@ bool Mistral::VariableRangeWithLearning::should_be_learnt (Literal q) {
 		std::cout << " CHECK IT OUT !" << solver->level <<std::endl;
 		exit(1);
 	}
-
+*/
 	/*
 	  previsouslevel_lb;
 	  int previsouslevel_ub;
