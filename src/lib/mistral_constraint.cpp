@@ -43,7 +43,8 @@
 //#define _DEBUG_WEIGHTEDBOOLSUM (id == 102)
 //#define _DEBUG_CLIQUENOTEQUAL true
 //  #define _DEBUG_DOMAINFAITHFULNESS true
-  //#define _DEBUG_DOMAINFAITHFULNESS ((scope[0].id() == 109) && (solver->level == 23))
+//  #define _DEBUG_DOMAINFAITHFULNESS ((scope[0].id() == 109) && (solver->level == 23))
+#define _DEBUG_DOMAINFAITHFULNESS_CHECK ((scope[0].id() == 11) && (scope[0].get_max() == 734))
 
 
 std::ostream& Mistral::operator<< (std::ostream& os, const Mistral::Constraint& x) {
@@ -14918,6 +14919,24 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 }
 
 int Mistral::DomainFaithfulnessConstraint::check( const int* s ) const {
+
+
+#ifdef _DEBUG_DOMAINFAITHFULNESS_CHECK
+	if(_DEBUG_DOMAINFAITHFULNESS_CHECK){
+		std::cout << "\n _DEBUG_DOMAINFAITHFULNESS_CHECK" << std::endl;
+		std::cout << "ub" << ub << std::endl;
+		std::cout << " \n \n variables domains : \n " << std::endl;
+		for (int i = 0; i< scope.size; ++i)
+			std::cout << scope[i] <<" :  " << scope[i].get_domain() << std::endl;
+
+	}
+#endif
+
+	for (int i = 0 ; i < scope.size ; ++i)
+		if (s[i]!= scope[i].get_min()){
+			std::cout << " \n \n error s[i]!= scope[i].get_min() \n " << std::endl;
+			exit(1);
+		}
 
 	int v = s[0];
 	int value;
