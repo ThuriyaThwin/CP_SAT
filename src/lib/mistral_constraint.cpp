@@ -14478,10 +14478,13 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 	delete [] index;
 	index = tmpindex;
 
-	if (changes.list_capacity < scope.size)
-		changes.extend_list();
 
-	changes[scope.size] = false;
+    changes.extend(scope.size -1 );
+
+	//if (changes.list_capacity < scope.size)
+		//changes.extend_list();
+
+	//changes[scope.size] = false;
 
 	/*
 	if (events.list_capacity < scope.size)
