@@ -2890,6 +2890,16 @@ namespace Mistral {
     inline void operator=( const Variable x ) { 
 
       int idx = x.id();
+
+
+      if (idx > 1800){
+
+          std::cout << "idx > 1800 " << idx << std::endl;
+
+    	  wei_ = 0;
+    	  dom_ = LARGE_VALUE;
+    	  return ;
+      }
       int i = map[idx].size;
       Variable y;
 

@@ -1693,7 +1693,7 @@ std::cout << "[" << std::setw(4) << id << "](" << name() << "): restore" << std:
       
       //   //exit(1);
       // } else {
-      
+
       if(active.contain(var)) {
 	
 	active.reversible_remove(var);
