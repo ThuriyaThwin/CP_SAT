@@ -601,6 +601,9 @@ void Mistral::ConstraintClauseBase::extend_scope(Variable x){
 
     changes.extend(scope.size -1 );
 
+    if (changes.list_capacity < scope.size)
+    	changes.extend_list();
+
 	events.size = changes.size;
 	events.index_capacity = changes.index_capacity;
 	events.list_capacity = changes.list_capacity;

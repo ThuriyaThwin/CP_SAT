@@ -10258,6 +10258,11 @@ void Mistral::Solver::learn_with_lazygeneration() {
 							if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
 							{
 
+								//std::cout << " \n \n sequence before  " << sequence << std::endl;
+								//std::cout << " \n \n sequence size before  " << sequence.size << std::endl;
+								//std::cout << " \n \n sequence capacity before  " << sequence.capacity << std::endl;
+
+
 								dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
 								Variable tmp__(0,1);
 								if (!is_lb)
@@ -10366,6 +10371,12 @@ void Mistral::Solver::learn_with_lazygeneration() {
 										if(lvl > backtrack_level)
 											backtrack_level = lvl;
 									}
+
+								//std::cout << " \n \n sequence after " << sequence << std::endl;
+								//std::cout << " \n \n sequence size after  " << sequence.size << std::endl;
+								//std::cout << " \n \n sequence capacity after  " << sequence.capacity << std::endl;
+
+
 							}
 							else
 								bound_literals_to_explore.add(q);
@@ -10506,6 +10517,11 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
 									{
 
+										//std::cout << " \n \n sequence before  " << sequence << std::endl;
+										//std::cout << " \n \n sequence size before  " << sequence.size << std::endl;
+										//std::cout << " \n \n sequence capacity before  " << sequence.capacity << std::endl;
+
+
 										dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
 										Variable tmp__(0,1);
 										if (!is_lb)
@@ -10613,6 +10629,11 @@ void Mistral::Solver::learn_with_lazygeneration() {
 												if(lvl > backtrack_level)
 													backtrack_level = lvl;
 											}
+
+					//					std::cout << " \n \n sequence after  " << sequence << std::endl;
+					//					std::cout << " \n \n sequence sizeafter  " << sequence.size << std::endl;
+					//					std::cout << " \n \n sequence capacity after  " << sequence.capacity << std::endl;
+
 									}
 									else
 										bound_literals_to_explore.add(q);

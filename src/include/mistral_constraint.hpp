@@ -1751,6 +1751,10 @@ if (enforce_nfc1)
 
       // }
 
+   //     std::cout << "\n var" << var << std::endl;
+   //     std::cout << "events" << events << std::endl;
+   //     std::cout << "events.list_capacity" << events.list_capacity << std::endl;
+   //     std::cout << "events.index_capacity" << events.index_capacity << std::endl;
       events.set_to(var);
       event_type[var] = evt;
     }

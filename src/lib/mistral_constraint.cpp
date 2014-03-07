@@ -14485,7 +14485,10 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 	index = tmpindex;
 
 
-    changes.extend(scope.size -1 );
+    changes.extend(scope.size -1);
+
+    if (changes.list_capacity < scope.size)
+    	changes.extend_list();
 
 	//if (changes.list_capacity < scope.size)
 		//changes.extend_list();
