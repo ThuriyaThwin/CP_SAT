@@ -1693,7 +1693,7 @@ std::cout << "[" << std::setw(4) << id << "](" << name() << "): restore" << std:
       
       //   //exit(1);
       // } else {
-
+if (enforce_nfc1)
       if(active.contain(var)) {
 	
 	active.reversible_remove(var);
@@ -1759,6 +1759,7 @@ std::cout << "[" << std::setw(4) << id << "](" << name() << "): restore" << std:
     void check_active() {
       for(int i=on.size; i--;) {
 	if(index[i]>=0) {
+		if (enforce_nfc1){
 	  if(active.contain(i)) {
 	    if(scope[i].is_ground()) {
 	      std::cout << "[" << std::setw(4) << id << "] " ;
@@ -1788,6 +1789,7 @@ std::cout << "[" << std::setw(4) << id << "](" << name() << "): restore" << std:
 	      //exit(1);
 	    }
 	  }
+	}
 	}
       }
     }

@@ -9282,6 +9282,9 @@ Mistral::ConstraintGAC2001::~ConstraintGAC2001()
 
 Mistral::PropagationOutcome Mistral::ConstraintGAC2001::propagate() 
 {
+
+	std::cout << " ConstraintGAC2001  "  << std::endl;
+	//exit(1);
   PropagationOutcome wiped = CONSISTENT;
 
   int i, oi, j, k, ok, valid, index, n, arity = scope.size, changedIdx;
