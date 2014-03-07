@@ -514,7 +514,7 @@ void Mistral::ConstraintClauseBase::extend_scope(Variable x){
 	  unsigned int idx = x.id()-start_from;
 	  if(idx == scope.size) {
 	    scope.add(x);
-	    _scope.add(x);
+	 //   _scope.add(x);
 	 //   reason_for.add(NULL);
 
 	    while(reason_for.capacity <= idx)
@@ -556,7 +556,6 @@ void Mistral::ConstraintClauseBase::extend_scope(Variable x){
 
 	  //reason = solver->reason.stack_;
 
-	  consolidate_var(scope.size -1);
 
 
 	Event * tmp_event_type = new Event[scope.size];
@@ -622,8 +621,7 @@ void Mistral::ConstraintClauseBase::extend_scope(Variable x){
 	self[i] = Constraint(this, i|type);
 	trigger_on(_VALUE_, scope[scope.size -1]);
 	index[i] = on[i]->post(self[i]);
-
-
+	consolidate_var(scope.size -1);
 }
 
 

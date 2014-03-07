@@ -13155,6 +13155,7 @@ void Mistral::Solver::set_fdlearning_on() {
 	graph_implied.initialise(10000);
 
 	initial_variablesize= variables.size;
+	//std::cout << "initial_variablesize " << initial_variablesize << std::endl;
 
 	__failure=NULL;
 	Vector< Variable >   bool_variables;

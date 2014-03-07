@@ -417,13 +417,23 @@ namespace Mistral {
 	int idx;
 	i = con.arity();
 	++constraint_weight[con.id()];
-	while(i--) {
-	  idx = scope[i].id();
-	  if(idx>=0) {
-	    //std::cout << " ++x" << idx; 
-	    variable_weight[idx] += weight_unit;
-	  }
-	}
+	if (solver->parameters.fd_learning )
+		while(i--) {
+			idx = scope[i].id();
+			if((idx>=0) && (idx < solver->initial_variablesize)) {
+				//std::cout << " ++x" << idx;
+				variable_weight[idx] += weight_unit;
+			}
+		}
+	else
+		while(i--) {
+			idx = scope[i].id();
+			if(idx>=0) {
+				//std::cout << " ++x" << idx;
+				variable_weight[idx] += weight_unit;
+			}
+		}
+
       } 
       // std::cout << std::endl;
 

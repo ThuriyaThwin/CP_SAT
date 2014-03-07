@@ -14440,8 +14440,8 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 	ub.add(__boundLiteral(value,x));
 	ub.sort();
 	scope.add(x);
-	_scope.add(x);
-	consolidate_var(scope.size -1);
+	//_scope.add(x);
+
 
 	//value =
 	Literal virtual_literal = encode_bound_literal(scope[0].id(), value + (!isub), isub);
@@ -14522,7 +14522,7 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 	index[i] = on[i]->post(self[i]);
 
 	//backtrackable??? add lvl!
-
+	consolidate_var(scope.size -1);
 
 
 }
