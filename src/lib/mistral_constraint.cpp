@@ -12619,7 +12619,8 @@ Mistral::Explanation::iterator Mistral::ConstraintIncrementalWeightedBoolSumInte
 
 Mistral::PropagationOutcome Mistral::ConstraintIncrementalWeightedBoolSumInterval::propagate() 
 {
-  
+	std::cout << " propagate ConstraintIncrementalWeightedBoolSumInterval "<< std::endl;
+
   PropagationOutcome wiped_idx = CONSISTENT;
   int w;
   int i;
@@ -13465,7 +13466,9 @@ Mistral::Explanation::iterator Mistral::PredicateWeightedBoolSum::get_reason_for
 
 Mistral::PropagationOutcome Mistral::PredicateWeightedBoolSum::propagate() 
 {
-  
+
+	std::cout << " propagate PredicateWeightedBoolSum::propagate "<< std::endl;
+
   PropagationOutcome wiped_idx = CONSISTENT;
   int w;
   int i;
