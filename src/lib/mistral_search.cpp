@@ -459,8 +459,9 @@ std::ostream& Mistral::FailureCountManager::display(std::ostream& os, const bool
       qsort(all_constraints, constraint_weight.size, sizeof(int), decreasing_weight);
 
       os << " c variable weight: \n c id: ";
+      if(solver->parameters.fd_learning)
       for(unsigned int i=0; i<variable_weight.size; ++i) {
-	if(all || solver->sequence.safe_contain(all_variables[i])) {
+	if(all || ((all_variables[i] < solver->initial_variablesize) && solver->sequence.contain(all_variables[i]))) {
 	  xwidth = log10(variable_weight[all_variables[i]]);
 	  w = log10(all_variables[i]);
 	  if(w>xwidth) xwidth = w;
@@ -468,9 +469,21 @@ std::ostream& Mistral::FailureCountManager::display(std::ostream& os, const bool
 	  os << std::setw(xwidth) << all_variables[i] << " ";
 	}
       }
+      else
+          for(unsigned int i=0; i<variable_weight.size; ++i) {
+    	if(all || solver->sequence.contain(all_variables[i])) {
+    	  xwidth = log10(variable_weight[all_variables[i]]);
+    	  w = log10(all_variables[i]);
+    	  if(w>xwidth) xwidth = w;
+
+    	  os << std::setw(xwidth) << all_variables[i] << " ";
+    	}
+          }
+
       os << "\n c va: ";
+      if(solver->parameters.fd_learning)
       for(unsigned int i=0; i<variable_weight.size; ++i) {
-	if(all || solver->sequence.safe_contain(all_variables[i])) {
+	if(all || ((all_variables[i] < solver->initial_variablesize) && solver->sequence.contain(all_variables[i]))) {
 	  xwidth = log10(variable_weight[all_variables[i]]);
 	  w = log10(all_variables[i]);
 	  if(w>xwidth) xwidth = w;
@@ -478,6 +491,16 @@ std::ostream& Mistral::FailureCountManager::display(std::ostream& os, const bool
 	  os << std::setw(xwidth) << variable_weight[all_variables[i]] << " ";
 	}
       }
+      else
+          for(unsigned int i=0; i<variable_weight.size; ++i) {
+    	if(all || solver->sequence.contain(all_variables[i])) {
+    	  xwidth = log10(variable_weight[all_variables[i]]);
+    	  w = log10(all_variables[i]);
+    	  if(w>xwidth) xwidth = w;
+
+    	  os << std::setw(xwidth) << variable_weight[all_variables[i]] << " ";
+    	}
+          }
       os << "\n c constraint weight: \n c id: ";
       for(unsigned int i=0; i<constraint_weight.size; ++i) {
 	xwidth = log10(constraint_weight[all_constraints[i]]);
@@ -524,8 +547,9 @@ std::ostream& Mistral::PruningCountManager::display(std::ostream& os, const bool
       qsort(all_variables, variable_weight.size, sizeof(int), decreasing_weight);
 
       os << " c variable weight: \n c id: ";
+      if (solver->parameters.fd_learning)
       for(unsigned int i=0; i<variable_weight.size; ++i) {
-	if(all || solver->sequence.safe_contain(all_variables[i])) {
+	if(all || ((all_variables[i] < solver->initial_variablesize) && solver->sequence.contain(all_variables[i]))) {
 	  xwidth = log10(variable_weight[all_variables[i]]);
 	  w = log10(all_variables[i]);
 	  if(w>xwidth) xwidth = w;
@@ -533,9 +557,20 @@ std::ostream& Mistral::PruningCountManager::display(std::ostream& os, const bool
 	  os << std::setw(xwidth) << all_variables[i] << " ";
 	}
       }
+      else
+    	  for(unsigned int i=0; i<variable_weight.size; ++i) {
+    	 	if(all || solver->sequence.contain(all_variables[i])) {
+    	 	  xwidth = log10(variable_weight[all_variables[i]]);
+    	 	  w = log10(all_variables[i]);
+    	 	  if(w>xwidth) xwidth = w;
+
+    	 	  os << std::setw(xwidth) << all_variables[i] << " ";
+    	 	}
+    	       }
       os << "\n c va: ";
+      if (solver->parameters.fd_learning)
       for(unsigned int i=0; i<variable_weight.size; ++i) {
-	if(all || solver->sequence.safe_contain(all_variables[i])) {
+	if(all || ((all_variables[i] < solver->initial_variablesize) && solver->sequence.contain(all_variables[i]))) {
 	  xwidth = log10(variable_weight[all_variables[i]]);
 	  w = log10(all_variables[i]);
 	  if(w>xwidth) xwidth = w;
@@ -543,6 +578,17 @@ std::ostream& Mistral::PruningCountManager::display(std::ostream& os, const bool
 	  os << std::setw(xwidth) << variable_weight[all_variables[i]] << " ";
 	}
       }
+      else
+          for(unsigned int i=0; i<variable_weight.size; ++i) {
+    	if(all || solver->sequence.contain(all_variables[i])) {
+    	  xwidth = log10(variable_weight[all_variables[i]]);
+    	  w = log10(all_variables[i]);
+    	  if(w>xwidth) xwidth = w;
+
+    	  os << std::setw(xwidth) << variable_weight[all_variables[i]] << " ";
+    	}
+          }
+
       os << std::endl;
 
     delete [] all_variables;
@@ -614,11 +660,13 @@ std::ostream& Mistral::LearningActivityManager::display(std::ostream& os, const 
       qsort(all_variables, var_activity.size, sizeof(int), decreasing_weight);
 
       os << " c variable weight: \n c id: ";
+
+      if (solver->parameters.fd_learning)
       for(unsigned int i=0; i<var_activity.size; ++i) {
 
 	if(!(i%1000)) {
 
-	if(all || solver->sequence.safe_contain(all_variables[i])) {
+	if(all || ((all_variables[i] < solver->initial_variablesize) && solver->sequence.contain(all_variables[i]))) {
 	  xwidth = log10(var_activity[all_variables[i]])+7;
 	  w = log10(all_variables[i]);
 	  if(w>xwidth) xwidth = w;
@@ -629,12 +677,29 @@ std::ostream& Mistral::LearningActivityManager::display(std::ostream& os, const 
 	}
 
       }
+      else
+          for(unsigned int i=0; i<var_activity.size; ++i) {
+
+    	if(!(i%1000)) {
+
+    	if(all || solver->sequence.contain(all_variables[i])) {
+    	  xwidth = log10(var_activity[all_variables[i]])+7;
+    	  w = log10(all_variables[i]);
+    	  if(w>xwidth) xwidth = w;
+
+    	  os << std::setw(xwidth) << all_variables[i] << " ";
+    	}
+
+    	}
+
+          }
       os << "\n c va: ";
+      if (solver->parameters.fd_learning)
       for(unsigned int i=0; i<var_activity.size; ++i) {
 
 	if(!(i%1000)) {
 
-	if(all || solver->sequence.safe_contain(all_variables[i])) {
+	if(all || ((all_variables[i] < solver->initial_variablesize) && solver->sequence.contain(all_variables[i]))) {
 	  xwidth = log10(var_activity[all_variables[i]])+7;
 	  w = log10(all_variables[i]);
 	  if(w>xwidth) xwidth = w;
@@ -648,12 +713,33 @@ std::ostream& Mistral::LearningActivityManager::display(std::ostream& os, const 
 	}
 
       }
+      else
+          for(unsigned int i=0; i<var_activity.size; ++i) {
+
+    	if(!(i%1000)) {
+
+    	if(all || solver->sequence.contain(all_variables[i])) {
+    	  xwidth = log10(var_activity[all_variables[i]])+7;
+    	  w = log10(all_variables[i]);
+    	  if(w>xwidth) xwidth = w;
+
+    	  long long int intval = (long long int)(100000 * var_activity[all_variables[i]]);
+    	  double outputval = ((double)intval)/100000;
+
+    	  os << std::setw(xwidth) << outputval << " ";
+    	}
+
+    	}
+
+          }
+
      os << "\n c  0: ";
+     if (solver->parameters.fd_learning)
       for(unsigned int i=0; i<var_activity.size; ++i) {
 
 	if(!(i%1000)) {
 
-	if(all || solver->sequence.safe_contain(all_variables[i])) {
+	if(all || ((all_variables[i] < solver->initial_variablesize) &&solver->sequence.contain(all_variables[i]))) {
 	  xwidth = log10(var_activity[2*all_variables[i]])+7;
 	  w = log10(all_variables[i]);
 	  if(w>xwidth) xwidth = w;
@@ -667,12 +753,33 @@ std::ostream& Mistral::LearningActivityManager::display(std::ostream& os, const 
 	}
 
       }
+     else
+         for(unsigned int i=0; i<var_activity.size; ++i) {
+
+   	if(!(i%1000)) {
+
+   	if(all || solver->sequence.contain(all_variables[i])) {
+   	  xwidth = log10(var_activity[2*all_variables[i]])+7;
+   	  w = log10(all_variables[i]);
+   	  if(w>xwidth) xwidth = w;
+
+   	  long long int intval = (long long int)(100000 * lit_activity[2*all_variables[i]]);
+   	  double outputval = ((double)intval)/100000;
+
+   	  os << std::setw(xwidth) << outputval << " ";
+   	}
+
+   	}
+
+         }
      os << "\n c  1: ";
+
+     if (solver->parameters.fd_learning)
       for(unsigned int i=0; i<var_activity.size; ++i) {
 
 	if(!(i%1000)) {
 
-	if(all || solver->sequence.safe_contain(all_variables[i])) {
+	if(all || ((all_variables[i] < solver->initial_variablesize) && solver->sequence.contain(all_variables[i]))) {
 	  xwidth = log10(lit_activity[2*all_variables[i]+1])+7;
 	  w = log10(all_variables[i]);
 	  if(w>xwidth) xwidth = w;
@@ -686,6 +793,25 @@ std::ostream& Mistral::LearningActivityManager::display(std::ostream& os, const 
 	}
 
       }
+     else
+         for(unsigned int i=0; i<var_activity.size; ++i) {
+
+   	if(!(i%1000)) {
+
+   	if(all ||  solver->sequence.contain(all_variables[i])) {
+   	  xwidth = log10(lit_activity[2*all_variables[i]+1])+7;
+   	  w = log10(all_variables[i]);
+   	  if(w>xwidth) xwidth = w;
+
+   	  long long int intval = (long long int)(100000 * lit_activity[2*all_variables[i]+1]);
+   	  double outputval = ((double)intval)/100000;
+
+   	  os << std::setw(xwidth) << outputval << " ";
+   	}
+
+   	}
+
+         }
       os << std::endl;
 
     delete [] all_variables;

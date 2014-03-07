@@ -2078,11 +2078,18 @@ void Mistral::Solver::initialise_search(Vector< Variable >& seq,
 
   sequence.clear();
   //decisions.clear();
+  if (parameters.fd_learning)
   for(unsigned int i=seq.size; i;) {
     Variable x = seq[--i].get_var();
-    if(!sequence.safe_contain(x) && !(domain_types[x.id()]&REMOVED_VAR)) sequence.add(x);
+    if( (x.id() < initial_variablesize) && !sequence.contain(x) && !(domain_types[x.id()]&REMOVED_VAR)) sequence.add(x);
     if(x.is_ground()) sequence.remove(x);
   }
+  else
+	  for(unsigned int i=seq.size; i;) {
+	    Variable x = seq[--i].get_var();
+	    if(!sequence.contain(x) && !(domain_types[x.id()]&REMOVED_VAR)) sequence.add(x);
+	    if(x.is_ground()) sequence.remove(x);
+	  }
   num_search_variables = sequence.size;
 
 
@@ -3253,14 +3260,24 @@ Mistral::PropagationOutcome Mistral::Solver::propagate(Constraint c,
     
       var_evt = active_variables.pop_front();
 
-      if(ASSIGNED(var_evt.second) && sequence.safe_contain(variables[var_evt.first])) {
+      if (parameters.fd_learning){
+      if(ASSIGNED(var_evt.second) && (variables[var_evt.first].id() < initial_variablesize) && sequence.contain(variables[var_evt.first])) {
 	sequence.remove(variables[var_evt.first]);
 	last_solution_lb[var_evt.first] = last_solution_ub[var_evt.first] = variables[var_evt.first].get_value();
 	assignment_level[var_evt.first] = level;
 	assignment_order[var_evt.first] = assignment_rank;
 	++assignment_rank;
       }
-
+    }
+      else {
+      if(ASSIGNED(var_evt.second) && sequence.contain(variables[var_evt.first])) {
+	sequence.remove(variables[var_evt.first]);
+	last_solution_lb[var_evt.first] = last_solution_ub[var_evt.first] = variables[var_evt.first].get_value();
+	assignment_level[var_evt.first] = level;
+	assignment_order[var_evt.first] = assignment_rank;
+	++assignment_rank;
+      }
+      }
 
    
       // std::cout << var_evt << " " 
@@ -3378,15 +3395,25 @@ Mistral::PropagationOutcome Mistral::Solver::checker_propagate(Constraint c,
 	std::cout << ". var stack: " << active_variables << std::endl;
       }
 #endif 
-
-      if(ASSIGNED(var_evt.second) && sequence.safe_contain(variables[var_evt.first])) {
+      if (parameters.fd_learning){
+      if(ASSIGNED(var_evt.second) && (variables[var_evt.first].id() < initial_variablesize) && sequence.contain(variables[var_evt.first])) {
 	sequence.remove(variables[var_evt.first]);
 	last_solution_lb[var_evt.first] = last_solution_ub[var_evt.first] = variables[var_evt.first].get_value();
 	assignment_level[var_evt.first] = level;
 	assignment_order[var_evt.first] = assignment_rank;
 	++assignment_rank;
       }
-     
+      }
+      else{
+          if(ASSIGNED(var_evt.second) && sequence.contain(variables[var_evt.first])) {
+    	sequence.remove(variables[var_evt.first]);
+    	last_solution_lb[var_evt.first] = last_solution_ub[var_evt.first] = variables[var_evt.first].get_value();
+    	assignment_level[var_evt.first] = level;
+    	assignment_order[var_evt.first] = assignment_rank;
+    	++assignment_rank;
+          }
+      }
+
       //std::cout << var_evt.third << " <-> " << c.propagator << std::endl;
 
       if(trigger_self || var_evt.third != c.propagator) {
@@ -3550,14 +3577,25 @@ Mistral::PropagationOutcome Mistral::Solver::bound_checker_propagate(Constraint 
     
       var_evt = active_variables.pop_front();
 
-      if(ASSIGNED(var_evt.second) && sequence.safe_contain(variables[var_evt.first])) {
+      if (parameters.fd_learning){
+      if(ASSIGNED(var_evt.second) && (variables[var_evt.first].id() < initial_variablesize) &&  sequence.contain(variables[var_evt.first])) {
 	sequence.remove(variables[var_evt.first]);
 	last_solution_lb[var_evt.first] = last_solution_ub[var_evt.first] = variables[var_evt.first].get_value();
 	assignment_level[var_evt.first] = level;
 	assignment_order[var_evt.first] = assignment_rank;
 	++assignment_rank;
       }
-     
+      }
+      else {
+          if(ASSIGNED(var_evt.second) && sequence.contain(variables[var_evt.first])) {
+    	sequence.remove(variables[var_evt.first]);
+    	last_solution_lb[var_evt.first] = last_solution_ub[var_evt.first] = variables[var_evt.first].get_value();
+    	assignment_level[var_evt.first] = level;
+    	assignment_order[var_evt.first] = assignment_rank;
+    	++assignment_rank;
+          }
+          }
+
       // std::cout << var_evt << " " 
       // 		<< variables[var_evt.first] << " \n0 " 
       // 		<< constraint_graph[var_evt.first].on[0] << "\n1 "
@@ -4425,9 +4463,12 @@ std::ostream& Mistral::Solver::display(std::ostream& os, const int current) {
   int arity;
 
   Vector<Variable> rem_vars;
+
+
+  if (parameters.fd_learning)
   for(unsigned int i=0; i<variables.size; ++i) {
     if(!(domain_types[i] & REMOVED_VAR) 
-       && (current != 1 || sequence.safe_contain(i))
+       && (current != 1 || (i < initial_variablesize && sequence.contain(i)))
        && (current != 2 || !(variables[i].is_ground()))) {
 
       os << "  " << variables[i] << " in " << variables[i].get_domain() ; //<< "\n";
@@ -4477,6 +4518,59 @@ std::ostream& Mistral::Solver::display(std::ostream& os, const int current) {
 
     }
   }
+  else
+	  for(unsigned int i=0; i<variables.size; ++i) {
+	    if(!(domain_types[i] & REMOVED_VAR)
+	       && (current != 1 || sequence.contain(i))
+	       && (current != 2 || !(variables[i].is_ground()))) {
+
+	      os << "  " << variables[i] << " in " << variables[i].get_domain() ; //<< "\n";
+
+	      os << ": " ;
+	      for(Event trig = 0; trig<3; ++trig)
+		for(int cons = constraint_graph[i].on[trig].size; --cons>=0;) {
+		  if(current) {
+		    os << "[" << constraint_graph[i].on[trig][cons].id()
+		       << constraint_graph[i].on[trig][cons].symbol();
+
+		    scope = constraint_graph[i].on[trig][cons].get_scope();
+		    arity = constraint_graph[i].on[trig][cons].arity();
+
+		    int k=0, j=0;
+		    for(; j<arity && k<1; ++j) {
+		      if(!scope[j].is_ground()) {
+			++k;
+			std::cout << scope[j].id() << " " ;
+		      }
+		    }
+		    for(; j<arity && k<2; ++j) {
+		      if(!scope[j].is_ground()) {
+			++k;
+			std::cout << scope[j].id() ; //<< " " ;
+		      }
+		    }
+
+		    os
+		      //<< constraint_graph[i].on[trig][cons].symbol()
+		      //constraint_graph[i].on[trig][cons].id()
+		      << "]";
+		  } else {
+		    os << "[" <<
+		      //constraint_graph[i].on[trig][cons].symbol()
+		      constraint_graph[i].on[trig][cons].id()
+		       << "]";
+		  }
+		}
+	      if(lit_activity)
+		os << lit_activity[2*i] << "/" << lit_activity[2*i+1] << ": " << var_activity[i] ;
+	      os << "\n";
+
+	    } else {
+
+	      rem_vars.add(variables[i]);
+
+	    }
+	  }
 
 
 
@@ -10929,10 +11023,11 @@ void Mistral::Solver::close_propagation() {
 
   // first, resolve the unresolved events, so that 'reason_for' and 'assignment_level' are up to date
   Triplet < int, Event, ConstraintImplementation* > var_evt;
+	if(parameters.fd_learning)
   while(!active_variables.empty()) {
     var_evt = active_variables.pop_front();
     vidx = var_evt.first;
-    if(ASSIGNED(var_evt.second) && sequence.safe_contain(variables[vidx])) {
+    if(ASSIGNED(var_evt.second) && (variables[vidx].id() < initial_variablesize) && sequence.contain(variables[vidx])) {
       sequence.remove(variables[vidx]);
       assignment_level[vidx] = level;
       assignment_order[vidx] = assignment_rank;
@@ -10947,6 +11042,27 @@ void Mistral::Solver::close_propagation() {
       reason_for[vidx] = var_evt.third; //->explain();
     }
   }
+	else
+		  while(!active_variables.empty()) {
+		    var_evt = active_variables.pop_front();
+		    vidx = var_evt.first;
+		    if(ASSIGNED(var_evt.second) && sequence.contain(variables[vidx])) {
+		      sequence.remove(variables[vidx]);
+		      assignment_level[vidx] = level;
+		      assignment_order[vidx] = assignment_rank;
+		      ++assignment_rank;
+
+		      // std::cout << "REASON FOR x" << vidx << ":";
+		      // if(var_evt.third)
+		      // 	std::cout << " c" << var_evt.third->id << std::endl;
+		      // else
+		      // 	std::cout << " decision" << std::endl;
+
+		      reason_for[vidx] = var_evt.third; //->explain();
+		    }
+		  }
+
+
 }
 
 
