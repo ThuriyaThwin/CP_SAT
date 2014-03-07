@@ -515,7 +515,11 @@ void Mistral::ConstraintClauseBase::extend_scope(Variable x){
 	  if(idx == scope.size) {
 	    scope.add(x);
 	    _scope.add(x);
-	    reason_for.add(NULL);
+	 //   reason_for.add(NULL);
+
+	    while(reason_for.capacity <= idx)
+	    	reason_for.extendStack();
+	    reason_for[idx] = NULL;
 
 	  } else {
 		  //if(idx > scope.size) {
