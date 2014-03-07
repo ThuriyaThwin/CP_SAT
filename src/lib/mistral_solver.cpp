@@ -3739,10 +3739,15 @@ bool Mistral::Solver::propagate()
       if(ASSIGNED(var_evt.second)) {
       
 	assigned.add(vidx);
-      
-	if(sequence.safe_contain(variables[vidx]))
-	  sequence.remove(variables[vidx]);
-      
+	if(parameters.fd_learning){
+		if((variables[vidx].id() < initial_variablesize) && sequence.contain(variables[vidx]))
+			sequence.remove(variables[vidx]);
+	}
+	else
+		if(sequence.contain(variables[vidx]))
+				sequence.remove(variables[vidx]);
+
+
 	last_solution_lb[var_evt.first] = last_solution_ub[var_evt.first] = variables[var_evt.first].get_value();
 	assignment_level[vidx] = level;
 	assignment_order[vidx] = assignment_rank;

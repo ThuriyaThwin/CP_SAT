@@ -380,8 +380,8 @@ namespace Mistral {
       solver->display(std::cout, 1);
 
       for(unsigned int i=0; i<variable_weight.size; ++i) {
-	
-	if(!(solver->domain_types[i] & REMOVED_VAR) && solver->sequence.safe_contain(i)) {
+	if (solver->parameters.fd_learning){
+	if(!(solver->domain_types[i] & REMOVED_VAR) && (i < solver->initial_variablesize) && solver->sequence.contain(i)) {
 
 	  xweight = 0;
 	  for(Event trig = 0; trig<3; ++trig) 
@@ -399,6 +399,30 @@ namespace Mistral {
 	    std::cout << "OK!" << std::endl;
 
 	  }
+	}
+	}
+
+	else
+	{
+		if(!(solver->domain_types[i] & REMOVED_VAR) && solver->sequence.contain(i)) {
+
+		  xweight = 0;
+		  for(Event trig = 0; trig<3; ++trig)
+		    for(int cons = solver->constraint_graph[i].on[trig].size; --cons>=0;) {
+		      xweight += constraint_weight[solver->constraint_graph[i].on[trig][cons].id()];
+		    }
+
+		  if(xweight != variable_weight[i]) {
+
+		    std::cout << "WARNING! inconsistency: on " << solver->variables[i] << ": "
+			      << variable_weight[i] << " should be " << xweight << std::endl;
+
+		  } else {
+
+		    std::cout << "OK!" << std::endl;
+
+		  }
+		}
 	}
       }
 
