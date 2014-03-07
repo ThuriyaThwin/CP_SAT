@@ -381,7 +381,7 @@ namespace Mistral {
 
       for(unsigned int i=0; i<variable_weight.size; ++i) {
 	
-	if(!(solver->domain_types[i] & REMOVED_VAR) && solver->sequence.contain(i)) {
+	if(!(solver->domain_types[i] & REMOVED_VAR) && solver->sequence.safe_contain(i)) {
 
 	  xweight = 0;
 	  for(Event trig = 0; trig<3; ++trig) 
