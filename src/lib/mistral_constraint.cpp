@@ -43,7 +43,7 @@
 //#define _DEBUG_WEIGHTEDBOOLSUM (id == 102)
 //#define _DEBUG_CLIQUENOTEQUAL true
 //  #define _DEBUG_DOMAINFAITHFULNESS true
-//  #define _DEBUG_DOMAINFAITHFULNESS ((scope[0].id() == 109) && (solver->level == 23))
+  #define _DEBUG_DOMAINFAITHFULNESS ((scope[0].id() == 221)) //&& (solver->level == 22))
 //#define _DEBUG_DOMAINFAITHFULNESS_CHECK ((scope[0].id() == 11) && (scope[0].get_max() == 734))
 
 
@@ -14737,7 +14737,8 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 	Literal tmp;
 	if (latestindex_lb < ub.size)
-		tmp = 	2*  ub[latestindex_lb].x.id() +1;
+		//tmp = 	2*  ub[latestindex_lb].x.id() +1;
+		tmp = ((Solver *) solver)->encode_boolean_variable_as_literal( ub[latestindex_lb].x.id(),1);
 
 	for (int i = index_lb ; i <latestindex_lb ;  ++i)
 		if(!ub[i].x.is_ground()){
@@ -14779,7 +14780,8 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 
 	if (latestindex_ub >= 0 &&  latestindex_ub < ub.size)
-		tmp = 	2*  ub[latestindex_ub].x.id();
+		//	tmp = 	2*  ub[latestindex_ub].x.id();
+		tmp = ((Solver *) solver)->encode_boolean_variable_as_literal( ub[latestindex_ub].x.id(),0);
 
 	idx = index_ub - latestindex_ub +1;
 	if (idx)
@@ -14849,7 +14851,8 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 	Vector < Literal > tmpclause ;
 
 	if (latestindex_lb < ub.size)
-		tmp = 	2*  ub[latestindex_lb].x.id() +1;
+		//	tmp = 	2*  ub[latestindex_lb].x.id() +1;
+		tmp = ((Solver *) solver)->encode_boolean_variable_as_literal(ub[latestindex_lb].x.id(),1);
 
 	tmpclause.add (tmp);
 
@@ -14881,7 +14884,8 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 	tmpclause.clear();
 
 	if (latestindex_ub >= 0 &&  latestindex_ub < ub.size)
-		tmp = 	2*  ub[latestindex_ub].x.id();
+		//tmp = 	2*  ub[latestindex_ub].x.id();
+		tmp = ((Solver *) solver)->encode_boolean_variable_as_literal( ub[latestindex_ub].x.id(),0);
 
 	tmpclause.add(tmp);
 

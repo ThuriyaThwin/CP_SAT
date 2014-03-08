@@ -885,7 +885,7 @@ namespace Mistral {
 	    std::cout << "[" << std::setw(4) << id << "](" << name() << "): repost on " << scope[var] << std::endl;
 	  }
 #endif
-	  
+
 	  un_relax_from(var);
 	} 
       }
