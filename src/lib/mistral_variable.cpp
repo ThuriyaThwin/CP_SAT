@@ -2116,7 +2116,7 @@ int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 					return upper_bound_levels[size+1];
 				}
 		}
-		std::cout << "END ? " << std::endl;
+		std::cout << "level_of END ? " << std::endl;
 		exit(1);
 		//	return lower_bound_reasons[0];
 
@@ -2322,7 +2322,7 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 					return upper_bound_reasons[size+1];
 				}
 		}
-		std::cout << "END ? " << std::endl;
+		std::cout << "reason_for END ? " << std::endl;
 		exit(1);
 		//	return lower_bound_reasons[0];
 #ifdef latest_bounds_learning
