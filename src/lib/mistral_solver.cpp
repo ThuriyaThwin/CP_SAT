@@ -2081,7 +2081,7 @@ void Mistral::Solver::initialise_search(Vector< Variable >& seq,
   if (parameters.fd_learning)
   for(unsigned int i=seq.size; i;) {
     Variable x = seq[--i].get_var();
-    if( (x.id() < initial_variablesize) && !sequence.contain(x) && !(domain_types[x.id()]&REMOVED_VAR)) sequence.add(x);
+    if( !((x.id() < initial_variablesize) && sequence.contain(x)) && !(domain_types[x.id()]&REMOVED_VAR)) sequence.add(x);
     if(x.is_ground()) sequence.remove(x);
   }
   else
@@ -3263,6 +3263,8 @@ Mistral::PropagationOutcome Mistral::Solver::propagate(Constraint c,
       if (parameters.fd_learning){
       if(ASSIGNED(var_evt.second) && (variables[var_evt.first].id() < initial_variablesize) && sequence.contain(variables[var_evt.first])) {
 	sequence.remove(variables[var_evt.first]);
+	std::cout << " check  assignment_level here " << std::endl;
+	exit(1);
 	last_solution_lb[var_evt.first] = last_solution_ub[var_evt.first] = variables[var_evt.first].get_value();
 	assignment_level[var_evt.first] = level;
 	assignment_order[var_evt.first] = assignment_rank;
@@ -3398,6 +3400,9 @@ Mistral::PropagationOutcome Mistral::Solver::checker_propagate(Constraint c,
       if (parameters.fd_learning){
       if(ASSIGNED(var_evt.second) && (variables[var_evt.first].id() < initial_variablesize) && sequence.contain(variables[var_evt.first])) {
 	sequence.remove(variables[var_evt.first]);
+
+    std::cout << "c check propagation" << std::endl;
+    exit(1);
 	last_solution_lb[var_evt.first] = last_solution_ub[var_evt.first] = variables[var_evt.first].get_value();
 	assignment_level[var_evt.first] = level;
 	assignment_order[var_evt.first] = assignment_rank;
@@ -3580,6 +3585,9 @@ Mistral::PropagationOutcome Mistral::Solver::bound_checker_propagate(Constraint 
       if (parameters.fd_learning){
       if(ASSIGNED(var_evt.second) && (variables[var_evt.first].id() < initial_variablesize) &&  sequence.contain(variables[var_evt.first])) {
 	sequence.remove(variables[var_evt.first]);
+
+    std::cout << "c check bound propagation" << std::endl;
+    exit(1);
 	last_solution_lb[var_evt.first] = last_solution_ub[var_evt.first] = variables[var_evt.first].get_value();
 	assignment_level[var_evt.first] = level;
 	assignment_order[var_evt.first] = assignment_rank;
@@ -4468,7 +4476,7 @@ std::ostream& Mistral::Solver::display(std::ostream& os, const int current) {
   if (parameters.fd_learning)
   for(unsigned int i=0; i<variables.size; ++i) {
     if(!(domain_types[i] & REMOVED_VAR) 
-       && (current != 1 || (i < initial_variablesize && sequence.contain(i)))
+       && (current != 1 || ((i < initial_variablesize) && sequence.contain(i)))
        && (current != 2 || !(variables[i].is_ground()))) {
 
       os << "  " << variables[i] << " in " << variables[i].get_domain() ; //<< "\n";
@@ -11027,8 +11035,23 @@ void Mistral::Solver::close_propagation() {
   while(!active_variables.empty()) {
     var_evt = active_variables.pop_front();
     vidx = var_evt.first;
-    if(ASSIGNED(var_evt.second) && (variables[vidx].id() < initial_variablesize) && sequence.contain(variables[vidx])) {
-      sequence.remove(variables[vidx]);
+    if(ASSIGNED(var_evt.second)) {
+        /*std::cout << "c close propagation" << std::endl;
+        std::cout << "c variables size " << variables.size << std::endl;
+        std::cout << "c init size " << initial_variablesize << std::endl;
+
+        std::cout << "c assignment_level size " << assignment_level.size << std::endl;
+        std::cout << "c assignment_level capacity " << assignment_level.capacity << std::endl;
+
+        std::cout << "c assignment_order size " << assignment_order.size << std::endl;
+        std::cout << "c assignment_order capacity " << assignment_order.capacity << std::endl;
+
+        std::cout << "c reason_for size " << reason_for.size << std::endl;
+        std::cout << "c reason_for capacity " << reason_for.capacity << std::endl;
+
+        if (variables.size>initial_variablesize)
+        exit(1);
+        */
       assignment_level[vidx] = level;
       assignment_order[vidx] = assignment_rank;
       ++assignment_rank;
@@ -11040,6 +11063,10 @@ void Mistral::Solver::close_propagation() {
       // 	std::cout << " decision" << std::endl;
       
       reason_for[vidx] = var_evt.third; //->explain();
+
+      if ((variables[vidx].id() < initial_variablesize) && sequence.contain(variables[vidx]))
+    	  sequence.remove(variables[vidx]);
+
     }
   }
 	else
