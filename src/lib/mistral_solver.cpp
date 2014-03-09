@@ -10112,13 +10112,7 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 //based on fdlearn_nogood_nosequence
 void Mistral::Solver::learn_with_lazygeneration() {
 
-	if ((variables.size - start_from) > 16383 ){
-		std::cout << " \n\n\n variablessize " << variables.size << std::endl;
-		std::cout << " \n\n\n start_from " << start_from << std::endl;
-		std::cout << "  ERRPR variables.size - start_from) > 16383! " << std::endl;
 
-		exit(1);
-	}
 	//std::cout << " \n\n\n fdlearn_ " << std::endl;
 	//std::cout << " \n\n\n variablessize " << variables.size << std::endl;
 	//std::cout << " \n\n\n start_from " << start_from << std::endl;
@@ -10443,6 +10437,13 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 									index___ = level - lvl;
 
+									if ((variables.size - start_from) > 16383 ){
+											std::cout << " \n\n\n variablessize " << variables.size << std::endl;
+											std::cout << " \n\n\n start_from " << start_from << std::endl;
+											std::cout << "  ERRPR variables.size - start_from) > 16383! " << std::endl;
+
+											exit(1);
+										}
 
 								}
 								else
@@ -10712,6 +10713,14 @@ void Mistral::Solver::learn_with_lazygeneration() {
 											trail_[trail_.size - (5*index___0)]++;
 
 											index___ = level - lvl;
+
+											if ((variables.size - start_from) > 16383 ){
+													std::cout << " \n\n\n variablessize " << variables.size << std::endl;
+													std::cout << " \n\n\n start_from " << start_from << std::endl;
+													std::cout << "  ERRPR variables.size - start_from) > 16383! " << std::endl;
+
+													exit(1);
+												}
 
 
 										}
