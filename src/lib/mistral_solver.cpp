@@ -37,7 +37,7 @@
 //#define _OLD_ true
 //#define _DEBUG_NOGOOD true //(statistics.num_filterings == 491)
 //#define _DEBUG_SEARCH true
-//#define _DEBUG_FD_NOGOOD  ((variables.size == 221)) //&& (solver->level == 22))//true
+#define _DEBUG_FD_NOGOOD ((variables.size== 16678) && (level==20)) //true // ((variables.size == 221)) //&& (solver->level == 22))//true
 //#define _DEBUG_SHOW_LEARNT_BOUNDS true
 //#define _TRACKING_BOUND 1078
 //#define _TRACKING_ATOM 368
@@ -10111,7 +10111,9 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 
 //based on fdlearn_nogood_nosequence
 void Mistral::Solver::learn_with_lazygeneration() {
-		//std::cout << " \n\n\n fdlearn_ " << std::endl;
+//	std::cout << " \n\n\n fdlearn_ " << std::endl;
+//	std::cout << " \n\n\n variablessize " << variables.size << std::endl;
+//	std::cout << " \n\n\n level " << level <<  std::endl;
 
 #ifdef latest_bounds_learning
 	propagate_literal_in_learnt_clause= true;
@@ -10294,6 +10296,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 					bound_literals_to_explore.clear();
 
 #ifdef 	_DEBUG_FD_NOGOOD
+					if(_DEBUG_FD_NOGOOD){
 					if (a==NULL_ATOM)
 						std::cout << " \n explaining a failure " << std::endl;
 					else
@@ -10302,6 +10305,8 @@ void Mistral::Solver::learn_with_lazygeneration() {
 						std::cout << " \n \n \n we will explain the boolean variable " << variables[a] << " ; its domain : " << variables[a].get_domain() << " its assignment_level : " << assignment_level[a] << std::endl;
 					}
 					std::cout << " this action (i.e. its explanation) comes from : "<< current_explanation << std::endl;
+					}
+
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 					if(tmp >= stop)
@@ -10326,6 +10331,8 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									std::cout << "\n is_lower_bound  "<< std::endl;
 									std::cout << " Problem comes from : "<< current_explanation << std::endl;
 									std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+									std::cout << " value: "<<  get_value_from_literal(q) << std::endl;
+
 									std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
 									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 									exit(1);
@@ -10339,6 +10346,8 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									std::cout << "\n is_upper_bound  "<< std::endl;
 									std::cout << " Problem comes from : "<< current_explanation << std::endl;
 									std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+									std::cout << " value: "<<  get_value_from_literal(q) << std::endl;
+
 									std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
 									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 									exit(1);
@@ -10349,10 +10358,12 @@ void Mistral::Solver::learn_with_lazygeneration() {
 								std::cout << " \n \n \n \n \n \n                                    Tracking bound : its explanation comes from : "<< current_explanation << std::endl;
 #endif
 #ifdef 	_DEBUG_FD_NOGOOD
+							if(_DEBUG_FD_NOGOOD){
 							std::cout << "\n is_a_bound_literal  "<< std::endl;
 							std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
 							std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
 							std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+							}
 #endif
 
 
@@ -10493,7 +10504,9 @@ void Mistral::Solver::learn_with_lazygeneration() {
 							lvl = assignment_level[get_id_boolean_variable(q)];
 
 #ifdef 	_DEBUG_FD_NOGOOD
+							if(_DEBUG_FD_NOGOOD){
 							std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
+}
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 							if ((x.get_size()>1) )
@@ -10551,17 +10564,21 @@ void Mistral::Solver::learn_with_lazygeneration() {
 						bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->reason_for(q) ;
 						graph_size++;
 #ifdef 	_DEBUG_FD_NOGOOD
+						if(_DEBUG_FD_NOGOOD){
 						std::cout << "\n we will explain "<< q << std::endl;
 						std::cout << "which corresponds to " << std::endl;
 						std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
 						std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
 						std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+}
 #endif
 						if(bound_explanation)
 						{
 
 #ifdef 	_DEBUG_FD_NOGOOD
+							if(_DEBUG_FD_NOGOOD){
 							std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
+							}
 #endif
 							Explanation::iterator end_tmp_iterator;
 							//Note that we do not need the level here ! I should remove that later
@@ -10584,6 +10601,8 @@ void Mistral::Solver::learn_with_lazygeneration() {
 											std::cout << "\n is_lower_bound  "<< std::endl;
 											std::cout << " Problem comes from : "<< bound_explanation << std::endl;
 											std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+											std::cout << " value: "<<  get_value_from_literal(q) << std::endl;
+
 											std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
 											std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 											exit(1);
@@ -10597,6 +10616,8 @@ void Mistral::Solver::learn_with_lazygeneration() {
 											std::cout << "\n is_upper_bound  "<< std::endl;
 											std::cout << " Problem comes from : "<< bound_explanation << std::endl;
 											std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+											std::cout << " value: "<<  get_value_from_literal(q) << std::endl;
+
 											std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
 											std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 											exit(1);
@@ -10607,10 +10628,12 @@ void Mistral::Solver::learn_with_lazygeneration() {
 										std::cout << "\n \n \n \n \n \n                                    Tracking bound : its explanation comes from : "<< bound_explanation << std::endl;
 #endif
 #ifdef 	_DEBUG_FD_NOGOOD
+									if(_DEBUG_FD_NOGOOD){
 									std::cout << "\n is_a_bound_literal  "<< std::endl;
 									std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
 									std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
 									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+}
 #endif
 
 
@@ -10751,8 +10774,11 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									lvl = assignment_level[get_id_boolean_variable(q)];
 
 #ifdef 	_DEBUG_FD_NOGOOD
+									if(_DEBUG_FD_NOGOOD){
 									std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " explanation comes from " << bound_explanation << std::endl;
+									}
 #endif
+
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 									if ((x.get_size()>1) )
 									{
@@ -10904,9 +10930,11 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 		//exit(1);
 #ifdef 	_DEBUG_FD_NOGOOD
+		if(_DEBUG_FD_NOGOOD){
 		std::cout << " c END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
 		std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
 		std::cout << "learnt_clause : "  << learnt_clause.size  << std::endl;
+}
 #endif
 
 #ifdef _CHECK_NOGOOD

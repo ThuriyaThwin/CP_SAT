@@ -43,7 +43,7 @@
 //#define _DEBUG_WEIGHTEDBOOLSUM (id == 102)
 //#define _DEBUG_CLIQUENOTEQUAL true
 //  #define _DEBUG_DOMAINFAITHFULNESS true
-  //#define _DEBUG_DOMAINFAITHFULNESS ((scope[0].id() == 221)) //&& (solver->level == 22))
+  #define _DEBUG_DOMAINFAITHFULNESS ((scope[0].id() == 153)) //&& (solver->level == 22))
 //#define _DEBUG_DOMAINFAITHFULNESS_CHECK ((scope[0].id() == 11) && (scope[0].get_max() == 734))
 
 
