@@ -14442,9 +14442,16 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 	scope.add(x);
 	//_scope.add(x);
 
-
+	Literal virtual_literal ;
 	//value =
-	Literal virtual_literal = encode_bound_literal(scope[0].id(), value + (!isub), isub);
+	if (
+			((!isub) &&  ( (value + (!isub)) > _x->lowerbounds[0] ) ) ||
+			( isub   &&    ((value + (!isub)) < _x->upperbounds[0] ) )
+			)
+
+	 virtual_literal = encode_bound_literal(scope[0].id(), value + (!isub), isub);
+	else
+		virtual_literal = NULL_ATOM;
 //	dom_constraint->eager_explanations[dom_constraint->eager_explanations.size -1]
 
 	eager_explanations.add(virtual_literal);
@@ -14564,7 +14571,20 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 	}
 #endif
+	/*
+	if (
+					 scope[0].get_min() >
+			 (scope0->lowerbounds[0])
+			 )
 
+				 explanation[++tmp] = encode_bound_literal(scope[0].id(),scope[0].get_min(),0 ) ;
+			 if (
+					 scope[0].get_max() <
+					 scope0->upperbounds[0]
+			 )
+
+				 explanation[++tmp] =  encode_bound_literal(scope[0].id(),scope[0].get_max(),1) ;
+			 */
 	int _lb = scope[0].get_min();
 	int _ub = scope[0].get_max();
 	int index_lb = ub.size +1 , index_ub = -2, latestindex_lb, latestindex_ub;
@@ -14592,7 +14612,13 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 				else{
 					for (int j = 0; j< scope.size; ++j)
 						if ( scope[j].id() == ub[i].x.id()){
-							eager_explanations[j]=encode_bound_literal(scope[0].id(), _lb, 0);
+							if (
+									_lb >
+							             _x->lowerbounds[0]
+							)
+								eager_explanations[j]=encode_bound_literal(scope[0].id(), _lb, 0);
+							else
+								eager_explanations[j]=NULL_ATOM;
 							break;
 						}
 				}
@@ -14604,8 +14630,14 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 						{
 							wiped = FAILURE(j);
 							//	break; ?
-
-							Literal	tmp = 	encode_bound_literal( scope[0].id() , _lb , 0) ;
+							Literal	tmp;
+							if (
+									_lb >
+							_x->lowerbounds[0]
+							)
+							tmp = 	encode_bound_literal( scope[0].id() , _lb , 0) ;
+							else
+								tmp=NULL_ATOM;
 							explanation[0] = tmp;
 							tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(scope[j].id(), 0));
 							//							tmp =  2* scope[j].id() ;
@@ -14658,7 +14690,13 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 					else
 						for (int j = 0; j< scope.size; ++j)
 							if ( scope[j].id() == ub[idx].x.id()){
+								if (
+										_ub <
+								_x->upperbounds[0]
+								)
 								eager_explanations[j]=encode_bound_literal(scope[0].id(), _ub, 1);
+								else
+								eager_explanations[j]=NULL_ATOM;
 								break;
 							}
 				}
@@ -14667,8 +14705,15 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 						for (int j=1; j< scope.size ; ++j)
 							if (scope[j].id()== ub[idx].x.id()){
 								wiped = FAILURE(j);
+								Literal	tmp ;
+								if (
+										_ub <
+										_x->upperbounds[0]
+								)
+									tmp = 	encode_bound_literal(scope[0].id() , _ub, 1);
 
-								Literal	tmp = 	encode_bound_literal(scope[0].id() , _ub, 1);
+								else
+									tmp =NULL_ATOM;
 								explanation[0] = tmp;
 								tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(scope[j].id(), 1));
 								//tmp =  2* scope[j].id() +1;
@@ -14864,8 +14909,13 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 		//		if(_x->set_min(ub[latestindex_lb].value +1  ,this ) == FAIL_EVENT) wiped = FAILURE(0);
 		if(_x->set_min(ub[latestindex_lb].value +1  ,cl ) == FAIL_EVENT) {
 			wiped = FAILURE(0);
-
+			if (
+													_ub <
+													_x->upperbounds[0]
+											)
 			tmp = 	encode_bound_literal(scope[0].id() , _ub, 1);
+			else
+				tmp=NULL_ATOM;
 			explanation[0] = tmp;
 			tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(ub[latestindex_lb].x.id() ,1));
 			//tmp = 	2*  ub[latestindex_lb].x.id() +1;
@@ -14896,8 +14946,13 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 		if(_x->set_max(ub[latestindex_ub].value ,cl ) == FAIL_EVENT) {
 			wiped = FAILURE(0);
 
-
+			if (
+					_lb >
+					_x->lowerbounds[0]
+			)
 			tmp = 	encode_bound_literal(scope[0].id() , _lb, 0);
+			else
+				tmp = NULL_ATOM;
 			explanation[0] = tmp;
 			tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(ub[latestindex_ub].x.id() ,0));
 			//			tmp = 	2*  ub[latestindex_ub].x.id();
@@ -14999,7 +15054,10 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 		//		std::cout <<" \n \n \Failure : NOT YET "  << std::endl;
 		//		exit(1);
 
-		end = &(explanation[0])+2;
+		if (explanation[0]==NULL_ATOM)
+			end = &(explanation[1])+2;
+		else
+			end = &(explanation[0])+2;
 
 	}
 	else
@@ -15015,7 +15073,12 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 
 		for (int i = 0 ; i < scope.size; ++i)
 			if (scope[i].id() == id) {
+				if (eager_explanations[i]==NULL_ATOM)
+					end = &(explanation[0]);
+				else {
 				explanation[0] = eager_explanations[i];
+				end = &(explanation[0])+1;
+				}
 				break;
 			}
 
@@ -15026,7 +15089,7 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 		explanation[1] = encode_bound_literal(scope[1].id(),get_value_from_literal(a)+processing_time[0],1 ) ;
 		end = &(explanation[0])+2;
 		 */
-		end = &(explanation[0])+1;
+
 	}
 	return &(explanation[0]);
 
