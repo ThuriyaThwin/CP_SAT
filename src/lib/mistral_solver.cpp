@@ -37,7 +37,7 @@
 //#define _OLD_ true
 //#define _DEBUG_NOGOOD true //(statistics.num_filterings == 491)
 //#define _DEBUG_SEARCH true
-#define _DEBUG_FD_NOGOOD ((variables.size== 16678) && (level==20)) //true // ((variables.size == 221)) //&& (solver->level == 22))//true
+//#define _DEBUG_FD_NOGOOD ((variables.size== 16678) && (level==20)) //true // ((variables.size == 221)) //&& (solver->level == 22))//true
 //#define _DEBUG_SHOW_LEARNT_BOUNDS true
 //#define _TRACKING_BOUND 1078
 //#define _TRACKING_ATOM 368
@@ -10111,9 +10111,18 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 
 //based on fdlearn_nogood_nosequence
 void Mistral::Solver::learn_with_lazygeneration() {
-//	std::cout << " \n\n\n fdlearn_ " << std::endl;
-//	std::cout << " \n\n\n variablessize " << variables.size << std::endl;
-//	std::cout << " \n\n\n level " << level <<  std::endl;
+
+	if ((variables.size - start_from) > 16383 ){
+		std::cout << " \n\n\n variablessize " << variables.size << std::endl;
+		std::cout << " \n\n\n start_from " << start_from << std::endl;
+		std::cout << "  ERRPR variables.size - start_from) > 16383! " << std::endl;
+
+		exit(1);
+	}
+	//std::cout << " \n\n\n fdlearn_ " << std::endl;
+	//std::cout << " \n\n\n variablessize " << variables.size << std::endl;
+	//std::cout << " \n\n\n start_from " << start_from << std::endl;
+	//std::cout << " \n\n\n level " << level <<  std::endl;
 
 #ifdef latest_bounds_learning
 	propagate_literal_in_learnt_clause= true;
@@ -10319,6 +10328,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 						q = *tmp;
 						++tmp;
 
+					//	std::cout << " q : "<< q << std::endl;
 						if (is_a_bound_literal(q))
 						{
 
@@ -10590,6 +10600,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 								q = *tmp;
 								++tmp;
 
+								//std::cout << " q : "<< q << std::endl;
 								if (is_a_bound_literal(q))
 								{
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
