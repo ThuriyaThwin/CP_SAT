@@ -15055,9 +15055,16 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 		//		exit(1);
 
 		if (explanation[0]==NULL_ATOM)
-			end = &(explanation[1])+2;
+			//end = &(explanation[1])+2;
+		{
+			end = &(explanation[1])+1;
+			return &(explanation[1]);
+		}
 		else
+		{
 			end = &(explanation[0])+2;
+			return &(explanation[0]);
+		}
 
 	}
 	else
