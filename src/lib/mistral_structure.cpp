@@ -109,6 +109,35 @@ void Mistral::IntStack::extend_list()
   list_ = new_list;
 }
 
+//extend both lists!
+void Mistral::IntStack::extend_lists()
+{
+  unsigned int increment = ((list_capacity+1) << 1);
+  list_capacity += increment;
+
+  int* new_list = new int[list_capacity];
+  memcpy(new_list, list_, (list_capacity-increment)*sizeof(int));
+
+  // for(unsigned int i=0; i<list_capacity-increment; ++i)
+  //  	new_list[i] = list_[i];
+
+  delete [] list_;
+  list_ = new_list;
+
+  increment = ((index_capacity+1) << 1);
+  index_capacity += increment;
+
+  unsigned int* new_indexlist = new unsigned int[index_capacity];
+  memcpy(new_indexlist, index_, (index_capacity-increment)*sizeof(int));
+
+  // for(unsigned int i=0; i<list_capacity-increment; ++i)
+  //  	new_list[i] = list_[i];
+
+  delete [] index_;
+  index_ = new_indexlist;
+
+}
+
 void Mistral::IntStack::extend(const int new_elt)
     {
       int lb = (int)(start_-index_), new_lb = lb;

@@ -2000,6 +2000,8 @@ template < int N, class T >
 
 
     void extend_list();
+
+    void extend_lists();
     void extend(const int new_elt);
 
 
