@@ -14492,35 +14492,22 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 	index = tmpindex;
 
 
-   // changes.extend(scope.size -1);
-
-    if (changes.list_capacity < scope.size)
+/*	std:: cout << " \n BEFORE : scope.size " << scope.size << std::endl;
+	std:: cout << "changes.size " << changes.size << std::endl;
+	std:: cout << "changes.list_capacity " << changes.list_capacity << std::endl;
+	std:: cout << "changes.index_capacity " << changes.index_capacity << std::endl;
+	std:: cout << "changes " << changes << std::endl;
+*/
+   if ((changes.list_capacity < scope.size) || (changes.index_capacity < scope.size))
     	changes.extend_lists();
 
+/*	std:: cout << " \n After : scope.size " << scope.size << std::endl;
+	std:: cout << "changes.size " << changes.size << std::endl;
+	std:: cout << "changes.list_capacity " << changes.list_capacity << std::endl;
+	std:: cout << "changes.index_capacity " << changes.index_capacity << std::endl;
+	std:: cout << "changes " << changes << std::endl;
+*/
 
-    //std:: cout << " \  index index_capacity" << changes.index_capacity << std::endl;
-    //std:: cout << "index list_capacity" << changes.list_capacity << std::endl;
-    //std:: cout << "scope.size " << scope.size << std::endl;
-
-
-    if (changes.index_capacity != changes.list_capacity)
-    {
-        std:: cout << " \n \n ERROR -->index capacity" << changes.index_capacity << std::endl;
-        std:: cout << "index capacity" << changes.list_capacity << std::endl;
-
-    	exit(1);
-
-    }
-
-	//if (changes.list_capacity < scope.size)
-		//changes.extend_list();
-
-	//changes[scope.size] = false;
-
-	/*
-	if (events.list_capacity < scope.size)
-		events.extend_list();
-	}*/
 
 	events.size = changes.size;
 	events.index_capacity = changes.index_capacity;

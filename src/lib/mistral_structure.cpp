@@ -112,30 +112,35 @@ void Mistral::IntStack::extend_list()
 //extend both lists!
 void Mistral::IntStack::extend_lists()
 {
-  unsigned int increment = ((list_capacity+1) << 1);
-  list_capacity += increment;
+	int  old_size = size;
+	unsigned int increment = ((list_capacity+1) << 1);
+	list_capacity += increment;
 
-  int* new_list = new int[list_capacity];
-  memcpy(new_list, list_, (list_capacity-increment)*sizeof(int));
+	int* old_list = new int[list_capacity];
+	memcpy(old_list, list_, (list_capacity-increment)*sizeof(int));
 
-  // for(unsigned int i=0; i<list_capacity-increment; ++i)
-  //  	new_list[i] = list_[i];
 
-  delete [] list_;
-  list_ = new_list;
+	increment = ((index_capacity+1) << 1);
+	index_capacity += increment;
 
-  increment = ((index_capacity+1) << 1);
-  index_capacity += increment;
+	delete [] list_;
+	list_ = new int[list_capacity];
+	delete [] index_;
+	index_ =  new unsigned int[index_capacity];
 
-  unsigned int* new_indexlist = new unsigned int[index_capacity];
-  memcpy(new_indexlist, index_, (index_capacity-increment)*sizeof(int));
 
-  // for(unsigned int i=0; i<list_capacity-increment; ++i)
-  //  	new_list[i] = list_[i];
+	for(int i=0; i<index_capacity; ++i)
+	{
+		index_[i] = i;
+		if(i < (int)list_capacity) list_[i] = i;
+	}
+	size = 0;
+	for(int i=0; i< old_size; ++i)
+	{
+		add( old_list[i]);
+	}
 
-  delete [] index_;
-  index_ = new_indexlist;
-
+	delete [] old_list;
 }
 
 void Mistral::IntStack::extend(const int new_elt)

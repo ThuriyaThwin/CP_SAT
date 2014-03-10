@@ -1728,8 +1728,8 @@ if (enforce_nfc1)
       // 	// std::cout << active << std::endl;
 
       // }
-/*
-      	 std::cout << " \n \n events " <<  events << std::endl;
+
+/*      	 std::cout << " \n \n events " <<  events << std::endl;
        	 std::cout << "events index_capacity" <<  events.index_capacity << std::endl;
        	 std::cout << "events list_capacity " <<  events.list_capacity << std::endl;
 	 std::cout << "var " << var << std::endl;
@@ -1737,8 +1737,8 @@ if (enforce_nfc1)
    	 std::cout << " this " <<  this  << std::endl;
 
    	 std::cout << " *this " <<  *this  << std::endl;
-
 */
+
 
 
 
