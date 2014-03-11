@@ -2925,7 +2925,7 @@ namespace Mistral {
 
       int idx = x.id();
 
-
+/*
       if (idx > 1800){
 
           std::cout << "idx > 1800 " << idx << std::endl;
@@ -2934,6 +2934,7 @@ namespace Mistral {
     	  dom_ = LARGE_VALUE;
     	  return ;
       }
+      */
       int i = map[idx].size;
       Variable y;
 

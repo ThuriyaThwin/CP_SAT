@@ -10481,7 +10481,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 								//assignment_level[var]=lvl;
 								//todo should be search_root!
-								if(	lvl)
+								//if(	lvl)
 									if( !visited.fast_contain(tmp__.id()) ) {
 										//Sould be done later!
 										/*
@@ -10494,7 +10494,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 										 */
 
 
-										//	visited.fast_add(tmp__.id());
+											visited.fast_add(tmp__.id());
 
 										//learnt_clause.add(encode_bool2*tmp__.id() + is_lb);
 										learnt_clause.add(encode_boolean_variable_as_literal(tmp__.id(), is_lb));
@@ -10762,7 +10762,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 										//assignment_level[var]=lvl;
 										//todo should be search_root!
-										if(	lvl)
+										//if(	lvl)
 											if( !visited.fast_contain(tmp__.id()) ) {
 												//Sould be done later!
 												/*
@@ -10775,7 +10775,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 												 */
 
 
-												//	visited.fast_add(tmp__.id());
+													visited.fast_add(tmp__.id());
 
 												//learnt_clause.add(encode_bool2*tmp__.id() + is_lb);
 												learnt_clause.add(encode_boolean_variable_as_literal(tmp__.id(), is_lb));
