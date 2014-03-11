@@ -14403,7 +14403,16 @@ Mistral::DomainFaithfulnessConstraint::DomainFaithfulnessConstraint(Vector< Vari
 }
 
 
-void Mistral::DomainFaithfulnessConstraint::initialise() {
+void Mistral::DomainFaithfulnessConstraint::start_over() {
+
+	ub.size = 0;
+	scope.size = 1;
+	_scope.size = 1;
+	eager_explanations.size = 1;
+	on.size = 1;
+
+}
+	void Mistral::DomainFaithfulnessConstraint::initialise() {
 	ConstraintImplementation::initialise();
 	for(unsigned int i=0; i<scope.size; ++i) {
 		//trigger_on(_VALUE_, scope[i]);

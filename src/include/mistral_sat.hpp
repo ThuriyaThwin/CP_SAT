@@ -350,6 +350,8 @@ namespace Mistral {
     }
 
     void extend_scope(Variable x);
+    unsigned int init_var_size;
+    void start_over();
 
     /**@name Miscellaneous*/
     //@{  

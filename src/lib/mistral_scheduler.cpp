@@ -2732,6 +2732,22 @@ void SchedulingSolver::dichotomic_search()
 
   //propagate the bounds, with respect to the initial upper bound
   Outcome result = (IS_OK(propagate()) ? UNKNOWN : UNSAT);
+
+  int init_expression_store_size = expression_store.size;
+  int init_constraint_graph_size = constraint_graph.size;
+  std::cout << " \n \n \n BEGIN expression_store.size" << expression_store.size << std::endl;
+  std::cout << " init variables.size" << initial_variablesize << std::endl;
+  std::cout << " variables.size" << variables.size << std::endl;
+  std::cout << " assignment_level.size" << assignment_level.size << std::endl;
+  std::cout << " variables.size" << assignment_order.size << std::endl;
+  std::cout << " variables.size" << reason_for.size << std::endl;
+  std::cout << " variables.size" << domain_types.size << std::endl;
+  std::cout << " variables.size" << last_solution_lb.size << std::endl;
+  std::cout << " variables.size" << last_solution_ub.size << std::endl;
+  std::cout << " constraint_graph.size" << constraint_graph.size << std::endl;
+  std::cout << " variable_triggers.size" << variable_triggers.size << std::endl;
+
+
   //std::cout << " solver : \n " << this << std::endl ;
   init_obj  = (int)(floor(((double)minfsble + (double)maxfsble)/2));
 #ifdef _CHECK_NOGOOD
@@ -2945,6 +2961,42 @@ void SchedulingSolver::dichotomic_search()
     		__size = base->learnt.size;
     		while (__size--)
     			base->remove(__size);
+
+
+    		  for( int i=init_expression_store_size; i<expression_store.size;++i) {
+    		    delete expression_store[i];
+    		  }
+    		  expression_store.size = initial_variablesize;
+
+
+    		expression_store.size =  init_expression_store_size;
+    		variables.size =initial_variablesize;
+    		assignment_level.size = initial_variablesize;
+    		assignment_order.size = initial_variablesize;
+    		reason_for.size = initial_variablesize;
+    		domain_types.size=initial_variablesize;
+    		last_solution_lb.size=initial_variablesize;
+    		last_solution_ub.size=initial_variablesize;
+    		constraint_graph.size=init_constraint_graph_size;
+    		//variable_triggers.size = 1;
+
+    		std::cout << " \n \n \n  expression_store.size" << expression_store.size << std::endl;
+    		std::cout << " variables.size" << variables.size << std::endl;
+    		std::cout << " assignment_level.size" << assignment_level.size << std::endl;
+    		std::cout << " variables.size" << assignment_order.size << std::endl;
+    		std::cout << " variables.size" << reason_for.size << std::endl;
+    		std::cout << " variables.size" << domain_types.size << std::endl;
+    		std::cout << " variables.size" << last_solution_lb.size << std::endl;
+    		std::cout << " variables.size" << last_solution_ub.size << std::endl;
+    		std::cout << " variables.size" << constraint_graph.size << std::endl;
+    		std::cout << " variables.size" << variable_triggers.size << std::endl;
+
+    		base->start_over();
+//    		VariableRangeWithLearning *__x;
+
+    		for (int i = 0; i < start_from; ++i)
+    		 (static_cast<VariableRangeWithLearning*> (variables[i].range_domain))->domainConstraint->start_over();
+
     	}
     	else{
     		__size = base->learnt.size -current_learnClauses_size;

@@ -5213,6 +5213,7 @@ if (enforce_nfc1)
 
 
 	  virtual bool explained() { return true; }
+	  void start_over();
 	  virtual iterator get_reason_for(const Atom a, const int lvl, iterator& end);
 	  //virtual iterator get_bound_reason_for(const Literal l, iterator& end);
 

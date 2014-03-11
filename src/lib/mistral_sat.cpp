@@ -412,6 +412,9 @@ Mistral::ConstraintClauseBase::ConstraintClauseBase(Vector< Variable >& scp, boo
   priority = 1;
   if (__fd_variables)
 	  enforce_nfc1 = false;
+
+  init_var_size = scp.size;
+
 }
 
 void Mistral::ConstraintClauseBase::mark_domain() {
@@ -745,6 +748,16 @@ int Mistral::ConstraintClauseBase::check( const int* sol ) const {
 
 
 
+
+void Mistral::ConstraintClauseBase::start_over() {
+
+	std::cout << "init_var_size" << init_var_size <<  std::endl;
+	scope.size = init_var_size;
+	_scope.size = init_var_size;
+	on.size = init_var_size;
+	reason_for.size =init_var_size ;
+
+}
 //#define _CHECKED_CLAUSES
 
 Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
