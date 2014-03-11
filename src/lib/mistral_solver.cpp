@@ -10377,6 +10377,9 @@ void Mistral::Solver::learn_with_lazygeneration() {
 							var = get_variable_from_literal(to_be_explored);
 							tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
 
+							lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
+							//if (lvl>0 Search root?
+							if (lvl>0){
 							if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
 							{
 
@@ -10392,7 +10395,6 @@ void Mistral::Solver::learn_with_lazygeneration() {
 								else
 									var = dom_constraint->value_exist( val-1 ) ;
 
-								lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
 								if ( var< 0)
 								{
 									//add(tmp__);
@@ -10509,6 +10511,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 							}
 							else
 								bound_literals_to_explore.add(q);
+							}
 						}
 						else{
 							x = variables[get_id_boolean_variable(q)];
@@ -10656,6 +10659,8 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									var = get_variable_from_literal(to_be_explored);
 									tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
 
+									lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
+									if (lvl>0){
 									if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
 									{
 
@@ -10671,7 +10676,6 @@ void Mistral::Solver::learn_with_lazygeneration() {
 										else
 											var = dom_constraint->value_exist( val-1 ) ;
 
-										lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
 										if ( var< 0)
 										{
 											//add(tmp__);
@@ -10787,6 +10791,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									}
 									else
 										bound_literals_to_explore.add(q);
+									}
 								}
 								else
 								{
