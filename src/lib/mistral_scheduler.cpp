@@ -2735,6 +2735,10 @@ void SchedulingSolver::dichotomic_search()
 
   int init_expression_store_size = expression_store.size;
   int init_constraint_graph_size = constraint_graph.size;
+
+  int init_booleans_last_size_size = booleans.size.back();
+  int init_booleans_slot_size = booleans.slots.size;
+
   std::cout << " \n \n \n BEGIN expression_store.size" << expression_store.size << std::endl;
   std::cout << " init variables.size" << initial_variablesize << std::endl;
   std::cout << " variables.size" << variables.size << std::endl;
@@ -2765,10 +2769,9 @@ void SchedulingSolver::dichotomic_search()
   std::cout << " decision_triggers.size" << decision_triggers.size << std::endl;
   std::cout << " variable_triggers.size" << variable_triggers.size << std::endl;
   std::cout << " constraint_triggers.size" << constraint_triggers.size << std::endl;
-
   std::cout << " iterator_space.size" << iterator_space.size << std::endl;
   std::cout << " booleans.size" << booleans.size << std::endl;
-
+  std::cout << " booleans.slots" << booleans.slots << std::endl;
 
 
 
@@ -2798,118 +2801,118 @@ void SchedulingSolver::dichotomic_search()
   while( //result == UNKNOWN && 
 	 minfsble<maxfsble && 
 	 iteration<params->Dichotomy
-	 ) {
+  ) {
 
-    
-    double remaining_time = params->Optimise - stats->get_total_time();
-    
-    if(remaining_time < (2*params->NodeBase)) break;
-    
-    objective = (int)(floor(((double)minfsble + (double)maxfsble)/2));
+
+	  double remaining_time = params->Optimise - stats->get_total_time();
+
+	  if(remaining_time < (2*params->NodeBase)) break;
+
+	  objective = (int)(floor(((double)minfsble + (double)maxfsble)/2));
 #ifdef _DEBUG_SCHEDULER
-    //objective = 1245;
+	  //objective = 1245;
 #endif
-    std::cout << "\n c +=========[ start dichotomic step ]=========+" << std::endl;
-    //       setPropagsLimit(params->NodeCutoff);
-    
-    parameters.propagation_limit = params->NodeCutoff;
-    
-    
-    std::cout << std::left << std::setw(30) << " c | current real range" << ":" 
-	      << std::right << " " << std::setw(5) << stats->lower_bound 
-	      << " to " << std::setw(5) << stats->upper_bound << " |" << std::endl;
-    std::cout << std::left << std::setw(30) << " c | current dichotomic range" << ":" 
-	      << std::right << " " << std::setw(5) << minfsble 
-	      << " to " << std::setw(5) << maxfsble << " |" << std::endl;
-    std::cout << std::left << std::setw(30) << " c | target objective" << ":"  
-	      << std::right << std::setw(15) << objective << " |" << std::endl;
-   
-    
-    statistics.start_time = get_run_time();
+	  std::cout << "\n c +=========[ start dichotomic step ]=========+" << std::endl;
+	  //       setPropagsLimit(params->NodeCutoff);
 
-    save();
-    
+	  parameters.propagation_limit = params->NodeCutoff;
 
-    result = set_objective(objective);
+
+	  std::cout << std::left << std::setw(30) << " c | current real range" << ":"
+			  << std::right << " " << std::setw(5) << stats->lower_bound
+			  << " to " << std::setw(5) << stats->upper_bound << " |" << std::endl;
+	  std::cout << std::left << std::setw(30) << " c | current dichotomic range" << ":"
+			  << std::right << " " << std::setw(5) << minfsble
+			  << " to " << std::setw(5) << maxfsble << " |" << std::endl;
+	  std::cout << std::left << std::setw(30) << " c | target objective" << ":"
+			  << std::right << std::setw(15) << objective << " |" << std::endl;
+
+
+	  statistics.start_time = get_run_time();
+
+	  save();
+
+
+	  result = set_objective(objective);
 
 
 #ifdef _DEBUG_PRUNING
-    monitor(tasks);
-    monitor(C_max);
+	  monitor(tasks);
+	  monitor(C_max);
 #endif
-    
 
-    result = restart_search(level);
 
-    
-    if( result == SAT ) {
-      new_objective = get_objective();
-   //   std::cout << " c SAT! " << std::endl;
-      // 	stats->normalized_objective = solver->get_normalized_objective();
-      
-      // at level 0, deduce new bounds for all variables with respect to the new objective
-      set_objective(new_objective);
-      propagate();
+	  result = restart_search(level);
 
-      maxfsble = new_objective;
-      pool->add(new SchedulingSolution(this));
-      
-      // 	if(nogoods) {
-      // 	  for(int i=ngd_stamp; i<nogoods->base->nogood.size; ++i)
-      // 	    stats->avg_nogood_size += (double)(nogoods->base->nogood[i]->size);
-      // 	  if(params->Rngd>1) stats->num_nogoods = nogoods->base->nogood.size;
-      // 	  else stats->num_nogoods += nogoods->base->nogood.size;
-      // 	}
-      
-      //std::cout << std::left << std::setw(30) << " c new upper bound" << ":" << std::right << std::setw(20) << new_objective << " |" << std::endl;
-      std::cout << std::left << std::setw(30) << " c | new upper bound" << ":" << std::right << std::setw(15) << new_objective << " |" << std::endl;
-      if (base)
-    	  current_learnClauses_size=base->learnt.size;
-      //pool->getBestSolution()->print(std::cout);
 
-    } else {
-//s    	std::cout << " c NOT SAT! " ;
-      new_objective = objective;
-      minfsble = objective+1;
+	  if( result == SAT ) {
+		  new_objective = get_objective();
+		  //   std::cout << " c SAT! " << std::endl;
+		  // 	stats->normalized_objective = solver->get_normalized_objective();
 
-      if( result == UNSAT ) {
-    //	  std::cout << " UNSAT! " ;
-	std::cout << std::left << std::setw(30) << " c | real lower bound" << ":" << std::right << std::setw(15) << minfsble << " |" << std::endl;
-      } else {
-	std::cout << std::left << std::setw(30) << " c | dichotomic lower bound" << ":" << std::right << std::setw(15) << minfsble << " |" << std::endl;
-      }
+		  // at level 0, deduce new bounds for all variables with respect to the new objective
+		  set_objective(new_objective);
+		  propagate();
 
-//	  std::cout << std::endl;
+		  maxfsble = new_objective;
+		  pool->add(new SchedulingSolution(this));
 
-      
-      // 	if(nogoods) {
-      // 	  nogoods->forget(ngd_stamp);
-      // 	  nogoods->reinit();
-      // 	}
-    }
-      
-    stats->add_info(new_objective, DICHO);
+		  // 	if(nogoods) {
+		  // 	  for(int i=ngd_stamp; i<nogoods->base->nogood.size; ++i)
+		  // 	    stats->avg_nogood_size += (double)(nogoods->base->nogood[i]->size);
+		  // 	  if(params->Rngd>1) stats->num_nogoods = nogoods->base->nogood.size;
+		  // 	  else stats->num_nogoods += nogoods->base->nogood.size;
+		  // 	}
 
-    std::cout << std::left << std::setw(30) << " c | cpu time" << ":" << std::right << std::setw(15) << (double)((int)((stats->time.back())*10000))/10000.0 << " |" << std::endl;
-    
-    //printStatistics(std::cout, ((params->Verbose ? RUNTIME : 0) + ((params->Verbose || result != UNKNOWN)  ? BTS + PPGS : 0) + OUTCOME) );
-    
-    
-    //std::cout << "LEVEL: " << level << " " << this << std::endl;
+		  //std::cout << std::left << std::setw(30) << " c new upper bound" << ":" << std::right << std::setw(20) << new_objective << " |" << std::endl;
+		  std::cout << std::left << std::setw(30) << " c | new upper bound" << ":" << std::right << std::setw(15) << new_objective << " |" << std::endl;
+		  if (base)
+			  current_learnClauses_size=base->learnt.size;
+		  //pool->getBestSolution()->print(std::cout);
 
-    restore();
-    statistics.initialise(this);
-    pol->initialise(parameters.restart_limit);
+	  } else {
+		  //s    	std::cout << " c NOT SAT! " ;
+		  new_objective = objective;
+		  minfsble = objective+1;
 
-    // std::cout << std::left << std::setw(30) << " c current dichotomic range" << ":" 
-    // 	      << std::right << std::setw(6) << " " << std::setw(5) << minfsble 
-    // 	      << " to " << std::setw(5) << maxfsble << " " << iteration << " " << params->Dichotomy << std::endl;
-    std::cout << " c +==========[ end dichotomic step ]==========+" << std::endl;
-    
+		  if( result == UNSAT ) {
+			  //	  std::cout << " UNSAT! " ;
+			  std::cout << std::left << std::setw(30) << " c | real lower bound" << ":" << std::right << std::setw(15) << minfsble << " |" << std::endl;
+		  } else {
+			  std::cout << std::left << std::setw(30) << " c | dichotomic lower bound" << ":" << std::right << std::setw(15) << minfsble << " |" << std::endl;
+		  }
 
-    // A module for checking learnt nogoods
+		  //	  std::cout << std::endl;
+
+
+		  // 	if(nogoods) {
+		  // 	  nogoods->forget(ngd_stamp);
+		  // 	  nogoods->reinit();
+		  // 	}
+	  }
+
+	  stats->add_info(new_objective, DICHO);
+
+	  std::cout << std::left << std::setw(30) << " c | cpu time" << ":" << std::right << std::setw(15) << (double)((int)((stats->time.back())*10000))/10000.0 << " |" << std::endl;
+
+	  //printStatistics(std::cout, ((params->Verbose ? RUNTIME : 0) + ((params->Verbose || result != UNKNOWN)  ? BTS + PPGS : 0) + OUTCOME) );
+
+
+	  //std::cout << "LEVEL: " << level << " " << this << std::endl;
+
+	  restore();
+	  statistics.initialise(this);
+	  pol->initialise(parameters.restart_limit);
+
+	  // std::cout << std::left << std::setw(30) << " c current dichotomic range" << ":"
+	  // 	      << std::right << std::setw(6) << " " << std::setw(5) << minfsble
+	  // 	      << " to " << std::setw(5) << maxfsble << " " << iteration << " " << params->Dichotomy << std::endl;
+	  std::cout << " c +==========[ end dichotomic step ]==========+" << std::endl;
+
+
+	  // A module for checking learnt nogoods
 #ifdef _CHECK_NOGOOD
-/*
+	  /*
     if (parameters.fd_learning)
     {
     	//For each single nogood we create a new solver with exactly the same parameters!
@@ -2967,92 +2970,113 @@ void SchedulingSolver::dichotomic_search()
     		}
     	}
     }
-    */
-    nogood_origin.clear();
-    nogood_clause.clear();
-    __nogoods.clear();
-    solution.clear();
-    node_num.clear();
-    atom.clear();
+	   */
+	  nogood_origin.clear();
+	  nogood_clause.clear();
+	  __nogoods.clear();
+	  solution.clear();
+	  node_num.clear();
+	  atom.clear();
 
 #endif
 
-    //TODO : Use Solver::forget() to forget?
-    /* Forgetting Clauses :
-     * If the flag forgetAll is set to 1 then forget all clauses betweeen all dichotomy iterations
-     * Otehrwise, forget the newly learnt clauses iff. the result of the current dichotomy is UNSAT
-     */
+	  //TODO : Use Solver::forget() to forget?
+	  /* Forgetting Clauses :
+	   * If the flag forgetAll is set to 1 then forget all clauses betweeen all dichotomy iterations
+	   * Otehrwise, forget the newly learnt clauses iff. the result of the current dichotomy is UNSAT
+	   */
 
-    if (base)
-    {
-    	if (params->forgetall)
-    	{
-    		__size = base->learnt.size;
-    		while (__size--)
-    			base->remove(__size);
+	  if (base)
+	  {
+		  if (params->forgetall)
+		  {
+			  __size = base->learnt.size;
+			  while (__size--)
+				  base->remove(__size);
 
 
-    		  for( int i=init_expression_store_size; i<expression_store.size;++i) {
-    		    delete expression_store[i];
+			  for( int i=init_expression_store_size; i<expression_store.size;++i) {
+				  delete expression_store[i];
+			  }
+
+			  expression_store.size =  init_expression_store_size;
+			  variables.size =initial_variablesize;
+			  assignment_level.size = initial_variablesize;
+			  assignment_order.size = initial_variablesize;
+			  reason_for.size = initial_variablesize;
+			  domain_types.size=initial_variablesize;
+			  last_solution_lb.size=initial_variablesize;
+			  last_solution_ub.size=initial_variablesize;
+			  constraint_graph.size=init_constraint_graph_size;
+			  //variable_triggers.size = 1;
+
+
+			  /*
+    		if(size.back() < 1024) {
+    		    x->bool_domain = slots.back()+size.back();
+    		    ++size.back();
+    		  } else {
+    		    int *nslot = new int[1024];
+    		    std::fill(nslot, nslot+1024, 3);
+    		    size.add(1);
+    		    slots.add(nslot);
+    		    x->bool_domain = nslot;
     		  }
+			   */
 
-    		expression_store.size =  init_expression_store_size;
-    		variables.size =initial_variablesize;
-    		assignment_level.size = initial_variablesize;
-    		assignment_order.size = initial_variablesize;
-    		reason_for.size = initial_variablesize;
-    		domain_types.size=initial_variablesize;
-    		last_solution_lb.size=initial_variablesize;
-    		last_solution_ub.size=initial_variablesize;
-    		constraint_graph.size=init_constraint_graph_size;
-    		//variable_triggers.size = 1;
+			  //booleans.size.size = init_booleans_slot_size;
+
+			  for (int i = init_booleans_last_size_size; i <1024; ++i )
+				  booleans.slots[init_booleans_slot_size-1][i]=3;
+
+			  for (int j = init_booleans_slot_size; j <booleans.slots.size; ++j )
+				  delete [] booleans.slots[j];
 
 
 
-    		base->start_over();
-//    		VariableRangeWithLearning *__x;
+			  booleans.size.size = init_booleans_slot_size;
+			  booleans.size[init_booleans_slot_size-1] = init_booleans_last_size_size;
+			  booleans.slots.size = init_booleans_slot_size;
 
-    		for (int i = 0; i < start_from; ++i)
-    		 (static_cast<VariableRangeWithLearning*> (variables[i].range_domain))->domainConstraint->start_over();
+			  base->start_over();
+			  //    		VariableRangeWithLearning *__x;
 
-
-    	}
-    	else{
-    		__size = base->learnt.size -current_learnClauses_size;
-    		//    	std::cout << "  base->learnt.size" << base->learnt.size << std::endl;
-    		//   	std::cout << " current_learnClauses_size" << current_learnClauses_size << std::endl;
-    		//  	std::cout << " __size " << __size << std::endl;
-
-    		while (__size--)
-    			base->remove(__size+current_learnClauses_size);
-    		// 	std::cout << "  \n \n \n " << std::endl;
-    		current_learnClauses_size=base->learnt.size;
-    	}
-    //	std::cout << " NEW  base->learnt.size" << base->learnt.size << std::endl;
-    }
-
-	std::cout << " \n \n \n  expression_store.size" << expression_store.size << std::endl;
-	std::cout << " variables.size" << variables.size << std::endl;
-	std::cout << " assignment_level.size" << assignment_level.size << std::endl;
-	std::cout << " variables.size" << assignment_order.size << std::endl;
-	std::cout << " variables.size" << reason_for.size << std::endl;
-	std::cout << " variables.size" << domain_types.size << std::endl;
-	std::cout << " variables.size" << last_solution_lb.size << std::endl;
-	std::cout << " variables.size" << last_solution_ub.size << std::endl;
-	std::cout << " variables.size" << constraint_graph.size << std::endl;
-	std::cout << " variable_triggers.size" << variable_triggers.size << std::endl;
+			  for (int i = 0; i < start_from; ++i)
+				  (static_cast<VariableRangeWithLearning*> (variables[i].range_domain))->domainConstraint->start_over();
 
 
+		  }
+		  else{
+			  __size = base->learnt.size -current_learnClauses_size;
+			  //    	std::cout << "  base->learnt.size" << base->learnt.size << std::endl;
+			  //   	std::cout << " current_learnClauses_size" << current_learnClauses_size << std::endl;
+			  //  	std::cout << " __size " << __size << std::endl;
 
+			  while (__size--)
+				  base->remove(__size+current_learnClauses_size);
+			  // 	std::cout << "  \n \n \n " << std::endl;
+			  current_learnClauses_size=base->learnt.size;
+		  }
+		  //	std::cout << " NEW  base->learnt.size" << base->learnt.size << std::endl;
+	  }
+
+	  std::cout << " \n \n \n  expression_store.size" << expression_store.size << std::endl;
+	  std::cout << " variables.size" << variables.size << std::endl;
+	  std::cout << " assignment_level.size" << assignment_level.size << std::endl;
+	  std::cout << " variables.size" << assignment_order.size << std::endl;
+	  std::cout << " variables.size" << reason_for.size << std::endl;
+	  std::cout << " variables.size" << domain_types.size << std::endl;
+	  std::cout << " variables.size" << last_solution_lb.size << std::endl;
+	  std::cout << " variables.size" << last_solution_ub.size << std::endl;
+	  std::cout << " variables.size" << constraint_graph.size << std::endl;
+	  std::cout << " variable_triggers.size" << variable_triggers.size << std::endl;
 	  std::cout << " active_variables.size" << active_variables.size << std::endl;
 	  std::cout << " removed_variables.size" << removed_variables.size << std::endl;
 	  std::cout << " assigned.size" << assigned.size << std::endl;
 	  std::cout << " constraints.size" << constraints.size << std::endl;
-	 // std::cout << " active_constraints.size" << active_constraints.size << std::endl;
+	  // std::cout << " active_constraints.size" << active_constraints.size << std::endl;
 	  std::cout << " posted_constraints.size" << posted_constraints.size << std::endl;
-
 	  std::cout << " decisions.size" << decisions.size << std::endl;
-
 	  std::cout << " solution_triggers.size" << solution_triggers.size << std::endl;
 	  std::cout << " restart_triggers.size" << restart_triggers.size << std::endl;
 	  std::cout << " success_triggers.size" << success_triggers.size << std::endl;
@@ -3060,15 +3084,14 @@ void SchedulingSolver::dichotomic_search()
 	  std::cout << " decision_triggers.size" << decision_triggers.size << std::endl;
 	  std::cout << " variable_triggers.size" << variable_triggers.size << std::endl;
 	  std::cout << " constraint_triggers.size" << constraint_triggers.size << std::endl;
-
 	  std::cout << " iterator_space.size" << iterator_space.size << std::endl;
 	  std::cout << " booleans.size" << booleans.size << std::endl;
-
+	  std::cout << " booleans.size" << booleans.slots << std::endl;
 	  std::cout << " \n trail : " << trail_ << std::endl;
 
 
 
-    ++iteration;
+	  ++iteration;
   } 
   //   } else if( status == SAT ) {
   //     std::cout << " c Solved during preprocessing!" << std::endl;
