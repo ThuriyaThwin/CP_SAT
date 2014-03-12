@@ -2995,6 +2995,8 @@ void SchedulingSolver::dichotomic_search()
 				  base->remove(__size);
 
 
+			  std::cout << " dichotomy ended with variables.size" << variables.size << std::endl;
+
 			  for( int i=init_expression_store_size; i<expression_store.size;++i) {
 				  delete expression_store[i];
 			  }
