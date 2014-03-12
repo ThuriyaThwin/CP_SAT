@@ -11347,7 +11347,7 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 
 
 								if (is_lb && visitedLowerBounds.fast_contain(var)){
-									if (visitedLowerBoundvalues[var] > val){
+									if (visitedLowerBoundvalues[var] >= val){
 						/*				std::cout << " \n \n is_lb : " << is_lb << std::endl;
 										std::cout << " var	 : " << var << std::endl;
 										std::cout << " val	 : " << val << std::endl;
@@ -11363,7 +11363,7 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 								}
 								else
 									if ((!is_lb) && visitedUpperBounds.fast_contain(var)){
-										if (visitedUpperBoundvalues[var] < val){
+										if (visitedUpperBoundvalues[var] <= val){
 			/*								std::cout << " \n \n is_lb : " << is_lb << std::endl;
 											std::cout << " var	 : " << var << std::endl;
 											std::cout << " val	 : " << val << std::endl;
@@ -11686,7 +11686,7 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 
 
 										if (is_lb && visitedLowerBounds.fast_contain(var)){
-											if (visitedLowerBoundvalues[var] > val){
+											if (visitedLowerBoundvalues[var] >= val){
 	/*											std::cout << " \n \n is_lb : " << is_lb << std::endl;
 												std::cout << " var	 : " << var << std::endl;
 												std::cout << " val	 : " << val << std::endl;
@@ -11703,7 +11703,7 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 										}
 										else
 											if ((!is_lb) && visitedUpperBounds.fast_contain(var)){
-												if (visitedUpperBoundvalues[var] < val){
+												if (visitedUpperBoundvalues[var] <= val){
 							/*						std::cout << " \n \n is_lb : " << is_lb << std::endl;
 													std::cout << " var	 : " << var << std::endl;
 													std::cout << " val	 : " << val << std::endl;
