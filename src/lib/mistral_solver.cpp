@@ -11345,15 +11345,35 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 								//std::cout << " \n \n sequence size before  " << sequence.size << std::endl;
 								//std::cout << " \n \n sequence capacity before  " << sequence.capacity << std::endl;
 
+
 								if (is_lb && visitedLowerBounds.fast_contain(var)){
-									if (visitedLowerBoundvalues[var] >= val)
+									if (visitedLowerBoundvalues[var] >= val){
+										/*
+										std::cout << " is_lb : " << is_lb << std::endl;
+										std::cout << " var	 : " << var << std::endl;
+										std::cout << " val	 : " << val << std::endl;
+
+										std::cout << " visitedLowerBounds.fast_contain(var) : " << visitedLowerBounds.fast_contain(var) << std::endl;
+
+										std::cout << " visitedLowerBoundvalues[var] : " << visitedLowerBoundvalues[var] << std::endl;
+*/
 										already_explored = true;
+									}
 						//			else
 								}
 								else
 									if ((!is_lb) && visitedUpperBounds.fast_contain(var)){
-										if (visitedUpperBoundvalues[var] <= val)
+										if (visitedUpperBoundvalues[var] <= val){
+/*											std::cout << " is_lb : " << is_lb << std::endl;
+											std::cout << " var	 : " << var << std::endl;
+											std::cout << " val	 : " << val << std::endl;
+
+											std::cout << " visitedUpperBounds.fast_contain(var) : " << visitedUpperBounds.fast_contain(var) << std::endl;
+
+											std::cout << " visitedUpperBoundvalues[var] : " << visitedUpperBoundvalues[var] << std::endl;
+*/
 											already_explored = true;
+										}
 							//			else
 									}
 
@@ -11479,8 +11499,8 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 										}
 										else
 										{
-											visitedLowerBounds.fast_add(range_id);
-											visitedLowerBoundvalues[range_id]= val;
+											visitedUpperBounds.fast_add(range_id);
+											visitedUpperBoundvalues[range_id]= val;
 										}
 
 									}
@@ -11653,14 +11673,32 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 
 
 										if (is_lb && visitedLowerBounds.fast_contain(var)){
-											if (visitedLowerBoundvalues[var] >= val)
+											if (visitedLowerBoundvalues[var] >= val){
+/*												std::cout << " is_lb : " << is_lb << std::endl;
+												std::cout << " var	 : " << var << std::endl;
+												std::cout << " val	 : " << val << std::endl;
+
+												std::cout << " visitedLowerBounds.fast_contain(var) : " << visitedLowerBounds.fast_contain(var) << std::endl;
+
+												std::cout << " visitedLowerBoundvalues[var] : " << visitedLowerBoundvalues[var] << std::endl;
+*/
 												already_explored = true;
+											}
 								//			else
 										}
 										else
 											if ((!is_lb) && visitedUpperBounds.fast_contain(var)){
-												if (visitedUpperBoundvalues[var] <= val)
+												if (visitedUpperBoundvalues[var] <= val){
+/*													std::cout << " is_lb : " << is_lb << std::endl;
+													std::cout << " var	 : " << var << std::endl;
+													std::cout << " val	 : " << val << std::endl;
+
+													std::cout << " visitetUpperBounds.fast_contain(var) : " << visitedUpperBounds.fast_contain(var) << std::endl;
+
+													std::cout << " visitedUpperBoundvalues[var] : " << visitedUpperBoundvalues[var] << std::endl;
+*/
 													already_explored = true;
+												}
 									//			else
 											}
 
@@ -11786,8 +11824,8 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 												}
 												else
 												{
-													visitedLowerBounds.fast_add(range_id);
-													visitedLowerBoundvalues[range_id]= val;
+													visitedUpperBounds.fast_add(range_id);
+													visitedUpperBoundvalues[range_id]= val;
 												}
 
 											}
@@ -14356,6 +14394,7 @@ void Mistral::Solver::set_fdlearning_on() {
 	parameters.backjump = true;
 	parameters.fd_learning = true;
 	parameters.forgetfulness = 0.0;
+	//std::cout << " start_from : " << start_from << std::endl;
 	visitedUpperBounds.initialise(0, start_from  , BitSet::empt);
 	visitedLowerBounds.initialise(0,  start_from  ,BitSet::empt);
 	visitedUpperBoundvalues = new unsigned int [start_from ];
