@@ -751,11 +751,20 @@ int Mistral::ConstraintClauseBase::check( const int* sol ) const {
 
 void Mistral::ConstraintClauseBase::start_over() {
 
-	std::cout << "init_var_size" << init_var_size <<  std::endl;
-	scope.size = init_var_size;
-	_scope.size = init_var_size;
+	//std::cout << "init_var_size" << init_var_size <<  std::endl;
+
 	on.size = init_var_size;
 	reason_for.size =init_var_size ;
+	//is_watched_by.
+	for (int i =  init_var_size*2 ; i < ((2* scope.size) -1) ; ++i)
+	  if (is_watched_by[i].size)
+	  {
+			std::cout << "ERROR  (is_watched_by[i].size) " <<  (is_watched_by[i].size) <<  std::endl;
+			exit(1);
+	  }
+
+	  scope.size = init_var_size;
+	  _scope.size = init_var_size;
 
 }
 //#define _CHECKED_CLAUSES
