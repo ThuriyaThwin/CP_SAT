@@ -2748,6 +2748,35 @@ void SchedulingSolver::dichotomic_search()
   std::cout << " variable_triggers.size" << variable_triggers.size << std::endl;
 
 
+
+  std::cout << " active_variables.size" << active_variables.size << std::endl;
+  std::cout << " removed_variables.size" << removed_variables.size << std::endl;
+  std::cout << " assigned.size" << assigned.size << std::endl;
+  std::cout << " constraints.size" << constraints.size << std::endl;
+  //std::cout << " active_constraints.size" << active_constraints.size << std::endl;
+  std::cout << " posted_constraints.size" << posted_constraints.size << std::endl;
+
+  std::cout << " decisions.size" << decisions.size << std::endl;
+
+  std::cout << " solution_triggers.size" << solution_triggers.size << std::endl;
+  std::cout << " restart_triggers.size" << restart_triggers.size << std::endl;
+  std::cout << " success_triggers.size" << success_triggers.size << std::endl;
+  std::cout << " failure_triggers.size" << failure_triggers.size << std::endl;
+  std::cout << " decision_triggers.size" << decision_triggers.size << std::endl;
+  std::cout << " variable_triggers.size" << variable_triggers.size << std::endl;
+  std::cout << " constraint_triggers.size" << constraint_triggers.size << std::endl;
+
+  std::cout << " iterator_space.size" << iterator_space.size << std::endl;
+  std::cout << " booleans.size" << booleans.size << std::endl;
+
+
+
+
+
+
+
+  std::cout << " \n trail : " << trail_ << std::endl;
+
   //std::cout << " solver : \n " << this << std::endl ;
   init_obj  = (int)(floor(((double)minfsble + (double)maxfsble)/2));
 #ifdef _CHECK_NOGOOD
@@ -2966,8 +2995,6 @@ void SchedulingSolver::dichotomic_search()
     		  for( int i=init_expression_store_size; i<expression_store.size;++i) {
     		    delete expression_store[i];
     		  }
-    		  expression_store.size = initial_variablesize;
-
 
     		expression_store.size =  init_expression_store_size;
     		variables.size =initial_variablesize;
@@ -2980,22 +3007,14 @@ void SchedulingSolver::dichotomic_search()
     		constraint_graph.size=init_constraint_graph_size;
     		//variable_triggers.size = 1;
 
-    		std::cout << " \n \n \n  expression_store.size" << expression_store.size << std::endl;
-    		std::cout << " variables.size" << variables.size << std::endl;
-    		std::cout << " assignment_level.size" << assignment_level.size << std::endl;
-    		std::cout << " variables.size" << assignment_order.size << std::endl;
-    		std::cout << " variables.size" << reason_for.size << std::endl;
-    		std::cout << " variables.size" << domain_types.size << std::endl;
-    		std::cout << " variables.size" << last_solution_lb.size << std::endl;
-    		std::cout << " variables.size" << last_solution_ub.size << std::endl;
-    		std::cout << " variables.size" << constraint_graph.size << std::endl;
-    		std::cout << " variables.size" << variable_triggers.size << std::endl;
+
 
     		base->start_over();
 //    		VariableRangeWithLearning *__x;
 
     		for (int i = 0; i < start_from; ++i)
     		 (static_cast<VariableRangeWithLearning*> (variables[i].range_domain))->domainConstraint->start_over();
+
 
     	}
     	else{
@@ -3011,6 +3030,44 @@ void SchedulingSolver::dichotomic_search()
     	}
     //	std::cout << " NEW  base->learnt.size" << base->learnt.size << std::endl;
     }
+
+	std::cout << " \n \n \n  expression_store.size" << expression_store.size << std::endl;
+	std::cout << " variables.size" << variables.size << std::endl;
+	std::cout << " assignment_level.size" << assignment_level.size << std::endl;
+	std::cout << " variables.size" << assignment_order.size << std::endl;
+	std::cout << " variables.size" << reason_for.size << std::endl;
+	std::cout << " variables.size" << domain_types.size << std::endl;
+	std::cout << " variables.size" << last_solution_lb.size << std::endl;
+	std::cout << " variables.size" << last_solution_ub.size << std::endl;
+	std::cout << " variables.size" << constraint_graph.size << std::endl;
+	std::cout << " variable_triggers.size" << variable_triggers.size << std::endl;
+
+
+
+	  std::cout << " active_variables.size" << active_variables.size << std::endl;
+	  std::cout << " removed_variables.size" << removed_variables.size << std::endl;
+	  std::cout << " assigned.size" << assigned.size << std::endl;
+	  std::cout << " constraints.size" << constraints.size << std::endl;
+	 // std::cout << " active_constraints.size" << active_constraints.size << std::endl;
+	  std::cout << " posted_constraints.size" << posted_constraints.size << std::endl;
+
+	  std::cout << " decisions.size" << decisions.size << std::endl;
+
+	  std::cout << " solution_triggers.size" << solution_triggers.size << std::endl;
+	  std::cout << " restart_triggers.size" << restart_triggers.size << std::endl;
+	  std::cout << " success_triggers.size" << success_triggers.size << std::endl;
+	  std::cout << " failure_triggers.size" << failure_triggers.size << std::endl;
+	  std::cout << " decision_triggers.size" << decision_triggers.size << std::endl;
+	  std::cout << " variable_triggers.size" << variable_triggers.size << std::endl;
+	  std::cout << " constraint_triggers.size" << constraint_triggers.size << std::endl;
+
+	  std::cout << " iterator_space.size" << iterator_space.size << std::endl;
+	  std::cout << " booleans.size" << booleans.size << std::endl;
+
+	  std::cout << " \n trail : " << trail_ << std::endl;
+
+
+
     ++iteration;
   } 
   //   } else if( status == SAT ) {
