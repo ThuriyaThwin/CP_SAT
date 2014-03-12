@@ -1420,7 +1420,7 @@ int Mistral::Solver::declare(Variable x) {
   bool extend_struct = (constraint_graph.capacity == constraint_graph.size);
   constraint_graph.add(array);
   if(extend_struct) {
-    constraint_graph.add(array);
+//    constraint_graph.add(array);
     for(int i = constraint_graph.size-1; i>=0; --i) {
       for(int j = 0; j<3; ++j) {
 	for(int k = constraint_graph[i].on[j].size-1; k>=0; --k) {
@@ -1496,7 +1496,7 @@ int Mistral::Solver::lazy_declare(Variable x) {
   bool extend_struct = (constraint_graph.capacity == constraint_graph.size);
   constraint_graph.add(array);
   if(extend_struct) {
-    constraint_graph.add(array);
+    //constraint_graph.add(array);
     for(int i = constraint_graph.size-1; i>=0; --i) {
       for(int j = 0; j<3; ++j) {
 	for(int k = constraint_graph[i].on[j].size-1; k>=0; --k) {

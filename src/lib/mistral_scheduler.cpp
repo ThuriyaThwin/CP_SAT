@@ -2748,7 +2748,7 @@ void SchedulingSolver::dichotomic_search()
   std::cout << " variables.size" << domain_types.size << std::endl;
   std::cout << " variables.size" << last_solution_lb.size << std::endl;
   std::cout << " variables.size" << last_solution_ub.size << std::endl;
-  std::cout << " constraint_graph.size" << constraint_graph.size << std::endl;
+  std::cout << " \n constraint_graph.size" << constraint_graph.size << std::endl;
   std::cout << " variable_triggers.size" << variable_triggers.size << std::endl;
 
 
@@ -3070,7 +3070,7 @@ void SchedulingSolver::dichotomic_search()
 	  std::cout << " variables.size" << domain_types.size << std::endl;
 	  std::cout << " variables.size" << last_solution_lb.size << std::endl;
 	  std::cout << " variables.size" << last_solution_ub.size << std::endl;
-	  std::cout << " variables.size" << constraint_graph.size << std::endl;
+	  std::cout << " \n constraint_graph.size" << constraint_graph.size << std::endl;
 	  std::cout << " variable_triggers.size" << variable_triggers.size << std::endl;
 	  std::cout << " active_variables.size" << active_variables.size << std::endl;
 	  std::cout << " removed_variables.size" << removed_variables.size << std::endl;
