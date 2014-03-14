@@ -2301,7 +2301,7 @@ void Mistral::Solver::restore() {
 #ifdef _DEBUG_RESTORE
     std::cout << "  (c) " << saved_cons.back() << " -> ";
 #endif
-   	std::cout << "saved_cons.pop().restore() : variables.size : " << variables.size << std::endl;
+//   	std::cout << "saved_cons.pop().restore() : variables.size : " << variables.size << std::endl;
     saved_cons.pop().restore();
 
 #ifdef _DEBUG_RESTORE
@@ -11438,6 +11438,10 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 
 											exit(1);
 										}
+#ifdef _CHECK_NOGOOD
+									varsIds_lazy.add(range_id);
+									value_lazy.add(val);
+#endif
 
 								}
 								else
@@ -11775,6 +11779,10 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 
 													exit(1);
 												}
+#ifdef _CHECK_NOGOOD
+									varsIds_lazy.add(range_id);
+									value_lazy.add(val);
+#endif
 
 
 										}

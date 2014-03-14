@@ -779,6 +779,12 @@ namespace Mistral {
     void learn_with_lazygeneration();
     void learn_with_lazygeneration_and_semantic_learning();
 
+#ifdef _CHECK_NOGOOD
+    //used to get the variable id of a lazily generated variable
+	Vector<unsigned int> varsIds_lazy ;
+	Vector<unsigned int> value_lazy ;
+#endif
+
 	Vector<Literal> graph_premise ;
 	Vector<Literal> graph_implied;
 

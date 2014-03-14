@@ -2998,6 +2998,10 @@ void SchedulingSolver::dichotomic_search()
 	  {
 		  if (params->forgetall)
 		  {
+#ifdef _CHECK_NOGOOD
+			  int id_range = 	varsIds_lazy[id - start_from];
+			  int val_range = value_lazy[id - start_from];
+#endif
 			  __size = base->learnt.size;
 			  while (__size--)
 				  base->remove(__size);
@@ -3643,15 +3647,42 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c)
 
 //	std::cout << " learnt nogood size :  "<< c.size  << std::endl;
 
+//	std::cout << " here ?  " << std::endl;
 	for(int j=0; j<c.size; ++j) {
 		int id =get_id_boolean_variable(c[j]);
 		//		std::cout << " id = " << id << std::endl;
 		//		std::cout << " the variable is : " << variables[id] <<" and its domain is : " <<  variables[id].get_domain() << std::endl;
+	if (id < initial_variablesize){
 		old_min.add( __solver->variables[id].get_min());
 		old_max.add( __solver->variables[id].get_max());
 		__solver->variables[id].set_domain(SIGN(NOT(c[j])));
+	}
+	else
+		if (id < variables.size){
+
+			int id_range = 	varsIds_lazy[id - initial_variablesize];
+			int val_range = value_lazy[id - initial_variablesize];
+
+		//	std::cout << " OK : id_range = " << id_range << std::endl;
+		//	std::cout << " OK : val_range = " << val_range << std::endl;
+
+			if (SIGN(NOT(c[j])))
+				__solver->variables[id_range].set_max(val_range);
+			else
+				__solver->variables[id_range].set_min(val_range);
+
+
+		}
+		else
+		{
+			std::cout << " ERROR : NOT (i < variables.size " << std::endl;
+			exit(1);
+		}
 		//		std::cout << " the new domain is : " << __solver->variables[id].get_domain() << " because its literal is " <<  nogood_clause[i][j] <<std::endl;
 	}
+
+
+	std::cout << " here ?  " << std::endl;
 
 	//	->chronological_dfs();
 	//Outcome  __result= __solver->depth_first_search();

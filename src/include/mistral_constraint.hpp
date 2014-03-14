@@ -272,7 +272,7 @@ namespace Mistral {
     }
     
     void un_relax_from(const int var) {
-
+/*
 		std::cout << " \n \n DEBUG un_relax_from : " << this << std::endl;
     	std::cout << " [in propag]" << id << std::endl;
     	std::cout << " [var]" << var << std::endl;
@@ -283,7 +283,7 @@ namespace Mistral {
     	std::cout << " on.size" << on.size << std::endl;
     	std::cout << " on " << on << std::endl;
     	std::cout << " on[var]" << on[var] << std::endl;
-
+*/
       index[var] = on[var]->post(self[var]);
     }
 
