@@ -14402,6 +14402,16 @@ Mistral::DomainFaithfulnessConstraint::DomainFaithfulnessConstraint(Vector< Vari
 	enforce_nfc1 = false;
 }
 
+void Mistral::DomainFaithfulnessConstraint::set_init_changes() {
+
+
+	initial_list__of_changes.clear();
+	for (int i = 0; i < changes.size; ++i)
+		initial_list__of_changes.add(changes[i]);
+	std::cout << " \n DomainFaithfulnessConstraint initial_list__of_changes : " << initial_list__of_changes << std::endl;
+}
+
+
 
 void Mistral::DomainFaithfulnessConstraint::start_over() {
 
@@ -14410,6 +14420,61 @@ void Mistral::DomainFaithfulnessConstraint::start_over() {
 	_scope.size = 1;
 	eager_explanations.size = 1;
 	on.size = 1;
+
+	for(int i=0; i<changes.index_capacity; ++i)
+	{
+		changes.index_[i] = i;
+		if(i < (int)changes.list_capacity) changes.list_[i] = i;
+	}
+
+	changes.size=0;
+
+	for(int i=0 ; i< initial_list__of_changes.size; ++i)
+	{
+		changes.add(initial_list__of_changes[i]);
+	}
+
+	events.size = changes.size;
+	events.index_capacity = changes.index_capacity;
+	events.list_capacity = changes.list_capacity;
+	events.list_ = changes.list_;
+	events.index_ = changes.index_;
+
+
+	  int old_size = scope.size;
+	Event * tmp_event_type = new Event[scope.size];
+	int * tmp_solution = new int[scope.size];
+	Constraint* tmpself = new Constraint[scope.size];
+	int*  tmpindex = new int[scope.size];
+
+	for(unsigned int i=0; i<old_size; ++i)
+		tmp_event_type[i] = event_type[i];
+
+	delete [] event_type;
+	event_type = tmp_event_type;
+
+//	event_type[old_size] = NO_EVENT;
+
+	for(unsigned int i=0; i<old_size; ++i)
+		tmp_solution[i] = solution[i];
+
+	delete [] solution;
+	solution = tmp_solution;
+	//solution [old_size]  = 0;
+
+
+	for(unsigned int i=0; i<old_size; ++i)
+		tmpself[i] = self[i];
+
+	delete [] self;
+	self = tmpself;
+
+	for(unsigned int i=0; i<old_size; ++i)
+		tmpindex[i] = index[i];
+
+	delete [] index;
+	index = tmpindex;
+
 
 }
 	void Mistral::DomainFaithfulnessConstraint::initialise() {

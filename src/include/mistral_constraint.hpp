@@ -272,6 +272,18 @@ namespace Mistral {
     }
     
     void un_relax_from(const int var) {
+
+		std::cout << " \n \n DEBUG un_relax_from : " << this << std::endl;
+    	std::cout << " [in propag]" << id << std::endl;
+    	std::cout << " [var]" << var << std::endl;
+    	std::cout << " var 1 : " << _scope[0].get_domain() << std::endl;
+    	std::cout << " var 2 : " << _scope[1].get_domain() << std::endl;
+    	std::cout << " [var]" << var << std::endl;
+    	std::cout << " self[var]" << self[var].propagator << std::endl;
+    	std::cout << " on.size" << on.size << std::endl;
+    	std::cout << " on " << on << std::endl;
+    	std::cout << " on[var]" << on[var] << std::endl;
+
       index[var] = on[var]->post(self[var]);
     }
 
@@ -5214,6 +5226,11 @@ if (enforce_nfc1)
 
 	  virtual bool explained() { return true; }
 	  void start_over();
+
+	  void set_init_changes();
+	  Vector<int> initial_list__of_changes;
+
+
 	  virtual iterator get_reason_for(const Atom a, const int lvl, iterator& end);
 	  //virtual iterator get_bound_reason_for(const Literal l, iterator& end);
 

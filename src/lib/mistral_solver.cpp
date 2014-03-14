@@ -2301,7 +2301,7 @@ void Mistral::Solver::restore() {
 #ifdef _DEBUG_RESTORE
     std::cout << "  (c) " << saved_cons.back() << " -> ";
 #endif
-
+   	std::cout << "saved_cons.pop().restore() : variables.size : " << variables.size << std::endl;
     saved_cons.pop().restore();
 
 #ifdef _DEBUG_RESTORE

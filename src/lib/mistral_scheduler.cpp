@@ -2773,12 +2773,20 @@ void SchedulingSolver::dichotomic_search()
   std::cout << " booleans.size" << booleans.size << std::endl;
   std::cout << " booleans.slots" << booleans.slots << std::endl;
 
-
-
-
-
-
   std::cout << " \n trail : " << trail_ << std::endl;
+
+  std::cout << " \n \n \n initial_list__of_changes : "  << std::endl;
+
+  if (base)
+	  if (params->forgetall)
+	  {
+		  base->set_init_changes();
+		  for (int i = 0; i < start_from; ++i)
+			  (static_cast<VariableRangeWithLearning*> (variables[i].range_domain))->domainConstraint->set_init_changes();
+	  }
+  std::cout << " \n END initial_list__of_changes : "  << std::endl;
+
+
 
   //std::cout << " solver : \n " << this << std::endl ;
   init_obj  = (int)(floor(((double)minfsble + (double)maxfsble)/2));
