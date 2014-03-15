@@ -3657,6 +3657,9 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c)
 		old_min.add( __solver->variables[id].get_min());
 		old_max.add( __solver->variables[id].get_max());
 		__solver->variables[id].set_domain(SIGN(NOT(c[j])));
+
+		std::cout << " literal associated to :  " << variables[id] << " = " << variables[id].get_domain() <<  std::endl;
+
 	}
 	else
 		if (id < variables.size){
@@ -3667,10 +3670,15 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c)
 		//	std::cout << " OK : id_range = " << id_range << std::endl;
 		//	std::cout << " OK : val_range = " << val_range << std::endl;
 
-			if (SIGN(NOT(c[j])))
+			if (SIGN(NOT(c[j]))){
 				__solver->variables[id_range].set_max(val_range);
-			else
-				__solver->variables[id_range].set_min(val_range);
+				std::cout << " Bound literal associated to :  " << variables[id_range] << " <=  " << val_range <<  std::endl;
+
+			}
+			else{
+				__solver->variables[id_range].set_min(val_range+1);
+				std::cout << " Bound literal associated to :  " << variables[id_range] << " >=  " << val_range+1 <<  std::endl;
+			}
 
 
 		}

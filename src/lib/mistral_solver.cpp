@@ -10510,6 +10510,13 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 										//learnt_clause.add(encode_bool2*tmp__.id() + is_lb);
 										learnt_clause.add(encode_boolean_variable_as_literal(tmp__.id(), is_lb));
+										std::cout << " \n learn :  " << encode_boolean_variable_as_literal(tmp__.id(), is_lb) << " : var  : " << tmp__ << " = " << tmp__.get_domain() ; //<< std::endl;
+										std::cout << " ---> corresponds to (nogood)  : " ;
+										std::cout << "\n is_a_bound_literal  "<< std::endl;
+																std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+																std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+																std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+
 
 										if(lvl > backtrack_level)
 											backtrack_level = lvl;
@@ -10564,6 +10571,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									} else {
 										// q's level is below the current level, we are not expending it further
 										learnt_clause.add(q);
+										std::cout << " \n learn :  " <<x << "  = " << x.get_domain() << " ; assignment_level : " << assignment_level[x.id()]<< std::endl;
 
 										if(lvl > backtrack_level)
 											backtrack_level = lvl;
@@ -10801,6 +10809,12 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 												//learnt_clause.add(encode_bool2*tmp__.id() + is_lb);
 												learnt_clause.add(encode_boolean_variable_as_literal(tmp__.id(), is_lb));
+												std::cout << " \n learn :  " << encode_boolean_variable_as_literal(tmp__.id(), is_lb) << " : var  : " << tmp__ << " = " << tmp__.get_domain() ; //<< std::endl;
+												std::cout << " ---> corresponds to (nogood)  : " ;
+												std::cout << "\n is_a_bound_literal  "<< std::endl;
+																		std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+																		std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+																		std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 
 												if(lvl > backtrack_level)
 													backtrack_level = lvl;
@@ -10863,6 +10877,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 											} else {
 												// q's level is below the current level, we are not expending it further
 												learnt_clause.add(q);
+												std::cout << " \n learn :  " << x << "  = " << x.get_domain() << " ; assignment_level : " << assignment_level[x.id()]<< std::endl;
 
 												if(lvl > backtrack_level)
 													backtrack_level = lvl;
@@ -10961,6 +10976,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 		// p is the last decision, since all atoms above it in the
 		// assumption stack have been skipped or expended.
 		learnt_clause[0] = NOT(p);
+		std::cout << " \n learn :  " << x << "  = " << x.get_domain() << " ; assignment_level : " << assignment_level[x.id()]<< std::endl;
 
 #ifdef _DEBUG_SEARCH
 		if(_DEBUG_SEARCH) {
@@ -12303,11 +12319,11 @@ Mistral::Outcome Mistral::Solver::branch_right() {
 #else
 //    	simple_fdlearn_nogood();
     //fdlearn_nogood();
-    fdlearn_nogood_nosequence();
+   // fdlearn_nogood_nosequence();
     	//fdimprovedlearn_nogood();
     	//learn_withoutClosingPropagation();
       //this should be the one..
-    //	learn_with_lazygeneration();
+    	learn_with_lazygeneration();
 //    	learn_with_lazygeneration_and_semantic_learning();
     	//      learn_nogood();
 #endif
