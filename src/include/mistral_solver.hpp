@@ -1217,7 +1217,14 @@ public:
   //the last 4 bits are for the variable_id : biggest variable_id is 32767.
 
 #ifndef latest_bounds_learning
-  inline unsigned int encode_bound_literal (int id_variable, int value,int sign) {return ( (sign << 31) | (value << 15)   | id_variable);}
+  inline unsigned int encode_bound_literal (int id_variable, int value,int sign) {
+	  //TODO Add compilation flag
+	  if ((value < 0) || (!value && (!sign)))
+	  {
+		  std::cout <<" \n \n \encode_bound_literal  ERROR "  << std::endl;
+		  exit(1);
+	  }
+	  return ( (sign << 31) | (value << 15)   | id_variable);}
   inline int get_variable_from_literal (unsigned int literal) { return ( 0x7FFF & literal) ;}
   inline int get_value_from_literal (unsigned int literal) {return ( (literal & 0x7FFFFFFF) >> 15);}
   inline int get_sign_from_literal (unsigned int literal) {return (literal >> 31);}

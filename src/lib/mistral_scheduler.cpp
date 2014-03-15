@@ -1722,6 +1722,7 @@ void SchedulingSolver::setup() {
   {
 	  Variable x_cmax(lb_C_max, ub_C_max);
 	  C_max = x_cmax;
+	  add(C_max);
   }
 
   // precedence constraints

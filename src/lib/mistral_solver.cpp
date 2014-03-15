@@ -12302,8 +12302,8 @@ Mistral::Outcome Mistral::Solver::branch_right() {
     	fdlearn_nogood_using_only_latest_bounds();
 #else
 //    	simple_fdlearn_nogood();
-    fdlearn_nogood();
-    //fdlearn_nogood_nosequence();
+    //fdlearn_nogood();
+    fdlearn_nogood_nosequence();
     	//fdimprovedlearn_nogood();
     	//learn_withoutClosingPropagation();
       //this should be the one..
