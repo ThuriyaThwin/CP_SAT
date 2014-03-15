@@ -777,6 +777,7 @@ namespace Mistral {
     void fdimprovedlearn_nogood();
     void learn_withoutClosingPropagation();
     void learn_with_lazygeneration();
+    void learn_with_lazygeneration_no_bound_at_the_end();
     void learn_with_lazygeneration_and_semantic_learning();
 
 #ifdef _CHECK_NOGOOD
