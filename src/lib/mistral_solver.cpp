@@ -11567,10 +11567,41 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 									visited.fast_add(get_id_boolean_variable(q));
 
 									if(lvl >= level) {
+
+
+
+										if (x.id()>= initial_variablesize){
+
+
+											int id_range_ = 	varsIds_lazy[x.id() - initial_variablesize];
+											int val_range_ = value_lazy[x.id() - initial_variablesize];
+
+										//	std::cout << " OK : id_range = " << id_range << std::endl;
+										//	std::cout << " OK : val_range = " << val_range << std::endl;
+
+											if (SIGN(NOT(q))){
+												//	__solver->variables[id_range].set_max(val_range);
+												//	std::cout << " Bound literal associated to :  " << variables[id_range] << " <=  " << val_range <<  std::endl;
+												Literal __tmp = encode_bound_literal(id_range_,val_range_, 1);
+												bound_literals_to_explore.add(__tmp);
+											}
+											else{
+												Literal __tmp = encode_bound_literal(id_range_,val_range_ +1, 0);
+												bound_literals_to_explore.add(__tmp);
+
+												//	__solver->variables[id_range].set_min(val_range+1);
+												//	std::cout << " Bound literal associated to :  " << variables[id_range] << " >=  " << val_range+1 <<  std::endl;
+											}
+
+
+										}
+										else {
+
 										//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 										// we'll need to replace 'a' by its parents since its level is too high
 										++pathC;
 										boolean_vairables_to_explore.add(get_id_boolean_variable(q));
+										}
 
 									} else {
 										// q's level is below the current level, we are not expending it further
@@ -11879,8 +11910,37 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 												std::cout << " is a " << (is_lower_bound(old) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(old) << std::endl;
 												std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(old)].get_domain() << std::endl;
 												 */
+
+
+												if (x.id()>= initial_variablesize){
+
+
+													int id_range_ = 	varsIds_lazy[x.id() - initial_variablesize];
+													int val_range_ = value_lazy[x.id() - initial_variablesize];
+
+												//	std::cout << " OK : id_range = " << id_range << std::endl;
+												//	std::cout << " OK : val_range = " << val_range << std::endl;
+
+													if (SIGN(NOT(q))){
+														//	__solver->variables[id_range].set_max(val_range);
+														//	std::cout << " Bound literal associated to :  " << variables[id_range] << " <=  " << val_range <<  std::endl;
+														Literal __tmp = encode_bound_literal(id_range_,val_range_, 1);
+														bound_literals_to_explore.add(__tmp);
+													}
+													else{
+														Literal __tmp = encode_bound_literal(id_range_,val_range_ +1, 0);
+														bound_literals_to_explore.add(__tmp);
+
+														//	__solver->variables[id_range].set_min(val_range+1);
+														//	std::cout << " Bound literal associated to :  " << variables[id_range] << " >=  " << val_range+1 <<  std::endl;
+													}
+
+
+												}
+												else {
 												++pathC;
 												boolean_vairables_to_explore.add(get_id_boolean_variable(q));
+												}
 
 											} else {
 												// q's level is below the current level, we are not expending it further
@@ -11985,6 +12045,15 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 		// assumption stack have been skipped or expended.
 		learnt_clause[0] = NOT(p);
 		std::cout << " \n learn :  " << x << "  = " << x.get_domain() << " ; assignment_level : " << assignment_level[x.id()]<< std::endl;
+
+
+
+		if (a>= initial_variablesize){
+			std::cout << " ERROR a>= initial_variablesize : " << a << std::endl;
+			exit(1);
+		//	std::cout << " OK : id_range = " << id_range << std::endl;
+		//	std::cout << " OK : val_range = " << val_range << std::endl;
+		}
 
 #ifdef _DEBUG_SEARCH
 		if(_DEBUG_SEARCH) {
