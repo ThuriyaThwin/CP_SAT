@@ -37,7 +37,7 @@
 //#define _OLD_ true
 //#define _DEBUG_NOGOOD true //(statistics.num_filterings == 491)
 //#define _DEBUG_SEARCH true
-//#define _DEBUG_FD_NOGOOD ((variables.size== 16678) && (level==20)) //true // ((variables.size == 221)) //&& (solver->level == 22))//true
+//#define _DEBUG_FD_NOGOOD true //((variables.size== 16678) && (level==20)) //true // ((variables.size == 221)) //&& (solver->level == 22))//true
 //#define _DEBUG_SHOW_LEARNT_BOUNDS true
 //#define _TRACKING_BOUND 1078
 //#define _TRACKING_ATOM 368
@@ -10367,6 +10367,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 							std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
 							std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
 							std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+
 							}
 #endif
 
@@ -10376,8 +10377,15 @@ void Mistral::Solver::learn_with_lazygeneration() {
 							val = get_value_from_literal(to_be_explored);
 							var = get_variable_from_literal(to_be_explored);
 							tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
-
+							int range_id = var;
 							lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
+#ifdef 	_DEBUG_FD_NOGOOD
+							if(_DEBUG_FD_NOGOOD){
+								std::cout << " its level :  " << lvl << std::endl;
+							}
+#endif
+
+
 							//if (lvl>0 Search root?
 							if (lvl>0){
 							if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
@@ -10446,6 +10454,10 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 											exit(1);
 										}
+#ifdef _CHECK_NOGOOD
+									varsIds_lazy.add(range_id);
+									value_lazy.add(val);
+#endif
 
 								}
 								else
@@ -10530,7 +10542,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 							}
 #endif
 							//todo should be search_root!
-							if(		lvl)
+							if(		lvl > 0 )
 								if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
 									//Sould be done later!
 									/*
@@ -10658,8 +10670,15 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									val = get_value_from_literal(to_be_explored);
 									var = get_variable_from_literal(to_be_explored);
 									tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
-
+									int range_id = var;
 									lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
+#ifdef 	_DEBUG_FD_NOGOOD
+									if(_DEBUG_FD_NOGOOD){
+										std::cout << " its level :  " << lvl << std::endl;
+									}
+#endif
+
+
 									if (lvl>0){
 									if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
 									{
@@ -10725,7 +10744,10 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 													exit(1);
 												}
-
+#ifdef _CHECK_NOGOOD
+									varsIds_lazy.add(range_id);
+									value_lazy.add(val);
+#endif
 
 										}
 										else
@@ -10812,7 +10834,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									}
 #endif
 									//todo we should start from search_route
-									if(		lvl)
+									if(		lvl > 0)
 										if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
 											//Sould be done later!
 											/*
@@ -12280,13 +12302,13 @@ Mistral::Outcome Mistral::Solver::branch_right() {
     	fdlearn_nogood_using_only_latest_bounds();
 #else
 //    	simple_fdlearn_nogood();
-    //fdlearn_nogood();
+    fdlearn_nogood();
     //fdlearn_nogood_nosequence();
     	//fdimprovedlearn_nogood();
     	//learn_withoutClosingPropagation();
       //this should be the one..
-//    	learn_with_lazygeneration();
-    	learn_with_lazygeneration_and_semantic_learning();
+    //	learn_with_lazygeneration();
+//    	learn_with_lazygeneration_and_semantic_learning();
     	//      learn_nogood();
 #endif
 

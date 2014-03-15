@@ -14408,7 +14408,7 @@ void Mistral::DomainFaithfulnessConstraint::set_init_changes() {
 	initial_list__of_changes.clear();
 	for (int i = 0; i < changes.size; ++i)
 		initial_list__of_changes.add(changes[i]);
-	std::cout << " \n DomainFaithfulnessConstraint initial_list__of_changes : " << initial_list__of_changes << std::endl;
+	//std::cout << " \n DomainFaithfulnessConstraint initial_list__of_changes : " << initial_list__of_changes << std::endl;
 }
 
 
@@ -15147,7 +15147,7 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 	{
 
 		if (is_a_bound_literal(a)){
-			std::cout <<" \n \n \is_a_bound_literal? "  << std::endl;
+			std::cout <<" \n \n is_a_bound_literal? "  << std::endl;
 			exit(1);
 		}
 

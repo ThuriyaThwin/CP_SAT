@@ -3725,9 +3725,9 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c)
 	}
 	else
 		std::cout << " Is a valid nogood !\n" << std::endl;
-	delete __pol;
-	delete __heu;
-	//delete __solver;
+	//delete __pol;
+	//delete __heu;
+	delete __solver;
 
 	params->FD_learning = 1;
 	params->LBinit = -1;

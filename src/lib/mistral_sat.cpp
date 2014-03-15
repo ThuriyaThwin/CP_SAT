@@ -753,7 +753,7 @@ void Mistral::ConstraintClauseBase::set_init_changes() {
 	for (int i = 0; i < changes.size; ++i)
 		initial_list__of_changes.add(changes[i]);
 
-	std::cout << " \n SAT initial_list__of_changes : " << initial_list__of_changes << std::endl;
+//	std::cout << " \n SAT initial_list__of_changes : " << initial_list__of_changes << std::endl;
 }
 
 
