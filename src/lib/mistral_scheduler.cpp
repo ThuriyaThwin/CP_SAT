@@ -1933,7 +1933,16 @@ void SchedulingSolver::setup() {
 //     add(depth == Sum(scope));
 //   }
 
-		//  std::cout << *this << std::endl;
+
+/*
+		  std::cout << " NOGOOD " << std::endl;
+  add(variables[346] == 0);
+  add(variables[58] >=  807);
+  add(variables[28]  <=  948);
+  add(variables[161]   <=  954);
+  add(variables[161]  >=  852);
+*/
+
 }
 
 SchedulingSolver::~SchedulingSolver() {
@@ -2740,7 +2749,7 @@ void SchedulingSolver::dichotomic_search()
   int init_booleans_last_size_size = booleans.size.back();
   int init_booleans_slot_size = booleans.slots.size;
 
-  std::cout << " \n \n \n BEGIN expression_store.size" << expression_store.size << std::endl;
+ /* std::cout << " \n \n \n BEGIN expression_store.size" << expression_store.size << std::endl;
   std::cout << " init variables.size" << initial_variablesize << std::endl;
   std::cout << " variables.size" << variables.size << std::endl;
   std::cout << " assignment_level.size" << assignment_level.size << std::endl;
@@ -2777,7 +2786,7 @@ void SchedulingSolver::dichotomic_search()
   std::cout << " \n trail : " << trail_ << std::endl;
 
   std::cout << " \n \n \n initial_list__of_changes : "  << std::endl;
-
+*/
   if (base)
 	  if (params->forgetall)
 	  {
@@ -2785,7 +2794,7 @@ void SchedulingSolver::dichotomic_search()
 		  for (int i = 0; i < start_from; ++i)
 			  (static_cast<VariableRangeWithLearning*> (variables[i].range_domain))->domainConstraint->set_init_changes();
 	  }
-  std::cout << " \n END initial_list__of_changes : "  << std::endl;
+ // std::cout << " \n END initial_list__of_changes : "  << std::endl;
 
 
 
@@ -3075,7 +3084,7 @@ void SchedulingSolver::dichotomic_search()
 		  //	std::cout << " NEW  base->learnt.size" << base->learnt.size << std::endl;
 	  }
 
-	  std::cout << " \n \n \n  expression_store.size" << expression_store.size << std::endl;
+	/*  std::cout << " \n \n \n  expression_store.size" << expression_store.size << std::endl;
 	  std::cout << " variables.size" << variables.size << std::endl;
 	  std::cout << " assignment_level.size" << assignment_level.size << std::endl;
 	  std::cout << " variables.size" << assignment_order.size << std::endl;
@@ -3104,7 +3113,7 @@ void SchedulingSolver::dichotomic_search()
 	  std::cout << " booleans.size" << booleans.slots << std::endl;
 	  std::cout << " \n trail : " << trail_ << std::endl;
 
-
+*/
 
 	  ++iteration;
   } 
