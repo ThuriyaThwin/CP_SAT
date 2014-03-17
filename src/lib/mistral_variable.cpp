@@ -2006,72 +2006,8 @@ bool Mistral::VariableRangeWithLearning::should_be_learnt (Literal q) {
 
 }
 
-
+/*OLD LEVELs
 int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
-
-
-	/*
-	int previsouslevel, idx;
-
-	//	std::cout << "debug level_of"<<  val << std::endl;
-	//	std::cout << "trail "<< trail_ << std::endl;
-
-	if (lb){
-		//		std::cout << " is lb "<< std::endl;
-
-		idx = trail_.size -3 ;
-		do{
-			idx-=3;
-			if (idx>=0)
-				previsouslevel = trail_[idx];
-			else{
-
-				//				std::cout << " will return  "<< trail_[2] << std::endl;
-				return trail_[2];
-			}
-
-
-		}while (val <= previsouslevel);
-
-		idx+=3;
-		//		std::cout << " will return  "<< trail_[idx+2] << std::endl;
-
-		return trail_[idx+2];
-
-	}
-	else{
-		//		std::cout << " is UB "<<  std::endl;
-
-		idx = trail_.size -2 ;
-		do{
-			idx-=3;
-			if (idx>=0)
-				previsouslevel = trail_[idx];
-			else{
-				//			std::cout << " will return  "<< trail_[2] << std::endl;
-				return trail_[2];
-			}
-
-		}while (val >= previsouslevel);
-		idx+=3;
-
-		//	std::cout << " will return  "<< trail_[idx+1] << std::endl;
-		return trail_[idx+1];
-
-	}
-
-	*/
-
-
-	/*
-	  previsouslevel_lb;
-	  int previsouslevel_ub;
-		solver->save(id);
-		trail_.add(min);
-		trail_.add(max);
-		trail_.add(solver->level);
-	 */
-
 
 
 
@@ -2122,6 +2058,66 @@ int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 
 
 
+
+
+}
+
+*/
+
+
+
+int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
+
+	//	std::cout << " \n level_of " << std::endl;
+	//	std::cout << " val " << val << std::endl;
+	//	std::cout << " lb  " << lb << std::endl;
+
+	if (lowerbounds.size != lower_bound_levels.size){
+		std::cout << " ERROR lowerbounds level_of END ? " << std::endl;
+		exit(1);
+	}
+
+	if (upperbounds.size != upper_bound_levels.size){
+		std::cout << " ERROR lowerbounds level_of END ? " << std::endl;
+		exit(1);
+	}
+
+	int size;
+	if (lb)
+	{
+
+		//		std::cout << "  lowerbounds.size  " << lowerbounds.size << std::endl;
+		//		std::cout << "  lowerbounds " << lowerbounds << std::endl;
+		//		std::cout << "  lower_bound_levels.size  " << lower_bound_levels.size << std::endl;
+		//		std::cout << "  lower_bound_levels " << lower_bound_levels << std::endl;
+
+		size =lowerbounds.size ;
+		while (size --)
+			if(lowerbounds[size]== val)
+			{
+				//		std::cout << "  return  " << lower_bound_levels[size] << std::endl;
+				return lower_bound_levels[size];
+			}
+	}
+	else
+	{
+
+		//	std::cout << "  upperbounds.size  " << upperbounds.size << std::endl;
+		//	std::cout << "  upperbounds " << upperbounds << std::endl;
+		//	std::cout << "  upper_bound_levels.size  " << upper_bound_levels.size << std::endl;
+		//	std::cout << "  upper_bound_levels " << upper_bound_levels << std::endl;
+
+		size =upperbounds.size ;
+		while (size --)
+			if(upperbounds[size]==val)
+			{
+				//		std::cout << "  return  " << upper_bound_levels[size]<< std::endl;
+
+				return upper_bound_levels[size];
+			}
+	}
+	std::cout << " ERROR level_of END ? " << std::endl;
+	exit(1);
 
 
 }

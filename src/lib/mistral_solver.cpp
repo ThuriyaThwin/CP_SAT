@@ -37,7 +37,7 @@
 //#define _OLD_ true
 //#define _DEBUG_NOGOOD true //(statistics.num_filterings == 491)
 //#define _DEBUG_SEARCH true
-#define _DEBUG_FD_NOGOOD true //((variables.size== 16678) && (level==20)) //true // ((variables.size == 221)) //&& (solver->level == 22))//true
+//#define _DEBUG_FD_NOGOOD true //((variables.size== 16678) && (level==20)) //true // ((variables.size == 221)) //&& (solver->level == 22))//true
 //#define _DEBUG_SHOW_LEARNT_BOUNDS true
 //#define _TRACKING_BOUND 1078
 //#define _TRACKING_ATOM 368
@@ -11497,6 +11497,14 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 
 								}
 
+								if (tmp__.get_min() == is_lb)
+								{
+									std::cout << " ERROR : \n  tmp__.get_min() == is_lb !! " << std::endl;
+									//std::cout << " lvl " <<  lvl << std::endl;
+									exit (1);
+
+								}
+
 
 								//assignment_level[var]=lvl;
 								//todo should be search_root!
@@ -11831,6 +11839,14 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 
 										}
 
+										if (tmp__.get_min() == is_lb)
+										{
+											std::cout << " ERROR : \n  tmp__.get_min() == is_lb !! " << std::endl;
+											//std::cout << " lvl " <<  lvl << std::endl;
+											exit (1);
+
+										}
+
 
 										//assignment_level[var]=lvl;
 										//todo should be search_root!
@@ -12094,13 +12110,13 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 			 */
 
 			// bug in instance 1
-			Vector<Literal > tmp_nogood;
+	/*		Vector<Literal > tmp_nogood;
 			tmp_nogood.add(241) ;
 			tmp_nogood.add(3811) ;
 			tmp_nogood.add(3798) ;
 			tmp_nogood.add(3796) ;
 			tmp_nogood.add(3795) ;
-
+*
 			if (learnt_clause.size == tmp_nogood.size){
 				bool equal = true;
 				for (int i = 0; i < learnt_clause.size ; ++i)
@@ -12116,6 +12132,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 					exit(1);
 				}
 			}
+			*/
 			((SchedulingSolver *) this)->	check_nogood(learnt_clause);
 			//	store_nogood(learnt_clause);
 		}
