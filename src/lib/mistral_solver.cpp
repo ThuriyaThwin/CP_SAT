@@ -37,7 +37,7 @@
 //#define _OLD_ true
 //#define _DEBUG_NOGOOD true //(statistics.num_filterings == 491)
 //#define _DEBUG_SEARCH true
-#define _DEBUG_FD_NOGOOD true //((variables.size== 16678) && (level==20)) //true // ((variables.size == 221)) //&& (solver->level == 22))//true
+//#define _DEBUG_FD_NOGOOD true //((variables.size== 16678) && (level==20)) //true // ((variables.size == 221)) //&& (solver->level == 22))//true
 //#define _DEBUG_SHOW_LEARNT_BOUNDS true
 //#define _TRACKING_BOUND 1078
 //#define _TRACKING_ATOM 368
@@ -12110,7 +12110,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 			 */
 
 			// bug in instance 1
-			Vector<Literal > tmp_nogood;
+		/*	Vector<Literal > tmp_nogood;
 			tmp_nogood.add(241) ;
 			tmp_nogood.add(3811) ;
 			tmp_nogood.add(3798) ;
@@ -12132,8 +12132,8 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 					exit(1);
 				}
 			}
-
-		//	((SchedulingSolver *) this)->	check_nogood(learnt_clause);
+*/
+			((SchedulingSolver *) this)->	check_nogood(learnt_clause);
 			//	store_nogood(learnt_clause);
 		}
 #endif
@@ -13445,13 +13445,14 @@ Mistral::Outcome Mistral::Solver::branch_right() {
 #else
 //    	simple_fdlearn_nogood();
     //fdlearn_nogood();
-   // fdlearn_nogood_nosequence();
+    fdlearn_nogood_nosequence();
     	//fdimprovedlearn_nogood();
     	//learn_withoutClosingPropagation();
       //this should be the one..
 //    	learn_with_lazygeneration();
 //    	learn_with_lazygeneration_and_semantic_learning();
-    	learn_with_lazygeneration_no_bound_at_the_end();
+    	//HERE
+  //  	learn_with_lazygeneration_no_bound_at_the_end();
     	//      learn_nogood();
 #endif
 
