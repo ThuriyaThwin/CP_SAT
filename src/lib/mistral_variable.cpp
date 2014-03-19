@@ -2156,6 +2156,8 @@ bool Mistral::VariableRangeWithLearning::set_visited (unsigned int literal) {
 }
 */
 
+
+//TODO rewrite reason_for
 Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) {
 	//	std::cout << "reason_for" << std::endl;
 	//	std::cout << "literal" << l << std::endl;
@@ -2201,61 +2203,7 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 		}
 #endif
 
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-		for (int i=1; i < upperbounds_levels.size; ++i)
-			if (upperbounds_levels[i-1]>upperbounds_levels[i])
-			{
-				std::cout << "upperbounds_levels not ordered" << std::endl;
-				exit(1);
-			}
 
-		for (int i=1; i < lowerbounds_levels.size; ++i)
-			if (lowerbounds_levels[i-1]>lowerbounds_levels[i])
-			{
-				std::cout << "lowerbounds_levels not ordered" << std::endl;
-				exit(1);
-			}
-
-
-		for (int i=1; i < lowerbounds.size; ++i)
-			if (lowerbounds[i-1]>lowerbounds[i])
-			{
-				//			std::cout << "lowerbounds not ordered" << std::endl;
-				exit(1);
-			}
-
-		for (int i=1; i < upperbounds.size; ++i)
-			if (upperbounds[i-1]<upperbounds[i])
-			{
-				//			std::cout << "upperbounds not ordered" << std::endl;
-				exit(1);
-			}
-
-		if (upper_bound_reasons.size-upperbounds.size )
-		{
-			std::cout << "upperbounds size problem!" << std::endl;
-			exit(1);
-		}
-
-		if (lower_bound_reasons.size -lowerbounds.size )
-		{
-			std::cout << "lowerbounds size problem!" << std::endl;
-			exit(1);
-		}
-
-		if (lowerbounds_levels.size -lowerbounds.size )
-		{
-			std::cout << "lowerbounds_levels size problem!" << std::endl;
-			exit(1);
-		}
-
-
-		if (upperbounds_levels.size -upperbounds.size )
-		{
-			std::cout << "upperbounds_levels size problem!" << std::endl;
-			exit(1);
-		}
-#endif
 		int size;
 		if (is_lower_bound(l))
 		{
@@ -2318,7 +2266,7 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 					return upper_bound_reasons[size+1];
 				}
 		}
-		std::cout << "reason_for END ? " << std::endl;
+		std::cout << " reason_for END ? " << std::endl;
 		exit(1);
 		//	return lower_bound_reasons[0];
 #ifdef latest_bounds_learning

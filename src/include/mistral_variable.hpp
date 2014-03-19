@@ -1540,10 +1540,7 @@ namespace Mistral {
 		  upper_bound_reasons.clear();
 		  lower_bound_levels.clear();
 		  upper_bound_levels.clear();
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-		  lowerbounds_levels.clear();
-		  upperbounds_levels.clear();
-#endif
+
 		  lowerbounds.add(lb);
 		  upperbounds.add(ub);
 		  lower_bound_reasons.add(NULL);
@@ -1552,10 +1549,7 @@ namespace Mistral {
 		  upper_bound_levels.add(-1);
 		//  std::cout << "111NDDDDD \n \n " << std::endl;
 	//	  std::cout << "level  \n \n " << solver->level <<std::endl;
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-		  lowerbounds_levels.add(0);
-		  upperbounds_levels.add(0);
-#endif
+
 
 #ifdef latest_bounds_learning
 		  latest = true;
@@ -1612,9 +1606,7 @@ namespace Mistral {
 			  lowerbounds.add(lo);
 			  lower_bound_reasons.add(C);
 			  lower_bound_levels.add(solver->level);
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-			  lowerbounds_levels.add(solver->level);
-#endif
+
 			  //  std::cout << "NEW LOWER BOUND \n \n " << std::endl;
 			  //  std::cout << "lowerbounds"<< lowerbounds << std::endl;
 			  //	  std::cout << "lower_bound_reasons"<< lower_bound_reasons << std::endl;
@@ -1660,9 +1652,7 @@ namespace Mistral {
 			  upperbounds.add(up);
 			  upper_bound_reasons.add(C);
 			  upper_bound_levels.add(solver->level);
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-			  upperbounds_levels.add(solver->level);
-#endif
+
 			  //	  std::cout << "NEW LOWER BOUND \n \n " << std::endl;
 			  //	  std::cout << "lowerbounds"<< lowerbounds << std::endl;
 			  //		  std::cout << "lower_bound_reasons"<< lower_bound_reasons << std::endl;
@@ -1719,9 +1709,6 @@ namespace Mistral {
 					  lowerbounds.pop();
 					  lower_bound_reasons.pop();
 					  lower_bound_levels.pop();
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-					  lowerbounds_levels.pop();
-#endif
 				  }
 				  else
 				  {
@@ -1739,9 +1726,7 @@ namespace Mistral {
 					  upperbounds.pop();
 					  upper_bound_reasons.pop();
 					  upper_bound_levels.pop();
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-					  upperbounds_levels.pop();
-#endif
+
 				  }
 				  else
 				  {
@@ -1766,10 +1751,6 @@ namespace Mistral {
 
 	  Vector<int> lowerbounds;
 	  Vector<int> upperbounds;
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-	  Vector<int> lowerbounds_levels;
-	  Vector<int> upperbounds_levels;
-#endif
 
 	  //Reasoning about latest changes
 	  Explanation* LB_Explanation;
