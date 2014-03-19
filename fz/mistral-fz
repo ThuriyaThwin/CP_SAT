@@ -12,8 +12,9 @@ if len(sys.argv) > 1:
 
     mcmd = ['./mistral-fzn']
     mcmd.extend(cmd)
-    mcmd.extend(['--print_sol', '-v 0', '--prefix_sol', '%', '--prefix_comment', '%', '--prefix_obj', '%', '--prefix_stat', '%', '--prefix_res', '%', '-f', filename, '-c', 'dom/wdeg', '-b', 'minval+guided', '-r', 'luby'])
+    mcmd.extend(['-w', '--print_sol', '-v 0', '--prefix_sol', '%', '--prefix_comment', '%', '--prefix_obj', '%', '--prefix_stat', '%', '--prefix_res', '%', '-f', filename, '-c', 'dom/wdeg', '-b', 'minval+guided', '-r', 'luby'])
 
-
+    print 'hello'
+    print mcmd
     mistral = subprocess.Popen(mcmd) #, stdout=subprocess.PIPE)
     mistral.wait()

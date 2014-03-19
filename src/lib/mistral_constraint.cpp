@@ -2177,6 +2177,23 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 	//	std::cout <<" \n \n \ExplainedConstraintLess  get_reason_for "  << std::endl;
 
 	if(a == NULL_ATOM) {
+		if (
+				scope[0].get_min() <=
+				scope0->lowerbounds[0]
+		)
+		{
+			std::cout << " ERROR scope[0].get_min <= scope[0].lowerbounds[0] <=" << std::endl;
+			exit(1);
+		}
+		if (
+				scope[1].get_max() >=
+				scope1->upperbounds[0]
+		)
+		{
+			std::cout << " ERROR scope[1].get_max <= scope[1].upperbounds[0] <=" << std::endl;
+			exit(1);
+		}
+
 		explanation[0] = encode_bound_literal(scope[0].id(),scope[0].get_min(),0 ) ;
 		explanation[1] =  encode_bound_literal(scope[1].id(),scope[1].get_max(),1) ;
 		end = &(explanation[0])+2;
@@ -2199,8 +2216,13 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 					end = &(explanation[0])+1;
 				}
 			}
+			else
+			{
+				std::cout << " ERROR !!" << std::endl;
+				exit(1);
+			}
 		}
-		else
+		else{
 			if(get_variable_from_literal(a) == scope[0].id())
 			{
 
@@ -2218,6 +2240,12 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 					end = &(explanation[0])+1;
 				}
 			}
+			else
+			{
+				std::cout << " ERROR !!" << std::endl;
+				exit(1);
+			}
+	}
 	}
 	return &(explanation[0]);
 
@@ -2619,7 +2647,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 					end = &(explanation[0])+2;
 				}
 			}
-			else
+			else {
 				if ( get_variable_from_literal(a) == scope[0].id())
 				{
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
@@ -2651,6 +2679,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 					exit(1);
 				}
 #endif
+			}
 
 		}
 		else
@@ -2678,7 +2707,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 					end = &(explanation[0])+2;
 				}
 			}
-			else
+			else {
 				if ( get_variable_from_literal(a) == scope[0].id())
 				{
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
@@ -2707,7 +2736,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 					exit(1);
 				}
 #endif
-
+			}
 		}
 	}
 	return &(explanation[0]);
@@ -12619,7 +12648,7 @@ Mistral::Explanation::iterator Mistral::ConstraintIncrementalWeightedBoolSumInte
 
 Mistral::PropagationOutcome Mistral::ConstraintIncrementalWeightedBoolSumInterval::propagate() 
 {
-	std::cout << " propagate ConstraintIncrementalWeightedBoolSumInterval "<< std::endl;
+	//std::cout << " propagate ConstraintIncrementalWeightedBoolSumInterval "<< std::endl;
 
   PropagationOutcome wiped_idx = CONSISTENT;
   int w;
@@ -13467,7 +13496,7 @@ Mistral::Explanation::iterator Mistral::PredicateWeightedBoolSum::get_reason_for
 Mistral::PropagationOutcome Mistral::PredicateWeightedBoolSum::propagate() 
 {
 
-	std::cout << " propagate PredicateWeightedBoolSum::propagate "<< std::endl;
+	//std::cout << " propagate PredicateWeightedBoolSum::propagate "<< std::endl;
 
   PropagationOutcome wiped_idx = CONSISTENT;
   int w;
