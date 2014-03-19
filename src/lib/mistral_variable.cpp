@@ -2158,6 +2158,7 @@ bool Mistral::VariableRangeWithLearning::set_visited (unsigned int literal) {
 
 
 //TODO rewrite reason_for
+/*
 Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) {
 	//	std::cout << "reason_for" << std::endl;
 	//	std::cout << "literal" << l << std::endl;
@@ -2280,7 +2281,74 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 #endif
 
 }
+*/
 
+
+//Exact reason for
+Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) {
+
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+	if (!is_a_bound_literal(l))
+	{
+		std::cout << "   is_a_bound_literal ERROR " << std::endl;
+		exit(1);
+	}
+	if (get_variable_from_literal(l) != id )
+	{
+		std::cout << "   get_variable_from_literal(l)!=id() ERROR " << std::endl;
+		exit(1);
+	}
+#endif
+
+	int size , val = get_value_from_literal(l);
+	if (is_lower_bound(l))
+	{
+
+		//		std::cout << "l"<< l << std::endl;
+		//		std::cout << "lowerbounds "<< lowerbounds << std::endl;
+		//		std::cout << "lower_bound_reasons"<< lower_bound_reasons << std::endl;
+		size =lowerbounds.size ;
+
+		//		std::cout << "size" << size<< std::endl;
+		while (size --)
+			if(lowerbounds[size]==val)
+			{
+
+				//			std::cout << " c lower bound found! " << std::endl;
+				//			if (upper_bound_reasons[size+1] == NULL)
+				//				std::cout << "c return NULL " << std::endl;
+				//			else
+				//				std::cout << " c return lowerbounds reason_for --> " << *lower_bound_reasons[size+1] << std::endl;
+				//	latest_visited_lower_bound = lowerbounds[size+1];
+				return lower_bound_reasons[size];
+			}
+		std::cout << "ERROR lowerbound not found!  " << std::endl;
+		exit(1);
+
+	}
+	else
+	{
+		size =upperbounds.size ;
+		while (size --)
+			if(upperbounds[size]==val)
+			{
+				//			std::cout << "c upperbound found" << size<< std::endl;
+				//			if (upper_bound_reasons[size+1] == NULL)
+				//				std::cout << "c return NULL " << std::endl;
+				//			else
+
+				//					std::cout <<" c return upperbounds reason_for --> " << *upper_bound_reasons[size+1] << std::endl;
+
+				//		latest_visited_upper_bound = upperbounds[size+1];
+				return upper_bound_reasons[size];
+			}
+
+		std::cout << "ERROR upperbound not found ! " << std::endl;
+		exit(1);
+
+	}
+}
 
 
 void Mistral::VariableList::initialise(Solver *s) {
