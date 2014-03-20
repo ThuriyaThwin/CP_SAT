@@ -780,6 +780,7 @@ namespace Mistral {
     void learn_with_lazygeneration_no_bound_at_the_end();
     void learn_with_lazygeneration_and_semantic_learning();
 
+//TODO declare them only when needen!
 #ifdef _CHECK_NOGOOD
     //used to get the variable id of a lazily generated variable
 	Vector<unsigned int> varsIds_lazy ;
