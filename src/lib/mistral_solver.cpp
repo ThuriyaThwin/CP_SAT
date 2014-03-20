@@ -5355,7 +5355,7 @@ void Mistral::Solver::fdlearn_nogood_nosequence(){
 								exit(1);
 							}
 
-							if (x.get_min()== SIGN(q))
+							if ((a != x.id()) && x.get_min()== SIGN(q))
 							{
 								std::cout << " \n (x.get_min()== SIGN(q))" << x << "  and its domain is " << x.get_domain() << " ; its assignment_level : " << assignment_level[x.id()] << " ; while the literal q = " << q << std::endl;
 								exit(1);
