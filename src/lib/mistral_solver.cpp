@@ -37,7 +37,7 @@
 //#define _OLD_ true
 //#define _DEBUG_NOGOOD true //(statistics.num_filterings == 491)
 //#define _DEBUG_SEARCH true
-//#define _DEBUG_FD_NOGOOD true //((variables.size== 16678) && (level==20)) //true // ((variables.size == 221)) //&& (solver->level == 22))//true
+#define _DEBUG_FD_NOGOOD false // (level==11) //((variables.size== 16678) && (level==20)) //true // ((variables.size == 221)) //&& (solver->level == 22))//true
 //#define _DEBUG_SHOW_LEARNT_BOUNDS true
 //#define _TRACKING_BOUND 1078
 //#define _TRACKING_ATOM 368
@@ -11365,7 +11365,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 #endif
 #ifdef 	_DEBUG_FD_NOGOOD
 							if(_DEBUG_FD_NOGOOD){
-							std::cout << "\n is_a_bound_literal  "<< std::endl;
+							std::cout << "\n HERE is_a_bound_literal  "<< std::endl;
 							std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
 							std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
 							std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
@@ -11710,13 +11710,12 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 #endif
 #ifdef 	_DEBUG_FD_NOGOOD
 									if(_DEBUG_FD_NOGOOD){
-									std::cout << "\n is_a_bound_literal  "<< std::endl;
+									std::cout << "\n inside while : is_a_bound_literal  "<< std::endl;
 									std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
 									std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
 									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 }
 #endif
-
 
 
 									to_be_explored=q;
@@ -11736,6 +11735,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 									if (lvl>0){
 									if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
 									{
+										std::cout << " \n \n should_be_learnt " << std::endl;
 
 										//std::cout << " \n \n sequence before  " << sequence << std::endl;
 										//std::cout << " \n \n sequence size before  " << sequence.size << std::endl;
@@ -11751,6 +11751,9 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 
 										if ( var< 0)
 										{
+
+											std::cout << " \n \n New var " << std::endl;
+
 											//add(tmp__);
 											tmp__.lazy_initialise(this);
 											dom_constraint->extend_scope(tmp__ , val - is_lb,!is_lb, lvl);
@@ -11810,6 +11813,8 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 										}
 										else
 										{
+
+											std::cout << " \n \n old var " << std::endl;
 											tmp__= variables[var];
 										}
 
@@ -11847,11 +11852,13 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 
 										}
 
-
 										//assignment_level[var]=lvl;
 										//todo should be search_root!
 										//if(	lvl)
 											if( !visited.fast_contain(tmp__.id()) ) {
+
+												std::cout << "visited ?  "<< std::endl;
+
 												//Sould be done later!
 												/*
 														if(lit_activity) {
@@ -11870,13 +11877,14 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 												std::cout << " \n learn :  " << encode_boolean_variable_as_literal(tmp__.id(), is_lb) << " : var  : " << tmp__ << " = " << tmp__.get_domain() ; //<< std::endl;
 												std::cout << " ---> corresponds to (nogood)  : " ;
 												std::cout << "\n is_a_bound_literal  "<< std::endl;
-																		std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-																		std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-																		std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+												std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+												std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+												std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 
 												if(lvl > backtrack_level)
 													backtrack_level = lvl;
 											}
+											std::cout << "learnt ?  "<< std::endl;
 
 					//					std::cout << " \n \n sequence after  " << sequence << std::endl;
 					//					std::cout << " \n \n sequence sizeafter  " << sequence.size << std::endl;
@@ -13445,14 +13453,14 @@ Mistral::Outcome Mistral::Solver::branch_right() {
 #else
 //    	simple_fdlearn_nogood();
     //fdlearn_nogood();
-    fdlearn_nogood_nosequence();
+   // fdlearn_nogood_nosequence();
     	//fdimprovedlearn_nogood();
     	//learn_withoutClosingPropagation();
       //this should be the one..
 //    	learn_with_lazygeneration();
 //    	learn_with_lazygeneration_and_semantic_learning();
     	//HERE
-  //  	learn_with_lazygeneration_no_bound_at_the_end();
+   	learn_with_lazygeneration_no_bound_at_the_end();
     	//      learn_nogood();
 #endif
 

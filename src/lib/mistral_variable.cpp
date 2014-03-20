@@ -2068,10 +2068,10 @@ int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 
 int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 
-		std::cout << " \n level_of " << std::endl;
+/*		std::cout << " \n level_of " << std::endl;
 		std::cout << " val " << val << std::endl;
 		std::cout << " lb  " << lb << std::endl;
-
+*/
 	if (lowerbounds.size != lower_bound_levels.size){
 		std::cout << " ERROR lowerbounds level_of END ? " << std::endl;
 		exit(1);
@@ -2086,11 +2086,11 @@ int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 	if (lb)
 	{
 
-				std::cout << "  lowerbounds.size  " << lowerbounds.size << std::endl;
+			/*	std::cout << "  lowerbounds.size  " << lowerbounds.size << std::endl;
 				std::cout << "  lowerbounds " << lowerbounds << std::endl;
 				std::cout << "  lower_bound_levels.size  " << lower_bound_levels.size << std::endl;
 				std::cout << "  lower_bound_levels " << lower_bound_levels << std::endl;
-
+*/
 		size =lowerbounds.size ;
 		while (size --)
 			if(lowerbounds[size]== val)
@@ -2102,11 +2102,11 @@ int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 	else
 	{
 
-			std::cout << "  upperbounds.size  " << upperbounds.size << std::endl;
+	/*		std::cout << "  upperbounds.size  " << upperbounds.size << std::endl;
 			std::cout << "  upperbounds " << upperbounds << std::endl;
 			std::cout << "  upper_bound_levels.size  " << upper_bound_levels.size << std::endl;
 			std::cout << "  upper_bound_levels " << upper_bound_levels << std::endl;
-
+*/
 		size =upperbounds.size ;
 		while (size --)
 			if(upperbounds[size]==val)
@@ -2118,7 +2118,6 @@ int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 	}
 	std::cout << " ERROR level_of END ? " << std::endl;
 	exit(1);
-
 
 }
 
@@ -2324,6 +2323,14 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 				return lower_bound_reasons[size];
 			}
 		std::cout << "ERROR lowerbound not found!  " << std::endl;
+		std::cout << "l"<< l << std::endl;
+		std::cout << " id : "<< id << std::endl;
+		std::cout << " value "<< val << std::endl;
+		std::cout << "lowerbounds "<< lowerbounds << std::endl;
+		std::cout << "lowerboundslevels "<< lower_bound_levels << std::endl;
+		std::cout << "lower_bound_reasons"<< lower_bound_reasons << std::endl;
+
+		std::cout << "  solver level  " << solver->level << std::endl;
 		exit(1);
 
 	}
@@ -2345,6 +2352,7 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 			}
 
 		std::cout << "ERROR upperbound not found ! " << std::endl;
+		std::cout << "  solver level  " << solver->level << std::endl;
 		exit(1);
 
 	}

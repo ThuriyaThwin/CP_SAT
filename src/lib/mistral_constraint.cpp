@@ -14522,7 +14522,7 @@ void Mistral::DomainFaithfulnessConstraint::start_over() {
 int Mistral::DomainFaithfulnessConstraint::value_exist(int value){
 
 //	if (value== 253)
-	std::cout << " \n value_exist? " << value << "\n ub :  " <<  ub << std::endl;
+	//std::cout << " \n value_exist? " << value << "\n ub :  " <<  ub << std::endl;
 
 	for(unsigned int i=0; i<ub.size; ++i)
 		if (ub[i].value == value)
@@ -14531,7 +14531,7 @@ int Mistral::DomainFaithfulnessConstraint::value_exist(int value){
 //	if (value== 253)
 //	std::cout << " \n NO ?  \n ub :  " <<  ub << std::endl;
 
-	std::cout << " \n NO ?  " <<  std::endl;
+//	std::cout << " \n NO ?  " <<  std::endl;
 
 	return -1;
 
@@ -14549,9 +14549,9 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 	Literal virtual_literal ;
 	//value =
 	if (
-			((!isub) &&  ( (value + (!isub)) > _x->lowerbounds[0] ) ) ||
-			( isub   &&    ((value + (!isub)) < _x->upperbounds[0] ) )
-			)
+			((!isub) &&  (( value+1)  > _x->lowerbounds[0] ) ) ||
+			( isub   &&    (value < _x->upperbounds[0] ) )
+	)
 
 	 virtual_literal = encode_bound_literal(scope[0].id(), value + (!isub), isub);
 	else
@@ -14708,12 +14708,7 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 				if( ub[i].x.set_domain(0) == FAIL_EVENT) {
 					std::cout << " c not possible! " << std::endl;
 					exit(1);
-					for (int j=1; j< scope.size ; ++j)
-						if (scope[j].id()== ub[i].x.id())
-						{
-							wiped = FAILURE(j);
-							//	break; ?
-						}
+
 				}
 				else{
 					for (int j = 0; j< scope.size; ++j)
@@ -14786,12 +14781,10 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 			else{
 				if(!ub[idx].x.is_ground()){
 					if( ub[idx].x.set_domain(1) == FAIL_EVENT) {
-						for (int j=1; j< scope.size ; ++j)
-							if (scope[j].id()== ub[idx].x.id()){
-								wiped = FAILURE(j);
-								std::cout << " c not possible! " << std::endl;
-								exit(1);
-							}
+						std::cout << " c not possible! " << std::endl;
+						exit(1);
+
+
 					}
 					else
 						for (int j = 0; j< scope.size; ++j)
@@ -14896,9 +14889,7 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 			if( ub[i].x.set_domain(0) == FAIL_EVENT) {
 				std::cout << " c not possible! " << std::endl;
 				exit(1);
-				for (int j=1; j< scope.size ; ++j)
-					if (scope[j].id()== ub[i].x.id())
-						wiped = FAILURE(j);
+
 			}
 			else
 				for (int j = 0; j< scope.size; ++j)
@@ -14943,11 +14934,6 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 					std::cout << " c not possible! " << std::endl;
 					exit(1);
 
-					for (int j=1; j< scope.size ; ++j)
-						if (scope[j].id()== ub[idx].x.id()){
-							wiped = FAILURE(j);
-
-						}
 				}
 				else
 					for (int j = 0; j< scope.size; ++j)
