@@ -3700,8 +3700,6 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c)
 	}
 
 
-	std::cout << " here ?  " << std::endl;
-
 	//	->chronological_dfs();
 	//Outcome  __result= __solver->depth_first_search();
 

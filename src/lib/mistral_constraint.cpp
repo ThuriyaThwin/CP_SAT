@@ -15161,26 +15161,41 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 	}
 	else
 	{
-
+		int id = a ;
+		//TODO we do not need this if generated literals are accepted at the end of learnt nogoods
 		if (is_a_bound_literal(a)){
 			std::cout <<" \n \n is_a_bound_literal? "  << std::endl;
-			exit(1);
+			if (is_lower_bound(a))
+				id = value_exist(get_value_from_literal(a) -1 );
+			else
+				id = value_exist(get_value_from_literal(a));
+
+//			exit(1);
 		}
 
 		//		int id = a/2 ;
-		int id = a ;
+
 
 		for (int i = 0 ; i < scope.size; ++i)
 			if (scope[i].id() == id) {
+				if (! scope[i].is_ground()) {
+
+					std::cout <<" \n \n boolean variable not decided! "  << std::endl;
+					exit(1);
+				}
+
 				if (eager_explanations[i]==NULL_ATOM)
 					end = &(explanation[0]);
 				else {
 				explanation[0] = eager_explanations[i];
 				end = &(explanation[0])+1;
 				}
-				break;
+				//break;
+				return &(explanation[0]);
 			}
 
+		std::cout <<" \n \n boolean variable not found "  << std::endl;
+		exit(1);
 		/*
 		for int (i= 1 ; i< scope.size ; ++i)
 				if (  == scope[0].id())
@@ -15190,7 +15205,7 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 		 */
 
 	}
-	return &(explanation[0]);
+	//return &(explanation[0]);
 
 }
 

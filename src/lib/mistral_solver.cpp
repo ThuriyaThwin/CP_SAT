@@ -37,7 +37,7 @@
 //#define _OLD_ true
 //#define _DEBUG_NOGOOD true //(statistics.num_filterings == 491)
 //#define _DEBUG_SEARCH true
-#define _DEBUG_FD_NOGOOD (level==13) //((variables.size== 16678) && (level==20)) //true // ((variables.size == 221)) //&& (solver->level == 22))//true
+#define _DEBUG_FD_NOGOOD false//(level==11) //((variables.size== 16678) && (level==20)) //true // ((variables.size == 221)) //&& (solver->level == 22))//true
 //#define _DEBUG_SHOW_LEARNT_BOUNDS true
 //#define _TRACKING_BOUND 1078
 //#define _TRACKING_ATOM 368
@@ -11474,7 +11474,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 										std::cout << " val " <<  val << std::endl;
 										std::cout << " id  " <<  range_id << std::endl;
 										std::cout << " level  " <<  level << std::endl;
-										exit (1);
+//										exit (1);
 
 									}
 
@@ -11760,7 +11760,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 									if (lvl>0){
 									if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
 									{
-										std::cout << " \n \n should_be_learnt " << std::endl;
+								//		std::cout << " \n \n should_be_learnt " << std::endl;
 
 										//std::cout << " \n \n sequence before  " << sequence << std::endl;
 										//std::cout << " \n \n sequence size before  " << sequence.size << std::endl;
@@ -11777,7 +11777,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 										if ( var< 0)
 										{
 
-											std::cout << " \n \n New var " << std::endl;
+										//	std::cout << " \n \n New var " << std::endl;
 
 											//add(tmp__);
 											tmp__.lazy_initialise(this);
@@ -11834,7 +11834,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 										value_lazy.add(val -1);
 
 //#endif
-
+									/*
 									if (tmp__.id() == 1989)
 									{
 										std::cout << " FOUND : 1989  :  " << std::endl;
@@ -11843,14 +11843,15 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 										std::cout << " id  " <<  range_id << std::endl;
 
 										std::cout << " level  " <<  level << std::endl;
-										exit (1);
+									//	exit (1);
 
 									}
+*/
 										}
 										else
 										{
 
-											std::cout << " \n \n old var " << std::endl;
+								//			std::cout << " \n \n old var " << std::endl;
 											tmp__= variables[var];
 										}
 
@@ -11893,7 +11894,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 										//if(	lvl)
 											if( !visited.fast_contain(tmp__.id()) ) {
 
-												std::cout << "visited ?  "<< std::endl;
+										//		std::cout << "visited ?  "<< std::endl;
 
 												//Sould be done later!
 												/*

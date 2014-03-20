@@ -2331,7 +2331,14 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 		std::cout << "lower_bound_reasons"<< lower_bound_reasons << std::endl;
 
 		std::cout << "  solver level  " << solver->level << std::endl;
-		exit(1);
+		int bool_var_id = domainConstraint->value_exist(val-1);
+
+		std::cout << " bool id   " << bool_var_id << std::endl;
+		if (bool_var_id<0)
+			exit(1);
+			else
+				return domainConstraint;
+
 
 	}
 	else
@@ -2353,7 +2360,12 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 
 		std::cout << "ERROR upperbound not found ! " << std::endl;
 		std::cout << "  solver level  " << solver->level << std::endl;
+
+		int bool_var_id = domainConstraint->value_exist(val);
+		if (bool_var_id<0)
 		exit(1);
+		else
+			return domainConstraint;
 
 	}
 }
