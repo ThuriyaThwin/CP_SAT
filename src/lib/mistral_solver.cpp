@@ -37,7 +37,7 @@
 //#define _OLD_ true
 //#define _DEBUG_NOGOOD true //(statistics.num_filterings == 491)
 //#define _DEBUG_SEARCH true
-#define _DEBUG_FD_NOGOOD false // (level==11) //((variables.size== 16678) && (level==20)) //true // ((variables.size == 221)) //&& (solver->level == 22))//true
+#define _DEBUG_FD_NOGOOD (level==13) //((variables.size== 16678) && (level==20)) //true // ((variables.size == 221)) //&& (solver->level == 22))//true
 //#define _DEBUG_SHOW_LEARNT_BOUNDS true
 //#define _TRACKING_BOUND 1078
 //#define _TRACKING_ATOM 368
@@ -11324,7 +11324,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 						q = *tmp;
 						++tmp;
 
-					//	std::cout << " q : "<< q << std::endl;
+						std::cout << " q : "<< q << std::endl;
 						if (is_a_bound_literal(q))
 						{
 
@@ -11365,7 +11365,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 #endif
 #ifdef 	_DEBUG_FD_NOGOOD
 							if(_DEBUG_FD_NOGOOD){
-							std::cout << "\n HERE is_a_bound_literal  "<< std::endl;
+							std::cout << "\n HERE is_a_bound_literal  "<< q <<  std::endl;
 							std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
 							std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
 							std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
@@ -11456,7 +11456,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 
 											exit(1);
 										}
-#ifdef _CHECK_NOGOOD
+//#ifdef _CHECK_NOGOOD
 									varsIds_lazy.add(range_id);
 									if (!is_lb)
 										value_lazy.add(val);
@@ -11464,7 +11464,19 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 										value_lazy.add(val -1);
 
 
-#endif
+//#endif
+
+
+									if (tmp__.id() == 1989)
+									{
+										std::cout << " FOUND : 1989  :  " << std::endl;
+										std::cout << " lvl " <<  lvl << std::endl;
+										std::cout << " val " <<  val << std::endl;
+										std::cout << " id  " <<  range_id << std::endl;
+										std::cout << " level  " <<  level << std::endl;
+										exit (1);
+
+									}
 
 								}
 								else
@@ -11601,7 +11613,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 												bound_literals_to_explore.add(__tmp);
 
 												//	__solver->variables[id_range].set_min(val_range+1);
-												//	std::cout << " Bound literal associated to :  " << variables[id_range] << " >=  " << val_range+1 <<  std::endl;
+													std::cout << " Bound literal associated to :  " << variables[id_range_] << " >=  " << val_range_+1 <<  std::endl;
 											}
 
 
@@ -11627,8 +11639,21 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 					}
 					while (bound_literals_to_explore.size)
 					{
+#ifdef 	_DEBUG_FD_NOGOOD
+						if(_DEBUG_FD_NOGOOD){
+							std::cout << " while (bound_literals_to_explore.size) " << std::endl;
+							std::cout << " bound_literals_to_explore : \n   " << bound_literals_to_explore << std::endl;
+						}
+
+#endif
 						//should be checked
 						q= bound_literals_to_explore.pop();
+#ifdef 	_DEBUG_FD_NOGOOD
+						if(_DEBUG_FD_NOGOOD)
+						std::cout << " q :  " << q << std::endl;
+
+#endif
+
 #ifdef _TRACKING_BOUND
 						Literal old = q;
 #endif
@@ -11670,7 +11695,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 								q = *tmp;
 								++tmp;
 
-								//std::cout << " q : "<< q << std::endl;
+								std::cout << " q : "<< q << std::endl;
 								if (is_a_bound_literal(q))
 								{
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
@@ -11710,7 +11735,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 #endif
 #ifdef 	_DEBUG_FD_NOGOOD
 									if(_DEBUG_FD_NOGOOD){
-									std::cout << "\n inside while : is_a_bound_literal  "<< std::endl;
+									std::cout << "\n inside while : is_a_bound_literal :: "<< q <<  std::endl;
 									std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
 									std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
 									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
@@ -11801,15 +11826,26 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 
 													exit(1);
 												}
-#ifdef _CHECK_NOGOOD
+//#ifdef _CHECK_NOGOOD
 									varsIds_lazy.add(range_id);
 									if (!is_lb)
 										value_lazy.add(val);
 									else
 										value_lazy.add(val -1);
 
-#endif
+//#endif
 
+									if (tmp__.id() == 1989)
+									{
+										std::cout << " FOUND : 1989  :  " << std::endl;
+										std::cout << " lvl " <<  lvl << std::endl;
+										std::cout << " val " <<  val << std::endl;
+										std::cout << " id  " <<  range_id << std::endl;
+
+										std::cout << " level  " <<  level << std::endl;
+										exit (1);
+
+									}
 										}
 										else
 										{
@@ -11959,7 +11995,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 														bound_literals_to_explore.add(__tmp);
 
 														//	__solver->variables[id_range].set_min(val_range+1);
-														//	std::cout << " Bound literal associated to :  " << variables[id_range] << " >=  " << val_range+1 <<  std::endl;
+															std::cout << " Bound literal associated to :  " << variables[id_range_] << " >=  " << val_range_+1 <<  std::endl;
 													}
 
 
