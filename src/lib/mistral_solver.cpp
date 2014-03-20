@@ -37,7 +37,7 @@
 //#define _OLD_ true
 //#define _DEBUG_NOGOOD true //(statistics.num_filterings == 491)
 //#define _DEBUG_SEARCH true
-#define _DEBUG_FD_NOGOOD false //(level==110) //((variables.size== 16678) && (level==20)) //true // ((variables.size == 221)) //&& (solver->level == 22))//true
+#define _DEBUG_FD_NOGOOD true //(level==110) //((variables.size== 16678) && (level==20)) //true // ((variables.size == 221)) //&& (solver->level == 22))//true
 //#define _DEBUG_SHOW_LEARNT_BOUNDS true
 //#define _TRACKING_BOUND 1078
 //#define _TRACKING_ATOM 368
@@ -5982,6 +5982,11 @@ void Mistral::Solver::fdlearn_nogood(){
 								exit(1);
 							}
 
+							if (lvl > level)
+							{
+								std::cout << " \n  (lvl > level) ! x : " << x << " ;  its domain is " << x.get_domain() << " ; its assignment_level : " << assignment_level[x.id()] << " ; while the literal q = " << q << std::endl;
+								exit(1);
+							}
 							if (x.get_min()== SIGN(q))
 							{
 								std::cout << " \n (x.get_min()== SIGN(q))" << x << "  and its domain is " << x.get_domain() << " ; its assignment_level : " << assignment_level[x.id()] << " ; while the literal q = " << q << std::endl;
@@ -6112,6 +6117,12 @@ void Mistral::Solver::fdlearn_nogood(){
 									if ((x.get_size()>1) )
 									{
 										std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+										exit(1);
+									}
+
+									if (lvl > level)
+									{
+										std::cout << " \n  (lvl > level) ! x : " << x << " ;  its domain is " << x.get_domain() << " ; its assignment_level : " << assignment_level[x.id()] << " ; while the literal q = " << q << std::endl;
 										exit(1);
 									}
 
@@ -13627,8 +13638,8 @@ Mistral::Outcome Mistral::Solver::branch_right() {
     	fdlearn_nogood_using_only_latest_bounds();
 #else
 //    	simple_fdlearn_nogood();
-    //fdlearn_nogood();
-    fdlearn_nogood_nosequence();
+    fdlearn_nogood();
+    //fdlearn_nogood_nosequence();
     	//fdimprovedlearn_nogood();
     	//learn_withoutClosingPropagation();
       //this should be the one..
