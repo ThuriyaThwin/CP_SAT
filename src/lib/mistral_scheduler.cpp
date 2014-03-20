@@ -3733,6 +3733,7 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c)
 //		params->UBinit = obj;
 		std::cout << " Lower Bound  " << stats->lower_bound;
 		std::cout << " Upper Bound  " << obj ;
+		std::cout << "Solver level " << level ;
 		std::cout << std::endl;
 
 //		std::cout << " Lower Bound  " << __stats.lower_bound ;
