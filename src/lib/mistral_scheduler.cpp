@@ -3009,8 +3009,9 @@ void SchedulingSolver::dichotomic_search()
 		  if (params->forgetall)
 		  {
 #ifdef _CHECK_NOGOOD
-			  int id_range = 	varsIds_lazy[id - start_from];
-			  int val_range = value_lazy[id - start_from];
+			  varsIds_lazy.clear();
+			  value_lazy.clear();
+			  std::cout << " clear   varsIds_lazy and  value_lazy" << std::endl;
 #endif
 			  __size = base->learnt.size;
 			  while (__size--)
