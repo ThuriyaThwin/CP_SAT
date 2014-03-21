@@ -11717,10 +11717,34 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 											if (SIGN(NOT(q))){
 												//	__solver->variables[id_range].set_max(val_range);
 												//	std::cout << " Bound literal associated to :  " << variables[id_range] << " <=  " << val_range <<  std::endl;
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+												DomainFaithfulnessConstraint * __c = static_cast<VariableRangeWithLearning*>(variables[id_range_].range_domain)->domainConstraint;
+												int tmp_size = __c->ub.size;
+												for (int i = 0; i< tmp_size; ++i)
+													if (__c->ub[i].x.id() == x.id())
+														if (val_range_!= __c->ub[i].value){
+															std::cout << " ERROR val_range_!= ub[i].value " << std::endl;
+															exit(1);
+														}
+#endif
+
+
 												Literal __tmp = encode_bound_literal(id_range_,val_range_, 1);
 												bound_literals_to_explore.add(__tmp);
 											}
 											else{
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+												DomainFaithfulnessConstraint * __c = static_cast<VariableRangeWithLearning*>(variables[id_range_].range_domain)->domainConstraint;
+												int tmp_size = __c->ub.size;
+												for (int i = 0; i< tmp_size; ++i)
+													if (__c->ub[i].x.id() == x.id())
+														if ((val_range_)!= __c->ub[i].value){
+															std::cout << " ERROR val_range_+1!= ub[i].value " << std::endl;
+															exit(1);
+														}
+#endif
+
 												Literal __tmp = encode_bound_literal(id_range_,val_range_ +1, 0);
 												bound_literals_to_explore.add(__tmp);
 
@@ -12116,10 +12140,36 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 													if (SIGN(NOT(q))){
 														//	__solver->variables[id_range].set_max(val_range);
 														//	std::cout << " Bound literal associated to :  " << variables[id_range] << " <=  " << val_range <<  std::endl;
+
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+												DomainFaithfulnessConstraint * __c = static_cast<VariableRangeWithLearning*>(variables[id_range_].range_domain)->domainConstraint;
+												int tmp_size = __c->ub.size;
+												for (int i = 0; i< tmp_size; ++i)
+													if (__c->ub[i].x.id() == x.id())
+														if (val_range_!= __c->ub[i].value){
+															std::cout << " ERROR val_range_!= ub[i].value " << std::endl;
+															exit(1);
+														}
+#endif
+
 														Literal __tmp = encode_bound_literal(id_range_,val_range_, 1);
 														bound_literals_to_explore.add(__tmp);
 													}
 													else{
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+														DomainFaithfulnessConstraint * __c = static_cast<VariableRangeWithLearning*>(variables[id_range_].range_domain)->domainConstraint;
+														int tmp_size = __c->ub.size;
+														for (int i = 0; i< tmp_size; ++i)
+															if (__c->ub[i].x.id() == x.id())
+																if ((val_range_)!= __c->ub[i].value){
+																	std::cout << " ERROR val_range_+1 != ub[i].value " << std::endl;
+																	exit(1);
+																}
+#endif
+
+
+
 														Literal __tmp = encode_bound_literal(id_range_,val_range_ +1, 0);
 														bound_literals_to_explore.add(__tmp);
 
@@ -13637,14 +13687,14 @@ Mistral::Outcome Mistral::Solver::branch_right() {
 #else
 //    	simple_fdlearn_nogood();
     //fdlearn_nogood();
-    fdlearn_nogood_nosequence();
+    //fdlearn_nogood_nosequence();
     	//fdimprovedlearn_nogood();
     	//learn_withoutClosingPropagation();
       //this should be the one..
 //    	learn_with_lazygeneration();
 //    	learn_with_lazygeneration_and_semantic_learning();
     	//HERE
-   	//learn_with_lazygeneration_no_bound_at_the_end();
+   	learn_with_lazygeneration_no_bound_at_the_end();
     	//      learn_nogood();
 #endif
 

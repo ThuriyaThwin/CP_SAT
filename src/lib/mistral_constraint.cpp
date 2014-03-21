@@ -14522,7 +14522,7 @@ void Mistral::DomainFaithfulnessConstraint::start_over() {
 int Mistral::DomainFaithfulnessConstraint::value_exist(int value){
 
 //	if (value== 253)
-	//std::cout << " \n value_exist? " << value << "\n ub :  " <<  ub << std::endl;
+	std::cout << " \n value_exist? " << value << "\n ub :  " <<  ub << std::endl;
 
 	for(unsigned int i=0; i<ub.size; ++i)
 		if (ub[i].value == value)

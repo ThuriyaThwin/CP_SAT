@@ -3114,7 +3114,9 @@ void SchedulingSolver::dichotomic_search()
 	  std::cout << " \n trail : " << trail_ << std::endl;
 
 */
+	  std::cout << " \n end first step " << std::endl;
 
+	  exit(1);
 	  ++iteration;
   } 
   //   } else if( status == SAT ) {
@@ -3612,7 +3614,7 @@ void SchedulingSolver::print_solution(std::ostream& os, std::string type)
 }
 #ifdef _CHECK_NOGOOD
 void SchedulingSolver::check_nogood(Vector<Literal> & c)
-//For each single nogood we create a new solvet with exactly the same parameters!
+//For each single nogood we create a new solver with exactly the same parameters!
 //for(int i=0; i<__nogoods.size; ++i) {//		if(!nogood_origin[i])
 {
 	StatisticList __stats;
