@@ -11530,6 +11530,15 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 									tmp__.lazy_initialise(this);
 //								dom_constraint->extend_scope(tmp__ , val,!is_lb, lvl);
 
+									std::cout << " new var :" << var << std::endl;
+									//printing  :
+									if (!is_lb)
+										dom_constraint->value_exist( val ) ;
+									else
+										dom_constraint->value_exist( val-1 ) ;
+
+
+
 									dom_constraint->extend_scope(tmp__ , val - is_lb,!is_lb, lvl);
 									base->extend_scope(tmp__);
 									//	tmp__.set_domain(!is_lb);
@@ -11599,6 +11608,15 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 								}
 								else
 								{
+
+									std::cout << " already exists : var :" << var << std::endl;
+									//printing  :
+									if (!is_lb)
+										dom_constraint->value_exist( val ) ;
+									else
+										dom_constraint->value_exist( val-1 ) ;
+
+
 									tmp__= variables[var];
 								}
 
@@ -11941,7 +11959,14 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 										if ( var< 0)
 										{
 
-										//	std::cout << " \n \n New var " << std::endl;
+
+											std::cout << " new var :" << var << std::endl;
+											//printing  :
+											if (!is_lb)
+												dom_constraint->value_exist( val ) ;
+											else
+												dom_constraint->value_exist( val-1 ) ;
+
 
 											//add(tmp__);
 											tmp__.lazy_initialise(this);
@@ -12015,7 +12040,13 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 										else
 										{
 
-								//			std::cout << " \n \n old var " << std::endl;
+											std::cout << " already exists var :" << var << std::endl;
+											//printing  :
+											if (!is_lb)
+												dom_constraint->value_exist( val ) ;
+											else
+												dom_constraint->value_exist( val-1 ) ;
+
 											tmp__= variables[var];
 										}
 
@@ -13719,10 +13750,10 @@ Mistral::Outcome Mistral::Solver::branch_right() {
     	//fdimprovedlearn_nogood();
     	//learn_withoutClosingPropagation();
       //this should be the one..
- 	learn_with_lazygeneration();
+ 	//learn_with_lazygeneration();
 //    	learn_with_lazygeneration_and_semantic_learning();
     	//HERE
-   	//learn_with_lazygeneration_no_bound_at_the_end();
+   	learn_with_lazygeneration_no_bound_at_the_end();
     	//      learn_nogood();
 #endif
 

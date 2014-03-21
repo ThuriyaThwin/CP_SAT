@@ -2609,13 +2609,23 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 			}
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-			if (bool_explanation_size==2)
-			{	 			if (get_variable_from_literal(explanation[4]) == get_variable_from_literal(explanation[5]) )
-			{
-				std::cout << " \n \n \n                     explanation[4] ==    explanation[5]        THEY SHOULD BE DIFFERENT " << std::endl;
+			if (bool_explanation_size==2){
+				if (get_variable_from_literal(explanation[4]) == get_variable_from_literal(explanation[5]) ){
+					std::cout << " \n \n \n                     explanation[4] ==    explanation[5]        THEY SHOULD BE DIFFERENT " << std::endl;
+					exit(1);
+				}
+			}
+
+			//int __var_id = ((Solver*) solver)->get_id_boolean_variable(a);
+			if (a!= scope[2].id()){
+				std::cout <<" \n \n ERROR  __var_id != scope[2].id() "  << std::endl;
 				exit(1);
 			}
+			if (!scope[2].is_ground()){
+				std::cout <<" \n \n ERROR  !scope[2].is_ground() "  << std::endl;
+				exit(1);
 			}
+
 #endif
 
 			end = &(explanation[4])+bool_explanation_size;
@@ -2627,6 +2637,12 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 			if ( get_variable_from_literal(a) == scope[1].id())
 			{
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+
+				if (!scope[2].is_ground()){
+					std::cout <<" \n \n ERROR  !scope[2].is_ground() "  << std::endl;
+					exit(1);
+				}
+
 				if (scope[2].get_min()==0)
 				{
 					std::cout << "scope[2]  should be assigned to 1" << std::endl;
@@ -2651,6 +2667,12 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 				if ( get_variable_from_literal(a) == scope[0].id())
 				{
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+
+					if (!scope[2].is_ground()){
+						std::cout <<" \n \n ERROR  !scope[2].is_ground() "  << std::endl;
+						exit(1);
+					}
+
 					if (scope[2].get_max()==1)
 					{
 						std::cout << "scope[2]  should be assigned to 0" << std::endl;
@@ -2680,7 +2702,6 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 				}
 #endif
 			}
-
 		}
 		else
 		{
@@ -2688,6 +2709,12 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 			if ( get_variable_from_literal(a) == scope[1].id())
 			{
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+
+				if (!scope[2].is_ground()){
+					std::cout <<" \n \n ERROR  !scope[2].is_ground() "  << std::endl;
+					exit(1);
+				}
+
 				if (scope[2].get_max()==1)
 				{
 					std::cout << "scope[2]  should be assigned to 0" << std::endl;
@@ -2711,6 +2738,12 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 				if ( get_variable_from_literal(a) == scope[0].id())
 				{
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+
+					if (!scope[2].is_ground()){
+						std::cout <<" \n \n ERROR  !scope[2].is_ground() "  << std::endl;
+						exit(1);
+					}
+
 					if (scope[2].get_min()==0)
 					{
 						std::cout << "scope[2]  should be assigned to 1" << std::endl;
@@ -14522,7 +14555,7 @@ void Mistral::DomainFaithfulnessConstraint::start_over() {
 int Mistral::DomainFaithfulnessConstraint::value_exist(int value){
 
 //	if (value== 253)
-	//std::cout << " \n value_exist? " << value << "\n ub :  " <<  ub << std::endl;
+//	std::cout << " \n value_exist? " << value << "\n ub :  " <<  ub << std::endl;
 
 	for(unsigned int i=0; i<ub.size; ++i)
 		if (ub[i].value == value)
@@ -15164,6 +15197,17 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 		int id = a ;
 		//TODO we do not need this if generated literals are accepted at the end of learnt nogoods
 		if (is_a_bound_literal(a)){
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+			if (is_a_bound_literal(a)){
+				int __var_id = get_variable_from_literal(a);
+				if (__var_id != scope[0].id()){
+					std::cout <<" \n \n ERROR __var_id != scope[0].id()"  << std::endl;
+					exit(1);
+				}
+			}
+#endif
+
 			std::cout <<" \n \n is_a_bound_literal? "  << std::endl;
 			if (is_lower_bound(a))
 				id = value_exist(get_value_from_literal(a) -1 );
