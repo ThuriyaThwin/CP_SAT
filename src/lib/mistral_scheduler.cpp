@@ -3114,9 +3114,9 @@ void SchedulingSolver::dichotomic_search()
 	  std::cout << " \n trail : " << trail_ << std::endl;
 
 */
-	  std::cout << " \n end first step " << std::endl;
+	 // std::cout << " \n end first step " << std::endl;
 
-	  exit(1);
+	//  exit(1);
 	  ++iteration;
   } 
   //   } else if( status == SAT ) {
