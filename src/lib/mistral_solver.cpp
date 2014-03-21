@@ -11529,14 +11529,14 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 									//add(tmp__);
 									tmp__.lazy_initialise(this);
 //								dom_constraint->extend_scope(tmp__ , val,!is_lb, lvl);
-
+/*
 									std::cout << " new var :" << var << std::endl;
 									//printing  :
 									if (!is_lb)
 										dom_constraint->value_exist( val ) ;
 									else
 										dom_constraint->value_exist( val-1 ) ;
-
+*/
 
 
 									dom_constraint->extend_scope(tmp__ , val - is_lb,!is_lb, lvl);
@@ -11608,14 +11608,14 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 								}
 								else
 								{
-
+/*
 									std::cout << " already exists : var :" << var << std::endl;
 									//printing  :
 									if (!is_lb)
 										dom_constraint->value_exist( val ) ;
 									else
 										dom_constraint->value_exist( val-1 ) ;
-
+*/
 
 									tmp__= variables[var];
 								}
@@ -11959,14 +11959,14 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 										if ( var< 0)
 										{
 
-
+/*
 											std::cout << " new var :" << var << std::endl;
 											//printing  :
 											if (!is_lb)
 												dom_constraint->value_exist( val ) ;
 											else
 												dom_constraint->value_exist( val-1 ) ;
-
+*/
 
 											//add(tmp__);
 											tmp__.lazy_initialise(this);
@@ -12040,13 +12040,13 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 										else
 										{
 
-											std::cout << " already exists var :" << var << std::endl;
+									/*		std::cout << " already exists var :" << var << std::endl;
 											//printing  :
 											if (!is_lb)
 												dom_constraint->value_exist( val ) ;
 											else
 												dom_constraint->value_exist( val-1 ) ;
-
+*/
 											tmp__= variables[var];
 										}
 
