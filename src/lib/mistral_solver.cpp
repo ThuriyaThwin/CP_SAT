@@ -10551,8 +10551,6 @@ void Mistral::Solver::learn_with_lazygeneration() {
 										value_lazy.add(val);
 									else
 										value_lazy.add(val -1);
-
-
 #endif
 
 								}
@@ -11765,6 +11763,41 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 #endif
 												Literal __tmp = encode_bound_literal(id_range_,val_range_, 1);
 
+
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+							if ((is_lower_bound(__tmp)))
+							{
+								if (variables[get_variable_from_literal(__tmp)].get_min() <  get_value_from_literal(__tmp) )
+								{
+									std::cout << "\n \n \n \n \n      FUTURE PROBLEM in recovered bound "<< std::endl;
+									std::cout << "\n is_lower_bound  "<< std::endl;
+									std::cout << " Problem comes from : "<< current_explanation << std::endl;
+									std::cout << " Range variable id : "<< get_variable_from_literal(__tmp) << std::endl;
+									std::cout << " value: "<<  get_value_from_literal(__tmp) << std::endl;
+
+									std::cout << " is a " << (is_lower_bound(__tmp) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(__tmp) << std::endl;
+									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(__tmp)].get_domain() << std::endl;
+									exit(1);
+								}
+
+							}
+							else
+								if (variables[get_variable_from_literal(__tmp)].get_max() >  get_value_from_literal(__tmp) )
+								{
+									std::cout << "\n \n \n \n \n           FUTURE PROBLEM in recovered bound "<< std::endl;
+									std::cout << "\n is_upper_bound  "<< std::endl;
+									std::cout << " Problem comes from : "<< current_explanation << std::endl;
+									std::cout << " Range variable id : "<< get_variable_from_literal(__tmp) << std::endl;
+									std::cout << " value: "<<  get_value_from_literal(__tmp) << std::endl;
+
+									std::cout << " is a " << (is_lower_bound(__tmp) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(__tmp) << std::endl;
+									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+									exit(1);
+								}
+#endif
+
+
 												bound_literals_to_explore.add(__tmp);
 
 											}
@@ -11781,6 +11814,40 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 #endif
 
 												Literal __tmp = encode_bound_literal(id_range_,val_range_ +1, 0);
+
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+							if ((is_lower_bound(__tmp)))
+							{
+								if (variables[get_variable_from_literal(__tmp)].get_min() <  get_value_from_literal(__tmp) )
+								{
+									std::cout << "\n \n \n \n \n      FUTURE PROBLEM in recovered bound "<< std::endl;
+									std::cout << "\n is_lower_bound  "<< std::endl;
+									std::cout << " Problem comes from : "<< current_explanation << std::endl;
+									std::cout << " Range variable id : "<< get_variable_from_literal(__tmp) << std::endl;
+									std::cout << " value: "<<  get_value_from_literal(__tmp) << std::endl;
+
+									std::cout << " is a " << (is_lower_bound(__tmp) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(__tmp) << std::endl;
+									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(__tmp)].get_domain() << std::endl;
+									exit(1);
+								}
+
+							}
+							else
+								if (variables[get_variable_from_literal(__tmp)].get_max() >  get_value_from_literal(__tmp) )
+								{
+									std::cout << "\n \n \n \n \n           FUTURE PROBLEM in recovered bound "<< std::endl;
+									std::cout << "\n is_upper_bound  "<< std::endl;
+									std::cout << " Problem comes from : "<< current_explanation << std::endl;
+									std::cout << " Range variable id : "<< get_variable_from_literal(__tmp) << std::endl;
+									std::cout << " value: "<<  get_value_from_literal(__tmp) << std::endl;
+
+									std::cout << " is a " << (is_lower_bound(__tmp) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(__tmp) << std::endl;
+									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+									exit(1);
+								}
+#endif
+
 												bound_literals_to_explore.add(__tmp);
 
 												//	__solver->variables[id_range].set_min(val_range+1);
@@ -12206,6 +12273,38 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 #endif
 
 														Literal __tmp = encode_bound_literal(id_range_,val_range_, 1);
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+							if ((is_lower_bound(__tmp)))
+							{
+								if (variables[get_variable_from_literal(__tmp)].get_min() <  get_value_from_literal(__tmp) )
+								{
+									std::cout << "\n \n \n \n \n      FUTURE PROBLEM in recovered bound "<< std::endl;
+									std::cout << "\n is_lower_bound  "<< std::endl;
+									std::cout << " Problem comes from : "<< current_explanation << std::endl;
+									std::cout << " Range variable id : "<< get_variable_from_literal(__tmp) << std::endl;
+									std::cout << " value: "<<  get_value_from_literal(__tmp) << std::endl;
+
+									std::cout << " is a " << (is_lower_bound(__tmp) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(__tmp) << std::endl;
+									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(__tmp)].get_domain() << std::endl;
+									exit(1);
+								}
+
+							}
+							else
+								if (variables[get_variable_from_literal(__tmp)].get_max() >  get_value_from_literal(__tmp) )
+								{
+									std::cout << "\n \n \n \n \n           FUTURE PROBLEM in recovered bound "<< std::endl;
+									std::cout << "\n is_upper_bound  "<< std::endl;
+									std::cout << " Problem comes from : "<< current_explanation << std::endl;
+									std::cout << " Range variable id : "<< get_variable_from_literal(__tmp) << std::endl;
+									std::cout << " value: "<<  get_value_from_literal(__tmp) << std::endl;
+
+									std::cout << " is a " << (is_lower_bound(__tmp) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(__tmp) << std::endl;
+									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+									exit(1);
+								}
+#endif
 														bound_literals_to_explore.add(__tmp);
 
 
@@ -12227,6 +12326,38 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 
 
 														Literal __tmp = encode_bound_literal(id_range_,val_range_ +1, 0);
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+							if ((is_lower_bound(__tmp)))
+							{
+								if (variables[get_variable_from_literal(__tmp)].get_min() <  get_value_from_literal(__tmp) )
+								{
+									std::cout << "\n \n \n \n \n      FUTURE PROBLEM in recovered bound "<< std::endl;
+									std::cout << "\n is_lower_bound  "<< std::endl;
+									std::cout << " Problem comes from : "<< current_explanation << std::endl;
+									std::cout << " Range variable id : "<< get_variable_from_literal(__tmp) << std::endl;
+									std::cout << " value: "<<  get_value_from_literal(__tmp) << std::endl;
+
+									std::cout << " is a " << (is_lower_bound(__tmp) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(__tmp) << std::endl;
+									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(__tmp)].get_domain() << std::endl;
+									exit(1);
+								}
+
+							}
+							else
+								if (variables[get_variable_from_literal(__tmp)].get_max() >  get_value_from_literal(__tmp) )
+								{
+									std::cout << "\n \n \n \n \n           FUTURE PROBLEM in recovered bound "<< std::endl;
+									std::cout << "\n is_upper_bound  "<< std::endl;
+									std::cout << " Problem comes from : "<< current_explanation << std::endl;
+									std::cout << " Range variable id : "<< get_variable_from_literal(__tmp) << std::endl;
+									std::cout << " value: "<<  get_value_from_literal(__tmp) << std::endl;
+
+									std::cout << " is a " << (is_lower_bound(__tmp) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(__tmp) << std::endl;
+									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+									exit(1);
+								}
+#endif
 														bound_literals_to_explore.add(__tmp);
 
 														//	__solver->variables[id_range].set_min(val_range+1);
@@ -13750,10 +13881,10 @@ Mistral::Outcome Mistral::Solver::branch_right() {
     	//fdimprovedlearn_nogood();
     	//learn_withoutClosingPropagation();
       //this should be the one..
- 	//learn_with_lazygeneration();
+ 	learn_with_lazygeneration();
 //    	learn_with_lazygeneration_and_semantic_learning();
     	//HERE
-   	learn_with_lazygeneration_no_bound_at_the_end();
+   	//learn_with_lazygeneration_no_bound_at_the_end();
     	//      learn_nogood();
 #endif
 
