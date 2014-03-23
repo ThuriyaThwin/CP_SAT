@@ -2748,6 +2748,14 @@ namespace Mistral {
     inline void operator=( const MinNeighborDomainOverNeighborWeight& x ) { dom_ = x.dom_; wei_ = x.wei_; }
     inline void operator=( const Variable x ) { 
       int idx = x.id();
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+      if (idx >1800 ){
+    	  std::cout << " ERRIR idx >= (initial_variablesize)" << std::endl;
+    	  exit(1);
+      }
+
+#endif
+
       int i = map[idx].size;
       Variable y;
       dom_ = 0;

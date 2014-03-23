@@ -15209,12 +15209,13 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 #endif
 
 			std::cout <<" \n \n is_a_bound_literal? "  << std::endl;
+/*
 			if (is_lower_bound(a))
 				id = value_exist(get_value_from_literal(a) -1 );
 			else
 				id = value_exist(get_value_from_literal(a));
-
-//			exit(1);
+*/
+			exit(1);
 		}
 
 		//		int id = a/2 ;
@@ -15222,15 +15223,44 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 
 		for (int i = 0 ; i < scope.size; ++i)
 			if (scope[i].id() == id) {
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+
 				if (! scope[i].is_ground()) {
 
 					std::cout <<" \n \n boolean variable not decided! "  << std::endl;
 					exit(1);
 				}
-
+#endif
 				if (eager_explanations[i]==NULL_ATOM)
 					end = &(explanation[0]);
 				else {
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+
+
+					int value__ = get_value_from_literal(eager_explanations[i]);
+
+					for (int j = 0 ; j < ub.size; ++j){
+						if (ub[j].x.id() ==id ){
+							if (ub[j].x.get_min()){
+								if (ub[j].value < value__ ){
+									std::cout <<" \n \n ERROR in Domain Faithfulness explanation ub[i].value < value__ "  << std::endl;
+									exit(1);
+								}
+							}
+							else{
+								if (ub[j].value >= value__ ){
+									std::cout <<" \n \n ERROR in Domain Faithfulness explanation : ub[i].value >= value__ "  << std::endl;
+									exit(1);
+								}
+							}
+							break;
+
+						}
+					}
+
+#endif
+
 				explanation[0] = eager_explanations[i];
 				end = &(explanation[0])+1;
 				}
