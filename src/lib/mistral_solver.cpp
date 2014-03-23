@@ -10412,7 +10412,11 @@ void Mistral::Solver::learn_with_lazygeneration() {
 					while(tmp < stop) {
 						q = *tmp;
 						++tmp;
-
+#ifdef 	_DEBUG_FD_NOGOOD
+							if(_DEBUG_FD_NOGOOD){
+						std::cout << " q : "<< q << std::endl;
+							}
+#endif
 					//	std::cout << " q : "<< q << std::endl;
 						if (is_a_bound_literal(q))
 						{
@@ -10729,7 +10733,11 @@ void Mistral::Solver::learn_with_lazygeneration() {
 							while(tmp < end_tmp_iterator) {
 								q = *tmp;
 								++tmp;
-
+#ifdef 	_DEBUG_FD_NOGOOD
+							if(_DEBUG_FD_NOGOOD){
+						std::cout << " q : "<< q << std::endl;
+							}
+#endif
 								//std::cout << " q : "<< q << std::endl;
 								if (is_a_bound_literal(q))
 								{

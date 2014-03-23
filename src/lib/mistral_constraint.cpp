@@ -42,7 +42,7 @@
 //#define _DEBUG_REASONRIWBS (get_solver()->statistics.num_filterings == 10037)
 //#define _DEBUG_WEIGHTEDBOOLSUM (id == 102)
 //#define _DEBUG_CLIQUENOTEQUAL true
-//  #define _DEBUG_DOMAINFAITHFULNESS true
+  #define _DEBUG_DOMAINFAITHFULNESS true
   //#define _DEBUG_DOMAINFAITHFULNESS true//((scope[0].id() == 153)) //&& (solver->level == 22))
 //#define _DEBUG_DOMAINFAITHFULNESS_CHECK ((scope[0].id() == 11) && (scope[0].get_max() == 734))
 
@@ -15251,6 +15251,14 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 							else{
 								if (ub[j].value >= value__ ){
 									std::cout <<" \n \n ERROR in Domain Faithfulness explanation : ub[i].value >= value__ "  << std::endl;
+									std::cout <<" \n \n ub[i].value "  << ub[j].value << std::endl;
+									std::cout <<" \n \n value__ "  << value__ << std::endl;
+									std::cout <<" \n \n  get_variable_from_literal(eager_explanations[i]) "  <<  get_variable_from_literal(eager_explanations[i]) << std::endl;
+									std::cout <<" \n \n  is a lower bound ?  "  <<  is_lower_bound(eager_explanations[i]) << std::endl;
+									std::cout <<" \n \n id "  << id << std::endl;
+									std::cout <<" \n \n  a"  << a << std::endl;
+									std::cout <<" \n \n  variables [a]"  << ((Solver *)solver)->variables[a] << std::endl;
+
 									exit(1);
 								}
 							}
