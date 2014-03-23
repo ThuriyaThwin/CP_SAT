@@ -15236,35 +15236,66 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 				else {
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+					int value__ ;
+					if (is_a_bound_literal(eager_explanations[i])) {
+						value__ = get_value_from_literal(eager_explanations[i]);
 
-
-					int value__ = get_value_from_literal(eager_explanations[i]);
-
-					for (int j = 0 ; j < ub.size; ++j){
-						if (ub[j].x.id() ==id ){
-							if (ub[j].x.get_min()){
-								if (ub[j].value < value__ ){
-									std::cout <<" \n \n ERROR in Domain Faithfulness explanation ub[i].value < value__ "  << std::endl;
-									exit(1);
+						for (int j = 0 ; j < ub.size; ++j){
+							if (ub[j].x.id() ==id ){
+								if (ub[j].x.get_min()){
+									if (ub[j].value < value__ ){
+										std::cout <<" \n \n ERROR in Domain Faithfulness explanation ub[i].value < value__ "  << std::endl;
+										exit(1);
+									}
 								}
-							}
-							else{
-								if (ub[j].value >= value__ ){
-									std::cout <<" \n \n ERROR in Domain Faithfulness explanation : ub[i].value >= value__ "  << std::endl;
-									std::cout <<" \n \n ub[i].value "  << ub[j].value << std::endl;
-									std::cout <<" \n \n value__ "  << value__ << std::endl;
-									std::cout <<" \n \n  get_variable_from_literal(eager_explanations[i]) "  <<  get_variable_from_literal(eager_explanations[i]) << std::endl;
-									std::cout <<" \n \n  is a lower bound ?  "  <<  is_lower_bound(eager_explanations[i]) << std::endl;
-									std::cout <<" \n \n id "  << id << std::endl;
-									std::cout <<" \n \n  a"  << a << std::endl;
-									std::cout <<" \n \n  variables [a]"  << ((Solver *)solver)->variables[a] << std::endl;
+								else{
+									if (ub[j].value >= value__ ){
+										std::cout <<" \n \n ERROR in Domain Faithfulness explanation : ub[i].value >= value__ "  << std::endl;
+										std::cout <<" \n \n ub[i].value "  << ub[j].value << std::endl;
+										std::cout <<" \n \n ub "  << ub << std::endl;
+										std::cout <<" \n \n value__ "  << value__ << std::endl;
+										std::cout <<" \n \n  get_variable_from_literal(eager_explanations[i]) "  <<  get_variable_from_literal(eager_explanations[i]) << std::endl;
+										std::cout <<" \n \n  is a bound literal?  "  <<  is_a_bound_literal(eager_explanations[i]) << std::endl;
+										std::cout <<" \n \n  is a lower bound ?  "  <<  is_lower_bound(eager_explanations[i]) << std::endl;
+										std::cout <<" \n \n id "  << id << std::endl;
+										std::cout <<" \n \n  a"  << a << std::endl;
+										std::cout <<" \n \n  variables [a]"  << ((Solver *)solver)->variables[a] << std::endl;
 
-									exit(1);
+										exit(1);
+									}
 								}
-							}
-							break;
+								break;
 
+							}
 						}
+					}
+					else{
+						int id__explanation = ((Solver*)solver)->get_id_boolean_variable(eager_explanations[i]);
+						for (int j = 0 ; j < ub.size; ++j)
+							if (ub[j].x.id() ==id__explanation ){
+								value__= ub[j].value;
+								break;
+							}
+
+
+						for (int j = 0 ; j < ub.size; ++j)
+							if (ub[j].x.id() ==id ){
+								if (ub[j].x.get_min()){
+									if (ub[j].value < value__ ){
+										std::cout <<" \n \n ERROR in Domain Faithfulness explanation ub[i].value < value__ "  << std::endl;
+										exit(1);
+									}
+								}
+								else{
+									if (ub[j].value >= value__ ){
+										if (ub[j].value > value__ ){
+											std::cout <<" \n \n ERROR in Domain Faithfulness explanation : ub[i].value >= value__ "  << std::endl;
+											exit(1);
+										}
+									}
+									break;
+								}
+							}
 					}
 
 #endif
