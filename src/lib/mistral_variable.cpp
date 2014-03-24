@@ -1825,6 +1825,21 @@ Mistral::Event Mistral::Variable::restore() {
     evt = expression->get_self().restore();
   }
   else {
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+
+	  if (get_solver()->assignment_level[id()] != get_solver()->level)
+	  {
+		  std::cout << "ERROR in restore boolean" << std::endl;
+		  std::cout << " variable " << this << std::endl;
+		  std::cout << " id " << id() << std::endl;
+		  std::cout << " get_solver()->assignment_level .size " <<get_solver()->assignment_level.size << std::endl;
+		  std::cout << " domain" << get_domain() << std::endl;
+		  std::cout << " get_solver()->assignment_level[id()]" <<get_solver()->assignment_level[id()]<< std::endl;
+		  exit(1);
+	  }
+#endif
+
     *bool_domain = 3;
     //evt = NO_EVENT;
   } 
