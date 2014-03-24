@@ -1962,7 +1962,7 @@ bool Mistral::VariableRangeWithLearning::should_be_learnt (Literal q) {
 	std::cout << " __level of literal : " <<  __level <<std::endl;
 	std::cout << " should be learnt ? " <<  (__level < solver->level) <<std::endl;
 */
-	return (__level < solver->level) ;
+	return (__level < (solver->level)) ;
 
 /*
 //	std::cout << " value :  " << value <<std::endl;

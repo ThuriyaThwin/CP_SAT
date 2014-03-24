@@ -11145,6 +11145,34 @@ void Mistral::Solver::learn_with_lazygeneration() {
 			}
 			std::cout << "END! current level  "  << level << " \n and backtrack_level :     " << backtrack_level << std::endl;
 			 */
+			// bug in instance 1
+			Vector<Literal > tmp_nogood;
+			tmp_nogood.add(241) ;
+			tmp_nogood.add(3811) ;
+			tmp_nogood.add(3798) ;
+			tmp_nogood.add(3796) ;
+			tmp_nogood.add(3795) ;
+
+			if (learnt_clause.size == tmp_nogood.size){
+				bool equal = true;
+				for (int i = 0; i < learnt_clause.size ; ++i)
+					if (learnt_clause[i]!= tmp_nogood[i]){
+						equal=false;
+						break;
+					}
+
+				if (equal){
+					std::cout << "learnt_clause==tmp_nogood  " <<std::endl;
+					std::cout << "\n \n simple_fdlearn_nogood " <<std::endl;
+					simple_fdlearn_nogood();
+					std::cout << "\n \n simple_fdlearn_nogood " <<std::endl;
+					fdlearn_nogood();
+					std::cout << "\n \n fdlearn_nogood_nosequence " <<std::endl;
+					fdlearn_nogood_nosequence();
+
+					exit(1);
+				}
+			}
 
 			((SchedulingSolver *) this)->	check_nogood(learnt_clause);
 			//	store_nogood(learnt_clause);
