@@ -3588,7 +3588,7 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 		__solver = new L_sum_Model(__jsp, params, -1);
 	}
 	else {
-		//	std::cout << "c unknown objective, exiting" << std::endl;
+		std::cout << "c unknown objective, exiting" << std::endl;
 		exit(1);
 	}
 	__solver->consolidate();
