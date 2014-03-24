@@ -14446,7 +14446,7 @@ std::ostream& Mistral::ConstraintCliqueNotEqual::display(std::ostream& os) const
 
 Mistral::DomainFaithfulnessConstraint::DomainFaithfulnessConstraint(Vector< Variable >& scp)
 : GlobalConstraint(scp) { //priority = 2;
-	  priority = 2;
+	priority = 2;
 	if (scp.size == 1){
 		_x =   static_cast<VariableRangeWithLearning*>(scp[0].range_domain) ;
 		_x-> domainConstraint = this;
@@ -14503,7 +14503,7 @@ void Mistral::DomainFaithfulnessConstraint::start_over() {
 	events.index_ = changes.index_;
 
 
-	  int old_size = scope.size;
+	int old_size = scope.size;
 	Event * tmp_event_type = new Event[scope.size];
 	int * tmp_solution = new int[scope.size];
 	Constraint* tmpself = new Constraint[scope.size];
@@ -14515,7 +14515,7 @@ void Mistral::DomainFaithfulnessConstraint::start_over() {
 	delete [] event_type;
 	event_type = tmp_event_type;
 
-//	event_type[old_size] = NO_EVENT;
+	//	event_type[old_size] = NO_EVENT;
 
 	for(unsigned int i=0; i<old_size; ++i)
 		tmp_solution[i] = solution[i];
@@ -14539,7 +14539,7 @@ void Mistral::DomainFaithfulnessConstraint::start_over() {
 
 
 }
-	void Mistral::DomainFaithfulnessConstraint::initialise() {
+void Mistral::DomainFaithfulnessConstraint::initialise() {
 	ConstraintImplementation::initialise();
 	for(unsigned int i=0; i<scope.size; ++i) {
 		//trigger_on(_VALUE_, scope[i]);
@@ -14554,17 +14554,17 @@ void Mistral::DomainFaithfulnessConstraint::start_over() {
 
 int Mistral::DomainFaithfulnessConstraint::value_exist(int value){
 
-//	if (value== 253)
+	//	if (value== 253)
 	std::cout << " \n value_exist? " << value << "\n ub :  " <<  ub << std::endl;
 
 	for(unsigned int i=0; i<ub.size; ++i)
 		if (ub[i].value == value)
 			return ub[i].x.id();
 
-//	if (value== 253)
-//	std::cout << " \n NO ?  \n ub :  " <<  ub << std::endl;
+	//	if (value== 253)
+	//	std::cout << " \n NO ?  \n ub :  " <<  ub << std::endl;
 
-//	std::cout << " \n NO ?  " <<  std::endl;
+	//	std::cout << " \n NO ?  " <<  std::endl;
 
 	return -1;
 
@@ -14586,10 +14586,10 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 			( isub   &&    (value < _x->upperbounds[0] ) )
 	)
 
-	 virtual_literal = encode_bound_literal(scope[0].id(), value + (!isub), isub);
+		virtual_literal = encode_bound_literal(scope[0].id(), value + (!isub), isub);
 	else
 		virtual_literal = NULL_ATOM;
-//	dom_constraint->eager_explanations[dom_constraint->eager_explanations.size -1]
+	//	dom_constraint->eager_explanations[dom_constraint->eager_explanations.size -1]
 
 	eager_explanations.add(virtual_literal);
 
@@ -14629,21 +14629,21 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 	index = tmpindex;
 
 
-/*	std:: cout << " \n BEFORE : scope.size " << scope.size << std::endl;
+	/*	std:: cout << " \n BEFORE : scope.size " << scope.size << std::endl;
 	std:: cout << "changes.size " << changes.size << std::endl;
 	std:: cout << "changes.list_capacity " << changes.list_capacity << std::endl;
 	std:: cout << "changes.index_capacity " << changes.index_capacity << std::endl;
 	std:: cout << "changes " << changes << std::endl;
-*/
-   if ((changes.list_capacity < scope.size) || (changes.index_capacity < scope.size))
-    	changes.extend_lists();
+	 */
+	if ((changes.list_capacity < scope.size) || (changes.index_capacity < scope.size))
+		changes.extend_lists();
 
-/*	std:: cout << " \n After : scope.size " << scope.size << std::endl;
+	/*	std:: cout << " \n After : scope.size " << scope.size << std::endl;
 	std:: cout << "changes.size " << changes.size << std::endl;
 	std:: cout << "changes.list_capacity " << changes.list_capacity << std::endl;
 	std:: cout << "changes.index_capacity " << changes.index_capacity << std::endl;
 	std:: cout << "changes " << changes << std::endl;
-*/
+	 */
 
 
 	events.size = changes.size;
@@ -14651,14 +14651,14 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 	events.list_capacity = changes.list_capacity;
 	events.list_ = changes.list_;
 	events.index_ = changes.index_;
-//	events.start_ = changes.start_;
+	//	events.start_ = changes.start_;
 
 
 	if (events.start_){
-	std::cout << "start_ " << events.start_ << std::endl;
-	std::cout << "exit start_ " << *events.start_ << std::endl;
+		std::cout << "start_ " << events.start_ << std::endl;
+		std::cout << "exit start_ " << *events.start_ << std::endl;
 
-	exit(1);
+		exit(1);
 	}
 
 
@@ -14682,8 +14682,7 @@ void Mistral::DomainFaithfulnessConstraint::mark_domain() {
 	}
 }
 
-Mistral::DomainFaithfulnessConstraint::~DomainFaithfulnessConstraint()
-{
+Mistral::DomainFaithfulnessConstraint::~DomainFaithfulnessConstraint(){
 #ifdef _DEBUG_MEMORY
 	std::cout << "c delete DomainFaithfulnessConstraint constraint" << std::endl;
 #endif
@@ -14697,16 +14696,16 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 #ifdef	_DEBUG_DOMAINFAITHFULNESS
 	if (_DEBUG_DOMAINFAITHFULNESS){
-	std::cout << " \n propagate DomainFaithfulnessConstraint \n ub " <<  ub << std::endl;
-	std::cout << " \n propagate DomainFaithfulnessConstraint \n id =  " <<  scope[0].id() << std::endl;
+		std::cout << " \n propagate DomainFaithfulnessConstraint \n ub " <<  ub << std::endl;
+		std::cout << " \n propagate DomainFaithfulnessConstraint \n id =  " <<  scope[0].id() << std::endl;
 
-	std::cout << " \n \n variables domains : \n " << std::endl;
+		std::cout << " \n \n variables domains : \n " << std::endl;
 
-	for (int i = 0; i< scope.size; ++i)
-	{
-		std::cout << scope[i] <<" :  " << scope[i].get_domain() << std::endl;
+		for (int i = 0; i< scope.size; ++i)
+		{
+			std::cout << scope[i] <<" :  " << scope[i].get_domain() << std::endl;
 
-	}
+		}
 
 	}
 #endif
@@ -14723,7 +14722,7 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 			 )
 
 				 explanation[++tmp] =  encode_bound_literal(scope[0].id(),scope[0].get_max(),1) ;
-			 */
+	 */
 	int _lb = scope[0].get_min();
 	int _ub = scope[0].get_max();
 	int index_lb = ub.size +1 , index_ub = -2, latestindex_lb, latestindex_ub;
@@ -14748,7 +14747,7 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 						if ( scope[j].id() == ub[i].x.id()){
 							if (
 									_lb >
-							             _x->lowerbounds[0]
+							_x->lowerbounds[0]
 							)
 								eager_explanations[j]=encode_bound_literal(scope[0].id(), _lb, 0);
 							else
@@ -14769,7 +14768,7 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 									_lb >
 							_x->lowerbounds[0]
 							)
-							tmp = 	encode_bound_literal( scope[0].id() , _lb , 0) ;
+								tmp = 	encode_bound_literal( scope[0].id() , _lb , 0) ;
 							else
 								tmp=NULL_ATOM;
 							explanation[0] = tmp;
@@ -14795,10 +14794,10 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 #ifdef	_DEBUG_DOMAINFAITHFULNESS
 	if (_DEBUG_DOMAINFAITHFULNESS){
-	std::cout << " index_lb " << index_lb <<std::endl;
-	if (index_lb < ub.size)
-		std::cout << " index_lb " << ub[index_lb] <<std::endl;
-}
+		std::cout << " index_lb " << index_lb <<std::endl;
+		if (index_lb < ub.size)
+			std::cout << " index_lb " << ub[index_lb] <<std::endl;
+	}
 #endif
 
 	//Use the current ub to enforce bound literals to be true
@@ -14824,11 +14823,11 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 							if ( scope[j].id() == ub[idx].x.id()){
 								if (
 										_ub <
-								_x->upperbounds[0]
+										_x->upperbounds[0]
 								)
-								eager_explanations[j]=encode_bound_literal(scope[0].id(), _ub, 1);
+									eager_explanations[j]=encode_bound_literal(scope[0].id(), _ub, 1);
 								else
-								eager_explanations[j]=NULL_ATOM;
+									eager_explanations[j]=NULL_ATOM;
 								break;
 							}
 				}
@@ -14872,9 +14871,9 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 #ifdef	_DEBUG_DOMAINFAITHFULNESS
 	if (_DEBUG_DOMAINFAITHFULNESS){
-	std::cout << " index_ub " << index_ub <<std::endl;
-	if (index_ub >= 0 )
-		std::cout << " index_ub " << ub[index_ub] <<std::endl;
+		std::cout << " index_ub " << index_ub <<std::endl;
+		if (index_ub >= 0 )
+			std::cout << " index_ub " << ub[index_ub] <<std::endl;
 	}
 #endif
 
@@ -14901,13 +14900,13 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 #ifdef	_DEBUG_DOMAINFAITHFULNESS
 	if (_DEBUG_DOMAINFAITHFULNESS){
-	std::cout << " latestindex_lb " << latestindex_lb <<std::endl;
-	if (latestindex_lb < ub.size)
-		std::cout << " latestindex_lb " << ub[latestindex_lb] <<std::endl;
-	std::cout << " latestindex_ub " << latestindex_ub <<std::endl;
+		std::cout << " latestindex_lb " << latestindex_lb <<std::endl;
+		if (latestindex_lb < ub.size)
+			std::cout << " latestindex_lb " << ub[latestindex_lb] <<std::endl;
+		std::cout << " latestindex_ub " << latestindex_ub <<std::endl;
 
-	if (latestindex_ub >= 0 &&  latestindex_ub < ub.size)
-		std::cout << " latestindex_ub " << ub[latestindex_ub] <<std::endl;
+		if (latestindex_ub >= 0 &&  latestindex_ub < ub.size)
+			std::cout << " latestindex_ub " << ub[latestindex_ub] <<std::endl;
 	}
 #endif
 
@@ -15035,10 +15034,10 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 		if(_x->set_min(ub[latestindex_lb].value +1  ,cl ) == FAIL_EVENT) {
 			wiped = FAILURE(0);
 			if (
-													_ub <
-													_x->upperbounds[0]
-											)
-			tmp = 	encode_bound_literal(scope[0].id() , _ub, 1);
+					_ub <
+					_x->upperbounds[0]
+			)
+				tmp = 	encode_bound_literal(scope[0].id() , _ub, 1);
 			else
 				tmp=NULL_ATOM;
 			explanation[0] = tmp;
@@ -15073,9 +15072,9 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 			if (
 					_lb >
-					_x->lowerbounds[0]
+	_x->lowerbounds[0]
 			)
-			tmp = 	encode_bound_literal(scope[0].id() , _lb, 0);
+				tmp = 	encode_bound_literal(scope[0].id() , _lb, 0);
 			else
 				tmp = NULL_ATOM;
 			explanation[0] = tmp;
@@ -15095,18 +15094,18 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 #ifdef	_DEBUG_DOMAINFAITHFULNESS
 	if (_DEBUG_DOMAINFAITHFULNESS){
-	std::cout << " \n At the end :  DomainFaithfulnessConstraint \n ub " <<  ub << std::endl;
+		std::cout << " \n At the end :  DomainFaithfulnessConstraint \n ub " <<  ub << std::endl;
 
 
-	std::cout << " \n \n variables domains : \n " << std::endl;
+		std::cout << " \n \n variables domains : \n " << std::endl;
 
-	for (int i = 0; i< scope.size; ++i)
-	{
-		std::cout << scope[i] <<" :  " << scope[i].get_domain() << std::endl;
+		for (int i = 0; i< scope.size; ++i)
+		{
+			std::cout << scope[i] <<" :  " << scope[i].get_domain() << std::endl;
 
-	}
+		}
 
-	std::cout << " \n \n\n " << std::endl;
+		std::cout << " \n \n\n " << std::endl;
 	}
 #endif
 
@@ -15127,13 +15126,13 @@ int Mistral::DomainFaithfulnessConstraint::check( const int* s ) const {
 
 	}
 #endif
-/*
+	/*
 	for (int i = 0 ; i < scope.size ; ++i)
 		if (s[i]!= scope[i].get_min()){
 			std::cout << " \n \n error s[i]!= scope[i].get_min() \n " << std::endl;
 			exit(1);
 		}
-*/
+	 */
 
 	int v = s[0];
 	int value;
@@ -15209,12 +15208,12 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 #endif
 
 			std::cout <<" \n \n is_a_bound_literal? "  << std::endl;
-/*
+			/*
 			if (is_lower_bound(a))
 				id = value_exist(get_value_from_literal(a) -1 );
 			else
 				id = value_exist(get_value_from_literal(a));
-*/
+			 */
 			exit(1);
 		}
 
@@ -15300,8 +15299,8 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 
 #endif
 
-				explanation[0] = eager_explanations[i];
-				end = &(explanation[0])+1;
+					explanation[0] = eager_explanations[i];
+					end = &(explanation[0])+1;
 				}
 				//break;
 				return &(explanation[0]);
@@ -15335,14 +15334,14 @@ std::ostream& Mistral::operator<< (std::ostream& os, const Mistral::__boundLiter
  **********************************************/
 
 void Mistral::ConstraintMultiAtMostSeqCard::initialise_struct(const int k, const int d, const int* p, const int* q) {
-  priority = 0;  
+  priority = 0;
 
   _k = k;
   _d = d;
   if(_k) {
     _p = new int[_k];
     _q =  new int[_k];
-    memcpy(_p, p, _k*sizeof(int));    
+    memcpy(_p, p, _k*sizeof(int));
     memcpy(_q, q, _k*sizeof(int));
   }
 
@@ -15352,13 +15351,13 @@ void Mistral::ConstraintMultiAtMostSeqCard::initialise_struct(const int k, const
   // }
   // std::cout << std::endl;
 
-  
-  wl = NULL; 
-  wr = NULL; 
-  occurrences = NULL; 
-  cardinality = NULL; 
-  lcumulated = NULL; 
-  rcumulated = NULL; 
+
+  wl = NULL;
+  wr = NULL;
+  occurrences = NULL;
+  cardinality = NULL;
+  lcumulated = NULL;
+  rcumulated = NULL;
 }
 
 Mistral::ConstraintMultiAtMostSeqCard::ConstraintMultiAtMostSeqCard()

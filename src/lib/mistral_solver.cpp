@@ -5116,7 +5116,7 @@ void Mistral::Solver::fdlearn_nogood_nosequence(){
 	//	else
 	{
 #ifdef 	_DEBUG_FD_NOGOOD
-			std::cout << " \n\n\n fdlearn_nogood : \n Decisions size" << decisions.size << " and the variables : \n        " << decisions << " \n and level = " << level << std::endl;
+		std::cout << " \n\n\n fdlearn_nogood : \n Decisions size" << decisions.size << " and the variables : \n        " << decisions << " \n and level = " << level << std::endl;
 #endif
 		/*
 		int size = Visited_lower_bound_variables .size;
@@ -5362,8 +5362,8 @@ void Mistral::Solver::fdlearn_nogood_nosequence(){
 							}
 
 #endif
-			//				std::cout << " \n before?? " <<lvl  << std::endl;
-			//				std::cout << " \n visited ?? " << visited << std::endl;
+							//				std::cout << " \n before?? " <<lvl  << std::endl;
+							//				std::cout << " \n visited ?? " << visited << std::endl;
 
 							//todo should be search_root!
 							if(		lvl)
@@ -5384,7 +5384,7 @@ void Mistral::Solver::fdlearn_nogood_nosequence(){
 										// we'll need to replace 'a' by its parents since its level is too high
 										++pathC;
 										boolean_vairables_to_explore.add(get_id_boolean_variable(q));
-						//				std::cout << " \n add to boolean_vairables_to_explore : variable b" << get_id_boolean_variable(q) << std::endl;
+										//				std::cout << " \n add to boolean_vairables_to_explore : variable b" << get_id_boolean_variable(q) << std::endl;
 
 									} else {
 										// q's level is below the current level, we are not expending it further
@@ -5394,8 +5394,8 @@ void Mistral::Solver::fdlearn_nogood_nosequence(){
 											backtrack_level = lvl;
 									}
 								}
-				//			std::cout << " \n ?? " << get_id_boolean_variable(q) << std::endl;
-				//			std::cout << " \n visited ?? " << visited << std::endl;
+							//			std::cout << " \n ?? " << get_id_boolean_variable(q) << std::endl;
+							//			std::cout << " \n visited ?? " << visited << std::endl;
 
 						}
 					}
@@ -5530,7 +5530,7 @@ void Mistral::Solver::fdlearn_nogood_nosequence(){
 												 */
 												++pathC;
 												boolean_vairables_to_explore.add(get_id_boolean_variable(q));
-					//							std::cout << " \n add to boolean_vairables_to_explore : variable b" << get_id_boolean_variable(q) << std::endl;
+												//							std::cout << " \n add to boolean_vairables_to_explore : variable b" << get_id_boolean_variable(q) << std::endl;
 
 											} else {
 												// q's level is below the current level, we are not expending it further
@@ -5548,7 +5548,7 @@ void Mistral::Solver::fdlearn_nogood_nosequence(){
 
 				}
 			}
-/*
+			/*
 			//			if( pathC > 0 )
 			//check index!
 			while(!visited.fast_contain(sequence[++index].id())) {
@@ -5566,7 +5566,7 @@ void Mistral::Solver::fdlearn_nogood_nosequence(){
 #endif
 
 			};
-*/
+			 */
 
 
 			std::cout << "\n \n \n boolean_vairables_to_explore  ==  " << boolean_vairables_to_explore << std::endl;
@@ -5583,8 +5583,8 @@ void Mistral::Solver::fdlearn_nogood_nosequence(){
 				}
 
 				x = variables[a];
-//			if( pathC > 0 ) {
-		//		x = sequence[index];
+				//			if( pathC > 0 ) {
+				//		x = sequence[index];
 				a = x.id();
 				//  p = ((2*a) | (x.get_min()));
 				p= encode_boolean_variable_as_literal(x.id(),x.get_min() );
@@ -5599,8 +5599,8 @@ void Mistral::Solver::fdlearn_nogood_nosequence(){
 				//std::cout << " explore the variable x " << x << std::endl;
 						std::cout << " pathC " << pathC << std::endl;
 				 */
-		//	}
-	//		if( pathC > 0 ) {
+				//	}
+				//		if( pathC > 0 ) {
 
 				// there are still atoms to expend, we start with 'a'
 
@@ -5611,7 +5611,7 @@ void Mistral::Solver::fdlearn_nogood_nosequence(){
 
 				//		current_explanation = jsp_reason_for[a-start_from];
 				visited.fast_add(a);
-	//		}
+				//		}
 			}
 			else //if (pathC==0)
 			{
@@ -5754,14 +5754,14 @@ void Mistral::Solver::fdlearn_nogood(){
 	propagate_literal_in_learnt_clause= true;
 #endif
 
-//	if (level < 3)
-//		simple_fdlearn_nogood();
-//	else
+	//	if (level < 3)
+	//		simple_fdlearn_nogood();
+	//	else
 	{
 #ifdef 	_DEBUG_FD_NOGOOD
-	//	std::cout << " \n\n\n fdlearn_nogood : \n Decisions size" << decisions.size << " and the variables : \n        " << decisions << " \n and level = " << level << std::endl;
+		//	std::cout << " \n\n\n fdlearn_nogood : \n Decisions size" << decisions.size << " and the variables : \n        " << decisions << " \n and level = " << level << std::endl;
 #endif
-/*
+		/*
 		int size = Visited_lower_bound_variables .size;
 		//	std::cout << "size  Visited_lower_bound_variables \n " << size << std::endl;
 		while (size--)
@@ -5782,7 +5782,7 @@ void Mistral::Solver::fdlearn_nogood(){
 
 		Visited_lower_bound_variables.clear() ;
 		Visited_upper_bound_variables.clear() ;
-*/
+		 */
 
 
 		int pathC = 0, index = sequence.size-1;
@@ -5797,10 +5797,10 @@ void Mistral::Solver::fdlearn_nogood(){
 
 		// We start from the constraint that failed
 		Explanation *current_explanation ;
-//		if (__failure)
-//			current_explanation=__failure;
-//		else
-			current_explanation= culprit.propagator;
+		//		if (__failure)
+		//			current_explanation=__failure;
+		//		else
+		current_explanation= culprit.propagator;
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 		if (culprit.propagator!=__failure)
@@ -5862,8 +5862,8 @@ void Mistral::Solver::fdlearn_nogood(){
 					std::cout << "pathC =  "<< pathC << std::endl;
 					std::cout << "id of the variable =  "<< a << std::endl;
 					std::cout << " variable[id] =  "<< variables[a] << std::endl;
-				//	std::cout << " min =  "<< variables[a].get_min() << std::endl;
-				//	std::cout << " max =  "<< variables[a].get_max() << std::endl;
+					//	std::cout << " min =  "<< variables[a].get_min() << std::endl;
+					//	std::cout << " max =  "<< variables[a].get_max() << std::endl;
 					std::cout << " domain =  "<< variables[a].get_domain() << std::endl;
 					std::cout << " reason_for =  "<< reason_for[a] << std::endl;
 					std::cout << "its literal without negation =  "<< encode_boolean_variable_as_literal(a, variables[a].get_min() ) << std::endl;
@@ -5896,7 +5896,7 @@ void Mistral::Solver::fdlearn_nogood(){
 
 						exit(1);
 					}
-					*/
+					 */
 				}
 				else{
 
@@ -6003,7 +6003,7 @@ void Mistral::Solver::fdlearn_nogood(){
 
 #endif
 							//todo should be search_root!
-						if(		lvl)
+							if(		lvl)
 								if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
 									//Sould be done later!
 									/*
@@ -6017,7 +6017,7 @@ void Mistral::Solver::fdlearn_nogood(){
 									visited.fast_add(get_id_boolean_variable(q));
 
 									if(lvl >= level) {
-//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+										//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 										// we'll need to replace 'a' by its parents since its level is too high
 										++pathC;
 									} else {
@@ -6037,7 +6037,7 @@ void Mistral::Solver::fdlearn_nogood(){
 #ifdef _TRACKING_BOUND
 						Literal old = q;
 #endif
-/*
+						/*
 						if ( static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->first_time_visited(is_lower_bound(q)) )
 						{
 							if (is_lower_bound(q))
@@ -6045,7 +6045,7 @@ void Mistral::Solver::fdlearn_nogood(){
 							else
 								Visited_upper_bound_variables.add(static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain));
 						}
-*/
+						 */
 						bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->reason_for(q) ;
 						graph_size++;
 #ifdef 	_DEBUG_FD_NOGOOD
@@ -6156,14 +6156,14 @@ void Mistral::Solver::fdlearn_nogood(){
 
 											if(lvl >= level) {
 												// we'll need to replace 'a' by its parents since its level is too high
-	/*											std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+												/*											std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 												std::cout << " s.t. explanation coming from : " << bound_explanation << std::endl;
 												std::cout << "\n explaination comes from  "<< old << std::endl;
 												std::cout << "which corresponds to " << std::endl;
 												std::cout << " Range variable id : "<< get_variable_from_literal(old) << std::endl;
 												std::cout << " is a " << (is_lower_bound(old) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(old) << std::endl;
 												std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(old)].get_domain() << std::endl;
-*/
+												 */
 												++pathC;
 											} else {
 												// q's level is below the current level, we are not expending it further
@@ -6208,7 +6208,7 @@ void Mistral::Solver::fdlearn_nogood(){
 				p= encode_boolean_variable_as_literal(x.id(),x.get_min() );
 				//		p = ((2*a) | (x.get_min())) + start_from;
 				lvl = assignment_level[a];
-/*
+				/*
 				std::cout << " we will explore the variable  " << x << std::endl;
 				std::cout << " its min is " << x.get_min() << std::endl;
 				std::cout << " its max is " << x.get_max() << std::endl;
@@ -6216,7 +6216,7 @@ void Mistral::Solver::fdlearn_nogood(){
 				std::cout << " level is " << level << std::endl;
 				//std::cout << " explore the variable x " << x << std::endl;
 						std::cout << " pathC " << pathC << std::endl;
-						*/
+				 */
 			}
 			if( pathC > 0 ) {
 
@@ -6233,8 +6233,8 @@ void Mistral::Solver::fdlearn_nogood(){
 			else if (pathC==0)
 			{
 				//TODO check if we can have paTHC=0 + give explanation in a failure on ExplainedContDisjunctioReif
-					std::cout << "\n \n \n PatyhC == 0 !!!!! " << pathC << std::endl;
-					exit(1);
+				std::cout << "\n \n \n PatyhC == 0 !!!!! " << pathC << std::endl;
+				exit(1);
 				//		std::cout << "backtrack level =" << backtrack_level << std::endl;
 				//		std::cout << "level =" << level << std::endl;
 
@@ -6318,7 +6318,7 @@ void Mistral::Solver::fdlearn_nogood(){
 			}
 			else
 			{
-			//	if (pathC !=1)
+				//	if (pathC !=1)
 				{
 					std::cout << "PatyhC < 0 !!!!! " << pathC << std::endl;
 					exit(1);
@@ -6361,17 +6361,17 @@ void Mistral::Solver::fdlearn_nogood(){
 #endif
 
 #ifdef _CHECK_NOGOOD
-	//	if (graph_size <35)
+		//	if (graph_size <35)
 		{
 			std::cout << "graph_size : "  << graph_size  << std::endl;
 			std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
-/*
+			/*
 			for (int i = 0; i< learnt_clause.size; ++i)
 			{
 				std::cout << "assignment level [i] = " << assignment_level[get_id_boolean_variable(learnt_clause[i])] << std::endl;
 			}
 			std::cout << "END! current level  "  << level << " \n and backtrack_level :     " << backtrack_level << std::endl;
-*/
+			 */
 
 			((SchedulingSolver *) this)->	check_nogood(learnt_clause);
 			//	store_nogood(learnt_clause);
@@ -6415,7 +6415,7 @@ void Mistral::Solver::fdlearn_nogood(){
 
 		//#ifdef _DEBUG
 		//		std::cout << "END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
-	//			std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
+		//			std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
 		/*		std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
 		for (int i = 0; i< learnt_clause.size; ++i)
 		{
@@ -6462,12 +6462,12 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 	propagate_literal_in_learnt_clause= true;
 #endif
 
-//	if (level < 3)
-//		simple_fdlearn_nogood();
-//	else
+	//	if (level < 3)
+	//		simple_fdlearn_nogood();
+	//	else
 	{
 #ifdef 	_DEBUG_FD_NOGOOD
-	//	std::cout << " \n\n\n fdlearn_nogood : \n Decisions size" << decisions.size << " and the variables : \n        " << decisions << " \n and level = " << level << std::endl;
+		//	std::cout << " \n\n\n fdlearn_nogood : \n Decisions size" << decisions.size << " and the variables : \n        " << decisions << " \n and level = " << level << std::endl;
 #endif
 
 
@@ -6483,10 +6483,10 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 
 		// We start from the constraint that failed
 		Explanation *current_explanation ;
-//		if (__failure)
-//			current_explanation=__failure;
-//		else
-			current_explanation= culprit.propagator;
+		//		if (__failure)
+		//			current_explanation=__failure;
+		//		else
+		current_explanation= culprit.propagator;
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 		if (culprit.propagator!=__failure)
@@ -6554,8 +6554,8 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 					std::cout << "pathC =  "<< pathC << std::endl;
 					std::cout << "id of the variable =  "<< a << std::endl;
 					std::cout << " variable[id] =  "<< variables[a] << std::endl;
-				//	std::cout << " min =  "<< variables[a].get_min() << std::endl;
-				//	std::cout << " max =  "<< variables[a].get_max() << std::endl;
+					//	std::cout << " min =  "<< variables[a].get_min() << std::endl;
+					//	std::cout << " max =  "<< variables[a].get_max() << std::endl;
 					std::cout << " domain =  "<< variables[a].get_domain() << std::endl;
 					std::cout << " reason_for =  "<< reason_for[a] << std::endl;
 					std::cout << "its literal without negation =  "<< encode_boolean_variable_as_literal(a, variables[a].get_min() ) << std::endl;
@@ -6588,7 +6588,7 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 
 						exit(1);
 					}
-					*/
+					 */
 				}
 				else{
 
@@ -6667,9 +6667,9 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 							std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
 							std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 #endif
-				//			bound_literals_to_explore.add(q);
+							//			bound_literals_to_explore.add(q);
 
-					//		bound_literals_to_explore.add(q);
+							//		bound_literals_to_explore.add(q);
 							to_be_explored=q;
 							is_lb = is_lower_bound(to_be_explored);
 
@@ -6683,11 +6683,11 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 
 #ifdef _DEBUG_SHOW_LEARNT_BOUNDS
 									else{
-									std::cout << " \n \n  Will not be explored  : " << std::endl;
+										std::cout << " \n \n  Will not be explored  : " << std::endl;
 
-									std::cout << "  id : "<< get_variable_from_literal(q) << std::endl;
-									std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+										std::cout << "  id : "<< get_variable_from_literal(q) << std::endl;
+										std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+										std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 									}
 #endif
 								}
@@ -6703,11 +6703,11 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 										bound_literals_to_explore.add(q);
 #ifdef _DEBUG_SHOW_LEARNT_BOUNDS
 									else{
-									std::cout << " \n \n  Will not be explored  : " << std::endl;
+										std::cout << " \n \n  Will not be explored  : " << std::endl;
 
-									std::cout << "  id : "<< get_variable_from_literal(q) << std::endl;
-									std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+										std::cout << "  id : "<< get_variable_from_literal(q) << std::endl;
+										std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+										std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 									}
 #endif
 								}
@@ -6739,7 +6739,7 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 							}
 #endif
 							//todo should be search_root!
-						if(		lvl)
+							if(		lvl)
 								if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
 									//Sould be done later!
 									/*
@@ -6753,7 +6753,7 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 									visited.fast_add(get_id_boolean_variable(q));
 
 									if(lvl >= level) {
-//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+										//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 										// we'll need to replace 'a' by its parents since its level is too high
 										++pathC;
 									} else {
@@ -6776,7 +6776,7 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 #ifdef _TRACKING_BOUND
 						Literal old = to_be_explored;
 #endif
-/*
+						/*
 						if ( static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->first_time_visited(is_lower_bound(q)) )
 						{
 							if (is_lower_bound(q))
@@ -6784,12 +6784,12 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 							else
 								Visited_upper_bound_variables.add(static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain));
 						}
-*/
+						 */
 
 
 
-//						std::cout << " \n \n \n  \n \n \n  \n \n \n  \n \n \n  VISITED" <<visitedLowerBounds << std::endl;
-//						std::cout << " \n \n \n  \n \n \n  \n \n \n  \n \n \n  VISITED" <<visitedUpperBounds << std::endl;
+						//						std::cout << " \n \n \n  \n \n \n  \n \n \n  \n \n \n  VISITED" <<visitedLowerBounds << std::endl;
+						//						std::cout << " \n \n \n  \n \n \n  \n \n \n  \n \n \n  VISITED" <<visitedUpperBounds << std::endl;
 
 						bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
 
@@ -6822,10 +6822,10 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 
 
 #ifdef _DEBUG_SHOW_LEARNT_BOUNDS
-												std::cout << " \n \n  We will explain  : " << std::endl;
-												std::cout << "  id : "<< get_variable_from_literal(to_be_explored) << std::endl;
-												std::cout << " is a " << (is_lower_bound(to_be_explored) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(to_be_explored) << std::endl;
-												std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(to_be_explored)].get_domain() << std::endl;
+							std::cout << " \n \n  We will explain  : " << std::endl;
+							std::cout << "  id : "<< get_variable_from_literal(to_be_explored) << std::endl;
+							std::cout << " is a " << (is_lower_bound(to_be_explored) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(to_be_explored) << std::endl;
+							std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(to_be_explored)].get_domain() << std::endl;
 #endif
 
 
@@ -6976,14 +6976,14 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 
 											if(lvl >= level) {
 												// we'll need to replace 'a' by its parents since its level is too high
-	/*											std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+												/*											std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 												std::cout << " s.t. explanation coming from : " << bound_explanation << std::endl;
 												std::cout << "\n explaination comes from  "<< old << std::endl;
 												std::cout << "which corresponds to " << std::endl;
 												std::cout << " Range variable id : "<< get_variable_from_literal(old) << std::endl;
 												std::cout << " is a " << (is_lower_bound(old) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(old) << std::endl;
 												std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(old)].get_domain() << std::endl;
-*/
+												 */
 												++pathC;
 											} else {
 												// q's level is below the current level, we are not expending it further
@@ -7091,7 +7091,7 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 				p= encode_boolean_variable_as_literal(x.id(),x.get_min() );
 				//		p = ((2*a) | (x.get_min())) + start_from;
 				lvl = assignment_level[a];
-/*
+				/*
 				std::cout << " we will explore the variable  " << x << std::endl;
 				std::cout << " its min is " << x.get_min() << std::endl;
 				std::cout << " its max is " << x.get_max() << std::endl;
@@ -7099,7 +7099,7 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 				std::cout << " level is " << level << std::endl;
 				//std::cout << " explore the variable x " << x << std::endl;
 						std::cout << " pathC " << pathC << std::endl;
-						*/
+				 */
 			}
 			if( pathC > 0 ) {
 
@@ -7116,8 +7116,8 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 			else if (pathC==0)
 			{
 				//TODO check if we can have paTHC=0 + give explanation in a failure on ExplainedContDisjunctioReif
-					std::cout << "\n \n \n PatyhC == 0 !!!!! " << pathC << std::endl;
-					exit(1);
+				std::cout << "\n \n \n PatyhC == 0 !!!!! " << pathC << std::endl;
+				exit(1);
 				//		std::cout << "backtrack level =" << backtrack_level << std::endl;
 				//		std::cout << "level =" << level << std::endl;
 
@@ -7201,7 +7201,7 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 			}
 			else
 			{
-			//	if (pathC !=1)
+				//	if (pathC !=1)
 				{
 					std::cout << "PatyhC < 0 !!!!! " << pathC << std::endl;
 					exit(1);
@@ -7210,7 +7210,7 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 			//		std::cout << "latest before while =" << pathC << std::endl;
 		} while( --pathC );
 
-//		std::cout << " \n \n \n  \n \n \n  \n \n \n  \n \n \n  " << std::endl;
+		//		std::cout << " \n \n \n  \n \n \n  \n \n \n  \n \n \n  " << std::endl;
 
 		//		std::cout << "after while !!!!! " << std::endl;
 		//		std::cout << "\n p =" << p << std::endl;
@@ -7244,17 +7244,17 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 #endif
 
 #ifdef _CHECK_NOGOOD
-	//	if (graph_size <35)
+		//	if (graph_size <35)
 		{
 			std::cout << "graph_size : "  << graph_size  << std::endl;
 			std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
-/*
+			/*
 			for (int i = 0; i< learnt_clause.size; ++i)
 			{
 				std::cout << "assignment level [i] = " << assignment_level[get_id_boolean_variable(learnt_clause[i])] << std::endl;
 			}
 			std::cout << "END! current level  "  << level << " \n and backtrack_level :     " << backtrack_level << std::endl;
-*/
+			 */
 
 			((SchedulingSolver *) this)->	check_nogood(learnt_clause);
 			//	store_nogood(learnt_clause);
@@ -7298,7 +7298,7 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 
 		//#ifdef _DEBUG
 		//		std::cout << "END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
-	//			std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
+		//			std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
 		/*		std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
 		for (int i = 0; i< learnt_clause.size; ++i)
 		{
@@ -7336,7 +7336,7 @@ void Mistral::Solver::fdimprovedlearn_nogood(){
 
 		//exit(1);
 	}
-	}
+}
 
 
 
@@ -7348,12 +7348,12 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 	propagate_literal_in_learnt_clause= true;
 #endif
 
-//	if (level < 3)
-//		simple_fdlearn_nogood();
-//	else
+	//	if (level < 3)
+	//		simple_fdlearn_nogood();
+	//	else
 	{
 #ifdef 	_DEBUG_FD_NOGOOD
-	//	std::cout << " \n\n\n fdlearn_nogood : \n Decisions size" << decisions.size << " and the variables : \n        " << decisions << " \n and level = " << level << std::endl;
+		//	std::cout << " \n\n\n fdlearn_nogood : \n Decisions size" << decisions.size << " and the variables : \n        " << decisions << " \n and level = " << level << std::endl;
 #endif
 
 
@@ -7367,18 +7367,18 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 		// double *lit_activity = base->lit_activity.stack_;
 		// double *var_activity = base->var_activity.stack_;
 
-	//	Vector<Literal> graph_premise;
-	//	Vector<Literal> graph_implied;
+		//	Vector<Literal> graph_premise;
+		//	Vector<Literal> graph_implied;
 		graph_premise.clear();
 		graph_implied.clear();
 
 		Literal premise ;
 		// We start from the constraint that failed
 		Explanation *current_explanation ;
-//		if (__failure)
-//			current_explanation=__failure;
-//		else
-			current_explanation= culprit.propagator;
+		//		if (__failure)
+		//			current_explanation=__failure;
+		//		else
+		current_explanation= culprit.propagator;
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 		if (culprit.propagator!=__failure)
@@ -7420,7 +7420,7 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 	std::cout << "NULL_ATOM   " << NULL_ATOM << std::endl;
 		 */
 
-//		std::cout << " \n \n   Graph : HELLO \n \n : " << std::endl;
+		//		std::cout << " \n \n   Graph : HELLO \n \n : " << std::endl;
 
 		//	std::cout << "assignment.size " << assignment_level.size <<  std::endl;
 		//std::cout << "visited.size " << visited.size <<  std::endl;
@@ -7448,8 +7448,8 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 					std::cout << "pathC =  "<< pathC << std::endl;
 					std::cout << "id of the variable =  "<< a << std::endl;
 					std::cout << " variable[id] =  "<< variables[a] << std::endl;
-				//	std::cout << " min =  "<< variables[a].get_min() << std::endl;
-				//	std::cout << " max =  "<< variables[a].get_max() << std::endl;
+					//	std::cout << " min =  "<< variables[a].get_min() << std::endl;
+					//	std::cout << " max =  "<< variables[a].get_max() << std::endl;
 					std::cout << " domain =  "<< variables[a].get_domain() << std::endl;
 					std::cout << " reason_for =  "<< reason_for[a] << std::endl;
 					std::cout << "its literal without negation =  "<< encode_boolean_variable_as_literal(a, variables[a].get_min() ) << std::endl;
@@ -7482,7 +7482,7 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 
 						exit(1);
 					}
-					*/
+					 */
 				}
 				else{
 
@@ -7502,7 +7502,7 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 					if (a==NULL_ATOM)
 						premise= NULL_ATOM;
 					else
-					premise = NOT(encode_boolean_variable_as_literal(a,variables[a].get_min()));
+						premise = NOT(encode_boolean_variable_as_literal(a,variables[a].get_min()));
 #ifdef 	_DEBUG_FD_NOGOOD
 					if (a==NULL_ATOM)
 						std::cout << " \n explaining a failure " << std::endl;
@@ -7532,8 +7532,8 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 						{
 
 
-//							std::cout << "\n add : graph_premise "<< graph_premise.back( ) << std::endl;
-//							std::cout << "\n add : graph_implied "<< graph_implied.back( ) << std::endl;
+							//							std::cout << "\n add : graph_premise "<< graph_premise.back( ) << std::endl;
+							//							std::cout << "\n add : graph_implied "<< graph_implied.back( ) << std::endl;
 
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
@@ -7573,9 +7573,9 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 							std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
 							std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 #endif
-				//			bound_literals_to_explore.add(q);
+							//			bound_literals_to_explore.add(q);
 
-					//		bound_literals_to_explore.add(q);
+							//		bound_literals_to_explore.add(q);
 							to_be_explored=q;
 							is_lb = is_lower_bound(to_be_explored);
 
@@ -7644,7 +7644,7 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 										bool removed_it = true;
 										Literal tmp__ = graph_implied.back() ;
 										Literal tmp__premise = graph_premise.back() ;
-/*
+										/*
 										if ( var== 126 ){
 											std::cout << "Got it " << std::endl;
 
@@ -7666,7 +7666,7 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 
 										}
 
-*/
+										 */
 
 										int index__ = graph_implied.size-1;
 										while (index__> 0)
@@ -7683,7 +7683,7 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 								std::cout << "Exploration " << std::endl;
 
 											}
-											*/
+											 */
 
 											if (is_a_bound_literal(tmp__premise))
 												if (is_upper_bound(tmp__premise))
@@ -7746,7 +7746,7 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 
 #endif
 							//todo should be search_root!
-						if(		lvl)
+							if(		lvl)
 								if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
 									//Sould be done later!
 									/*
@@ -7760,14 +7760,14 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 									visited.fast_add(get_id_boolean_variable(q));
 
 									if(lvl >= level) {
-//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+										//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 										// we'll need to replace 'a' by its parents since its level is too high
 										++pathC;
 
 
 
-//										std::cout << "\n add : graph_premise "<< graph_premise.back( ) << std::endl;
-//										std::cout << "\n add : graph_implied "<< graph_implied.back( ) << std::endl;
+										//										std::cout << "\n add : graph_premise "<< graph_premise.back( ) << std::endl;
+										//										std::cout << "\n add : graph_implied "<< graph_implied.back( ) << std::endl;
 
 									} else {
 										// q's level is below the current level, we are not expending it further
@@ -7789,7 +7789,7 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 #ifdef _TRACKING_BOUND
 						Literal old = to_be_explored;
 #endif
-/*
+						/*
 						if ( static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->first_time_visited(is_lower_bound(q)) )
 						{
 							if (is_lower_bound(q))
@@ -7797,12 +7797,12 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 							else
 								Visited_upper_bound_variables.add(static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain));
 						}
-*/
+						 */
 
 
 
-//						std::cout << " \n \n \n  \n \n \n  \n \n \n  \n \n \n  VISITED" <<visitedLowerBounds << std::endl;
-//						std::cout << " \n \n \n  \n \n \n  \n \n \n  \n \n \n  VISITED" <<visitedUpperBounds << std::endl;
+						//						std::cout << " \n \n \n  \n \n \n  \n \n \n  \n \n \n  VISITED" <<visitedLowerBounds << std::endl;
+						//						std::cout << " \n \n \n  \n \n \n  \n \n \n  \n \n \n  VISITED" <<visitedUpperBounds << std::endl;
 
 						bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(to_be_explored)].range_domain)->reason_for(to_be_explored) ;
 
@@ -7835,10 +7835,10 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 
 
 #ifdef _DEBUG_SHOW_LEARNT_BOUNDS
-												std::cout << " \n \n  We will explain  : " << std::endl;
-												std::cout << "  id : "<< get_variable_from_literal(to_be_explored) << std::endl;
-												std::cout << " is a " << (is_lower_bound(to_be_explored) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(to_be_explored) << std::endl;
-												std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(to_be_explored)].get_domain() << std::endl;
+							std::cout << " \n \n  We will explain  : " << std::endl;
+							std::cout << "  id : "<< get_variable_from_literal(to_be_explored) << std::endl;
+							std::cout << " is a " << (is_lower_bound(to_be_explored) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(to_be_explored) << std::endl;
+							std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(to_be_explored)].get_domain() << std::endl;
 #endif
 
 
@@ -7861,8 +7861,8 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 								if (is_a_bound_literal(q))
 								{
 
-//									std::cout << "\n add : graph_premise "<< graph_premise.back( ) << std::endl;
-//									std::cout << "\n add : graph_implied "<< graph_implied.back( ) << std::endl;
+									//									std::cout << "\n add : graph_premise "<< graph_premise.back( ) << std::endl;
+									//									std::cout << "\n add : graph_implied "<< graph_implied.back( ) << std::endl;
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 									if ((is_lower_bound(q)))
@@ -7930,14 +7930,14 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 																	removed_it= false;
 																	break;
 																}
-/*
+													/*
 													//find tmp__premise in graph_implied
 													while (graph_implied[--index__] != tmp__premise)
 													{
 														if (tmp__premise == NULL_ATOM)
 															break;
 													};
-*/
+													 */
 													while ((index__ >= 0) && graph_implied[index__] != tmp__premise)
 													{
 														index__ --;
@@ -8084,19 +8084,19 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 
 											if(lvl >= level) {
 												// we'll need to replace 'a' by its parents since its level is too high
-	/*											std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+												/*											std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 												std::cout << " s.t. explanation coming from : " << bound_explanation << std::endl;
 												std::cout << "\n explaination comes from  "<< old << std::endl;
 												std::cout << "which corresponds to " << std::endl;
 												std::cout << " Range variable id : "<< get_variable_from_literal(old) << std::endl;
 												std::cout << " is a " << (is_lower_bound(old) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(old) << std::endl;
 												std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(old)].get_domain() << std::endl;
-	 */
+												 */
 												++pathC;
 
 
-//												std::cout << "\n add : graph_premise "<< graph_premise.back( ) << std::endl;
-//												std::cout << "\n add : graph_implied "<< graph_implied.back( ) << std::endl;
+												//												std::cout << "\n add : graph_premise "<< graph_premise.back( ) << std::endl;
+												//												std::cout << "\n add : graph_implied "<< graph_implied.back( ) << std::endl;
 
 											} else {
 												// q's level is below the current level, we are not expending it further
@@ -8204,7 +8204,7 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 				p= encode_boolean_variable_as_literal(x.id(),x.get_min() );
 				//		p = ((2*a) | (x.get_min())) + start_from;
 				lvl = assignment_level[a];
-/*
+				/*
 				std::cout << " we will explore the variable  " << x << std::endl;
 				std::cout << " its min is " << x.get_min() << std::endl;
 				std::cout << " its max is " << x.get_max() << std::endl;
@@ -8212,7 +8212,7 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 				std::cout << " level is " << level << std::endl;
 				//std::cout << " explore the variable x " << x << std::endl;
 						std::cout << " pathC " << pathC << std::endl;
-						*/
+				 */
 			}
 			if( pathC > 0 ) {
 
@@ -8229,8 +8229,8 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 			else if (pathC==0)
 			{
 				//TODO check if we can have paTHC=0 + give explanation in a failure on ExplainedContDisjunctioReif
-					std::cout << "\n \n \n PatyhC == 0 !!!!! " << pathC << std::endl;
-					exit(1);
+				std::cout << "\n \n \n PatyhC == 0 !!!!! " << pathC << std::endl;
+				exit(1);
 				//		std::cout << "backtrack level =" << backtrack_level << std::endl;
 				//		std::cout << "level =" << level << std::endl;
 
@@ -8314,7 +8314,7 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 			}
 			else
 			{
-			//	if (pathC !=1)
+				//	if (pathC !=1)
 				{
 					std::cout << "PatyhC < 0 !!!!! " << pathC << std::endl;
 					exit(1);
@@ -8323,7 +8323,7 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 			//		std::cout << "latest before while =" << pathC << std::endl;
 		} while( --pathC );
 
-//		std::cout << " \n \n \n  \n \n \n  \n \n \n  \n \n \n  " << std::endl;
+		//		std::cout << " \n \n \n  \n \n \n  \n \n \n  \n \n \n  " << std::endl;
 
 		//		std::cout << "after while !!!!! " << std::endl;
 		//		std::cout << "\n p =" << p << std::endl;
@@ -8357,17 +8357,17 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 #endif
 
 #ifdef _CHECK_NOGOOD
-	//	if (graph_size <35)
+		//	if (graph_size <35)
 		{
 			std::cout << "graph_size : "  << graph_size  << std::endl;
 			std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
-/*
+			/*
 			for (int i = 0; i< learnt_clause.size; ++i)
 			{
 				std::cout << "assignment level [i] = " << assignment_level[get_id_boolean_variable(learnt_clause[i])] << std::endl;
 			}
 			std::cout << "END! current level  "  << level << " \n and backtrack_level :     " << backtrack_level << std::endl;
-*/
+			 */
 
 			((SchedulingSolver *) this)->	check_nogood(learnt_clause);
 			//	store_nogood(learnt_clause);
@@ -8411,7 +8411,7 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 
 		//#ifdef _DEBUG
 		//		std::cout << "END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
-	//			std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
+		//			std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
 		/*		std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
 		for (int i = 0; i< learnt_clause.size; ++i)
 		{
@@ -8449,7 +8449,7 @@ void Mistral::Solver::learn_withoutClosingPropagation()
 
 		//exit(1);
 	}
-	}
+}
 #ifdef latest_bounds_learning
 void Mistral::Solver::learn_cycle_nogood(Literal * l) {
 #ifdef latest_bounds_learning
@@ -8458,7 +8458,7 @@ void Mistral::Solver::learn_cycle_nogood(Literal * l) {
 	backtrack_level = level-1;
 	//	backtrack_level = level-2;
 
-//	std::cout << "\nDO CYCLE " << std::endl;
+	//	std::cout << "\nDO CYCLE " << std::endl;
 
 	//	std::cout << "decisions "  << decisions.size << " and the values : \n        " << decisions << std::endl;
 
@@ -8478,36 +8478,36 @@ void Mistral::Solver::learn_cycle_nogood(Literal * l) {
 
 
 #ifdef _CHECK_NOGOOD
-  store_nogood(learnt_clause);
+	store_nogood(learnt_clause);
 #endif
 
 
-  if( learnt_clause.size != 1 ) {
+	if( learnt_clause.size != 1 ) {
 
-	  // if(lit_activity) {
-	  //   int i=learnt_clause.size;
-	  //   while(i--) {
-	  // 	var_activity[UNSIGNED(learnt_clause[i])] += parameters.activity_increment;
-	  //   }
-	  // }
+		// if(lit_activity) {
+		//   int i=learnt_clause.size;
+		//   while(i--) {
+		// 	var_activity[UNSIGNED(learnt_clause[i])] += parameters.activity_increment;
+		//   }
+		// }
 
 
-	  base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
-	  //add_clause( learnt, learnt_clause, stats.learnt_avg_size );
-	  //reason[UNSIGNED(p)] = base->learnt.back();
+		base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
+		//add_clause( learnt, learnt_clause, stats.learnt_avg_size );
+		//reason[UNSIGNED(p)] = base->learnt.back();
 
-	  // EXPL
-	  //base->reason_for[UNSIGNED(p)] = base->learnt.back();
+		// EXPL
+		//base->reason_for[UNSIGNED(p)] = base->learnt.back();
 
-	  //base->reason_for[UNSIGNED(p)] = base->learnt.back();
-	  //reason_for[UNSIGNED(p)] = base;
-	  //taboo_constraint = base;
+		//base->reason_for[UNSIGNED(p)] = base->learnt.back();
+		//reason_for[UNSIGNED(p)] = base;
+		//taboo_constraint = base;
 
-	  taboo_constraint = (ConstraintImplementation*)(base->learnt.back());
-	  //reason_for[UNSIGNED(p)].store_reason_for_change(VALUE_EVENT, base->learnt.back());
-  } else {
-	  taboo_constraint = NULL;
-  }
+		taboo_constraint = (ConstraintImplementation*)(base->learnt.back());
+		//reason_for[UNSIGNED(p)].store_reason_for_change(VALUE_EVENT, base->learnt.back());
+	} else {
+		taboo_constraint = NULL;
+	}
 
 	//	      deduction = decisions.back();
 	//	      deduction.invert();
@@ -8697,150 +8697,150 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 
 
 #ifdef _CHECK_NOGOOD
-					// std::cout << (int*)current_explanation << " " ;
-					// std::cout.flush();
-					// std::cout << current_explanation << std::endl;
+						// std::cout << (int*)current_explanation << " " ;
+						// std::cout.flush();
+						// std::cout << current_explanation << std::endl;
 
-					store_reason(current_explanation, a);
+						store_reason(current_explanation, a);
 #endif
 
-					Explanation::iterator lit = current_explanation->get_reason_for(a, (a != NULL_ATOM ? assignment_level[a] : level), stop);
-					graph_size++;
-					tmp = lit;
-					bound_literals_to_explore.clear();
-					if (a!=NULL_ATOM)
-					under_exploration == encode_boolean_variable_as_literal(a,variables[a].get_min());
+						Explanation::iterator lit = current_explanation->get_reason_for(a, (a != NULL_ATOM ? assignment_level[a] : level), stop);
+						graph_size++;
+						tmp = lit;
+						bound_literals_to_explore.clear();
+						if (a!=NULL_ATOM)
+							under_exploration == encode_boolean_variable_as_literal(a,variables[a].get_min());
 
 #ifdef 	_DEBUG_FD_NOGOOD
-					if (a==NULL_ATOM)
-						std::cout << " \n explaining a failure " << std::endl;
-					else
-					{
-
-						std::cout << " \n \n \n we will explain the boolean variable " << variables[a] << " ; its domain : " << variables[a].get_domain() << " its assignment_level : " << assignment_level[a] << std::endl;
-					}
-					std::cout << " this action (i.e. its explanation) comes from : "<< current_explanation << std::endl;
-#endif
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-					if(tmp >= stop)
-					{
-						std::cout << " tmp >= stop \n"  ;
-						exit(1);
-					}
-#endif
-
-
-
-					while(tmp < stop) {
-						q = *tmp;
-						++tmp;
-
-						if (is_a_latest_bound_literal(q))
+						if (a==NULL_ATOM)
+							std::cout << " \n explaining a failure " << std::endl;
+						else
 						{
 
+							std::cout << " \n \n \n we will explain the boolean variable " << variables[a] << " ; its domain : " << variables[a].get_domain() << " its assignment_level : " << assignment_level[a] << std::endl;
+						}
+						std::cout << " this action (i.e. its explanation) comes from : "<< current_explanation << std::endl;
+#endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-							if ((is_lower_bound(q)))
-							{
-								if (variables[get_variable_from_literal(q)].get_min() <  get_value_from_literal(q) )
-								{
-									std::cout << "\n \n \n \n \n                        FUTURE PROBLEM  "<< std::endl;
-									std::cout << "\n is_lower_bound  "<< std::endl;
-									std::cout << " Problem comes from : "<< current_explanation << std::endl;
-									std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-									std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-									exit(1);
-								}
+						if(tmp >= stop)
+						{
+							std::cout << " tmp >= stop \n"  ;
+							exit(1);
+						}
+#endif
 
-							}
-							else
-								if (variables[get_variable_from_literal(q)].get_max() >  get_value_from_literal(q) )
+
+
+						while(tmp < stop) {
+							q = *tmp;
+							++tmp;
+
+							if (is_a_latest_bound_literal(q))
+							{
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+								if ((is_lower_bound(q)))
 								{
-									std::cout << "\n \n \n \n \n                        FUTURE PROBLEM  "<< std::endl;
-									std::cout << "\n is_upper_bound  "<< std::endl;
-									std::cout << " Problem comes from : "<< current_explanation << std::endl;
-									std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-									std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-									exit(1);
+									if (variables[get_variable_from_literal(q)].get_min() <  get_value_from_literal(q) )
+									{
+										std::cout << "\n \n \n \n \n                        FUTURE PROBLEM  "<< std::endl;
+										std::cout << "\n is_lower_bound  "<< std::endl;
+										std::cout << " Problem comes from : "<< current_explanation << std::endl;
+										std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+										std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+										std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+										exit(1);
+									}
+
 								}
+								else
+									if (variables[get_variable_from_literal(q)].get_max() >  get_value_from_literal(q) )
+									{
+										std::cout << "\n \n \n \n \n                        FUTURE PROBLEM  "<< std::endl;
+										std::cout << "\n is_upper_bound  "<< std::endl;
+										std::cout << " Problem comes from : "<< current_explanation << std::endl;
+										std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+										std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+										std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+										exit(1);
+									}
 #endif
 #ifdef _TRACKING_BOUND
-							if ((get_value_from_literal(q) ==_TRACKING_BOUND) && !(is_lower_bound(q)))
-								std::cout << " \n \n \n \n \n \n                                    Tracking bound : its explanation comes from : "<< current_explanation << std::endl;
+								if ((get_value_from_literal(q) ==_TRACKING_BOUND) && !(is_lower_bound(q)))
+									std::cout << " \n \n \n \n \n \n                                    Tracking bound : its explanation comes from : "<< current_explanation << std::endl;
 #endif
 #ifdef 	_DEBUG_FD_NOGOOD
-							std::cout << "\n is_a_bound_literal  "<< std::endl;
-							std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-							std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-							std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+								std::cout << "\n is_a_bound_literal  "<< std::endl;
+								std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+								std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+								std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 #endif
-							bound_literals_to_explore.add(q);
-						}
-						else{
-							x = variables[get_id_boolean_variable(q)];
-							lvl = assignment_level[get_id_boolean_variable(q)];
+								bound_literals_to_explore.add(q);
+							}
+							else{
+								x = variables[get_id_boolean_variable(q)];
+								lvl = assignment_level[get_id_boolean_variable(q)];
 
 #ifdef 	_DEBUG_FD_NOGOOD
-							std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
+								std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-							if ((x.get_size()>1) )
-							{
-								std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
-								exit(1);
-							}
+								if ((x.get_size()>1) )
+								{
+									std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+									exit(1);
+								}
 
-							if (x.get_min()== SIGN(q))
-							{
-								std::cout << " \n (x.get_min()== SIGN(q))" << x << "  and its domain is " << x.get_domain() << " ; its assignment_level : " << assignment_level[x.id()] << " ; while the literal q = " << q << std::endl;
-								exit(1);
-							}
+								if (x.get_min()== SIGN(q))
+								{
+									std::cout << " \n (x.get_min()== SIGN(q))" << x << "  and its domain is " << x.get_domain() << " ; its assignment_level : " << assignment_level[x.id()] << " ; while the literal q = " << q << std::endl;
+									exit(1);
+								}
 #endif
-							//todo should be search_root!
-							if(	lvl)
-								if ( !will_not_be_explored.fast_contain(get_id_boolean_variable(q)))
-								if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
-									//Sould be done later!
-									/*
+								//todo should be search_root!
+								if(	lvl)
+									if ( !will_not_be_explored.fast_contain(get_id_boolean_variable(q)))
+										if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
+											//Sould be done later!
+											/*
 						if(lit_activity) {
 							//lit_activity[q] += 0.5 * parameters.activity_increment;
 							lit_activity[NOT(q)] += // 0.5 *
 									parameters.activity_increment;
 							var_activity[get_id_boolean_variable(q)] += parameters.activity_increment;
 						}
-									 */
-									visited.fast_add(get_id_boolean_variable(q));
+											 */
+											visited.fast_add(get_id_boolean_variable(q));
 
-									if(lvl >= level) {
-										//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
-										// we'll need to replace 'a' by its parents since its level is too high
-										++pathC;
-										to_explore.add(get_id_boolean_variable(q));
-									} else {
-										// q's level is below the current level, we are not expending it further
-										learnt_clause.add(q);
+											if(lvl >= level) {
+												//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+												// we'll need to replace 'a' by its parents since its level is too high
+												++pathC;
+												to_explore.add(get_id_boolean_variable(q));
+											} else {
+												// q's level is below the current level, we are not expending it further
+												learnt_clause.add(q);
 
-										if(lvl > backtrack_level)
-											backtrack_level = lvl;
-									}
-								}
+												if(lvl > backtrack_level)
+													backtrack_level = lvl;
+											}
+										}
+							}
 						}
-					}
 
 
 
-					while (bound_literals_to_explore.size)
-					{
+						while (bound_literals_to_explore.size)
+						{
 
 
 
-						//should be checked
-						q= bound_literals_to_explore.pop();
+							//should be checked
+							q= bound_literals_to_explore.pop();
 #ifdef _TRACKING_BOUND
-						Literal old = q;
+							Literal old = q;
 #endif
-						/*
+							/*
 						if ( static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->first_time_visited(is_lower_bound(q)) )
 						{
 							if (is_lower_bound(q))
@@ -8848,216 +8848,216 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 							else
 								Visited_upper_bound_variables.add(static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain));
 						}
-						 */
+							 */
 
-						Literal* bound = &q;
-						bounds_under_exploration.clear();
+							Literal* bound = &q;
+							bounds_under_exploration.clear();
 
 
-						while (bound)
-						{
-
-							if (is_a_latest_lower_bound(*bound))
+							while (bound)
 							{
-								if (visitedBounds.fast_contain(get_variable_from_latest_literal(*bound)))
-									break;
-								if (bounds_under_exploration.fast_contain(get_variable_from_latest_literal(*bound)))
+
+								if (is_a_latest_lower_bound(*bound))
 								{
-									// a cycle
-									learn_cycle_nogood(bound);
-									return;
+									if (visitedBounds.fast_contain(get_variable_from_latest_literal(*bound)))
+										break;
+									if (bounds_under_exploration.fast_contain(get_variable_from_latest_literal(*bound)))
+									{
+										// a cycle
+										learn_cycle_nogood(bound);
+										return;
+									}
 								}
-							}
-							else
-							{
-								if (visitedBounds.fast_contain(variables.size + get_variable_from_latest_literal(*bound)))
-									break;
-								if (bounds_under_exploration.fast_contain(variables.size + get_variable_from_latest_literal(*bound)))
+								else
 								{
-									// a cycle
-									learn_cycle_nogood(bound);
-									return;
+									if (visitedBounds.fast_contain(variables.size + get_variable_from_latest_literal(*bound)))
+										break;
+									if (bounds_under_exploration.fast_contain(variables.size + get_variable_from_latest_literal(*bound)))
+									{
+										// a cycle
+										learn_cycle_nogood(bound);
+										return;
+									}
 								}
-							}
 
 
 
-							bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_latest_literal(*bound)].range_domain)->reason_for(*bound) ;
-							graph_size++;
+								bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_latest_literal(*bound)].range_domain)->reason_for(*bound) ;
+								graph_size++;
 
 
-							if (is_a_latest_lower_bound(*bound))
-								bounds_under_exploration.fast_add(get_variable_from_latest_literal(*bound));
-							else
-								bounds_under_exploration.fast_add(variables.size + get_variable_from_latest_literal(*bound));
+								if (is_a_latest_lower_bound(*bound))
+									bounds_under_exploration.fast_add(get_variable_from_latest_literal(*bound));
+								else
+									bounds_under_exploration.fast_add(variables.size + get_variable_from_latest_literal(*bound));
 
-							//							std::cout << "\n while tmp  " << std::endl;
+								//							std::cout << "\n while tmp  " << std::endl;
 
-							/*
+								/*
 							std::cout << " \n a : " << bound << std::endl;
 							std::cout << " \n a : " << *bound << std::endl;
 							std::cout << " \n get_variable_from_latest_literal(*bound)] : " << get_variable_from_latest_literal(*bound) << std::endl;
 							std::cout << " \n variables[get_variable_from_latest_literal(*bound)] : " << variables[get_variable_from_latest_literal(*bound)] << std::endl;
 							std::cout << " \n domain : " << variables[get_variable_from_latest_literal(*bound)].get_domain() << std::endl;
-							 */
-							if(bound_explanation)
-							{
-								//								std::cout << "\n while a  " << std::endl;
+								 */
+								if(bound_explanation)
+								{
+									//								std::cout << "\n while a  " << std::endl;
 
 
 #ifdef 	_DEBUG_FD_NOGOOD
-								std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
+									std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
 #endif
 
-								Explanation::iterator end_tmp_iterator;
-								//Note that we do not need the level here ! I should remove that later
+									Explanation::iterator end_tmp_iterator;
+									//Note that we do not need the level here ! I should remove that later
 
-								Explanation::iterator start_tmp_iterator = bound_explanation->get_reason_for(*bound, level, end_tmp_iterator);
-								bound = NULL;
+									Explanation::iterator start_tmp_iterator = bound_explanation->get_reason_for(*bound, level, end_tmp_iterator);
+									bound = NULL;
 
-								if ((end_tmp_iterator - start_tmp_iterator ) > 2)
-									exit (1);
+									if ((end_tmp_iterator - start_tmp_iterator ) > 2)
+										exit (1);
 
-								tmp = start_tmp_iterator;
+									tmp = start_tmp_iterator;
 
-								while(tmp < end_tmp_iterator) {
-									q = *tmp;
-									++tmp;
+									while(tmp < end_tmp_iterator) {
+										q = *tmp;
+										++tmp;
 
-									if (is_a_latest_bound_literal(q))
-									{
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-										if ((is_lower_bound(q)))
+										if (is_a_latest_bound_literal(q))
 										{
-											if (variables[get_variable_from_literal(q)].get_min() <  get_value_from_literal(q) )
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+											if ((is_lower_bound(q)))
 											{
-												std::cout << "\n \n \n \n \n                        FUTURE PROBLEM  "<< std::endl;
-												std::cout << "\n is_lower_bound  "<< std::endl;
-												std::cout << " Problem comes from : "<< bound_explanation << std::endl;
-												std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-												std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-												std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-												exit(1);
+												if (variables[get_variable_from_literal(q)].get_min() <  get_value_from_literal(q) )
+												{
+													std::cout << "\n \n \n \n \n                        FUTURE PROBLEM  "<< std::endl;
+													std::cout << "\n is_lower_bound  "<< std::endl;
+													std::cout << " Problem comes from : "<< bound_explanation << std::endl;
+													std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+													std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+													std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+													exit(1);
 
+												}
 											}
-										}
-										else
-											if (variables[get_variable_from_literal(q)].get_max() >  get_value_from_literal(q) )
-											{
-												std::cout << "\n \n \n \n \n                        FUTURE PROBLEM  "<< std::endl;
-												std::cout << "\n is_upper_bound  "<< std::endl;
-												std::cout << " Problem comes from : "<< bound_explanation << std::endl;
-												std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-												std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-												std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-												exit(1);
-											}
+											else
+												if (variables[get_variable_from_literal(q)].get_max() >  get_value_from_literal(q) )
+												{
+													std::cout << "\n \n \n \n \n                        FUTURE PROBLEM  "<< std::endl;
+													std::cout << "\n is_upper_bound  "<< std::endl;
+													std::cout << " Problem comes from : "<< bound_explanation << std::endl;
+													std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+													std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+													std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+													exit(1);
+												}
 #endif
 #ifdef _TRACKING_BOUND
-										if ((get_value_from_literal(q) ==_TRACKING_BOUND) && !(is_lower_bound(q)))
-											std::cout << "\n \n \n \n \n \n                                    Tracking bound : its explanation comes from : "<< bound_explanation << std::endl;
+											if ((get_value_from_literal(q) ==_TRACKING_BOUND) && !(is_lower_bound(q)))
+												std::cout << "\n \n \n \n \n \n                                    Tracking bound : its explanation comes from : "<< bound_explanation << std::endl;
 #endif
 #ifdef 	_DEBUG_FD_NOGOODcout
-										std::cout << "\n is_a_bound_literal  "<< std::endl;
-										std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-										std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-										std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+											std::cout << "\n is_a_bound_literal  "<< std::endl;
+											std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+											std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+											std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 #endif
 
-										//			bound_literals_to_explore.add(q);
-										bound = & q;
-									}
-									else
-									{
-										x = variables[get_id_boolean_variable(q)];
-										lvl = assignment_level[get_id_boolean_variable(q)];
+											//			bound_literals_to_explore.add(q);
+											bound = & q;
+										}
+										else
+										{
+											x = variables[get_id_boolean_variable(q)];
+											lvl = assignment_level[get_id_boolean_variable(q)];
 
 #ifdef 	_DEBUG_FD_NOGOOD
-										std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " explanation comes from " << bound_explanation << std::endl;
+											std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " explanation comes from " << bound_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-										if ((x.get_size()>1) )
-										{
-											std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
-											exit(1);
-										}
+											if ((x.get_size()>1) )
+											{
+												std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+												exit(1);
+											}
 
-										if (x.get_min()== SIGN(q))
-										{
-											std::cout << " \n (x.get_min()== SIGN(q))" << x << "  and its domain is " << x.get_domain() << " ; its assignment_level : " << assignment_level[x.id()] << " ; while the literal q = " << q << std::endl;
-											exit(1);
-										}
+											if (x.get_min()== SIGN(q))
+											{
+												std::cout << " \n (x.get_min()== SIGN(q))" << x << "  and its domain is " << x.get_domain() << " ; its assignment_level : " << assignment_level[x.id()] << " ; while the literal q = " << q << std::endl;
+												exit(1);
+											}
 #endif
-										//todo we should start from search_route
-										if(		lvl)
-										{
-											if ( !will_not_be_explored.fast_contain(get_id_boolean_variable(q))) {
-												if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
-													//Sould be done later!
-													/*
+											//todo we should start from search_route
+											if(		lvl)
+											{
+												if ( !will_not_be_explored.fast_contain(get_id_boolean_variable(q))) {
+													if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
+														//Sould be done later!
+														/*
 															if(lit_activity) {
 																//lit_activity[q] += 0.5 * parameters.activity_increment;
 																lit_activity[NOT(q)] += // 0.5 *
 																		parameters.activity_increment;
 																var_activity[get_id_boolean_variable(q)] += parameters.activity_increment;
 															}
-													 */
-													visited.fast_add(get_id_boolean_variable(q));
+														 */
+														visited.fast_add(get_id_boolean_variable(q));
 
-													if(lvl >= level) {
-														// we'll need to replace 'a' by its parents since its level is too high
-														/*											std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+														if(lvl >= level) {
+															// we'll need to replace 'a' by its parents since its level is too high
+															/*											std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 																		std::cout << " s.t. explanation coming from : " << bound_explanation << std::endl;
 																		std::cout << "\n explaination comes from  "<< old << std::endl;
 																		std::cout << "which corresponds to " << std::endl;
 																		std::cout << " Range variable id : "<< get_variable_from_literal(old) << std::endl;
 																		std::cout << " is a " << (is_lower_bound(old) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(old) << std::endl;
 																		std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(old)].get_domain() << std::endl;
-														 */
+															 */
 
-														++pathC;
+															++pathC;
 
-														to_explore.add(get_id_boolean_variable(q));
+															to_explore.add(get_id_boolean_variable(q));
 
-													} else {
-														// q's level is below the current level, we are not expending it further
-														learnt_clause.add(q);
+														} else {
+															// q's level is below the current level, we are not expending it further
+															learnt_clause.add(q);
 
-														if(lvl > backtrack_level)
-															backtrack_level = lvl;
+															if(lvl > backtrack_level)
+																backtrack_level = lvl;
+														}
 													}
+													else if	(a != NULL_ATOM )
+														if (under_exploration == q)
+														{
+															//stop exploration immediately and keep it in will_not_be_explored
+															will_not_be_explored.fast_add(get_id_boolean_variable(q));
+															learnt_clause.add(q);
+
+															// TODO remove all unnecessary literals
+														}
 												}
-												else if	(a != NULL_ATOM )
-													if (under_exploration == q)
-													{
-														//stop exploration immediately and keep it in will_not_be_explored
-														will_not_be_explored.fast_add(get_id_boolean_variable(q));
-														learnt_clause.add(q);
-
-														// TODO remove all unnecessary literals
-													}
 											}
 										}
 									}
 								}
-							}
-							else
+								else
 
 
 #ifdef latest_bounds_learning
-	propagate_literal_in_learnt_clause = true;
+									propagate_literal_in_learnt_clause = true;
 #endif
 
-	//	if (level < 3)
-	//		simple_fdlearn_nogood();
-	//	else
-	{
+								//	if (level < 3)
+								//		simple_fdlearn_nogood();
+								//	else
+								{
 #ifdef 	_DEBUG_FD_NOGOOD
-		std::cout << " \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n   " << std::endl;
+									std::cout << " \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n   " << std::endl;
 
-		//	std::cout << " \n\n\n fdlearn_nogood : \n Decisions size" << decisions.size << " and the variables : \n        " << decisions << " \n and level = " << level << std::endl;
+									//	std::cout << " \n\n\n fdlearn_nogood : \n Decisions size" << decisions.size << " and the variables : \n        " << decisions << " \n and level = " << level << std::endl;
 #endif
-		/*
+									/*
 		int size = Visited_lower_bound_variables .size;
 		//	std::cout << "size  Visited_lower_bound_variables \n " << size << std::endl;
 		while (size--)
@@ -9078,114 +9078,114 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 
 		Visited_lower_bound_variables.clear() ;
 		Visited_upper_bound_variables.clear() ;
-		 */
+									 */
 
 
-		int pathC = 0, index = sequence.size-1;
-		Literal p=0, q, under_exploration;
-		Atom a = NULL_ATOM;
-		Variable x;
-		int lvl;
-		Explanation::iterator tmp;
-		Vector<Literal> bound_literals_to_explore;
-		Vector<unsigned int> to_explore;
-		// double *lit_activity = base->lit_activity.stack_;
-		// double *var_activity = base->var_activity.stack_;
+									int pathC = 0, index = sequence.size-1;
+									Literal p=0, q, under_exploration;
+									Atom a = NULL_ATOM;
+									Variable x;
+									int lvl;
+									Explanation::iterator tmp;
+									Vector<Literal> bound_literals_to_explore;
+									Vector<unsigned int> to_explore;
+									// double *lit_activity = base->lit_activity.stack_;
+									// double *var_activity = base->var_activity.stack_;
 
-		// We start from the constraint that failed
-		Explanation *current_explanation ;
-		//		if (__failure)
-		//			current_explanation=__failure;
-		//		else
-		current_explanation= culprit.propagator;
-		visited.clear();
+									// We start from the constraint that failed
+									Explanation *current_explanation ;
+									//		if (__failure)
+									//			current_explanation=__failure;
+									//		else
+									current_explanation= culprit.propagator;
+									visited.clear();
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-		if (culprit.propagator!=__failure)
-		{
-			std::cout << " culprit.propagator :  " <<culprit.propagator <<std::endl;
-			std::cout << " wheareas the real failure comes from " <<__failure <<std::endl;
-			exit(1);
-		}
+									if (culprit.propagator!=__failure)
+									{
+										std::cout << " culprit.propagator :  " <<culprit.propagator <<std::endl;
+										std::cout << " wheareas the real failure comes from " <<__failure <<std::endl;
+										exit(1);
+									}
 #endif
 
-		//UNSAT!
-		if (current_explanation == NULL )
-		{
-			//Not finished yet
-			std::cout << "Should be UNSAT! " << std::endl;
-			exit (1);
-		}
-		Explanation *bound_explanation;
+									//UNSAT!
+									if (current_explanation == NULL )
+									{
+										//Not finished yet
+										std::cout << "Should be UNSAT! " << std::endl;
+										exit (1);
+									}
+									Explanation *bound_explanation;
 
 
-		// Variable *scope = culprit.get_scope();
-		// int arity = culprit.arity();
-		// for(int i=0; i<arity; ++i) {
-		//   var_activity[scope[i].id()] += 10 * parameters.activity_increment;
-		// }
+									// Variable *scope = culprit.get_scope();
+									// int arity = culprit.arity();
+									// for(int i=0; i<arity; ++i) {
+									//   var_activity[scope[i].id()] += 10 * parameters.activity_increment;
+									// }
 
-		backtrack_level = 0;
-		int graph_size = 0;
-		// the resulting nogood is stored in the vector 'learnt_clause'
-		learnt_clause.clear();
-		learnt_clause.add(p);/*
+									backtrack_level = 0;
+									int graph_size = 0;
+									// the resulting nogood is stored in the vector 'learnt_clause'
+									learnt_clause.clear();
+									learnt_clause.add(p);/*
 	std::cout << "DO \n \n   " << std::endl;
 	std::cout << "current_explanation   " << current_explanation << std::endl;
 	std::cout << "NULL_ATOM   " << NULL_ATOM << std::endl;
-		 */
+									 */
 
-		//	std::cout << "assignment.size " << assignment_level.size <<  std::endl;
-		//std::cout << "visited.size " << visited.size <<  std::endl;
+									//	std::cout << "assignment.size " << assignment_level.size <<  std::endl;
+									//std::cout << "visited.size " << visited.size <<  std::endl;
 
-		BitSet visitedBounds;
-		BitSet bounds_under_exploration;
-		BitSet will_not_be_explored;
+									BitSet visitedBounds;
+									BitSet bounds_under_exploration;
+									BitSet will_not_be_explored;
 
-		visitedBounds.initialise(0, 2* variables.size , BitSet::empt);
-		bounds_under_exploration.initialise(0, 2* variables.size , BitSet::empt);
-		will_not_be_explored.initialise(0, variables.size , BitSet::empt);
-
-
-		//	std::cout << "variables.size()" << variables.size <<  std::endl;
+									visitedBounds.initialise(0, 2* variables.size , BitSet::empt);
+									bounds_under_exploration.initialise(0, 2* variables.size , BitSet::empt);
+									will_not_be_explored.initialise(0, variables.size , BitSet::empt);
 
 
-		do {
+									//	std::cout << "variables.size()" << variables.size <<  std::endl;
 
 
-			//	std::cout << "\nDO " << std::endl;
-			//	std::cout << "a =  "<< a << std::endl;
-			//	std::cout << "PathC =  "<< pathC << std::endl;
-			//	std::cout << "CURRENT learnt_clause size "  << learnt_clause.size << " and the values : \n        " << learnt_clause << std::endl;
+									do {
 
-			if(a == NULL_ATOM || assignment_level[a]) {
 
-				Explanation::iterator stop;
-				/*			std::cout << "?? current_explanation == NULL "  << std::endl;
+										//	std::cout << "\nDO " << std::endl;
+										//	std::cout << "a =  "<< a << std::endl;
+										//	std::cout << "PathC =  "<< pathC << std::endl;
+										//	std::cout << "CURRENT learnt_clause size "  << learnt_clause.size << " and the values : \n        " << learnt_clause << std::endl;
+
+										if(a == NULL_ATOM || assignment_level[a]) {
+
+											Explanation::iterator stop;
+											/*			std::cout << "?? current_explanation == NULL "  << std::endl;
 			std::cout << "a =  "<< a << std::endl;
 			std::cout << "NULL_ATOM =  "<< NULL_ATOM << std::endl;
 
 			std::cout << " assignment_level[a] "  << assignment_level[a] << std::endl;
 			std::cout << "  level "  << level << std::endl;
-				 */
+											 */
 
-				if(current_explanation == NULL) {
-					std::cout << "?? current_explanation == NULL "  << std::endl;
-					std::cout << "pathC =  "<< pathC << std::endl;
-					std::cout << "id of the variable =  "<< a << std::endl;
-					std::cout << " variable[id] =  "<< variables[a] << std::endl;
-					//	std::cout << " min =  "<< variables[a].get_min() << std::endl;
-					//	std::cout << " max =  "<< variables[a].get_max() << std::endl;
-					std::cout << " domain =  "<< variables[a].get_domain() << std::endl;
-					std::cout << " reason_for =  "<< reason_for[a] << std::endl;
-					std::cout << "its literal without negation =  "<< encode_boolean_variable_as_literal(a, variables[a].get_min() ) << std::endl;
-					std::cout << " the value of NULL_ATOM is "<< NULL_ATOM << std::endl;
-					std::cout << " assignment_level "  << assignment_level[a] << std::endl;
-					std::cout << "  currentlevel "  << level << std::endl;
-					std::cout << "  current decisions "  << decisions << std::endl;
-					std::cout << "  current sequence "  << sequence << std::endl;
+											if(current_explanation == NULL) {
+												std::cout << "?? current_explanation == NULL "  << std::endl;
+												std::cout << "pathC =  "<< pathC << std::endl;
+												std::cout << "id of the variable =  "<< a << std::endl;
+												std::cout << " variable[id] =  "<< variables[a] << std::endl;
+												//	std::cout << " min =  "<< variables[a].get_min() << std::endl;
+												//	std::cout << " max =  "<< variables[a].get_max() << std::endl;
+												std::cout << " domain =  "<< variables[a].get_domain() << std::endl;
+												std::cout << " reason_for =  "<< reason_for[a] << std::endl;
+												std::cout << "its literal without negation =  "<< encode_boolean_variable_as_literal(a, variables[a].get_min() ) << std::endl;
+												std::cout << " the value of NULL_ATOM is "<< NULL_ATOM << std::endl;
+												std::cout << " assignment_level "  << assignment_level[a] << std::endl;
+												std::cout << "  currentlevel "  << level << std::endl;
+												std::cout << "  current decisions "  << decisions << std::endl;
+												std::cout << "  current sequence "  << sequence << std::endl;
 
-					exit (1);
-					/*
+												exit (1);
+												/*
 					if (assignment_level[a]!= INFTY)
 					{
 						p = ((2*a) | (x.get_min())) + start_from;
@@ -9207,157 +9207,157 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 
 						exit(1);
 					}
-					 */
-				}
-				else{
-					if ( a==NULL_ATOM || will_not_be_explored.fast_contain(a)){
+												 */
+											}
+											else{
+												if ( a==NULL_ATOM || will_not_be_explored.fast_contain(a)){
 
 
 #ifdef _CHECK_NOGOOD
-					// std::cout << (int*)current_explanation << " " ;
-					// std::cout.flush();
-					// std::cout << current_explanation << std::endl;
+													// std::cout << (int*)current_explanation << " " ;
+													// std::cout.flush();
+													// std::cout << current_explanation << std::endl;
 
-					store_reason(current_explanation, a);
+													store_reason(current_explanation, a);
 #endif
 
-					Explanation::iterator lit = current_explanation->get_reason_for(a, (a != NULL_ATOM ? assignment_level[a] : level), stop);
-					graph_size++;
-					tmp = lit;
-					bound_literals_to_explore.clear();
-					if (a!=NULL_ATOM)
-					under_exploration == encode_boolean_variable_as_literal(a,variables[a].get_min());
+													Explanation::iterator lit = current_explanation->get_reason_for(a, (a != NULL_ATOM ? assignment_level[a] : level), stop);
+													graph_size++;
+													tmp = lit;
+													bound_literals_to_explore.clear();
+													if (a!=NULL_ATOM)
+														under_exploration == encode_boolean_variable_as_literal(a,variables[a].get_min());
 
 #ifdef 	_DEBUG_FD_NOGOOD
-					if (a==NULL_ATOM)
-						std::cout << " \n explaining a failure " << std::endl;
-					else
-					{
+													if (a==NULL_ATOM)
+														std::cout << " \n explaining a failure " << std::endl;
+													else
+													{
 
-						std::cout << " \n \n \n we will explain the boolean variable " << variables[a] << " ; its domain : " << variables[a].get_domain() << " its assignment_level : " << assignment_level[a] << std::endl;
-					}
-					std::cout << " this action (i.e. its explanation) comes from : "<< current_explanation << std::endl;
+														std::cout << " \n \n \n we will explain the boolean variable " << variables[a] << " ; its domain : " << variables[a].get_domain() << " its assignment_level : " << assignment_level[a] << std::endl;
+													}
+													std::cout << " this action (i.e. its explanation) comes from : "<< current_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-					if(tmp >= stop)
-					{
-						std::cout << " tmp >= stop \n"  ;
-						exit(1);
-					}
+													if(tmp >= stop)
+													{
+														std::cout << " tmp >= stop \n"  ;
+														exit(1);
+													}
 #endif
 
 
 
-					while(tmp < stop) {
-						q = *tmp;
-						++tmp;
+													while(tmp < stop) {
+														q = *tmp;
+														++tmp;
 
-						if (is_a_latest_bound_literal(q))
-						{
+														if (is_a_latest_bound_literal(q))
+														{
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-							if ((is_lower_bound(q)))
-							{
-								if (variables[get_variable_from_literal(q)].get_min() <  get_value_from_literal(q) )
-								{
-									std::cout << "\n \n \n \n \n                        FUTURE PROBLEM  "<< std::endl;
-									std::cout << "\n is_lower_bound  "<< std::endl;
-									std::cout << " Problem comes from : "<< current_explanation << std::endl;
-									std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-									std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-									exit(1);
-								}
+															if ((is_lower_bound(q)))
+															{
+																if (variables[get_variable_from_literal(q)].get_min() <  get_value_from_literal(q) )
+																{
+																	std::cout << "\n \n \n \n \n                        FUTURE PROBLEM  "<< std::endl;
+																	std::cout << "\n is_lower_bound  "<< std::endl;
+																	std::cout << " Problem comes from : "<< current_explanation << std::endl;
+																	std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+																	std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+																	std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+																	exit(1);
+																}
 
-							}
-							else
-								if (variables[get_variable_from_literal(q)].get_max() >  get_value_from_literal(q) )
-								{
-									std::cout << "\n \n \n \n \n                        FUTURE PROBLEM  "<< std::endl;
-									std::cout << "\n is_upper_bound  "<< std::endl;
-									std::cout << " Problem comes from : "<< current_explanation << std::endl;
-									std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-									std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-									exit(1);
-								}
+															}
+															else
+																if (variables[get_variable_from_literal(q)].get_max() >  get_value_from_literal(q) )
+																{
+																	std::cout << "\n \n \n \n \n                        FUTURE PROBLEM  "<< std::endl;
+																	std::cout << "\n is_upper_bound  "<< std::endl;
+																	std::cout << " Problem comes from : "<< current_explanation << std::endl;
+																	std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+																	std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+																	std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+																	exit(1);
+																}
 #endif
 #ifdef _TRACKING_BOUND
-							if ((get_value_from_literal(q) ==_TRACKING_BOUND) && !(is_lower_bound(q)))
-								std::cout << " \n \n \n \n \n \n                                    Tracking bound : its explanation comes from : "<< current_explanation << std::endl;
+															if ((get_value_from_literal(q) ==_TRACKING_BOUND) && !(is_lower_bound(q)))
+																std::cout << " \n \n \n \n \n \n                                    Tracking bound : its explanation comes from : "<< current_explanation << std::endl;
 #endif
 #ifdef 	_DEBUG_FD_NOGOOD
-							std::cout << "\n is_a_bound_literal  "<< std::endl;
-							std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-							std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-							std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+															std::cout << "\n is_a_bound_literal  "<< std::endl;
+															std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+															std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+															std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 #endif
-							bound_literals_to_explore.add(q);
-						}
-						else{
-							x = variables[get_id_boolean_variable(q)];
-							lvl = assignment_level[get_id_boolean_variable(q)];
+															bound_literals_to_explore.add(q);
+														}
+														else{
+															x = variables[get_id_boolean_variable(q)];
+															lvl = assignment_level[get_id_boolean_variable(q)];
 
 #ifdef 	_DEBUG_FD_NOGOOD
-							std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
+															std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-							if ((x.get_size()>1) )
-							{
-								std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
-								exit(1);
-							}
+															if ((x.get_size()>1) )
+															{
+																std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+																exit(1);
+															}
 
-							if (x.get_min()== SIGN(q))
-							{
-								std::cout << " \n (x.get_min()== SIGN(q))" << x << "  and its domain is " << x.get_domain() << " ; its assignment_level : " << assignment_level[x.id()] << " ; while the literal q = " << q << std::endl;
-								exit(1);
-							}
+															if (x.get_min()== SIGN(q))
+															{
+																std::cout << " \n (x.get_min()== SIGN(q))" << x << "  and its domain is " << x.get_domain() << " ; its assignment_level : " << assignment_level[x.id()] << " ; while the literal q = " << q << std::endl;
+																exit(1);
+															}
 #endif
-							//todo should be search_root!
-							if(	lvl)
-								if ( !will_not_be_explored.fast_contain(get_id_boolean_variable(q)))
-								if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
-									//Sould be done later!
-									/*
+															//todo should be search_root!
+															if(	lvl)
+																if ( !will_not_be_explored.fast_contain(get_id_boolean_variable(q)))
+																	if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
+																		//Sould be done later!
+																		/*
 						if(lit_activity) {
 							//lit_activity[q] += 0.5 * parameters.activity_increment;
 							lit_activity[NOT(q)] += // 0.5 *
 									parameters.activity_increment;
 							var_activity[get_id_boolean_variable(q)] += parameters.activity_increment;
 						}
-									 */
-									visited.fast_add(get_id_boolean_variable(q));
+																		 */
+																		visited.fast_add(get_id_boolean_variable(q));
 
-									if(lvl >= level) {
-										//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
-										// we'll need to replace 'a' by its parents since its level is too high
-										++pathC;
-										to_explore.add(get_id_boolean_variable(q));
-									} else {
-										// q's level is below the current level, we are not expending it further
-										learnt_clause.add(q);
+																		if(lvl >= level) {
+																			//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+																			// we'll need to replace 'a' by its parents since its level is too high
+																			++pathC;
+																			to_explore.add(get_id_boolean_variable(q));
+																		} else {
+																			// q's level is below the current level, we are not expending it further
+																			learnt_clause.add(q);
 
-										if(lvl > backtrack_level)
-											backtrack_level = lvl;
-									}
-								}
-						}
-					}
-
-
-
-					while (bound_literals_to_explore.size)
-					{
+																			if(lvl > backtrack_level)
+																				backtrack_level = lvl;
+																		}
+																	}
+														}
+													}
 
 
 
-						//should be checked
-						q= bound_literals_to_explore.pop();
+													while (bound_literals_to_explore.size)
+													{
+
+
+
+														//should be checked
+														q= bound_literals_to_explore.pop();
 #ifdef _TRACKING_BOUND
-						Literal old = q;
+														Literal old = q;
 #endif
-						/*
+														/*
 						if ( static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->first_time_visited(is_lower_bound(q)) )
 						{
 							if (is_lower_bound(q))
@@ -9388,218 +9388,218 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 				else
 								Visited_upper_bound_variables.add(static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain));
 						}
-						 */
+														 */
 
-						Literal* bound = &q;
-						bounds_under_exploration.clear();
-
-
-						while (bound)
-						{
-
-							if (is_a_latest_lower_bound(*bound))
-							{
-								if (visitedBounds.fast_contain(get_variable_from_latest_literal(*bound)))
-									break;
-								if (bounds_under_exploration.fast_contain(get_variable_from_latest_literal(*bound)))
-								{
-									// a cycle
-									learn_cycle_nogood(bound);
-									return;
-								}
-							}
-							else
-							{
-								if (visitedBounds.fast_contain(variables.size + get_variable_from_latest_literal(*bound)))
-									break;
-								if (bounds_under_exploration.fast_contain(variables.size + get_variable_from_latest_literal(*bound)))
-								{
-									// a cycle
-									learn_cycle_nogood(bound);
-									return;
-								}
-							}
+														Literal* bound = &q;
+														bounds_under_exploration.clear();
 
 
+														while (bound)
+														{
 
-							bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_latest_literal(*bound)].range_domain)->reason_for(*bound) ;
-							graph_size++;
+															if (is_a_latest_lower_bound(*bound))
+															{
+																if (visitedBounds.fast_contain(get_variable_from_latest_literal(*bound)))
+																	break;
+																if (bounds_under_exploration.fast_contain(get_variable_from_latest_literal(*bound)))
+																{
+																	// a cycle
+																	learn_cycle_nogood(bound);
+																	return;
+																}
+															}
+															else
+															{
+																if (visitedBounds.fast_contain(variables.size + get_variable_from_latest_literal(*bound)))
+																	break;
+																if (bounds_under_exploration.fast_contain(variables.size + get_variable_from_latest_literal(*bound)))
+																{
+																	// a cycle
+																	learn_cycle_nogood(bound);
+																	return;
+																}
+															}
 
 
-							if (is_a_latest_lower_bound(*bound))
-								bounds_under_exploration.fast_add(get_variable_from_latest_literal(*bound));
-							else
-								bounds_under_exploration.fast_add(variables.size + get_variable_from_latest_literal(*bound));
 
-							//							std::cout << "\n while tmp  " << std::endl;
+															bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_latest_literal(*bound)].range_domain)->reason_for(*bound) ;
+															graph_size++;
 
-							/*
+
+															if (is_a_latest_lower_bound(*bound))
+																bounds_under_exploration.fast_add(get_variable_from_latest_literal(*bound));
+															else
+																bounds_under_exploration.fast_add(variables.size + get_variable_from_latest_literal(*bound));
+
+															//							std::cout << "\n while tmp  " << std::endl;
+
+															/*
 							std::cout << " \n a : " << bound << std::endl;
 							std::cout << " \n a : " << *bound << std::endl;
 							std::cout << " \n get_variable_from_latest_literal(*bound)] : " << get_variable_from_latest_literal(*bound) << std::endl;
 							std::cout << " \n variables[get_variable_from_latest_literal(*bound)] : " << variables[get_variable_from_latest_literal(*bound)] << std::endl;
 							std::cout << " \n domain : " << variables[get_variable_from_latest_literal(*bound)].get_domain() << std::endl;
-							 */
-							if(bound_explanation)
-							{
-								//								std::cout << "\n while a  " << std::endl;
+															 */
+															if(bound_explanation)
+															{
+																//								std::cout << "\n while a  " << std::endl;
 
 
 #ifdef 	_DEBUG_FD_NOGOOD
-								std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
+																std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
 #endif
 
-								Explanation::iterator end_tmp_iterator;
-								//Note that we do not need the level here ! I should remove that later
+																Explanation::iterator end_tmp_iterator;
+																//Note that we do not need the level here ! I should remove that later
 
-								Explanation::iterator start_tmp_iterator = bound_explanation->get_reason_for(*bound, level, end_tmp_iterator);
-								bound = NULL;
+																Explanation::iterator start_tmp_iterator = bound_explanation->get_reason_for(*bound, level, end_tmp_iterator);
+																bound = NULL;
 
-								if ((end_tmp_iterator - start_tmp_iterator ) > 2)
-									exit (1);
+																if ((end_tmp_iterator - start_tmp_iterator ) > 2)
+																	exit (1);
 
-								tmp = start_tmp_iterator;
+																tmp = start_tmp_iterator;
 
-								while(tmp < end_tmp_iterator) {
-									q = *tmp;
-									++tmp;
+																while(tmp < end_tmp_iterator) {
+																	q = *tmp;
+																	++tmp;
 
-									if (is_a_latest_bound_literal(q))
-									{
+																	if (is_a_latest_bound_literal(q))
+																	{
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-										if ((is_lower_bound(q)))
-										{
-											if (variables[get_variable_from_literal(q)].get_min() <  get_value_from_literal(q) )
-											{
-												std::cout << "\n \n \n \n \n                        FUTURE PROBLEM  "<< std::endl;
-												std::cout << "\n is_lower_bound  "<< std::endl;
-												std::cout << " Problem comes from : "<< bound_explanation << std::endl;
-												std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-												std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-												std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-												exit(1);
+																		if ((is_lower_bound(q)))
+																		{
+																			if (variables[get_variable_from_literal(q)].get_min() <  get_value_from_literal(q) )
+																			{
+																				std::cout << "\n \n \n \n \n                        FUTURE PROBLEM  "<< std::endl;
+																				std::cout << "\n is_lower_bound  "<< std::endl;
+																				std::cout << " Problem comes from : "<< bound_explanation << std::endl;
+																				std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+																				std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+																				std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+																				exit(1);
 
-											}
-										}
-										else
-											if (variables[get_variable_from_literal(q)].get_max() >  get_value_from_literal(q) )
-											{
-												std::cout << "\n \n \n \n \n                        FUTURE PROBLEM  "<< std::endl;
-												std::cout << "\n is_upper_bound  "<< std::endl;
-												std::cout << " Problem comes from : "<< bound_explanation << std::endl;
-												std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-												std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-												std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-												exit(1);
-											}
+																			}
+																		}
+																		else
+																			if (variables[get_variable_from_literal(q)].get_max() >  get_value_from_literal(q) )
+																			{
+																				std::cout << "\n \n \n \n \n                        FUTURE PROBLEM  "<< std::endl;
+																				std::cout << "\n is_upper_bound  "<< std::endl;
+																				std::cout << " Problem comes from : "<< bound_explanation << std::endl;
+																				std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+																				std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+																				std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+																				exit(1);
+																			}
 #endif
 #ifdef _TRACKING_BOUND
-										if ((get_value_from_literal(q) ==_TRACKING_BOUND) && !(is_lower_bound(q)))
-											std::cout << "\n \n \n \n \n \n                                    Tracking bound : its explanation comes from : "<< bound_explanation << std::endl;
+																		if ((get_value_from_literal(q) ==_TRACKING_BOUND) && !(is_lower_bound(q)))
+																			std::cout << "\n \n \n \n \n \n                                    Tracking bound : its explanation comes from : "<< bound_explanation << std::endl;
 #endif
 #ifdef 	_DEBUG_FD_NOGOODcout
-										std::cout << "\n is_a_bound_literal  "<< std::endl;
-										std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-										std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-										std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+																		std::cout << "\n is_a_bound_literal  "<< std::endl;
+																		std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+																		std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+																		std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 #endif
 
-										//			bound_literals_to_explore.add(q);
-										bound = & q;
-									}
-									else
-									{
-										x = variables[get_id_boolean_variable(q)];
-										lvl = assignment_level[get_id_boolean_variable(q)];
+																		//			bound_literals_to_explore.add(q);
+																		bound = & q;
+																	}
+																	else
+																	{
+																		x = variables[get_id_boolean_variable(q)];
+																		lvl = assignment_level[get_id_boolean_variable(q)];
 
 #ifdef 	_DEBUG_FD_NOGOOD
-										std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " explanation comes from " << bound_explanation << std::endl;
+																		std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " explanation comes from " << bound_explanation << std::endl;
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-										if ((x.get_size()>1) )
-										{
-											std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
-											exit(1);
-										}
+																		if ((x.get_size()>1) )
+																		{
+																			std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+																			exit(1);
+																		}
 
-										if (x.get_min()== SIGN(q))
-										{
-											std::cout << " \n (x.get_min()== SIGN(q))" << x << "  and its domain is " << x.get_domain() << " ; its assignment_level : " << assignment_level[x.id()] << " ; while the literal q = " << q << std::endl;
-											exit(1);
-										}
+																		if (x.get_min()== SIGN(q))
+																		{
+																			std::cout << " \n (x.get_min()== SIGN(q))" << x << "  and its domain is " << x.get_domain() << " ; its assignment_level : " << assignment_level[x.id()] << " ; while the literal q = " << q << std::endl;
+																			exit(1);
+																		}
 #endif
-										//todo we should start from search_route
-										if(		lvl)
-										{
-											if ( !will_not_be_explored.fast_contain(get_id_boolean_variable(q))) {
-												if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
-													//Sould be done later!
-													/*
+																		//todo we should start from search_route
+																		if(		lvl)
+																		{
+																			if ( !will_not_be_explored.fast_contain(get_id_boolean_variable(q))) {
+																				if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
+																					//Sould be done later!
+																					/*
 															if(lit_activity) {
 																//lit_activity[q] += 0.5 * parameters.activity_increment;
 																lit_activity[NOT(q)] += // 0.5 *
 																		parameters.activity_increment;
 																var_activity[get_id_boolean_variable(q)] += parameters.activity_increment;
 															}
-													 */
-													visited.fast_add(get_id_boolean_variable(q));
+																					 */
+																					visited.fast_add(get_id_boolean_variable(q));
 
-													if(lvl >= level) {
-														// we'll need to replace 'a' by its parents since its level is too high
-														/*											std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+																					if(lvl >= level) {
+																						// we'll need to replace 'a' by its parents since its level is too high
+																						/*											std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 																		std::cout << " s.t. explanation coming from : " << bound_explanation << std::endl;
 																		std::cout << "\n explaination comes from  "<< old << std::endl;
 																		std::cout << "which corresponds to " << std::endl;
 																		std::cout << " Range variable id : "<< get_variable_from_literal(old) << std::endl;
 																		std::cout << " is a " << (is_lower_bound(old) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(old) << std::endl;
 																		std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(old)].get_domain() << std::endl;
-														 */
+																						 */
 
-														++pathC;
+																						++pathC;
 
-														to_explore.add(get_id_boolean_variable(q));
+																						to_explore.add(get_id_boolean_variable(q));
 
-													} else {
-														// q's level is below the current level, we are not expending it further
-														learnt_clause.add(q);
+																					} else {
+																						// q's level is below the current level, we are not expending it further
+																						learnt_clause.add(q);
 
-														if(lvl > backtrack_level)
-															backtrack_level = lvl;
+																						if(lvl > backtrack_level)
+																							backtrack_level = lvl;
+																					}
+																				}
+																				else if	(a != NULL_ATOM )
+																					if (under_exploration == q)
+																					{
+																						//stop exploration immediately and keep it in will_not_be_explored
+																						will_not_be_explored.fast_add(get_id_boolean_variable(q));
+																						learnt_clause.add(q);
+
+																						// TODO remove all unnecessary literals
+																					}
+																			}
+																		}
+																	}
+																}
+															}
+															else
+																bound = NULL;
+
+														}
+
+														visitedBounds.union_with(bounds_under_exploration);
+														//		delete bound;
 													}
 												}
-												else if	(a != NULL_ATOM )
-													if (under_exploration == q)
-													{
-														//stop exploration immediately and keep it in will_not_be_explored
-														will_not_be_explored.fast_add(get_id_boolean_variable(q));
-														learnt_clause.add(q);
-
-														// TODO remove all unnecessary literals
-													}
 											}
 										}
-									}
-								}
-							}
-							else
-								bound = NULL;
 
-						}
+										//			if( pathC > 0 )
+										//check index!
+										//		pathC++;
+										//		do{
+										//			pathC --;
 
-						visitedBounds.union_with(bounds_under_exploration);
-						//		delete bound;
-					}
-				}
-				}
-			}
-
-			//			if( pathC > 0 )
-			//check index!
-	//		pathC++;
-	//		do{
-	//			pathC --;
-
-			/*
+										/*
 			while(!visited.fast_contain(sequence[++index].id())) {
 
 				//	std::cout << " c new index " <<  index << std::endl;
@@ -9615,34 +9615,34 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 #endif
 
 			};
-			*/
+										 */
 
-	//		}while (will_not_be_explored.fast_contain(sequence[index].id()));
+										//		}while (will_not_be_explored.fast_contain(sequence[index].id()));
 
-			//		std::cout << "GOT IT ! " << std::endl;
+										//		std::cout << "GOT IT ! " << std::endl;
 
 
-			if (to_explore.size)
-			{
-				to_explore.pop(a);
-				if (reason_for[a] == NULL)
-				{
-					if (to_explore.size){
-						to_explore.add(to_explore[0]);
-						to_explore[0]=a;
-						to_explore.pop(a);
-					}
-				}
+										if (to_explore.size)
+										{
+											to_explore.pop(a);
+											if (reason_for[a] == NULL)
+											{
+												if (to_explore.size){
+													to_explore.add(to_explore[0]);
+													to_explore[0]=a;
+													to_explore.pop(a);
+												}
+											}
 
-				x = variables[a];
-//			if( pathC > 0 ) {
-		//		x = sequence[index];
-				a = x.id();
-				//  p = ((2*a) | (x.get_min()));
-				p= encode_boolean_variable_as_literal(x.id(),x.get_min() );
-				//		p = ((2*a) | (x.get_min())) + start_from;
-				lvl = assignment_level[a];
-				/*
+											x = variables[a];
+											//			if( pathC > 0 ) {
+											//		x = sequence[index];
+											a = x.id();
+											//  p = ((2*a) | (x.get_min()));
+											p= encode_boolean_variable_as_literal(x.id(),x.get_min() );
+											//		p = ((2*a) | (x.get_min())) + start_from;
+											lvl = assignment_level[a];
+											/*
 				std::cout << " we will explore the variable  " << x << std::endl;
 				std::cout << " its min is " << x.get_min() << std::endl;
 				std::cout << " its max is " << x.get_max() << std::endl;
@@ -9650,108 +9650,108 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 				std::cout << " level is " << level << std::endl;
 				//std::cout << " explore the variable x " << x << std::endl;
 						std::cout << " pathC " << pathC << std::endl;
-				 */
-		//	}
-	//		if( pathC > 0 ) {
+											 */
+											//	}
+											//		if( pathC > 0 ) {
 
-				// there are still atoms to expend, we start with 'a'
+											// there are still atoms to expend, we start with 'a'
 
-				// EXPL
-				current_explanation = reason_for[a];
+											// EXPL
+											current_explanation = reason_for[a];
 
-				//				std::cout << " reason_for[a] " << reason_for[a] << std::endl;
+											//				std::cout << " reason_for[a] " << reason_for[a] << std::endl;
 
-				//		current_explanation = jsp_reason_for[a-start_from];
-				visited.fast_add(a);
-	//		}
-			}
-			else //if (pathC==0)
-			{
-				//TODO check if we can have paTHC=0 + give explanation in a failure on ExplainedContDisjunctioReif
-				std::cout << "\n \n \n PatyhC == 0 !!!!! " << pathC << std::endl;
-				exit(1);
-				//		std::cout << "backtrack level =" << backtrack_level << std::endl;
-				//		std::cout << "level =" << level << std::endl;
+											//		current_explanation = jsp_reason_for[a-start_from];
+											visited.fast_add(a);
+											//		}
+										}
+										else //if (pathC==0)
+										{
+											//TODO check if we can have paTHC=0 + give explanation in a failure on ExplainedContDisjunctioReif
+											std::cout << "\n \n \n PatyhC == 0 !!!!! " << pathC << std::endl;
+											exit(1);
+											//		std::cout << "backtrack level =" << backtrack_level << std::endl;
+											//		std::cout << "level =" << level << std::endl;
 
-				//				std::cout << "learnt_clause =" << learnt_clause << std::endl;
-				int bts=0, found =0, bts_value=0;
-				int index__ =0;
-				for (int i = 1; i< learnt_clause.size; ++i)
-				{
-					//				std::cout << "assignment level [i] = " << assignment_level[get_id_boolean_variable(learnt_clause[i])] << std::endl;
-					if (assignment_level[get_id_boolean_variable(learnt_clause[i])]==backtrack_level)
-					{
-						index__=i;
-						bts++;
-						//			std::cout << "[i] =" << i << std::endl;
-						//			std::cout << "learnt_clause[i] =" << learnt_clause[i] << std::endl;
-						x = variables[get_id_boolean_variable(learnt_clause[i])];
-						a = get_id_boolean_variable(learnt_clause[i]);
-						//			std::cout << " a =" << a  << std::endl;
-						//			std::cout << " x =" << x  << std::endl;
+											//				std::cout << "learnt_clause =" << learnt_clause << std::endl;
+											int bts=0, found =0, bts_value=0;
+											int index__ =0;
+											for (int i = 1; i< learnt_clause.size; ++i)
+											{
+												//				std::cout << "assignment level [i] = " << assignment_level[get_id_boolean_variable(learnt_clause[i])] << std::endl;
+												if (assignment_level[get_id_boolean_variable(learnt_clause[i])]==backtrack_level)
+												{
+													index__=i;
+													bts++;
+													//			std::cout << "[i] =" << i << std::endl;
+													//			std::cout << "learnt_clause[i] =" << learnt_clause[i] << std::endl;
+													x = variables[get_id_boolean_variable(learnt_clause[i])];
+													a = get_id_boolean_variable(learnt_clause[i]);
+													//			std::cout << " a =" << a  << std::endl;
+													//			std::cout << " x =" << x  << std::endl;
 
-						//  p = ((2*a) | (x.get_min()));
-						p= encode_boolean_variable_as_literal(x.id(),x.get_min() );
+													//  p = ((2*a) | (x.get_min()));
+													p= encode_boolean_variable_as_literal(x.id(),x.get_min() );
 
-						//		std::cout << " p here =" << p  << std::endl;
+													//		std::cout << " p here =" << p  << std::endl;
 
-						//		p = ((2*a) | (x.get_min())) + start_from;
-						lvl = assignment_level[a];
+													//		p = ((2*a) | (x.get_min())) + start_from;
+													lvl = assignment_level[a];
 
-						//		std::cout << " explore the variable x " << x << std::endl;
-						//		std::cout << " assignment level of x " << lvl << std::endl;
-						//std::cout << " explore the variable x " << x << std::endl;
-						//		std::cout << " pathC " << pathC << std::endl;
-						current_explanation = reason_for[a];
-						if (current_explanation!=NULL)
-						{
-							visited.fast_add(a);
-							pathC++;
-							found=1;
-							learnt_clause.remove(i);
-							//			std::cout << " current_explanation " << current_explanation << std::endl;
+													//		std::cout << " explore the variable x " << x << std::endl;
+													//		std::cout << " assignment level of x " << lvl << std::endl;
+													//std::cout << " explore the variable x " << x << std::endl;
+													//		std::cout << " pathC " << pathC << std::endl;
+													current_explanation = reason_for[a];
+													if (current_explanation!=NULL)
+													{
+														visited.fast_add(a);
+														pathC++;
+														found=1;
+														learnt_clause.remove(i);
+														//			std::cout << " current_explanation " << current_explanation << std::endl;
 
 
-							break;
-						}
-					}
-					else
-						if(bts_value < assignment_level[get_id_boolean_variable(learnt_clause[i])])
-							bts_value=assignment_level[get_id_boolean_variable(learnt_clause[i])];
-				}
+														break;
+													}
+												}
+												else
+													if(bts_value < assignment_level[get_id_boolean_variable(learnt_clause[i])])
+														bts_value=assignment_level[get_id_boolean_variable(learnt_clause[i])];
+											}
 
-				//	std::cout << "bts =" << bts << std::endl;
-				//	std::cout << "new pathC =" << pathC << std::endl;
-				backtrack_level=bts_value;
+											//	std::cout << "bts =" << bts << std::endl;
+											//	std::cout << "new pathC =" << pathC << std::endl;
+											backtrack_level=bts_value;
 
-				//		std::cout << "backtrack_level" << backtrack_level << std::endl;
-				//learnt_clause.remove()
-				if (!bts)
-					exit(1);
+											//		std::cout << "backtrack_level" << backtrack_level << std::endl;
+											//learnt_clause.remove()
+											if (!bts)
+												exit(1);
 
-				if (!pathC)
-				{
-					//	x = sequence[index];
-					//	a = x.id();
+											if (!pathC)
+											{
+												//	x = sequence[index];
+												//	a = x.id();
 
-					//p= encode_boolean_variable_as_literal(x.id(),x.get_min() );
+												//p= encode_boolean_variable_as_literal(x.id(),x.get_min() );
 
-					//lvl = assignment_level[a];
+												//lvl = assignment_level[a];
 
-					//			std::cout << "\n \n \n before !! " << p << std::endl;
+												//			std::cout << "\n \n \n before !! " << p << std::endl;
 
-					//	p= NOT(learnt_clause[index__]);
-					//			std::cout << "\n \n \n after !! " << p << std::endl;
-					//					p= learnt_clause[index__];
-					//learnt_clause[0]=NOT(learnt_clause[index__]);
-					learnt_clause.remove(index__);
-					pathC=1;
+												//	p= NOT(learnt_clause[index__]);
+												//			std::cout << "\n \n \n after !! " << p << std::endl;
+												//					p= learnt_clause[index__];
+												//learnt_clause[0]=NOT(learnt_clause[index__]);
+												learnt_clause.remove(index__);
+												pathC=1;
 
-					//			std::cout << " get out" << std::endl;
+												//			std::cout << " get out" << std::endl;
 
-				}
-			}
-	/*		else
+											}
+										}
+										/*		else
 			{
 				//	if (pathC !=1)
 				{
@@ -9759,104 +9759,104 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 					exit(1);
 				}
 			}
-*/
+										 */
 
-			//		std::cout << "latest before while =" << pathC << std::endl;
-	//	} while( --pathC );
-		} while( to_explore.size );
+										//		std::cout << "latest before while =" << pathC << std::endl;
+										//	} while( --pathC );
+									} while( to_explore.size );
 
-		//		std::cout << "after while !!!!! " << std::endl;
-		//		std::cout << "\n p =" << p << std::endl;
-		//		std::cout << "\n NULLATOM =" << NULL_ATOM << std::endl;
-		//		std::cout << "learnt_clause size =" << learnt_clause.size << std::endl;
-		//		std::cout << "learnt_clause =" << learnt_clause << std::endl;
+									//		std::cout << "after while !!!!! " << std::endl;
+									//		std::cout << "\n p =" << p << std::endl;
+									//		std::cout << "\n NULLATOM =" << NULL_ATOM << std::endl;
+									//		std::cout << "learnt_clause size =" << learnt_clause.size << std::endl;
+									//		std::cout << "learnt_clause =" << learnt_clause << std::endl;
 
 
-		// p is the last decision, since all atoms above it in the
-		// assumption stack have been skipped or expended.
-		learnt_clause[0] = NOT(p);
+									// p is the last decision, since all atoms above it in the
+									// assumption stack have been skipped or expended.
+									learnt_clause[0] = NOT(p);
 
 #ifdef _DEBUG_SEARCH
-		if(_DEBUG_SEARCH) {
-			for(int i=0; i<level; ++i) std::cout << " ";
-			std::cout << "learn " << learnt_clause.size << " (";
-			print_literal(std::cout, learnt_clause[0]);
-			for(unsigned int i=1; i<learnt_clause.size; ++i) {
-				std::cout << " v " ;//<< learnt_clause[i];
-				print_literal(std::cout, learnt_clause[i]);
-			}
-			std::cout << " ) " << (backtrack_level<level-1 ? "-backjump" : "") << std::endl;
-		}
+									if(_DEBUG_SEARCH) {
+										for(int i=0; i<level; ++i) std::cout << " ";
+										std::cout << "learn " << learnt_clause.size << " (";
+										print_literal(std::cout, learnt_clause[0]);
+										for(unsigned int i=1; i<learnt_clause.size; ++i) {
+											std::cout << " v " ;//<< learnt_clause[i];
+											print_literal(std::cout, learnt_clause[i]);
+										}
+										std::cout << " ) " << (backtrack_level<level-1 ? "-backjump" : "") << std::endl;
+									}
 #endif
 
-		//exit(1);
+									//exit(1);
 #ifdef 	_DEBUG_FD_NOGOOD
-		std::cout << " c END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
-		std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
-		std::cout << "learnt_clause : "  << learnt_clause.size  << std::endl;
+									std::cout << " c END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
+									std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
+									std::cout << "learnt_clause : "  << learnt_clause.size  << std::endl;
 #endif
 
 #ifdef _CHECK_NOGOOD
-		//	if (graph_size <35)
-		{
-			std::cout << "graph_size : "  << graph_size  << std::endl;
-			std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
-			/*
+									//	if (graph_size <35)
+									{
+										std::cout << "graph_size : "  << graph_size  << std::endl;
+										std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
+										/*
 			for (int i = 0; i< learnt_clause.size; ++i)
 			{
 				std::cout << "assignment level [i] = " << assignment_level[get_id_boolean_variable(learnt_clause[i])] << std::endl;
 			}
 			std::cout << "END! current level  "  << level << " \n and backtrack_level :     " << backtrack_level << std::endl;
-			 */
+										 */
 
-			((SchedulingSolver *) this)->	check_nogood(learnt_clause);
-			//	store_nogood(learnt_clause);
-		}
+										((SchedulingSolver *) this)->	check_nogood(learnt_clause);
+										//	store_nogood(learnt_clause);
+									}
 #endif
 
-		statistics.size_learned += learnt_clause.size;
-		statistics.avg_learned_size =
-				((statistics.avg_learned_size * (double)(statistics.num_failures)) + (double)(learnt_clause.size))
-				/ ((double)(++statistics.num_failures));
+									statistics.size_learned += learnt_clause.size;
+									statistics.avg_learned_size =
+											((statistics.avg_learned_size * (double)(statistics.num_failures)) + (double)(learnt_clause.size))
+											/ ((double)(++statistics.num_failures));
 
-		if( learnt_clause.size != 1 ) {
+									if( learnt_clause.size != 1 ) {
 
-			// if(lit_activity) {
-			//   int i=learnt_clause.size;
-			//   while(i--) {
-			// 	var_activity[UNSIGNED(learnt_clause[i])] += parameters.activity_increment;
-			//   }
-			// }
+										// if(lit_activity) {
+										//   int i=learnt_clause.size;
+										//   while(i--) {
+										// 	var_activity[UNSIGNED(learnt_clause[i])] += parameters.activity_increment;
+										//   }
+										// }
 
 
-			base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
-			//add_clause( learnt, learnt_clause, stats.learnt_avg_size );
-			//reason[UNSIGNED(p)] = base->learnt.back();
+										base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
+										//add_clause( learnt, learnt_clause, stats.learnt_avg_size );
+										//reason[UNSIGNED(p)] = base->learnt.back();
 
-			// EXPL
-			//base->reason_for[UNSIGNED(p)] = base->learnt.back();
+										// EXPL
+										//base->reason_for[UNSIGNED(p)] = base->learnt.back();
 
-			//base->reason_for[UNSIGNED(p)] = base->learnt.back();
-			//reason_for[UNSIGNED(p)] = base;
-			//taboo_constraint = base;
+										//base->reason_for[UNSIGNED(p)] = base->learnt.back();
+										//reason_for[UNSIGNED(p)] = base;
+										//taboo_constraint = base;
 
-			taboo_constraint = (ConstraintImplementation*)(base->learnt.back());
-			//reason_for[UNSIGNED(p)].store_reason_for_change(VALUE_EVENT, base->learnt.back());
-		} else {
-			taboo_constraint = NULL;
-		}
-		visited.clear();
+										taboo_constraint = (ConstraintImplementation*)(base->learnt.back());
+										//reason_for[UNSIGNED(p)].store_reason_for_change(VALUE_EVENT, base->learnt.back());
+									} else {
+										taboo_constraint = NULL;
+									}
+									visited.clear();
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-		__failure=NULL;
+									__failure=NULL;
 #endif
 
-		if (will_not_be_explored.size())
-			propagate_literal_in_learnt_clause = false;
+									if (will_not_be_explored.size())
+										propagate_literal_in_learnt_clause = false;
 
-		//#ifdef _DEBUG
-		//		std::cout << "END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
-		//			std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
-		/*		std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
+									//#ifdef _DEBUG
+									//		std::cout << "END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
+									//			std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
+									/*		std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
 		for (int i = 0; i< learnt_clause.size; ++i)
 		{
 			std::cout << "assignment level [i] = " << assignment_level[get_id_boolean_variable(learnt_clause[i])] << std::endl;
@@ -9864,51 +9864,51 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 		std::cout << "END! current level  "  << level << " \n and backtrack_level :     " << backtrack_level << std::endl;
 
 		std::cout << "endl no_recursive \n"  << std::endl;
-		 */
-		// int real_size = 0;
-		// for(int i=0; i<base->learnt.size; ++i) {
-		//   real_size += base->learnt[i]->size;
-		// }
-		// if(real_size != statistics.size_learned) {
-		//   std::cout << "discrepancy after learning!!\n" ;
-		//   exit(1);
-		// }
+									 */
+									// int real_size = 0;
+									// for(int i=0; i<base->learnt.size; ++i) {
+									//   real_size += base->learnt[i]->size;
+									// }
+									// if(real_size != statistics.size_learned) {
+									//   std::cout << "discrepancy after learning!!\n" ;
+									//   exit(1);
+									// }
 
 
-		//backjump_decision = decision(variables[UNSIGNED(p)], Decision::REMOVAL, SIGN(p));
+									//backjump_decision = decision(variables[UNSIGNED(p)], Decision::REMOVAL, SIGN(p));
 
 #ifdef _DEBUG_NOGOOD
-		if(_DEBUG_NOGOOD) {
-			//for(int i=0; i<level; ++i) std::cout << " ";
-			std::cout << "backtrackLevel = " << backtrack_level << "/" << (decisions.size) << std::endl;
-		}
+									if(_DEBUG_NOGOOD) {
+										//for(int i=0; i<level; ++i) std::cout << " ";
+										std::cout << "backtrackLevel = " << backtrack_level << "/" << (decisions.size) << std::endl;
+									}
 #endif
 
-		//   while(level>backtrack_level) {
-		//     restore();
-		//     decisions.pop();
-		//   }
+									//   while(level>backtrack_level) {
+									//     restore();
+									//     decisions.pop();
+									//   }
 
-		//return decision;
+									//return decision;
 
-		//exit(1);
-	}
-	bound = NULL;
+									//exit(1);
+								}
+								bound = NULL;
 
+							}
+
+							visitedBounds.union_with(bounds_under_exploration);
+							//		delete bound;
 						}
-
-						visitedBounds.union_with(bounds_under_exploration);
-						//		delete bound;
 					}
-				}
 				}
 			}
 
 			//			if( pathC > 0 )
 			//check index!
-	//		pathC++;
-	//		do{
-	//			pathC --;
+			//		pathC++;
+			//		do{
+			//			pathC --;
 
 			/*
 			while(!visited.fast_contain(sequence[++index].id())) {
@@ -9926,9 +9926,9 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 #endif
 
 			};
-			*/
+			 */
 
-	//		}while (will_not_be_explored.fast_contain(sequence[index].id()));
+			//		}while (will_not_be_explored.fast_contain(sequence[index].id()));
 
 			//		std::cout << "GOT IT ! " << std::endl;
 
@@ -9946,8 +9946,8 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 				}
 
 				x = variables[a];
-//			if( pathC > 0 ) {
-		//		x = sequence[index];
+				//			if( pathC > 0 ) {
+				//		x = sequence[index];
 				a = x.id();
 				//  p = ((2*a) | (x.get_min()));
 				p= encode_boolean_variable_as_literal(x.id(),x.get_min() );
@@ -9962,8 +9962,8 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 				//std::cout << " explore the variable x " << x << std::endl;
 						std::cout << " pathC " << pathC << std::endl;
 				 */
-		//	}
-	//		if( pathC > 0 ) {
+				//	}
+				//		if( pathC > 0 ) {
 
 				// there are still atoms to expend, we start with 'a'
 
@@ -9974,7 +9974,7 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 
 				//		current_explanation = jsp_reason_for[a-start_from];
 				visited.fast_add(a);
-	//		}
+				//		}
 			}
 			else //if (pathC==0)
 			{
@@ -10062,7 +10062,7 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 
 				}
 			}
-	/*		else
+			/*		else
 			{
 				//	if (pathC !=1)
 				{
@@ -10070,10 +10070,10 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 					exit(1);
 				}
 			}
-*/
+			 */
 
 			//		std::cout << "latest before while =" << pathC << std::endl;
-	//	} while( --pathC );
+			//	} while( --pathC );
 		} while( to_explore.size );
 
 		//		std::cout << "after while !!!!! " << std::endl;
@@ -10262,7 +10262,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 
 
-	//	visited.extend(variables.size);
+		//	visited.extend(variables.size);
 		bool is_lb ;
 		int val ;
 		int var ;
@@ -10399,14 +10399,14 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 #ifdef 	_DEBUG_FD_NOGOOD
 					if(_DEBUG_FD_NOGOOD){
-					if (a==NULL_ATOM)
-						std::cout << " \n explaining a failure " << std::endl;
-					else
-					{
+						if (a==NULL_ATOM)
+							std::cout << " \n explaining a failure " << std::endl;
+						else
+						{
 
-						std::cout << " \n \n \n we will explain the boolean variable " << variables[a] << " ; its domain : " << variables[a].get_domain() << " its assignment_level : " << assignment_level[a] << std::endl;
-					}
-					std::cout << " this action (i.e. its explanation) comes from : "<< current_explanation << std::endl;
+							std::cout << " \n \n \n we will explain the boolean variable " << variables[a] << " ; its domain : " << variables[a].get_domain() << " its assignment_level : " << assignment_level[a] << std::endl;
+						}
+						std::cout << " this action (i.e. its explanation) comes from : "<< current_explanation << std::endl;
 					}
 
 #endif
@@ -10421,11 +10421,11 @@ void Mistral::Solver::learn_with_lazygeneration() {
 						q = *tmp;
 						++tmp;
 #ifdef 	_DEBUG_FD_NOGOOD
-							if(_DEBUG_FD_NOGOOD){
-						std::cout << " q : "<< q << std::endl;
-							}
+						if(_DEBUG_FD_NOGOOD){
+							std::cout << " q : "<< q << std::endl;
+						}
 #endif
-					//	std::cout << " q : "<< q << std::endl;
+						//	std::cout << " q : "<< q << std::endl;
 						if (is_a_bound_literal(q))
 						{
 
@@ -10466,10 +10466,10 @@ void Mistral::Solver::learn_with_lazygeneration() {
 #endif
 #ifdef 	_DEBUG_FD_NOGOOD
 							if(_DEBUG_FD_NOGOOD){
-							std::cout << "\n is_a_bound_literal  "<< std::endl;
-							std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-							std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-							std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+								std::cout << "\n is_a_bound_literal  "<< std::endl;
+								std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+								std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+								std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 
 							}
 #endif
@@ -10491,66 +10491,66 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 							//if (lvl>0 Search root?
 							if (lvl>0){
-							if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
-							{
-
-								//std::cout << " \n \n sequence before  " << sequence << std::endl;
-								//std::cout << " \n \n sequence size before  " << sequence.size << std::endl;
-								//std::cout << " \n \n sequence capacity before  " << sequence.capacity << std::endl;
-
-
-								dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
-								Variable tmp__(0,1);
-								if (!is_lb)
-									var = dom_constraint->value_exist( val ) ;
-								else
-									var = dom_constraint->value_exist( val-1 ) ;
-
-								if ( var< 0)
+								if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
 								{
-									//add(tmp__);
-									tmp__.lazy_initialise(this);
-//								dom_constraint->extend_scope(tmp__ , val,!is_lb, lvl);
 
-									dom_constraint->extend_scope(tmp__ , val - is_lb,!is_lb, lvl);
-									base->extend_scope(tmp__);
-									//	tmp__.set_domain(!is_lb);
-									assignment_level[tmp__.id()] = lvl;
-									reason_for[tmp__.id()] = dom_constraint;
+									//std::cout << " \n \n sequence before  " << sequence << std::endl;
+									//std::cout << " \n \n sequence size before  " << sequence.size << std::endl;
+									//std::cout << " \n \n sequence capacity before  " << sequence.capacity << std::endl;
 
 
-									*(tmp__.expression->get_self().bool_domain)  = (1+ (!is_lb));
-									int index___ = level - lvl;
-									int index___0 = 1;
+									dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
+									Variable tmp__(0,1);
+									if (!is_lb)
+										var = dom_constraint->value_exist( val ) ;
+									else
+										var = dom_constraint->value_exist( val-1 ) ;
 
-									int saved_vars_size_at_level =  saved_vars.size;
+									if ( var< 0)
+									{
+										//add(tmp__);
+										tmp__.lazy_initialise(this);
+										//								dom_constraint->extend_scope(tmp__ , val,!is_lb, lvl);
+
+										dom_constraint->extend_scope(tmp__ , val - is_lb,!is_lb, lvl);
+										base->extend_scope(tmp__);
+										//	tmp__.set_domain(!is_lb);
+										assignment_level[tmp__.id()] = lvl;
+										reason_for[tmp__.id()] = dom_constraint;
 
 
-									index___ = level - lvl;
+										*(tmp__.expression->get_self().bool_domain)  = (1+ (!is_lb));
+										int index___ = level - lvl;
+										int index___0 = 1;
+
+										int saved_vars_size_at_level =  saved_vars.size;
 
 
-									saved_vars.add(saved_vars[trail_[trail_.size -5]]);
+										index___ = level - lvl;
 
 
-									while(index___0 < index___){
+										saved_vars.add(saved_vars[trail_[trail_.size -5]]);
+
+
+										while(index___0 < index___){
+
+											saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
+
+											saved_vars[saved_vars_size_at_level] = saved_vars[trail_[trail_.size - (5*(index___0+1))]];
+
+											trail_[trail_.size - (5*index___0)]++;
+											++index___0;
+										}
 
 										saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
 
-										saved_vars[saved_vars_size_at_level] = saved_vars[trail_[trail_.size - (5*(index___0+1))]];
+										saved_vars[saved_vars_size_at_level] =  tmp__.id();
 
 										trail_[trail_.size - (5*index___0)]++;
-										++index___0;
-									}
 
-									saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
+										index___ = level - lvl;
 
-									saved_vars[saved_vars_size_at_level] =  tmp__.id();
-
-									trail_[trail_.size - (5*index___0)]++;
-
-									index___ = level - lvl;
-
-									if ((variables.size - start_from) > 16383 ){
+										if ((variables.size - start_from) > 16383 ){
 											std::cout << " \n\n\n variablessize " << variables.size << std::endl;
 											std::cout << " \n\n\n start_from " << start_from << std::endl;
 											std::cout << "  ERRPR variables.size - start_from) > 16383! " << std::endl;
@@ -10558,48 +10558,48 @@ void Mistral::Solver::learn_with_lazygeneration() {
 											exit(1);
 										}
 #ifdef _CHECK_NOGOOD
-									varsIds_lazy.add(range_id);
-									if (!is_lb)
-										value_lazy.add(val);
-									else
-										value_lazy.add(val -1);
+										varsIds_lazy.add(range_id);
+										if (!is_lb)
+											value_lazy.add(val);
+										else
+											value_lazy.add(val -1);
 #endif
 
-								}
-								else
-								{
-									tmp__= variables[var];
-								}
+									}
+									else
+									{
+										tmp__= variables[var];
+									}
 
 
-								if ( assignment_level[ tmp__.id() ] != lvl)
-								{
-									std::cout << " ERROR : \n assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
-									std::cout << " lvl " <<  lvl << std::endl;
-									std::cout << " \n \n VVV tmp__ Domain " << tmp__.get_domain() << std::endl;
-									std::cout << " tmp__.id() " << tmp__.id() << std::endl;
-									std::cout << " var  " << var<< std::endl;
-									std::cout << " reason_for[var] " << reason_for[ tmp__.id() ] << std::endl;
-									std::cout << " assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
-									std::cout << " lvl " <<  lvl << std::endl;
+									if ( assignment_level[ tmp__.id() ] != lvl)
+									{
+										std::cout << " ERROR : \n assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
+										std::cout << " lvl " <<  lvl << std::endl;
+										std::cout << " \n \n VVV tmp__ Domain " << tmp__.get_domain() << std::endl;
+										std::cout << " tmp__.id() " << tmp__.id() << std::endl;
+										std::cout << " var  " << var<< std::endl;
+										std::cout << " reason_for[var] " << reason_for[ tmp__.id() ] << std::endl;
+										std::cout << " assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
+										std::cout << " lvl " <<  lvl << std::endl;
 
-									std::cout << " current level  " <<  level << std::endl;
+										std::cout << " current level  " <<  level << std::endl;
 
-									exit (1);
+										exit (1);
 
-								}
-								if (! tmp__.is_ground())
-								{
-									std::cout << " ERROR : \n not ground !! " << std::endl;
-									//std::cout << " lvl " <<  lvl << std::endl;
-									exit (1);
+									}
+									if (! tmp__.is_ground())
+									{
+										std::cout << " ERROR : \n not ground !! " << std::endl;
+										//std::cout << " lvl " <<  lvl << std::endl;
+										exit (1);
 
-								}
+									}
 
 
-								//assignment_level[var]=lvl;
-								//todo should be search_root!
-								//if(	lvl)
+									//assignment_level[var]=lvl;
+									//todo should be search_root!
+									//if(	lvl)
 									if( !visited.fast_contain(tmp__.id()) ) {
 										//Sould be done later!
 										/*
@@ -10612,7 +10612,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 										 */
 
 
-											visited.fast_add(tmp__.id());
+										visited.fast_add(tmp__.id());
 
 										//learnt_clause.add(encode_bool2*tmp__.id() + is_lb);
 										learnt_clause.add(encode_boolean_variable_as_literal(tmp__.id(), is_lb));
@@ -10631,14 +10631,14 @@ void Mistral::Solver::learn_with_lazygeneration() {
 											backtrack_level = lvl;
 									}
 
-								//std::cout << " \n \n sequence after " << sequence << std::endl;
-								//std::cout << " \n \n sequence size after  " << sequence.size << std::endl;
-								//std::cout << " \n \n sequence capacity after  " << sequence.capacity << std::endl;
+									//std::cout << " \n \n sequence after " << sequence << std::endl;
+									//std::cout << " \n \n sequence size after  " << sequence.size << std::endl;
+									//std::cout << " \n \n sequence capacity after  " << sequence.capacity << std::endl;
 
 
-							}
-							else
-								bound_literals_to_explore.add(q);
+								}
+								else
+									bound_literals_to_explore.add(q);
 							}
 						}
 						else{
@@ -10647,8 +10647,8 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 #ifdef 	_DEBUG_FD_NOGOOD
 							if(_DEBUG_FD_NOGOOD){
-							std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
-}
+								std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
+							}
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 							if ((x.get_size()>1) )
@@ -10688,7 +10688,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 										learnt_clause.add(q);
 #ifdef 	_DEBUG_FD_NOGOOD
 										if(_DEBUG_FD_NOGOOD){
-										std::cout << " \n learn :  " <<x << "  = " << x.get_domain() << " ; assignment_level : " << assignment_level[x.id()]<< std::endl;
+											std::cout << " \n learn :  " <<x << "  = " << x.get_domain() << " ; assignment_level : " << assignment_level[x.id()]<< std::endl;
 										}
 #endif
 										if(lvl > backtrack_level)
@@ -10717,19 +10717,19 @@ void Mistral::Solver::learn_with_lazygeneration() {
 						graph_size++;
 #ifdef 	_DEBUG_FD_NOGOOD
 						if(_DEBUG_FD_NOGOOD){
-						std::cout << "\n we will explain "<< q << std::endl;
-						std::cout << "which corresponds to " << std::endl;
-						std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-						std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-						std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-}
+							std::cout << "\n we will explain "<< q << std::endl;
+							std::cout << "which corresponds to " << std::endl;
+							std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+							std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+							std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+						}
 #endif
 						if(bound_explanation)
 						{
 
 #ifdef 	_DEBUG_FD_NOGOOD
 							if(_DEBUG_FD_NOGOOD){
-							std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
+								std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
 							}
 #endif
 							Explanation::iterator end_tmp_iterator;
@@ -10742,9 +10742,9 @@ void Mistral::Solver::learn_with_lazygeneration() {
 								q = *tmp;
 								++tmp;
 #ifdef 	_DEBUG_FD_NOGOOD
-							if(_DEBUG_FD_NOGOOD){
-						std::cout << " q : "<< q << std::endl;
-							}
+								if(_DEBUG_FD_NOGOOD){
+									std::cout << " q : "<< q << std::endl;
+								}
 #endif
 								//std::cout << " q : "<< q << std::endl;
 								if (is_a_bound_literal(q))
@@ -10786,11 +10786,11 @@ void Mistral::Solver::learn_with_lazygeneration() {
 #endif
 #ifdef 	_DEBUG_FD_NOGOOD
 									if(_DEBUG_FD_NOGOOD){
-									std::cout << "\n is_a_bound_literal  "<< std::endl;
-									std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-									std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-}
+										std::cout << "\n is_a_bound_literal  "<< std::endl;
+										std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+										std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+										std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+									}
 #endif
 
 
@@ -10810,64 +10810,64 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 
 									if (lvl>0){
-									if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
-									{
-
-										//std::cout << " \n \n sequence before  " << sequence << std::endl;
-										//std::cout << " \n \n sequence size before  " << sequence.size << std::endl;
-										//std::cout << " \n \n sequence capacity before  " << sequence.capacity << std::endl;
-
-
-										dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
-										Variable tmp__(0,1);
-										if (!is_lb)
-											var = dom_constraint->value_exist( val ) ;
-										else
-											var = dom_constraint->value_exist( val-1 ) ;
-
-										if ( var< 0)
+										if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
 										{
-											//add(tmp__);
-											tmp__.lazy_initialise(this);
-											dom_constraint->extend_scope(tmp__ , val - is_lb,!is_lb, lvl);
-											base->extend_scope(tmp__);
-											//	tmp__.set_domain(!is_lb);
-											assignment_level[tmp__.id()] = lvl;
-											reason_for[tmp__.id()] = dom_constraint;
+
+											//std::cout << " \n \n sequence before  " << sequence << std::endl;
+											//std::cout << " \n \n sequence size before  " << sequence.size << std::endl;
+											//std::cout << " \n \n sequence capacity before  " << sequence.capacity << std::endl;
 
 
-											*(tmp__.expression->get_self().bool_domain)  = (1+ (!is_lb));
-											int index___ = level - lvl;
-											int index___0 = 1;
+											dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
+											Variable tmp__(0,1);
+											if (!is_lb)
+												var = dom_constraint->value_exist( val ) ;
+											else
+												var = dom_constraint->value_exist( val-1 ) ;
 
-											int saved_vars_size_at_level =  saved_vars.size;
+											if ( var< 0)
+											{
+												//add(tmp__);
+												tmp__.lazy_initialise(this);
+												dom_constraint->extend_scope(tmp__ , val - is_lb,!is_lb, lvl);
+												base->extend_scope(tmp__);
+												//	tmp__.set_domain(!is_lb);
+												assignment_level[tmp__.id()] = lvl;
+												reason_for[tmp__.id()] = dom_constraint;
 
 
-											index___ = level - lvl;
+												*(tmp__.expression->get_self().bool_domain)  = (1+ (!is_lb));
+												int index___ = level - lvl;
+												int index___0 = 1;
+
+												int saved_vars_size_at_level =  saved_vars.size;
 
 
-											saved_vars.add(saved_vars[trail_[trail_.size -5]]);
+												index___ = level - lvl;
 
 
-											while(index___0 < index___){
+												saved_vars.add(saved_vars[trail_[trail_.size -5]]);
+
+
+												while(index___0 < index___){
+
+													saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
+
+													saved_vars[saved_vars_size_at_level] = saved_vars[trail_[trail_.size - (5*(index___0+1))]];
+
+													trail_[trail_.size - (5*index___0)]++;
+													++index___0;
+												}
 
 												saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
 
-												saved_vars[saved_vars_size_at_level] = saved_vars[trail_[trail_.size - (5*(index___0+1))]];
+												saved_vars[saved_vars_size_at_level] =  tmp__.id();
 
 												trail_[trail_.size - (5*index___0)]++;
-												++index___0;
-											}
 
-											saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
+												index___ = level - lvl;
 
-											saved_vars[saved_vars_size_at_level] =  tmp__.id();
-
-											trail_[trail_.size - (5*index___0)]++;
-
-											index___ = level - lvl;
-
-											if ((variables.size - start_from) > 16383 ){
+												if ((variables.size - start_from) > 16383 ){
 													std::cout << " \n\n\n variablessize " << variables.size << std::endl;
 													std::cout << " \n\n\n start_from " << start_from << std::endl;
 													std::cout << "  ERRPR variables.size - start_from) > 16383! " << std::endl;
@@ -10875,50 +10875,50 @@ void Mistral::Solver::learn_with_lazygeneration() {
 													exit(1);
 												}
 #ifdef _CHECK_NOGOOD
-									varsIds_lazy.add(range_id);
-									if (!is_lb)
-										value_lazy.add(val);
-									else
-										value_lazy.add(val -1);
+												varsIds_lazy.add(range_id);
+												if (!is_lb)
+													value_lazy.add(val);
+												else
+													value_lazy.add(val -1);
 
 #endif
 
-										}
-										else
-										{
-											tmp__= variables[var];
-										}
+											}
+											else
+											{
+												tmp__= variables[var];
+											}
 
 
 
-										if ( assignment_level[ tmp__.id() ] != lvl)
-										{
-											std::cout << " ERROR : \n assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
-											std::cout << " lvl " <<  lvl << std::endl;
-											std::cout << " \n \n VVV tmp__ Domain " << tmp__.get_domain() << std::endl;
-											std::cout << " tmp__.id() " << tmp__.id() << std::endl;
-											std::cout << " var  " << var<< std::endl;
-											std::cout << " reason_for[var] " << reason_for[ tmp__.id() ] << std::endl;
-											std::cout << " assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
-											std::cout << " lvl " <<  lvl << std::endl;
+											if ( assignment_level[ tmp__.id() ] != lvl)
+											{
+												std::cout << " ERROR : \n assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
+												std::cout << " lvl " <<  lvl << std::endl;
+												std::cout << " \n \n VVV tmp__ Domain " << tmp__.get_domain() << std::endl;
+												std::cout << " tmp__.id() " << tmp__.id() << std::endl;
+												std::cout << " var  " << var<< std::endl;
+												std::cout << " reason_for[var] " << reason_for[ tmp__.id() ] << std::endl;
+												std::cout << " assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
+												std::cout << " lvl " <<  lvl << std::endl;
 
-											std::cout << " current level  " <<  level << std::endl;
+												std::cout << " current level  " <<  level << std::endl;
 
-											exit (1);
+												exit (1);
 
-										}
-										if (! tmp__.is_ground())
-										{
-											std::cout << " ERROR : \n not ground !! " << std::endl;
-											//std::cout << " lvl " <<  lvl << std::endl;
-											exit (1);
+											}
+											if (! tmp__.is_ground())
+											{
+												std::cout << " ERROR : \n not ground !! " << std::endl;
+												//std::cout << " lvl " <<  lvl << std::endl;
+												exit (1);
 
-										}
+											}
 
 
-										//assignment_level[var]=lvl;
-										//todo should be search_root!
-										//if(	lvl)
+											//assignment_level[var]=lvl;
+											//todo should be search_root!
+											//if(	lvl)
 											if( !visited.fast_contain(tmp__.id()) ) {
 												//Sould be done later!
 												/*
@@ -10931,31 +10931,31 @@ void Mistral::Solver::learn_with_lazygeneration() {
 												 */
 
 
-													visited.fast_add(tmp__.id());
+												visited.fast_add(tmp__.id());
 
 												//learnt_clause.add(encode_bool2*tmp__.id() + is_lb);
 												learnt_clause.add(encode_boolean_variable_as_literal(tmp__.id(), is_lb));
 #ifdef 	_DEBUG_FD_NOGOOD
-										if(_DEBUG_FD_NOGOOD){
-												std::cout << " \n learn :  " << encode_boolean_variable_as_literal(tmp__.id(), is_lb) << " : var  : " << tmp__ << " = " << tmp__.get_domain() ; //<< std::endl;
-												std::cout << " ---> corresponds to (nogood)  : " ;
-												std::cout << "\n is_a_bound_literal  "<< std::endl;
-												std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-												std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-												std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-										}
+												if(_DEBUG_FD_NOGOOD){
+													std::cout << " \n learn :  " << encode_boolean_variable_as_literal(tmp__.id(), is_lb) << " : var  : " << tmp__ << " = " << tmp__.get_domain() ; //<< std::endl;
+													std::cout << " ---> corresponds to (nogood)  : " ;
+													std::cout << "\n is_a_bound_literal  "<< std::endl;
+													std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+													std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+													std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+												}
 #endif
 												if(lvl > backtrack_level)
 													backtrack_level = lvl;
 											}
 
-					//					std::cout << " \n \n sequence after  " << sequence << std::endl;
-					//					std::cout << " \n \n sequence sizeafter  " << sequence.size << std::endl;
-					//					std::cout << " \n \n sequence capacity after  " << sequence.capacity << std::endl;
+											//					std::cout << " \n \n sequence after  " << sequence << std::endl;
+											//					std::cout << " \n \n sequence sizeafter  " << sequence.size << std::endl;
+											//					std::cout << " \n \n sequence capacity after  " << sequence.capacity << std::endl;
 
-									}
-									else
-										bound_literals_to_explore.add(q);
+										}
+										else
+											bound_literals_to_explore.add(q);
 									}
 								}
 								else
@@ -10965,7 +10965,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 #ifdef 	_DEBUG_FD_NOGOOD
 									if(_DEBUG_FD_NOGOOD){
-									std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " explanation comes from " << bound_explanation << std::endl;
+										std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " explanation comes from " << bound_explanation << std::endl;
 									}
 #endif
 
@@ -11013,9 +11013,9 @@ void Mistral::Solver::learn_with_lazygeneration() {
 												// q's level is below the current level, we are not expending it further
 												learnt_clause.add(q);
 #ifdef 	_DEBUG_FD_NOGOOD
-										if(_DEBUG_FD_NOGOOD){
-												std::cout << " \n learn :  " << x << "  = " << x.get_domain() << " ; assignment_level : " << assignment_level[x.id()]<< std::endl;
-										}
+												if(_DEBUG_FD_NOGOOD){
+													std::cout << " \n learn :  " << x << "  = " << x.get_domain() << " ; assignment_level : " << assignment_level[x.id()]<< std::endl;
+												}
 #endif
 												if(lvl > backtrack_level)
 													backtrack_level = lvl;
@@ -11029,7 +11029,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 				}
 			}
-/*
+			/*
 			//			if( pathC > 0 )
 			//check index!
 			while(!visited.fast_contain(sequence[++index].id())) {
@@ -11047,7 +11047,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 #endif
 
 			};
-*/
+			 */
 
 
 
@@ -11064,8 +11064,8 @@ void Mistral::Solver::learn_with_lazygeneration() {
 				}
 
 				x = variables[a];
-//			if( pathC > 0 ) {
-		//		x = sequence[index];
+				//			if( pathC > 0 ) {
+				//		x = sequence[index];
 				a = x.id();
 				//  p = ((2*a) | (x.get_min()));
 				p= encode_boolean_variable_as_literal(x.id(),x.get_min() );
@@ -11080,8 +11080,8 @@ void Mistral::Solver::learn_with_lazygeneration() {
 				//std::cout << " explore the variable x " << x << std::endl;
 						std::cout << " pathC " << pathC << std::endl;
 				 */
-		//	}
-	//		if( pathC > 0 ) {
+				//	}
+				//		if( pathC > 0 ) {
 
 				// there are still atoms to expend, we start with 'a'
 
@@ -11092,7 +11092,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 				//		current_explanation = jsp_reason_for[a-start_from];
 				visited.fast_add(a);
-	//		}
+				//		}
 			}
 			else //if (pathC==0)
 			{
@@ -11135,10 +11135,10 @@ void Mistral::Solver::learn_with_lazygeneration() {
 		//exit(1);
 #ifdef 	_DEBUG_FD_NOGOOD
 		if(_DEBUG_FD_NOGOOD){
-		std::cout << " c END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
-		std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
-		std::cout << "learnt_clause : "  << learnt_clause.size  << std::endl;
-}
+			std::cout << " c END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
+			std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
+			std::cout << "learnt_clause : "  << learnt_clause.size  << std::endl;
+		}
 #endif
 
 #ifdef _CHECK_NOGOOD
@@ -11174,7 +11174,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 					std::cout << "\n \n simple_fdlearn_nogood " <<std::endl;
 					simple_fdlearn_nogood();
 					std::cout << "\n \n simple_fdlearn_nogood " <<std::endl;
-			//		fdlearn_nogood();
+					//		fdlearn_nogood();
 					std::cout << "\n \n fdlearn_nogood_nosequence " <<std::endl;
 					visited.clear();
 
@@ -11263,7 +11263,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 		//return decision;
 
 
-	//	std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
+		//	std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
 
 		//exit(1);
 	}
@@ -11324,7 +11324,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 
 
 
-	//	visited.extend(variables.size);
+		//	visited.extend(variables.size);
 		bool is_lb ;
 		int val ;
 		int var ;
@@ -11461,14 +11461,14 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 
 #ifdef 	_DEBUG_FD_NOGOOD
 					if(_DEBUG_FD_NOGOOD){
-					if (a==NULL_ATOM)
-						std::cout << " \n explaining a failure " << std::endl;
-					else
-					{
+						if (a==NULL_ATOM)
+							std::cout << " \n explaining a failure " << std::endl;
+						else
+						{
 
-						std::cout << " \n \n \n we will explain the boolean variable " << variables[a] << " ; its domain : " << variables[a].get_domain() << " its assignment_level : " << assignment_level[a] << std::endl;
-					}
-					std::cout << " this action (i.e. its explanation) comes from : "<< current_explanation << std::endl;
+							std::cout << " \n \n \n we will explain the boolean variable " << variables[a] << " ; its domain : " << variables[a].get_domain() << " its assignment_level : " << assignment_level[a] << std::endl;
+						}
+						std::cout << " this action (i.e. its explanation) comes from : "<< current_explanation << std::endl;
 					}
 
 #endif
@@ -11483,9 +11483,9 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 						q = *tmp;
 						++tmp;
 #ifdef 	_DEBUG_FD_NOGOOD
-							if(_DEBUG_FD_NOGOOD){
-						std::cout << " q : "<< q << std::endl;
-							}
+						if(_DEBUG_FD_NOGOOD){
+							std::cout << " q : "<< q << std::endl;
+						}
 #endif
 
 						if (is_a_bound_literal(q))
@@ -11528,10 +11528,10 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 #endif
 #ifdef 	_DEBUG_FD_NOGOOD
 							if(_DEBUG_FD_NOGOOD){
-							std::cout << "\n HERE is_a_bound_literal  "<< q <<  std::endl;
-							std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-							std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-							std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+								std::cout << "\n HERE is_a_bound_literal  "<< q <<  std::endl;
+								std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+								std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+								std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 
 							}
 #endif
@@ -11553,75 +11553,75 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 
 							//if (lvl>0 Search root?
 							if (lvl>0){
-							if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
-							{
-
-								//std::cout << " \n \n sequence before  " << sequence << std::endl;
-								//std::cout << " \n \n sequence size before  " << sequence.size << std::endl;
-								//std::cout << " \n \n sequence capacity before  " << sequence.capacity << std::endl;
-
-
-								dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
-								Variable tmp__(0,1);
-								if (!is_lb)
-									var = dom_constraint->value_exist( val ) ;
-								else
-									var = dom_constraint->value_exist( val-1 ) ;
-
-								if ( var< 0)
+								if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
 								{
-									//add(tmp__);
-									tmp__.lazy_initialise(this);
-//								dom_constraint->extend_scope(tmp__ , val,!is_lb, lvl);
-/*
+
+									//std::cout << " \n \n sequence before  " << sequence << std::endl;
+									//std::cout << " \n \n sequence size before  " << sequence.size << std::endl;
+									//std::cout << " \n \n sequence capacity before  " << sequence.capacity << std::endl;
+
+
+									dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
+									Variable tmp__(0,1);
+									if (!is_lb)
+										var = dom_constraint->value_exist( val ) ;
+									else
+										var = dom_constraint->value_exist( val-1 ) ;
+
+									if ( var< 0)
+									{
+										//add(tmp__);
+										tmp__.lazy_initialise(this);
+										//								dom_constraint->extend_scope(tmp__ , val,!is_lb, lvl);
+										/*
 									std::cout << " new var :" << var << std::endl;
 									//printing  :
 									if (!is_lb)
 										dom_constraint->value_exist( val ) ;
 									else
 										dom_constraint->value_exist( val-1 ) ;
-*/
+										 */
 
 
-									dom_constraint->extend_scope(tmp__ , val - is_lb,!is_lb, lvl);
-									base->extend_scope(tmp__);
-									//	tmp__.set_domain(!is_lb);
-									assignment_level[tmp__.id()] = lvl;
-									reason_for[tmp__.id()] = dom_constraint;
+										dom_constraint->extend_scope(tmp__ , val - is_lb,!is_lb, lvl);
+										base->extend_scope(tmp__);
+										//	tmp__.set_domain(!is_lb);
+										assignment_level[tmp__.id()] = lvl;
+										reason_for[tmp__.id()] = dom_constraint;
 
 
-									*(tmp__.expression->get_self().bool_domain)  = (1+ (!is_lb));
-									int index___ = level - lvl;
-									int index___0 = 1;
+										*(tmp__.expression->get_self().bool_domain)  = (1+ (!is_lb));
+										int index___ = level - lvl;
+										int index___0 = 1;
 
-									int saved_vars_size_at_level =  saved_vars.size;
-
-
-									index___ = level - lvl;
+										int saved_vars_size_at_level =  saved_vars.size;
 
 
-									saved_vars.add(saved_vars[trail_[trail_.size -5]]);
+										index___ = level - lvl;
 
 
-									while(index___0 < index___){
+										saved_vars.add(saved_vars[trail_[trail_.size -5]]);
+
+
+										while(index___0 < index___){
+
+											saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
+
+											saved_vars[saved_vars_size_at_level] = saved_vars[trail_[trail_.size - (5*(index___0+1))]];
+
+											trail_[trail_.size - (5*index___0)]++;
+											++index___0;
+										}
 
 										saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
 
-										saved_vars[saved_vars_size_at_level] = saved_vars[trail_[trail_.size - (5*(index___0+1))]];
+										saved_vars[saved_vars_size_at_level] =  tmp__.id();
 
 										trail_[trail_.size - (5*index___0)]++;
-										++index___0;
-									}
 
-									saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
+										index___ = level - lvl;
 
-									saved_vars[saved_vars_size_at_level] =  tmp__.id();
-
-									trail_[trail_.size - (5*index___0)]++;
-
-									index___ = level - lvl;
-
-									if ((variables.size - start_from) > 16383 ){
+										if ((variables.size - start_from) > 16383 ){
 											std::cout << " \n\n\n variablessize " << variables.size << std::endl;
 											std::cout << " \n\n\n start_from " << start_from << std::endl;
 											std::cout << "  ERRPR variables.size - start_from) > 16383! " << std::endl;
@@ -11629,14 +11629,14 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 											exit(1);
 										}
 #ifdef _CHECK_NOGOOD
-									varsIds_lazy.add(range_id);
-									if (!is_lb)
-										value_lazy.add(val);
-									else
-										value_lazy.add(val -1);
+										varsIds_lazy.add(range_id);
+										if (!is_lb)
+											value_lazy.add(val);
+										else
+											value_lazy.add(val -1);
 #endif
 
-/*
+										/*
 									if (tmp__.id() == 1989)
 									{
 										std::cout << " FOUND : 1989  :  " << std::endl;
@@ -11647,60 +11647,60 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 //										exit (1);
 
 									}
-									*/
+										 */
 
-								}
-								else
-								{
-/*
+									}
+									else
+									{
+										/*
 									std::cout << " already exists : var :" << var << std::endl;
 									//printing  :
 									if (!is_lb)
 										dom_constraint->value_exist( val ) ;
 									else
 										dom_constraint->value_exist( val-1 ) ;
-*/
+										 */
 
-									tmp__= variables[var];
-								}
-
-
-								if ( assignment_level[ tmp__.id() ] != lvl)
-								{
-									std::cout << " ERROR : \n assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
-									std::cout << " lvl " <<  lvl << std::endl;
-									std::cout << " \n \n VVV tmp__ Domain " << tmp__.get_domain() << std::endl;
-									std::cout << " tmp__.id() " << tmp__.id() << std::endl;
-									std::cout << " var  " << var<< std::endl;
-									std::cout << " reason_for[var] " << reason_for[ tmp__.id() ] << std::endl;
-									std::cout << " assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
-									std::cout << " lvl " <<  lvl << std::endl;
-
-									std::cout << " current level  " <<  level << std::endl;
-
-									exit (1);
-
-								}
-								if (! tmp__.is_ground())
-								{
-									std::cout << " ERROR : \n not ground !! " << std::endl;
-									//std::cout << " lvl " <<  lvl << std::endl;
-									exit (1);
-
-								}
-
-								if (tmp__.get_min() == is_lb)
-								{
-									std::cout << " ERROR : \n  tmp__.get_min() == is_lb !! " << std::endl;
-									//std::cout << " lvl " <<  lvl << std::endl;
-									exit (1);
-
-								}
+										tmp__= variables[var];
+									}
 
 
-								//assignment_level[var]=lvl;
-								//todo should be search_root!
-								//if(	lvl)
+									if ( assignment_level[ tmp__.id() ] != lvl)
+									{
+										std::cout << " ERROR : \n assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
+										std::cout << " lvl " <<  lvl << std::endl;
+										std::cout << " \n \n VVV tmp__ Domain " << tmp__.get_domain() << std::endl;
+										std::cout << " tmp__.id() " << tmp__.id() << std::endl;
+										std::cout << " var  " << var<< std::endl;
+										std::cout << " reason_for[var] " << reason_for[ tmp__.id() ] << std::endl;
+										std::cout << " assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
+										std::cout << " lvl " <<  lvl << std::endl;
+
+										std::cout << " current level  " <<  level << std::endl;
+
+										exit (1);
+
+									}
+									if (! tmp__.is_ground())
+									{
+										std::cout << " ERROR : \n not ground !! " << std::endl;
+										//std::cout << " lvl " <<  lvl << std::endl;
+										exit (1);
+
+									}
+
+									if (tmp__.get_min() == is_lb)
+									{
+										std::cout << " ERROR : \n  tmp__.get_min() == is_lb !! " << std::endl;
+										//std::cout << " lvl " <<  lvl << std::endl;
+										exit (1);
+
+									}
+
+
+									//assignment_level[var]=lvl;
+									//todo should be search_root!
+									//if(	lvl)
 									if( !visited.fast_contain(tmp__.id()) ) {
 										//Sould be done later!
 										/*
@@ -11713,34 +11713,34 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 										 */
 
 
-											visited.fast_add(tmp__.id());
+										visited.fast_add(tmp__.id());
 
 										//learnt_clause.add(encode_bool2*tmp__.id() + is_lb);
 										learnt_clause.add(encode_boolean_variable_as_literal(tmp__.id(), is_lb));
 
 #ifdef 	_DEBUG_FD_NOGOOD
-							if(_DEBUG_FD_NOGOOD){
-										std::cout << " \n learn :  " << encode_boolean_variable_as_literal(tmp__.id(), is_lb) << " : var  : " << tmp__ << " = " << tmp__.get_domain() ; //<< std::endl;
-										std::cout << " ---> corresponds to (nogood)  : " ;
-										std::cout << "\n is_a_bound_literal  "<< std::endl;
-										std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-										std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-										std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-							}
+										if(_DEBUG_FD_NOGOOD){
+											std::cout << " \n learn :  " << encode_boolean_variable_as_literal(tmp__.id(), is_lb) << " : var  : " << tmp__ << " = " << tmp__.get_domain() ; //<< std::endl;
+											std::cout << " ---> corresponds to (nogood)  : " ;
+											std::cout << "\n is_a_bound_literal  "<< std::endl;
+											std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+											std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+											std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+										}
 #endif
 
 										if(lvl > backtrack_level)
 											backtrack_level = lvl;
 									}
 
-								//std::cout << " \n \n sequence after " << sequence << std::endl;
-								//std::cout << " \n \n sequence size after  " << sequence.size << std::endl;
-								//std::cout << " \n \n sequence capacity after  " << sequence.capacity << std::endl;
+									//std::cout << " \n \n sequence after " << sequence << std::endl;
+									//std::cout << " \n \n sequence size after  " << sequence.size << std::endl;
+									//std::cout << " \n \n sequence capacity after  " << sequence.capacity << std::endl;
 
 
-							}
-							else
-								bound_literals_to_explore.add(q);
+								}
+								else
+									bound_literals_to_explore.add(q);
 							}
 						}
 						else{
@@ -11749,8 +11749,8 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 
 #ifdef 	_DEBUG_FD_NOGOOD
 							if(_DEBUG_FD_NOGOOD){
-							std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
-}
+								std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
+							}
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 							if ((x.get_size()>1) )
@@ -11788,8 +11788,8 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 											int id_range_ = 	varsIds_lazy[x.id() - initial_variablesize];
 											int val_range_ = value_lazy[x.id() - initial_variablesize];
 
-									//	std::cout << " OK : id_range = " << id_range << std::endl;
-										//	std::cout << " OK : val_range = " << val_range << std::endl;
+											//	std::cout << " OK : id_range = " << id_range << std::endl;
+											//	std::cout << " OK : val_range = " << val_range << std::endl;
 
 											if (SIGN(NOT(q))){
 												//	__solver->variables[id_range].set_max(val_range);
@@ -11812,35 +11812,35 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-							if ((is_lower_bound(__tmp)))
-							{
-								if (variables[get_variable_from_literal(__tmp)].get_min() <  get_value_from_literal(__tmp) )
-								{
-									std::cout << "\n \n \n \n \n      FUTURE PROBLEM in recovered bound "<< std::endl;
-									std::cout << "\n is_lower_bound  "<< std::endl;
-									std::cout << " Problem comes from : "<< current_explanation << std::endl;
-									std::cout << " Range variable id : "<< get_variable_from_literal(__tmp) << std::endl;
-									std::cout << " value: "<<  get_value_from_literal(__tmp) << std::endl;
+												if ((is_lower_bound(__tmp)))
+												{
+													if (variables[get_variable_from_literal(__tmp)].get_min() <  get_value_from_literal(__tmp) )
+													{
+														std::cout << "\n \n \n \n \n      FUTURE PROBLEM in recovered bound "<< std::endl;
+														std::cout << "\n is_lower_bound  "<< std::endl;
+														std::cout << " Problem comes from : "<< current_explanation << std::endl;
+														std::cout << " Range variable id : "<< get_variable_from_literal(__tmp) << std::endl;
+														std::cout << " value: "<<  get_value_from_literal(__tmp) << std::endl;
 
-									std::cout << " is a " << (is_lower_bound(__tmp) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(__tmp) << std::endl;
-									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(__tmp)].get_domain() << std::endl;
-									exit(1);
-								}
+														std::cout << " is a " << (is_lower_bound(__tmp) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(__tmp) << std::endl;
+														std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(__tmp)].get_domain() << std::endl;
+														exit(1);
+													}
 
-							}
-							else
-								if (variables[get_variable_from_literal(__tmp)].get_max() >  get_value_from_literal(__tmp) )
-								{
-									std::cout << "\n \n \n \n \n           FUTURE PROBLEM in recovered bound "<< std::endl;
-									std::cout << "\n is_upper_bound  "<< std::endl;
-									std::cout << " Problem comes from : "<< current_explanation << std::endl;
-									std::cout << " Range variable id : "<< get_variable_from_literal(__tmp) << std::endl;
-									std::cout << " value: "<<  get_value_from_literal(__tmp) << std::endl;
+												}
+												else
+													if (variables[get_variable_from_literal(__tmp)].get_max() >  get_value_from_literal(__tmp) )
+													{
+														std::cout << "\n \n \n \n \n           FUTURE PROBLEM in recovered bound "<< std::endl;
+														std::cout << "\n is_upper_bound  "<< std::endl;
+														std::cout << " Problem comes from : "<< current_explanation << std::endl;
+														std::cout << " Range variable id : "<< get_variable_from_literal(__tmp) << std::endl;
+														std::cout << " value: "<<  get_value_from_literal(__tmp) << std::endl;
 
-									std::cout << " is a " << (is_lower_bound(__tmp) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(__tmp) << std::endl;
-									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-									exit(1);
-								}
+														std::cout << " is a " << (is_lower_bound(__tmp) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(__tmp) << std::endl;
+														std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+														exit(1);
+													}
 #endif
 
 
@@ -11863,41 +11863,41 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-							if ((is_lower_bound(__tmp)))
-							{
-								if (variables[get_variable_from_literal(__tmp)].get_min() <  get_value_from_literal(__tmp) )
-								{
-									std::cout << "\n \n \n \n \n      FUTURE PROBLEM in recovered bound "<< std::endl;
-									std::cout << "\n is_lower_bound  "<< std::endl;
-									std::cout << " Problem comes from : "<< current_explanation << std::endl;
-									std::cout << " Range variable id : "<< get_variable_from_literal(__tmp) << std::endl;
-									std::cout << " value: "<<  get_value_from_literal(__tmp) << std::endl;
+												if ((is_lower_bound(__tmp)))
+												{
+													if (variables[get_variable_from_literal(__tmp)].get_min() <  get_value_from_literal(__tmp) )
+													{
+														std::cout << "\n \n \n \n \n      FUTURE PROBLEM in recovered bound "<< std::endl;
+														std::cout << "\n is_lower_bound  "<< std::endl;
+														std::cout << " Problem comes from : "<< current_explanation << std::endl;
+														std::cout << " Range variable id : "<< get_variable_from_literal(__tmp) << std::endl;
+														std::cout << " value: "<<  get_value_from_literal(__tmp) << std::endl;
 
-									std::cout << " is a " << (is_lower_bound(__tmp) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(__tmp) << std::endl;
-									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(__tmp)].get_domain() << std::endl;
-									exit(1);
-								}
+														std::cout << " is a " << (is_lower_bound(__tmp) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(__tmp) << std::endl;
+														std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(__tmp)].get_domain() << std::endl;
+														exit(1);
+													}
 
-							}
-							else
-								if (variables[get_variable_from_literal(__tmp)].get_max() >  get_value_from_literal(__tmp) )
-								{
-									std::cout << "\n \n \n \n \n           FUTURE PROBLEM in recovered bound "<< std::endl;
-									std::cout << "\n is_upper_bound  "<< std::endl;
-									std::cout << " Problem comes from : "<< current_explanation << std::endl;
-									std::cout << " Range variable id : "<< get_variable_from_literal(__tmp) << std::endl;
-									std::cout << " value: "<<  get_value_from_literal(__tmp) << std::endl;
+												}
+												else
+													if (variables[get_variable_from_literal(__tmp)].get_max() >  get_value_from_literal(__tmp) )
+													{
+														std::cout << "\n \n \n \n \n           FUTURE PROBLEM in recovered bound "<< std::endl;
+														std::cout << "\n is_upper_bound  "<< std::endl;
+														std::cout << " Problem comes from : "<< current_explanation << std::endl;
+														std::cout << " Range variable id : "<< get_variable_from_literal(__tmp) << std::endl;
+														std::cout << " value: "<<  get_value_from_literal(__tmp) << std::endl;
 
-									std::cout << " is a " << (is_lower_bound(__tmp) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(__tmp) << std::endl;
-									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-									exit(1);
-								}
+														std::cout << " is a " << (is_lower_bound(__tmp) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(__tmp) << std::endl;
+														std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+														exit(1);
+													}
 #endif
 
 												bound_literals_to_explore.add(__tmp);
 
 												//	__solver->variables[id_range].set_min(val_range+1);
-							//						std::cout << " Bound literal associated to :  " << variables[id_range_] << " >=  " << val_range_+1 <<  std::endl;
+												//						std::cout << " Bound literal associated to :  " << variables[id_range_] << " >=  " << val_range_+1 <<  std::endl;
 											}
 #else
 											std::cout << " _CHECK_NOGOOD should be enabled " <<std::endl;
@@ -11908,19 +11908,19 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 										}
 										else {
 
-										//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
-										// we'll need to replace 'a' by its parents since its level is too high
-										++pathC;
-										boolean_vairables_to_explore.add(get_id_boolean_variable(q));
+											//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+											// we'll need to replace 'a' by its parents since its level is too high
+											++pathC;
+											boolean_vairables_to_explore.add(get_id_boolean_variable(q));
 										}
 
 									} else {
 										// q's level is below the current level, we are not expending it further
 										learnt_clause.add(q);
 #ifdef 	_DEBUG_FD_NOGOOD
-							if(_DEBUG_FD_NOGOOD){
-										std::cout << " \n learn :  " <<x << "  = " << x.get_domain() << " ; assignment_level : " << assignment_level[x.id()]<< std::endl;
-							}
+										if(_DEBUG_FD_NOGOOD){
+											std::cout << " \n learn :  " <<x << "  = " << x.get_domain() << " ; assignment_level : " << assignment_level[x.id()]<< std::endl;
+										}
 #endif
 
 										if(lvl > backtrack_level)
@@ -11942,7 +11942,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 						q= bound_literals_to_explore.pop();
 #ifdef 	_DEBUG_FD_NOGOOD
 						if(_DEBUG_FD_NOGOOD)
-						std::cout << " q :  " << q << std::endl;
+							std::cout << " q :  " << q << std::endl;
 
 #endif
 
@@ -11962,19 +11962,19 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 						graph_size++;
 #ifdef 	_DEBUG_FD_NOGOOD
 						if(_DEBUG_FD_NOGOOD){
-						std::cout << "\n we will explain "<< q << std::endl;
-						std::cout << "which corresponds to " << std::endl;
-						std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-						std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-						std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-}
+							std::cout << "\n we will explain "<< q << std::endl;
+							std::cout << "which corresponds to " << std::endl;
+							std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+							std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+							std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+						}
 #endif
 						if(bound_explanation)
 						{
 
 #ifdef 	_DEBUG_FD_NOGOOD
 							if(_DEBUG_FD_NOGOOD){
-							std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
+								std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
 							}
 #endif
 							Explanation::iterator end_tmp_iterator;
@@ -11987,9 +11987,9 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 								q = *tmp;
 								++tmp;
 #ifdef 	_DEBUG_FD_NOGOOD
-									if(_DEBUG_FD_NOGOOD){
-								std::cout << " q : "<< q << std::endl;
-									}
+								if(_DEBUG_FD_NOGOOD){
+									std::cout << " q : "<< q << std::endl;
+								}
 #endif
 								if (is_a_bound_literal(q))
 								{
@@ -12030,11 +12030,11 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 #endif
 #ifdef 	_DEBUG_FD_NOGOOD
 									if(_DEBUG_FD_NOGOOD){
-									std::cout << "\n inside while : is_a_bound_literal :: "<< q <<  std::endl;
-									std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-									std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-}
+										std::cout << "\n inside while : is_a_bound_literal :: "<< q <<  std::endl;
+										std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+										std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+										std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+									}
 #endif
 
 
@@ -12053,75 +12053,75 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 
 
 									if (lvl>0){
-									if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
-									{
-								//		std::cout << " \n \n should_be_learnt " << std::endl;
-
-										//std::cout << " \n \n sequence before  " << sequence << std::endl;
-										//std::cout << " \n \n sequence size before  " << sequence.size << std::endl;
-										//std::cout << " \n \n sequence capacity before  " << sequence.capacity << std::endl;
-
-
-										dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
-										Variable tmp__(0,1);
-										if (!is_lb)
-											var = dom_constraint->value_exist( val ) ;
-										else
-											var = dom_constraint->value_exist( val-1 ) ;
-
-										if ( var< 0)
+										if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
 										{
+											//		std::cout << " \n \n should_be_learnt " << std::endl;
 
-/*
+											//std::cout << " \n \n sequence before  " << sequence << std::endl;
+											//std::cout << " \n \n sequence size before  " << sequence.size << std::endl;
+											//std::cout << " \n \n sequence capacity before  " << sequence.capacity << std::endl;
+
+
+											dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
+											Variable tmp__(0,1);
+											if (!is_lb)
+												var = dom_constraint->value_exist( val ) ;
+											else
+												var = dom_constraint->value_exist( val-1 ) ;
+
+											if ( var< 0)
+											{
+
+												/*
 											std::cout << " new var :" << var << std::endl;
 											//printing  :
 											if (!is_lb)
 												dom_constraint->value_exist( val ) ;
 											else
 												dom_constraint->value_exist( val-1 ) ;
-*/
+												 */
 
-											//add(tmp__);
-											tmp__.lazy_initialise(this);
-											dom_constraint->extend_scope(tmp__ , val - is_lb,!is_lb, lvl);
-											base->extend_scope(tmp__);
-											//	tmp__.set_domain(!is_lb);
-											assignment_level[tmp__.id()] = lvl;
-											reason_for[tmp__.id()] = dom_constraint;
-
-
-											*(tmp__.expression->get_self().bool_domain)  = (1+ (!is_lb));
-											int index___ = level - lvl;
-											int index___0 = 1;
-
-											int saved_vars_size_at_level =  saved_vars.size;
+												//add(tmp__);
+												tmp__.lazy_initialise(this);
+												dom_constraint->extend_scope(tmp__ , val - is_lb,!is_lb, lvl);
+												base->extend_scope(tmp__);
+												//	tmp__.set_domain(!is_lb);
+												assignment_level[tmp__.id()] = lvl;
+												reason_for[tmp__.id()] = dom_constraint;
 
 
-											index___ = level - lvl;
+												*(tmp__.expression->get_self().bool_domain)  = (1+ (!is_lb));
+												int index___ = level - lvl;
+												int index___0 = 1;
+
+												int saved_vars_size_at_level =  saved_vars.size;
 
 
-											saved_vars.add(saved_vars[trail_[trail_.size -5]]);
+												index___ = level - lvl;
 
 
-											while(index___0 < index___){
+												saved_vars.add(saved_vars[trail_[trail_.size -5]]);
+
+
+												while(index___0 < index___){
+
+													saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
+
+													saved_vars[saved_vars_size_at_level] = saved_vars[trail_[trail_.size - (5*(index___0+1))]];
+
+													trail_[trail_.size - (5*index___0)]++;
+													++index___0;
+												}
 
 												saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
 
-												saved_vars[saved_vars_size_at_level] = saved_vars[trail_[trail_.size - (5*(index___0+1))]];
+												saved_vars[saved_vars_size_at_level] =  tmp__.id();
 
 												trail_[trail_.size - (5*index___0)]++;
-												++index___0;
-											}
 
-											saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
+												index___ = level - lvl;
 
-											saved_vars[saved_vars_size_at_level] =  tmp__.id();
-
-											trail_[trail_.size - (5*index___0)]++;
-
-											index___ = level - lvl;
-
-											if ((variables.size - start_from) > 16383 ){
+												if ((variables.size - start_from) > 16383 ){
 													std::cout << " \n\n\n variablessize " << variables.size << std::endl;
 													std::cout << " \n\n\n start_from " << start_from << std::endl;
 													std::cout << "  ERRPR variables.size - start_from) > 16383! " << std::endl;
@@ -12129,14 +12129,14 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 													exit(1);
 												}
 #ifdef _CHECK_NOGOOD
-									varsIds_lazy.add(range_id);
-									if (!is_lb)
-										value_lazy.add(val);
-									else
-										value_lazy.add(val -1);
+												varsIds_lazy.add(range_id);
+												if (!is_lb)
+													value_lazy.add(val);
+												else
+													value_lazy.add(val -1);
 
 #endif
-									/*
+												/*
 									if (tmp__.id() == 1989)
 									{
 										std::cout << " FOUND : 1989  :  " << std::endl;
@@ -12148,61 +12148,61 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 									//	exit (1);
 
 									}
-*/
-										}
-										else
-										{
+												 */
+											}
+											else
+											{
 
-									/*		std::cout << " already exists var :" << var << std::endl;
+												/*		std::cout << " already exists var :" << var << std::endl;
 											//printing  :
 											if (!is_lb)
 												dom_constraint->value_exist( val ) ;
 											else
 												dom_constraint->value_exist( val-1 ) ;
-*/
-											tmp__= variables[var];
-										}
+												 */
+												tmp__= variables[var];
+											}
 
 
 
-										if ( assignment_level[ tmp__.id() ] != lvl)
-										{
-											std::cout << " ERROR : \n assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
-											std::cout << " lvl " <<  lvl << std::endl;
-											std::cout << " \n \n VVV tmp__ Domain " << tmp__.get_domain() << std::endl;
-											std::cout << " tmp__.id() " << tmp__.id() << std::endl;
-											std::cout << " var  " << var<< std::endl;
-											std::cout << " reason_for[var] " << reason_for[ tmp__.id() ] << std::endl;
-											std::cout << " assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
-											std::cout << " lvl " <<  lvl << std::endl;
+											if ( assignment_level[ tmp__.id() ] != lvl)
+											{
+												std::cout << " ERROR : \n assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
+												std::cout << " lvl " <<  lvl << std::endl;
+												std::cout << " \n \n VVV tmp__ Domain " << tmp__.get_domain() << std::endl;
+												std::cout << " tmp__.id() " << tmp__.id() << std::endl;
+												std::cout << " var  " << var<< std::endl;
+												std::cout << " reason_for[var] " << reason_for[ tmp__.id() ] << std::endl;
+												std::cout << " assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
+												std::cout << " lvl " <<  lvl << std::endl;
 
-											std::cout << " current level  " <<  level << std::endl;
+												std::cout << " current level  " <<  level << std::endl;
 
-											exit (1);
+												exit (1);
 
-										}
-										if (! tmp__.is_ground())
-										{
-											std::cout << " ERROR : \n not ground !! " << std::endl;
-											//std::cout << " lvl " <<  lvl << std::endl;
-											exit (1);
+											}
+											if (! tmp__.is_ground())
+											{
+												std::cout << " ERROR : \n not ground !! " << std::endl;
+												//std::cout << " lvl " <<  lvl << std::endl;
+												exit (1);
 
-										}
+											}
 
-										if (tmp__.get_min() == is_lb)
-										{
-											std::cout << " ERROR : \n  tmp__.get_min() == is_lb !! " << std::endl;
-											//std::cout << " lvl " <<  lvl << std::endl;
-											exit (1);
+											if (tmp__.get_min() == is_lb)
+											{
+												std::cout << " ERROR : \n  tmp__.get_min() == is_lb !! " << std::endl;
+												//std::cout << " lvl " <<  lvl << std::endl;
+												exit (1);
 
-										}
+											}
 
-										//assignment_level[var]=lvl;
-										//todo should be search_root!
-										//if(	lvl)
+											//assignment_level[var]=lvl;
+											//todo should be search_root!
+											//if(	lvl)
 											if( !visited.fast_contain(tmp__.id()) ) {
 
-										//		std::cout << "visited ?  "<< std::endl;
+												//		std::cout << "visited ?  "<< std::endl;
 
 												//Sould be done later!
 												/*
@@ -12215,7 +12215,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 												 */
 
 
-													visited.fast_add(tmp__.id());
+												visited.fast_add(tmp__.id());
 
 												//learnt_clause.add(encode_bool2*tmp__.id() + is_lb);
 												learnt_clause.add(encode_boolean_variable_as_literal(tmp__.id(), is_lb));
@@ -12231,15 +12231,15 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 												if(lvl > backtrack_level)
 													backtrack_level = lvl;
 											}
-										//	std::cout << "learnt ?  "<< std::endl;
+											//	std::cout << "learnt ?  "<< std::endl;
 
-					//					std::cout << " \n \n sequence after  " << sequence << std::endl;
-					//					std::cout << " \n \n sequence sizeafter  " << sequence.size << std::endl;
-					//					std::cout << " \n \n sequence capacity after  " << sequence.capacity << std::endl;
+											//					std::cout << " \n \n sequence after  " << sequence << std::endl;
+											//					std::cout << " \n \n sequence sizeafter  " << sequence.size << std::endl;
+											//					std::cout << " \n \n sequence capacity after  " << sequence.capacity << std::endl;
 
-									}
-									else
-										bound_literals_to_explore.add(q);
+										}
+										else
+											bound_literals_to_explore.add(q);
 									}
 								}
 								else
@@ -12299,8 +12299,8 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 													int id_range_ = 	varsIds_lazy[x.id() - initial_variablesize];
 													int val_range_ = value_lazy[x.id() - initial_variablesize];
 
-												//	std::cout << " OK : id_range = " << id_range << std::endl;
-												//	std::cout << " OK : val_range = " << val_range << std::endl;
+													//	std::cout << " OK : id_range = " << id_range << std::endl;
+													//	std::cout << " OK : val_range = " << val_range << std::endl;
 
 													if (SIGN(NOT(q))){
 														//	__solver->variables[id_range].set_max(val_range);
@@ -12308,48 +12308,48 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-												DomainFaithfulnessConstraint * __c = static_cast<VariableRangeWithLearning*>(variables[id_range_].range_domain)->domainConstraint;
-												int tmp_size = __c->ub.size;
-												for (int i = 0; i< tmp_size; ++i)
-													if (__c->ub[i].x.id() == x.id())
-														if (val_range_!= __c->ub[i].value){
-															std::cout << " ERROR val_range_!= ub[i].value " << std::endl;
-															exit(1);
-														}
+														DomainFaithfulnessConstraint * __c = static_cast<VariableRangeWithLearning*>(variables[id_range_].range_domain)->domainConstraint;
+														int tmp_size = __c->ub.size;
+														for (int i = 0; i< tmp_size; ++i)
+															if (__c->ub[i].x.id() == x.id())
+																if (val_range_!= __c->ub[i].value){
+																	std::cout << " ERROR val_range_!= ub[i].value " << std::endl;
+																	exit(1);
+																}
 #endif
 
 														Literal __tmp = encode_bound_literal(id_range_,val_range_, 1);
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-							if ((is_lower_bound(__tmp)))
-							{
-								if (variables[get_variable_from_literal(__tmp)].get_min() <  get_value_from_literal(__tmp) )
-								{
-									std::cout << "\n \n \n \n \n      FUTURE PROBLEM in recovered bound "<< std::endl;
-									std::cout << "\n is_lower_bound  "<< std::endl;
-									std::cout << " Problem comes from : "<< current_explanation << std::endl;
-									std::cout << " Range variable id : "<< get_variable_from_literal(__tmp) << std::endl;
-									std::cout << " value: "<<  get_value_from_literal(__tmp) << std::endl;
+														if ((is_lower_bound(__tmp)))
+														{
+															if (variables[get_variable_from_literal(__tmp)].get_min() <  get_value_from_literal(__tmp) )
+															{
+																std::cout << "\n \n \n \n \n      FUTURE PROBLEM in recovered bound "<< std::endl;
+																std::cout << "\n is_lower_bound  "<< std::endl;
+																std::cout << " Problem comes from : "<< current_explanation << std::endl;
+																std::cout << " Range variable id : "<< get_variable_from_literal(__tmp) << std::endl;
+																std::cout << " value: "<<  get_value_from_literal(__tmp) << std::endl;
 
-									std::cout << " is a " << (is_lower_bound(__tmp) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(__tmp) << std::endl;
-									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(__tmp)].get_domain() << std::endl;
-									exit(1);
-								}
+																std::cout << " is a " << (is_lower_bound(__tmp) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(__tmp) << std::endl;
+																std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(__tmp)].get_domain() << std::endl;
+																exit(1);
+															}
 
-							}
-							else
-								if (variables[get_variable_from_literal(__tmp)].get_max() >  get_value_from_literal(__tmp) )
-								{
-									std::cout << "\n \n \n \n \n           FUTURE PROBLEM in recovered bound "<< std::endl;
-									std::cout << "\n is_upper_bound  "<< std::endl;
-									std::cout << " Problem comes from : "<< current_explanation << std::endl;
-									std::cout << " Range variable id : "<< get_variable_from_literal(__tmp) << std::endl;
-									std::cout << " value: "<<  get_value_from_literal(__tmp) << std::endl;
+														}
+														else
+															if (variables[get_variable_from_literal(__tmp)].get_max() >  get_value_from_literal(__tmp) )
+															{
+																std::cout << "\n \n \n \n \n           FUTURE PROBLEM in recovered bound "<< std::endl;
+																std::cout << "\n is_upper_bound  "<< std::endl;
+																std::cout << " Problem comes from : "<< current_explanation << std::endl;
+																std::cout << " Range variable id : "<< get_variable_from_literal(__tmp) << std::endl;
+																std::cout << " value: "<<  get_value_from_literal(__tmp) << std::endl;
 
-									std::cout << " is a " << (is_lower_bound(__tmp) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(__tmp) << std::endl;
-									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-									exit(1);
-								}
+																std::cout << " is a " << (is_lower_bound(__tmp) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(__tmp) << std::endl;
+																std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+																exit(1);
+															}
 #endif
 														bound_literals_to_explore.add(__tmp);
 
@@ -12374,50 +12374,50 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 														Literal __tmp = encode_bound_literal(id_range_,val_range_ +1, 0);
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-							if ((is_lower_bound(__tmp)))
-							{
-								if (variables[get_variable_from_literal(__tmp)].get_min() <  get_value_from_literal(__tmp) )
-								{
-									std::cout << "\n \n \n \n \n      FUTURE PROBLEM in recovered bound "<< std::endl;
-									std::cout << "\n is_lower_bound  "<< std::endl;
-									std::cout << " Problem comes from : "<< current_explanation << std::endl;
-									std::cout << " Range variable id : "<< get_variable_from_literal(__tmp) << std::endl;
-									std::cout << " value: "<<  get_value_from_literal(__tmp) << std::endl;
+														if ((is_lower_bound(__tmp)))
+														{
+															if (variables[get_variable_from_literal(__tmp)].get_min() <  get_value_from_literal(__tmp) )
+															{
+																std::cout << "\n \n \n \n \n      FUTURE PROBLEM in recovered bound "<< std::endl;
+																std::cout << "\n is_lower_bound  "<< std::endl;
+																std::cout << " Problem comes from : "<< current_explanation << std::endl;
+																std::cout << " Range variable id : "<< get_variable_from_literal(__tmp) << std::endl;
+																std::cout << " value: "<<  get_value_from_literal(__tmp) << std::endl;
 
-									std::cout << " is a " << (is_lower_bound(__tmp) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(__tmp) << std::endl;
-									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(__tmp)].get_domain() << std::endl;
-									exit(1);
-								}
+																std::cout << " is a " << (is_lower_bound(__tmp) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(__tmp) << std::endl;
+																std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(__tmp)].get_domain() << std::endl;
+																exit(1);
+															}
 
-							}
-							else
-								if (variables[get_variable_from_literal(__tmp)].get_max() >  get_value_from_literal(__tmp) )
-								{
-									std::cout << "\n \n \n \n \n           FUTURE PROBLEM in recovered bound "<< std::endl;
-									std::cout << "\n is_upper_bound  "<< std::endl;
-									std::cout << " Problem comes from : "<< current_explanation << std::endl;
-									std::cout << " Range variable id : "<< get_variable_from_literal(__tmp) << std::endl;
-									std::cout << " value: "<<  get_value_from_literal(__tmp) << std::endl;
+														}
+														else
+															if (variables[get_variable_from_literal(__tmp)].get_max() >  get_value_from_literal(__tmp) )
+															{
+																std::cout << "\n \n \n \n \n           FUTURE PROBLEM in recovered bound "<< std::endl;
+																std::cout << "\n is_upper_bound  "<< std::endl;
+																std::cout << " Problem comes from : "<< current_explanation << std::endl;
+																std::cout << " Range variable id : "<< get_variable_from_literal(__tmp) << std::endl;
+																std::cout << " value: "<<  get_value_from_literal(__tmp) << std::endl;
 
-									std::cout << " is a " << (is_lower_bound(__tmp) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(__tmp) << std::endl;
-									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-									exit(1);
-								}
+																std::cout << " is a " << (is_lower_bound(__tmp) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(__tmp) << std::endl;
+																std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+																exit(1);
+															}
 #endif
 														bound_literals_to_explore.add(__tmp);
 
 														//	__solver->variables[id_range].set_min(val_range+1);
-											//				std::cout << " Bound literal associated to :  " << variables[id_range_] << " >=  " << val_range_+1 <<  std::endl;
+														//				std::cout << " Bound literal associated to :  " << variables[id_range_] << " >=  " << val_range_+1 <<  std::endl;
 													}
 #else
-											std::cout << " _CHECK_NOGOOD should be enabled " <<std::endl;
-											exit(1);
+													std::cout << " _CHECK_NOGOOD should be enabled " <<std::endl;
+													exit(1);
 #endif
 
 												}
 												else {
-												++pathC;
-												boolean_vairables_to_explore.add(get_id_boolean_variable(q));
+													++pathC;
+													boolean_vairables_to_explore.add(get_id_boolean_variable(q));
 												}
 
 											} else {
@@ -12441,7 +12441,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 
 				}
 			}
-/*
+			/*
 			//			if( pathC > 0 )
 			//check index!
 			while(!visited.fast_contain(sequence[++index].id())) {
@@ -12459,7 +12459,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 #endif
 
 			};
-*/
+			 */
 
 
 
@@ -12476,8 +12476,8 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 				}
 
 				x = variables[a];
-//			if( pathC > 0 ) {
-		//		x = sequence[index];
+				//			if( pathC > 0 ) {
+				//		x = sequence[index];
 				a = x.id();
 				//  p = ((2*a) | (x.get_min()));
 				p= encode_boolean_variable_as_literal(x.id(),x.get_min() );
@@ -12492,8 +12492,8 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 				//std::cout << " explore the variable x " << x << std::endl;
 						std::cout << " pathC " << pathC << std::endl;
 				 */
-		//	}
-	//		if( pathC > 0 ) {
+				//	}
+				//		if( pathC > 0 ) {
 
 				// there are still atoms to expend, we start with 'a'
 
@@ -12504,7 +12504,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 
 				//		current_explanation = jsp_reason_for[a-start_from];
 				visited.fast_add(a);
-	//		}
+				//		}
 			}
 			else //if (pathC==0)
 			{
@@ -12536,8 +12536,8 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 		if (a>= initial_variablesize){
 			std::cout << " ERROR a>= initial_variablesize : " << a << std::endl;
 			exit(1);
-		//	std::cout << " OK : id_range = " << id_range << std::endl;
-		//	std::cout << " OK : val_range = " << val_range << std::endl;
+			//	std::cout << " OK : id_range = " << id_range << std::endl;
+			//	std::cout << " OK : val_range = " << val_range << std::endl;
 		}
 
 #ifdef _DEBUG_SEARCH
@@ -12556,10 +12556,10 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 		//exit(1);
 #ifdef 	_DEBUG_FD_NOGOOD
 		if(_DEBUG_FD_NOGOOD){
-		std::cout << " c END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
-		std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
-		std::cout << "learnt_clause : "  << learnt_clause.size  << std::endl;
-}
+			std::cout << " c END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
+			std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
+			std::cout << "learnt_clause : "  << learnt_clause.size  << std::endl;
+		}
 #endif
 
 #ifdef _CHECK_NOGOOD
@@ -12576,7 +12576,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 			 */
 
 			// bug in instance 1
-		/*	Vector<Literal > tmp_nogood;
+			/*	Vector<Literal > tmp_nogood;
 			tmp_nogood.add(241) ;
 			tmp_nogood.add(3811) ;
 			tmp_nogood.add(3798) ;
@@ -12598,7 +12598,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 					exit(1);
 				}
 			}
-*/
+			 */
 			((SchedulingSolver *) this)->	check_nogood(learnt_clause);
 			//	store_nogood(learnt_clause);
 		}
@@ -12678,7 +12678,7 @@ void Mistral::Solver::learn_with_lazygeneration_no_bound_at_the_end() {
 		//return decision;
 
 
-	//	std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
+		//	std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
 
 		//exit(1);
 	}
@@ -12738,11 +12738,11 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 
 		visitedLowerBounds.clear();
 		visitedUpperBounds.clear();
-//		visitedUpperBoundvalues = new unsigned int [start_from ];
-//		visitedLowerBoundvalues = new unsigned int [start_from ];
+		//		visitedUpperBoundvalues = new unsigned int [start_from ];
+		//		visitedLowerBoundvalues = new unsigned int [start_from ];
 
 
-	//	visited.extend(variables.size);
+		//	visited.extend(variables.size);
 		bool is_lb ;
 		int val ;
 		int var ;
@@ -12879,14 +12879,14 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 
 #ifdef 	_DEBUG_FD_NOGOOD
 					if(_DEBUG_FD_NOGOOD){
-					if (a==NULL_ATOM)
-						std::cout << " \n explaining a failure " << std::endl;
-					else
-					{
+						if (a==NULL_ATOM)
+							std::cout << " \n explaining a failure " << std::endl;
+						else
+						{
 
-						std::cout << " \n \n \n we will explain the boolean variable " << variables[a] << " ; its domain : " << variables[a].get_domain() << " its assignment_level : " << assignment_level[a] << std::endl;
-					}
-					std::cout << " this action (i.e. its explanation) comes from : "<< current_explanation << std::endl;
+							std::cout << " \n \n \n we will explain the boolean variable " << variables[a] << " ; its domain : " << variables[a].get_domain() << " its assignment_level : " << assignment_level[a] << std::endl;
+						}
+						std::cout << " this action (i.e. its explanation) comes from : "<< current_explanation << std::endl;
 					}
 
 #endif
@@ -12901,7 +12901,7 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 						q = *tmp;
 						++tmp;
 
-					//	std::cout << " q : "<< q << std::endl;
+						//	std::cout << " q : "<< q << std::endl;
 						if (is_a_bound_literal(q))
 						{
 
@@ -12942,10 +12942,10 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 #endif
 #ifdef 	_DEBUG_FD_NOGOOD
 							if(_DEBUG_FD_NOGOOD){
-							std::cout << "\n is_a_bound_literal  "<< std::endl;
-							std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-							std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-							std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+								std::cout << "\n is_a_bound_literal  "<< std::endl;
+								std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+								std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+								std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 							}
 #endif
 
@@ -12956,22 +12956,22 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 							var = get_variable_from_literal(to_be_explored);
 							tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
 							unsigned int range_id = var;
-					//		std::cout << " \n \n \n  val	 : " << val << std::endl;
+							//		std::cout << " \n \n \n  val	 : " << val << std::endl;
 							lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
 							bool already_explored = false;
 							//if (lvl>0 Search root?
 							if (lvl>0){
-							if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
-							{
+								if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
+								{
 
-								//std::cout << " \n \n sequence before  " << sequence << std::endl;
-								//std::cout << " \n \n sequence size before  " << sequence.size << std::endl;
-								//std::cout << " \n \n sequence capacity before  " << sequence.capacity << std::endl;
+									//std::cout << " \n \n sequence before  " << sequence << std::endl;
+									//std::cout << " \n \n sequence size before  " << sequence.size << std::endl;
+									//std::cout << " \n \n sequence capacity before  " << sequence.capacity << std::endl;
 
 
-								if (is_lb && visitedLowerBounds.fast_contain(var)){
-									if (visitedLowerBoundvalues[var] >= val){
-						/*				std::cout << " \n \n is_lb : " << is_lb << std::endl;
+									if (is_lb && visitedLowerBounds.fast_contain(var)){
+										if (visitedLowerBoundvalues[var] >= val){
+											/*				std::cout << " \n \n is_lb : " << is_lb << std::endl;
 										std::cout << " var	 : " << var << std::endl;
 										std::cout << " val	 : " << val << std::endl;
 
@@ -12979,15 +12979,15 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 										std::cout << " visitedLowerBounds.  : " << visitedLowerBounds << std::endl;
 
 										std::cout << " visitedLowerBoundvalues[var] : " << visitedLowerBoundvalues[var] << std::endl;
-						*/
-										already_explored = true;
+											 */
+											already_explored = true;
+										}
+										//			else
 									}
-						//			else
-								}
-								else
-									if ((!is_lb) && visitedUpperBounds.fast_contain(var)){
-										if (visitedUpperBoundvalues[var] <= val){
-			/*								std::cout << " \n \n is_lb : " << is_lb << std::endl;
+									else
+										if ((!is_lb) && visitedUpperBounds.fast_contain(var)){
+											if (visitedUpperBoundvalues[var] <= val){
+												/*								std::cout << " \n \n is_lb : " << is_lb << std::endl;
 											std::cout << " var	 : " << var << std::endl;
 											std::cout << " val	 : " << val << std::endl;
 
@@ -12995,167 +12995,167 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 											std::cout << " visitedLowerBounds.  : " << visitedUpperBounds << std::endl;
 
 											std::cout << " visitedUpperBoundvalues[var] : " << visitedUpperBoundvalues[var] << std::endl;
-*/
-											already_explored = true;
+												 */
+												already_explored = true;
+											}
+											//			else
 										}
-							//			else
-									}
 
 
-								if (!already_explored){
-								dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
-								Variable tmp__(0,1);
-								if (!is_lb)
-									var = dom_constraint->value_exist( val ) ;
-								else
-									var = dom_constraint->value_exist( val-1 ) ;
+									if (!already_explored){
+										dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
+										Variable tmp__(0,1);
+										if (!is_lb)
+											var = dom_constraint->value_exist( val ) ;
+										else
+											var = dom_constraint->value_exist( val-1 ) ;
 
-								if ( var< 0)
-								{
-									//add(tmp__);
-									tmp__.lazy_initialise(this);
-//								dom_constraint->extend_scope(tmp__ , val,!is_lb, lvl);
+										if ( var< 0)
+										{
+											//add(tmp__);
+											tmp__.lazy_initialise(this);
+											//								dom_constraint->extend_scope(tmp__ , val,!is_lb, lvl);
 
-									dom_constraint->extend_scope(tmp__ , val - is_lb,!is_lb, lvl);
-									base->extend_scope(tmp__);
-									//	tmp__.set_domain(!is_lb);
-									assignment_level[tmp__.id()] = lvl;
-									reason_for[tmp__.id()] = dom_constraint;
-
-
-									*(tmp__.expression->get_self().bool_domain)  = (1+ (!is_lb));
-									int index___ = level - lvl;
-									int index___0 = 1;
-
-									int saved_vars_size_at_level =  saved_vars.size;
+											dom_constraint->extend_scope(tmp__ , val - is_lb,!is_lb, lvl);
+											base->extend_scope(tmp__);
+											//	tmp__.set_domain(!is_lb);
+											assignment_level[tmp__.id()] = lvl;
+											reason_for[tmp__.id()] = dom_constraint;
 
 
-									index___ = level - lvl;
+											*(tmp__.expression->get_self().bool_domain)  = (1+ (!is_lb));
+											int index___ = level - lvl;
+											int index___0 = 1;
+
+											int saved_vars_size_at_level =  saved_vars.size;
 
 
-									saved_vars.add(saved_vars[trail_[trail_.size -5]]);
+											index___ = level - lvl;
 
 
-									while(index___0 < index___){
+											saved_vars.add(saved_vars[trail_[trail_.size -5]]);
 
-										saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
 
-										saved_vars[saved_vars_size_at_level] = saved_vars[trail_[trail_.size - (5*(index___0+1))]];
+											while(index___0 < index___){
 
-										trail_[trail_.size - (5*index___0)]++;
-										++index___0;
-									}
+												saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
 
-									saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
+												saved_vars[saved_vars_size_at_level] = saved_vars[trail_[trail_.size - (5*(index___0+1))]];
 
-									saved_vars[saved_vars_size_at_level] =  tmp__.id();
+												trail_[trail_.size - (5*index___0)]++;
+												++index___0;
+											}
 
-									trail_[trail_.size - (5*index___0)]++;
+											saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
 
-									index___ = level - lvl;
+											saved_vars[saved_vars_size_at_level] =  tmp__.id();
 
-									if ((variables.size - start_from) > 16383 ){
-											std::cout << " \n\n\n variablessize " << variables.size << std::endl;
-											std::cout << " \n\n\n start_from " << start_from << std::endl;
-											std::cout << "  ERRPR variables.size - start_from) > 16383! " << std::endl;
+											trail_[trail_.size - (5*index___0)]++;
 
-											exit(1);
-										}
+											index___ = level - lvl;
+
+											if ((variables.size - start_from) > 16383 ){
+												std::cout << " \n\n\n variablessize " << variables.size << std::endl;
+												std::cout << " \n\n\n start_from " << start_from << std::endl;
+												std::cout << "  ERRPR variables.size - start_from) > 16383! " << std::endl;
+
+												exit(1);
+											}
 #ifdef _CHECK_NOGOOD
-									varsIds_lazy.add(range_id);
-									if (!is_lb)
-										value_lazy.add(val);
-									else
-										value_lazy.add(val -1);
+											varsIds_lazy.add(range_id);
+											if (!is_lb)
+												value_lazy.add(val);
+											else
+												value_lazy.add(val -1);
 
 #endif
 
-								}
-								else
-								{
-									tmp__= variables[var];
-								}
+										}
+										else
+										{
+											tmp__= variables[var];
+										}
 
 
-								if ( assignment_level[ tmp__.id() ] != lvl)
-								{
-									std::cout << " ERROR : \n assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
-									std::cout << " lvl " <<  lvl << std::endl;
-									std::cout << " \n \n VVV tmp__ Domain " << tmp__.get_domain() << std::endl;
-									std::cout << " tmp__.id() " << tmp__.id() << std::endl;
-									std::cout << " var  " << var<< std::endl;
-									std::cout << " reason_for[var] " << reason_for[ tmp__.id() ] << std::endl;
-									std::cout << " assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
-									std::cout << " lvl " <<  lvl << std::endl;
+										if ( assignment_level[ tmp__.id() ] != lvl)
+										{
+											std::cout << " ERROR : \n assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
+											std::cout << " lvl " <<  lvl << std::endl;
+											std::cout << " \n \n VVV tmp__ Domain " << tmp__.get_domain() << std::endl;
+											std::cout << " tmp__.id() " << tmp__.id() << std::endl;
+											std::cout << " var  " << var<< std::endl;
+											std::cout << " reason_for[var] " << reason_for[ tmp__.id() ] << std::endl;
+											std::cout << " assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
+											std::cout << " lvl " <<  lvl << std::endl;
 
-									std::cout << " current level  " <<  level << std::endl;
+											std::cout << " current level  " <<  level << std::endl;
 
-									exit (1);
+											exit (1);
 
-								}
-								if (! tmp__.is_ground())
-								{
-									std::cout << " ERROR : \n not ground !! " << std::endl;
-									//std::cout << " lvl " <<  lvl << std::endl;
-									exit (1);
+										}
+										if (! tmp__.is_ground())
+										{
+											std::cout << " ERROR : \n not ground !! " << std::endl;
+											//std::cout << " lvl " <<  lvl << std::endl;
+											exit (1);
 
-								}
+										}
 
 
-								//assignment_level[var]=lvl;
-								//todo should be search_root!
-								//if(	lvl)
-									if( !visited.fast_contain(tmp__.id()) ) {
-										//Sould be done later!
-										/*
+										//assignment_level[var]=lvl;
+										//todo should be search_root!
+										//if(	lvl)
+										if( !visited.fast_contain(tmp__.id()) ) {
+											//Sould be done later!
+											/*
 												if(lit_activity) {
 													//lit_activity[q] += 0.5 * parameters.activity_increment;
 													lit_activity[NOT(q)] += // 0.5 *
 															parameters.activity_increment;
 													var_activity[get_id_boolean_variable(q)] += parameters.activity_increment;
 												}
-										 */
+											 */
 
 
 											visited.fast_add(tmp__.id());
 
-										//learnt_clause.add(encode_bool2*tmp__.id() + is_lb);
-										learnt_clause.add(encode_boolean_variable_as_literal(tmp__.id(), is_lb));
+											//learnt_clause.add(encode_bool2*tmp__.id() + is_lb);
+											learnt_clause.add(encode_boolean_variable_as_literal(tmp__.id(), is_lb));
 
-										if(lvl > backtrack_level)
-											backtrack_level = lvl;
+											if(lvl > backtrack_level)
+												backtrack_level = lvl;
 
-										if (range_id >= start_from)
-										{
-											std::cout << " \n \n ERROR	range_id >= start_from: " << std::endl;
-											exit(1);
+											if (range_id >= start_from)
+											{
+												std::cout << " \n \n ERROR	range_id >= start_from: " << std::endl;
+												exit(1);
+											}
+											if (is_lb){
+
+												//	std::cout << " \n \n learn  val	 : " << val << std::endl;
+												if (!visitedLowerBounds.fast_contain(range_id))
+													visitedLowerBounds.fast_add(range_id);
+												visitedLowerBoundvalues[range_id]= val;
+
+											}
+											else
+											{
+												//	std::cout << " \n \n \ learn val	 : " << val << std::endl;
+												if (!visitedUpperBounds.fast_contain(range_id))
+													visitedUpperBounds.fast_add(range_id);
+												visitedUpperBoundvalues[range_id]= val;
+											}
+
 										}
-										if (is_lb){
 
-											//	std::cout << " \n \n learn  val	 : " << val << std::endl;
-											if (!visitedLowerBounds.fast_contain(range_id))
-												visitedLowerBounds.fast_add(range_id);
-											visitedLowerBoundvalues[range_id]= val;
-
-										}
-										else
-										{
-											//	std::cout << " \n \n \ learn val	 : " << val << std::endl;
-											if (!visitedUpperBounds.fast_contain(range_id))
-												visitedUpperBounds.fast_add(range_id);
-											visitedUpperBoundvalues[range_id]= val;
-										}
-
+										//std::cout << " \n \n sequence after " << sequence << std::endl;
+										//std::cout << " \n \n sequence size after  " << sequence.size << std::endl;
+										//std::cout << " \n \n sequence capacity after  " << sequence.capacity << std::endl;
 									}
 
-								//std::cout << " \n \n sequence after " << sequence << std::endl;
-								//std::cout << " \n \n sequence size after  " << sequence.size << std::endl;
-								//std::cout << " \n \n sequence capacity after  " << sequence.capacity << std::endl;
 								}
-
-							}
-							else
-								bound_literals_to_explore.add(q);
+								else
+									bound_literals_to_explore.add(q);
 							}
 						}
 						else{
@@ -13164,8 +13164,8 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 
 #ifdef 	_DEBUG_FD_NOGOOD
 							if(_DEBUG_FD_NOGOOD){
-							std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
-}
+								std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
+							}
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 							if ((x.get_size()>1) )
@@ -13230,19 +13230,19 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 						graph_size++;
 #ifdef 	_DEBUG_FD_NOGOOD
 						if(_DEBUG_FD_NOGOOD){
-						std::cout << "\n we will explain "<< q << std::endl;
-						std::cout << "which corresponds to " << std::endl;
-						std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-						std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-						std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-}
+							std::cout << "\n we will explain "<< q << std::endl;
+							std::cout << "which corresponds to " << std::endl;
+							std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+							std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+							std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+						}
 #endif
 						if(bound_explanation)
 						{
 
 #ifdef 	_DEBUG_FD_NOGOOD
 							if(_DEBUG_FD_NOGOOD){
-							std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
+								std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
 							}
 #endif
 							Explanation::iterator end_tmp_iterator;
@@ -13295,11 +13295,11 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 #endif
 #ifdef 	_DEBUG_FD_NOGOOD
 									if(_DEBUG_FD_NOGOOD){
-									std::cout << "\n is_a_bound_literal  "<< std::endl;
-									std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-									std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-}
+										std::cout << "\n is_a_bound_literal  "<< std::endl;
+										std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+										std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+										std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+									}
 #endif
 
 
@@ -13310,21 +13310,21 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 									var = get_variable_from_literal(to_be_explored);
 									tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
 									unsigned int range_id = var;
-					//				std::cout << " \n \n \n  val	 : " << val << std::endl;
+									//				std::cout << " \n \n \n  val	 : " << val << std::endl;
 									lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
 									bool already_explored = false;
 									if (lvl>0){
-									if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
-									{
+										if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
+										{
 
-										//std::cout << " \n \n sequence before  " << sequence << std::endl;
-										//std::cout << " \n \n sequence size before  " << sequence.size << std::endl;
-										//std::cout << " \n \n sequence capacity before  " << sequence.capacity << std::endl;
+											//std::cout << " \n \n sequence before  " << sequence << std::endl;
+											//std::cout << " \n \n sequence size before  " << sequence.size << std::endl;
+											//std::cout << " \n \n sequence capacity before  " << sequence.capacity << std::endl;
 
 
-										if (is_lb && visitedLowerBounds.fast_contain(var)){
-											if (visitedLowerBoundvalues[var] >= val){
-	/*											std::cout << " \n \n is_lb : " << is_lb << std::endl;
+											if (is_lb && visitedLowerBounds.fast_contain(var)){
+												if (visitedLowerBoundvalues[var] >= val){
+													/*											std::cout << " \n \n is_lb : " << is_lb << std::endl;
 												std::cout << " var	 : " << var << std::endl;
 												std::cout << " val	 : " << val << std::endl;
 
@@ -13333,15 +13333,15 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 												std::cout << " visitedLowerBounds.  : " << visitedLowerBounds << std::endl;
 
 												std::cout << " visitedLowerBoundvalues[var] : " << visitedLowerBoundvalues[var] << std::endl;
-*/
-												already_explored = true;
+													 */
+													already_explored = true;
+												}
+												//			else
 											}
-								//			else
-										}
-										else
-											if ((!is_lb) && visitedUpperBounds.fast_contain(var)){
-												if (visitedUpperBoundvalues[var] <= val){
-							/*						std::cout << " \n \n is_lb : " << is_lb << std::endl;
+											else
+												if ((!is_lb) && visitedUpperBounds.fast_contain(var)){
+													if (visitedUpperBoundvalues[var] <= val){
+														/*						std::cout << " \n \n is_lb : " << is_lb << std::endl;
 													std::cout << " var	 : " << var << std::endl;
 													std::cout << " val	 : " << val << std::endl;
 
@@ -13349,167 +13349,167 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 													std::cout << " visitedUpperBounds.  : " << visitedUpperBounds<< std::endl;
 
 													std::cout << " visitedUpperBoundvalues[var] : " << visitedUpperBoundvalues[var] << std::endl;
-							*/
-													already_explored = true;
+														 */
+														already_explored = true;
+													}
+													//			else
 												}
-									//			else
-											}
 
-										if (!already_explored){
-										dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
-										Variable tmp__(0,1);
-										if (!is_lb)
-											var = dom_constraint->value_exist( val ) ;
-										else
-											var = dom_constraint->value_exist( val-1 ) ;
+											if (!already_explored){
+												dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
+												Variable tmp__(0,1);
+												if (!is_lb)
+													var = dom_constraint->value_exist( val ) ;
+												else
+													var = dom_constraint->value_exist( val-1 ) ;
 
-										if ( var< 0)
-										{
-											//add(tmp__);
-											tmp__.lazy_initialise(this);
-											dom_constraint->extend_scope(tmp__ , val - is_lb,!is_lb, lvl);
-											base->extend_scope(tmp__);
-											//	tmp__.set_domain(!is_lb);
-											assignment_level[tmp__.id()] = lvl;
-											reason_for[tmp__.id()] = dom_constraint;
+												if ( var< 0)
+												{
+													//add(tmp__);
+													tmp__.lazy_initialise(this);
+													dom_constraint->extend_scope(tmp__ , val - is_lb,!is_lb, lvl);
+													base->extend_scope(tmp__);
+													//	tmp__.set_domain(!is_lb);
+													assignment_level[tmp__.id()] = lvl;
+													reason_for[tmp__.id()] = dom_constraint;
 
 
-											*(tmp__.expression->get_self().bool_domain)  = (1+ (!is_lb));
-											int index___ = level - lvl;
-											int index___0 = 1;
+													*(tmp__.expression->get_self().bool_domain)  = (1+ (!is_lb));
+													int index___ = level - lvl;
+													int index___0 = 1;
 
-											int saved_vars_size_at_level =  saved_vars.size;
-
-
-											index___ = level - lvl;
+													int saved_vars_size_at_level =  saved_vars.size;
 
 
-											saved_vars.add(saved_vars[trail_[trail_.size -5]]);
+													index___ = level - lvl;
 
 
-											while(index___0 < index___){
+													saved_vars.add(saved_vars[trail_[trail_.size -5]]);
 
-												saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
 
-												saved_vars[saved_vars_size_at_level] = saved_vars[trail_[trail_.size - (5*(index___0+1))]];
+													while(index___0 < index___){
 
-												trail_[trail_.size - (5*index___0)]++;
-												++index___0;
-											}
+														saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
 
-											saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
+														saved_vars[saved_vars_size_at_level] = saved_vars[trail_[trail_.size - (5*(index___0+1))]];
 
-											saved_vars[saved_vars_size_at_level] =  tmp__.id();
+														trail_[trail_.size - (5*index___0)]++;
+														++index___0;
+													}
 
-											trail_[trail_.size - (5*index___0)]++;
+													saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
 
-											index___ = level - lvl;
+													saved_vars[saved_vars_size_at_level] =  tmp__.id();
 
-											if ((variables.size - start_from) > 16383 ){
-													std::cout << " \n\n\n variablessize " << variables.size << std::endl;
-													std::cout << " \n\n\n start_from " << start_from << std::endl;
-													std::cout << "  ERRPR variables.size - start_from) > 16383! " << std::endl;
+													trail_[trail_.size - (5*index___0)]++;
 
-													exit(1);
-												}
+													index___ = level - lvl;
+
+													if ((variables.size - start_from) > 16383 ){
+														std::cout << " \n\n\n variablessize " << variables.size << std::endl;
+														std::cout << " \n\n\n start_from " << start_from << std::endl;
+														std::cout << "  ERRPR variables.size - start_from) > 16383! " << std::endl;
+
+														exit(1);
+													}
 #ifdef _CHECK_NOGOOD
-									varsIds_lazy.add(range_id);
-									if (!is_lb)
-										value_lazy.add(val);
-									else
-										value_lazy.add(val -1);
+													varsIds_lazy.add(range_id);
+													if (!is_lb)
+														value_lazy.add(val);
+													else
+														value_lazy.add(val -1);
 #endif
 
 
-										}
-										else
-										{
-											tmp__= variables[var];
-										}
+												}
+												else
+												{
+													tmp__= variables[var];
+												}
 
 
 
-										if ( assignment_level[ tmp__.id() ] != lvl)
-										{
-											std::cout << " ERROR : \n assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
-											std::cout << " lvl " <<  lvl << std::endl;
-											std::cout << " \n \n VVV tmp__ Domain " << tmp__.get_domain() << std::endl;
-											std::cout << " tmp__.id() " << tmp__.id() << std::endl;
-											std::cout << " var  " << var<< std::endl;
-											std::cout << " reason_for[var] " << reason_for[ tmp__.id() ] << std::endl;
-											std::cout << " assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
-											std::cout << " lvl " <<  lvl << std::endl;
+												if ( assignment_level[ tmp__.id() ] != lvl)
+												{
+													std::cout << " ERROR : \n assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
+													std::cout << " lvl " <<  lvl << std::endl;
+													std::cout << " \n \n VVV tmp__ Domain " << tmp__.get_domain() << std::endl;
+													std::cout << " tmp__.id() " << tmp__.id() << std::endl;
+													std::cout << " var  " << var<< std::endl;
+													std::cout << " reason_for[var] " << reason_for[ tmp__.id() ] << std::endl;
+													std::cout << " assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
+													std::cout << " lvl " <<  lvl << std::endl;
 
-											std::cout << " current level  " <<  level << std::endl;
+													std::cout << " current level  " <<  level << std::endl;
 
-											exit (1);
+													exit (1);
 
-										}
-										if (! tmp__.is_ground())
-										{
-											std::cout << " ERROR : \n not ground !! " << std::endl;
-											//std::cout << " lvl " <<  lvl << std::endl;
-											exit (1);
+												}
+												if (! tmp__.is_ground())
+												{
+													std::cout << " ERROR : \n not ground !! " << std::endl;
+													//std::cout << " lvl " <<  lvl << std::endl;
+													exit (1);
 
-										}
+												}
 
 
-										//assignment_level[var]=lvl;
-										//todo should be search_root!
-										//if(	lvl)
-											if( !visited.fast_contain(tmp__.id()) ) {
-												//Sould be done later!
-												/*
+												//assignment_level[var]=lvl;
+												//todo should be search_root!
+												//if(	lvl)
+												if( !visited.fast_contain(tmp__.id()) ) {
+													//Sould be done later!
+													/*
 														if(lit_activity) {
 															//lit_activity[q] += 0.5 * parameters.activity_increment;
 															lit_activity[NOT(q)] += // 0.5 *
 																	parameters.activity_increment;
 															var_activity[get_id_boolean_variable(q)] += parameters.activity_increment;
 														}
-												 */
+													 */
 
 
 													visited.fast_add(tmp__.id());
 
-												//learnt_clause.add(encode_bool2*tmp__.id() + is_lb);
-												learnt_clause.add(encode_boolean_variable_as_literal(tmp__.id(), is_lb));
+													//learnt_clause.add(encode_bool2*tmp__.id() + is_lb);
+													learnt_clause.add(encode_boolean_variable_as_literal(tmp__.id(), is_lb));
 
-												if(lvl > backtrack_level)
-													backtrack_level = lvl;
+													if(lvl > backtrack_level)
+														backtrack_level = lvl;
 
 
-												if (range_id >= start_from)
-												{
-													std::cout << " \n \n ERROR	range_id >= start_from: " << std::endl;
-													exit(1);
+													if (range_id >= start_from)
+													{
+														std::cout << " \n \n ERROR	range_id >= start_from: " << std::endl;
+														exit(1);
+													}
+													if (is_lb){
+
+														//			std::cout << " \n \n learn  val	 : " << val << std::endl;
+														if (!visitedLowerBounds.fast_contain(range_id))
+															visitedLowerBounds.fast_add(range_id);
+														visitedLowerBoundvalues[range_id]= val;
+
+													}
+													else
+													{
+														//			std::cout << " \n \n \ learn val	 : " << val << std::endl;
+														if (!visitedUpperBounds.fast_contain(range_id))
+															visitedUpperBounds.fast_add(range_id);
+														visitedUpperBoundvalues[range_id]= val;
+													}
+
+
 												}
-												if (is_lb){
 
-													//			std::cout << " \n \n learn  val	 : " << val << std::endl;
-													if (!visitedLowerBounds.fast_contain(range_id))
-														visitedLowerBounds.fast_add(range_id);
-													visitedLowerBoundvalues[range_id]= val;
-
-												}
-												else
-												{
-													//			std::cout << " \n \n \ learn val	 : " << val << std::endl;
-													if (!visitedUpperBounds.fast_contain(range_id))
-														visitedUpperBounds.fast_add(range_id);
-													visitedUpperBoundvalues[range_id]= val;
-												}
-
+												//					std::cout << " \n \n sequence after  " << sequence << std::endl;
+												//					std::cout << " \n \n sequence sizeafter  " << sequence.size << std::endl;
+												//					std::cout << " \n \n sequence capacity after  " << sequence.capacity << std::endl;
 
 											}
-
-					//					std::cout << " \n \n sequence after  " << sequence << std::endl;
-					//					std::cout << " \n \n sequence sizeafter  " << sequence.size << std::endl;
-					//					std::cout << " \n \n sequence capacity after  " << sequence.capacity << std::endl;
-
 										}
-									}
-									else
-										bound_literals_to_explore.add(q);
+										else
+											bound_literals_to_explore.add(q);
 									}
 								}
 								else
@@ -13519,7 +13519,7 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 
 #ifdef 	_DEBUG_FD_NOGOOD
 									if(_DEBUG_FD_NOGOOD){
-									std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " explanation comes from " << bound_explanation << std::endl;
+										std::cout << " boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " explanation comes from " << bound_explanation << std::endl;
 									}
 #endif
 
@@ -13579,7 +13579,7 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 
 				}
 			}
-/*
+			/*
 			//			if( pathC > 0 )
 			//check index!
 			while(!visited.fast_contain(sequence[++index].id())) {
@@ -13597,7 +13597,7 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 #endif
 
 			};
-*/
+			 */
 
 
 
@@ -13614,8 +13614,8 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 				}
 
 				x = variables[a];
-//			if( pathC > 0 ) {
-		//		x = sequence[index];
+				//			if( pathC > 0 ) {
+				//		x = sequence[index];
 				a = x.id();
 				//  p = ((2*a) | (x.get_min()));
 				p= encode_boolean_variable_as_literal(x.id(),x.get_min() );
@@ -13630,8 +13630,8 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 				//std::cout << " explore the variable x " << x << std::endl;
 						std::cout << " pathC " << pathC << std::endl;
 				 */
-		//	}
-	//		if( pathC > 0 ) {
+				//	}
+				//		if( pathC > 0 ) {
 
 				// there are still atoms to expend, we start with 'a'
 
@@ -13642,7 +13642,7 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 
 				//		current_explanation = jsp_reason_for[a-start_from];
 				visited.fast_add(a);
-	//		}
+				//		}
 			}
 			else //if (pathC==0)
 			{
@@ -13681,10 +13681,10 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 		//exit(1);
 #ifdef 	_DEBUG_FD_NOGOOD
 		if(_DEBUG_FD_NOGOOD){
-		std::cout << " c END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
-		std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
-		std::cout << "learnt_clause : "  << learnt_clause.size  << std::endl;
-}
+			std::cout << " c END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
+			std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
+			std::cout << "learnt_clause : "  << learnt_clause.size  << std::endl;
+		}
 #endif
 
 #ifdef _CHECK_NOGOOD
@@ -13779,7 +13779,7 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 		//return decision;
 
 
-	//	std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
+		//	std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
 
 		//exit(1);
 	}

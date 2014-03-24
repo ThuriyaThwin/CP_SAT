@@ -1945,64 +1945,24 @@ int Mistral::VariableImplementation::assigned_at_last_level() const {
 bool Mistral::VariableRangeWithLearning::should_be_learnt (Literal q) {
 
 
-//	std::cout << " should_be_learnt ? " << std::endl;
+	//	std::cout << " should_be_learnt ? " << std::endl;
 
-//	std::cout << " previsouslevel lower value : " <<  trail_[trail_.size - 3] <<std::endl;
-//	std::cout << " previsouslevel upper value : " <<  trail_[trail_.size - 2] <<std::endl;
-//	std::cout << " previsouslevel level : " <<  trail_[trail_.size - 1] <<std::endl;
+	//	std::cout << " previsouslevel lower value : " <<  trail_[trail_.size - 3] <<std::endl;
+	//	std::cout << " previsouslevel upper value : " <<  trail_[trail_.size - 2] <<std::endl;
+	//	std::cout << " previsouslevel level : " <<  trail_[trail_.size - 1] <<std::endl;
 
 
 	int value = get_value_from_literal(q);
 	bool islb = is_lower_bound(q);
 	int __level = level_of(value, islb);
-/*
+	/*
 	std::cout << " \n \n should_be_learnt ? " << std::endl;
 
 	std::cout << " level : " <<  solver->level <<std::endl;
 	std::cout << " __level of literal : " <<  __level <<std::endl;
 	std::cout << " should be learnt ? " <<  (__level < solver->level) <<std::endl;
-*/
-	return (__level < (solver->level)) ;
-
-/*
-//	std::cout << " value :  " << value <<std::endl;
-//	std::cout << " is_lower_bound(q) :  " << is_lower_bound(q) <<std::endl;
-
-	int idx_level= trail_.size -4;
-	if (trail_[trail_.size - 1] != solver->level)
-	{
-		//	std::cout << " ERROR not the latest level! " << solver->level <<std::endl;
-		// std::cout << " trail_ " << trail_ <<std::endl;
-		//	exit(1);
-		idx_level+=3;
-	}
-	if (idx_level> 1) {
-		if (is_lower_bound(q)){
-
-			previsouslevel = trail_[idx_level -2];
-			return (value <= previsouslevel);
-
-		}
-		else{
-			previsouslevel = trail_[idx_level-1];
-
-			return (value >= previsouslevel);
-		}
-	}
-	else
-	{
-		std::cout << " CHECK IT OUT !" << solver->level <<std::endl;
-		exit(1);
-	}
-*/
-	/*
-	  previsouslevel_lb;
-	  int previsouslevel_ub;
-		solver->save(id);
-		trail_.add(min);
-		trail_.add(max);
-		trail_.add(solver->level);
 	 */
+	return (__level < (solver->level)) ;
 
 }
 
@@ -2062,15 +2022,15 @@ int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 
 }
 
-*/
+ */
 
 
 
 int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 
-		std::cout << " \n level_of " << std::endl;
-		std::cout << " val " << val << std::endl;
-		std::cout << " lb  " << lb << std::endl;
+	std::cout << " \n level_of " << std::endl;
+	std::cout << " val " << val << std::endl;
+	std::cout << " lb  " << lb << std::endl;
 
 	if (lowerbounds.size != lower_bound_levels.size){
 		std::cout << " ERROR lowerbounds level_of END ? " << std::endl;
@@ -2086,11 +2046,11 @@ int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 	if (lb)
 	{
 
-			/*	std::cout << "  lowerbounds.size  " << lowerbounds.size << std::endl;
+		/*	std::cout << "  lowerbounds.size  " << lowerbounds.size << std::endl;
 				std::cout << "  lowerbounds " << lowerbounds << std::endl;
 				std::cout << "  lower_bound_levels.size  " << lower_bound_levels.size << std::endl;
 				std::cout << "  lower_bound_levels " << lower_bound_levels << std::endl;
-*/
+		 */
 		size =lowerbounds.size ;
 		while (size --)
 			if(lowerbounds[size]== val)
@@ -2102,11 +2062,11 @@ int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 	else
 	{
 
-	/*		std::cout << "  upperbounds.size  " << upperbounds.size << std::endl;
+		/*		std::cout << "  upperbounds.size  " << upperbounds.size << std::endl;
 			std::cout << "  upperbounds " << upperbounds << std::endl;
 			std::cout << "  upper_bound_levels.size  " << upper_bound_levels.size << std::endl;
 			std::cout << "  upper_bound_levels " << upper_bound_levels << std::endl;
-*/
+		 */
 		size =upperbounds.size ;
 		while (size --)
 			if(upperbounds[size]==val)
@@ -2139,32 +2099,7 @@ bool Mistral::VariableRangeWithLearning::first_time_visited (bool is_a_lowerboun
 	else
 		return (latest_visited_upper_bound == INFTY);
 }
-/*
-bool Mistral::VariableRangeWithLearning::set_visited (unsigned int literal) {
 
-	if (is_lower_bound(literal))
-	{
-		if (latest_visited_lower_bound> get_value_from_literal(literal))
-			return true;
-		else
-		{
-			latest_visited_lower_bound= get_value_from_literal(literal);
-			return false;
-		}
-	}
-	else
-	{
-		if (latest_visited_upper_bound < get_value_from_literal(literal))
-			return true;
-		else
-		{
-			latest_visited_upper_bound= get_value_from_literal(literal);
-			return false;
-		}
-	}
-
-}
-*/
 
 
 //TODO rewrite reason_for
@@ -2291,7 +2226,7 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 #endif
 
 }
-*/
+ */
 
 
 //Exact reason for
@@ -2348,10 +2283,10 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 
 		std::cout << "  bool_var_id " <<bool_var_id << std::endl;
 
-		if (bool_var_id<0)
-			exit(1);
-			else
-				return domainConstraint;
+		//	if (bool_var_id<0)
+		exit(1);
+		//else
+		//	return domainConstraint;
 
 
 	}
@@ -2387,10 +2322,10 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 
 		std::cout << "  bool_var_id " <<bool_var_id << std::endl;
 
-		if (bool_var_id<0)
+		//	if (bool_var_id<0)
 		exit(1);
-		else
-			return domainConstraint;
+		//	else
+		//		return domainConstraint;
 
 	}
 }

@@ -1531,7 +1531,7 @@ namespace Mistral {
 
   public:
 	  VariableRangeWithLearning(const int lb, const int ub) : VariableRange(lb,ub) {
-	//	  std::cout << "HERE \n \n " << std::endl;
+		  //	  std::cout << "HERE \n \n " << std::endl;
 		  latest_visited_upper_bound = INFTY;
 		  latest_visited_lower_bound = -INFTY;
 		  lowerbounds.clear();
@@ -1547,8 +1547,8 @@ namespace Mistral {
 		  upper_bound_reasons.add(NULL);
 		  lower_bound_levels.add(-1);
 		  upper_bound_levels.add(-1);
-		//  std::cout << "111NDDDDD \n \n " << std::endl;
-	//	  std::cout << "level  \n \n " << solver->level <<std::endl;
+		  //  std::cout << "111NDDDDD \n \n " << std::endl;
+		  //	  std::cout << "level  \n \n " << solver->level <<std::endl;
 
 
 #ifdef latest_bounds_learning
@@ -1563,7 +1563,7 @@ namespace Mistral {
 		  explanation_trail.add(UB_Explanation);
 #endif
 		  domainConstraint = NULL;
-//		  std::cout << "ENDDDDD \n \n " << std::endl;
+		  //		  std::cout << "ENDDDDD \n \n " << std::endl;
 	  };
 	  Explanation* reason_for(Literal l);
 
@@ -1580,7 +1580,7 @@ namespace Mistral {
 	  bool should_be_learnt(Literal q);
 	  int level_of(int val, bool lb) ;
 
-//	  bool set_visited(unsigned int literal);
+	  //	  bool set_visited(unsigned int literal);
 	  /// Remove all values strictly lower than l
 	  inline Event set_min(const int lo,  Explanation * C) {
 		  Event lower_bound = LB_EVENT;
@@ -1613,7 +1613,7 @@ namespace Mistral {
 			  //	  int size =lowerbounds.size ;
 			  //	  std::cout << "size" << size<< std::endl;
 #ifdef latest_bounds_learning
-			  }
+		  }
 		  else{
 
 			  LB_Explanation = C;
@@ -1673,7 +1673,7 @@ namespace Mistral {
 		  solver->trigger_event(id, upper_bound);
 		  return upper_bound;
 	  }
-/*
+	  /*
 	  inline void save() {
 		  if(trail_.back() != solver->level) {
 			  solver->save(id);
@@ -1688,7 +1688,7 @@ namespace Mistral {
 			  }
 		  }
 	  }
-*/
+	   */
 
 	  inline Event restore() {
 
@@ -1759,14 +1759,14 @@ namespace Mistral {
 
 #ifdef latest_bounds_learning
 	  bool latest;
-	    Vector<Explanation* > explanation_trail;
+	  Vector<Explanation* > explanation_trail;
 #endif
 
   private:
-		  Vector<Explanation*> lower_bound_reasons;
-		  Vector<Explanation*> upper_bound_reasons;
-		  Vector<int> lower_bound_levels;
-		  Vector<int> upper_bound_levels;
+	  Vector<Explanation*> lower_bound_reasons;
+	  Vector<Explanation*> upper_bound_reasons;
+	  Vector<int> lower_bound_levels;
+	  Vector<int> upper_bound_levels;
 	  int latest_visited_lower_bound ;
 	  int latest_visited_upper_bound ;
 
