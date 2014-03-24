@@ -1316,6 +1316,24 @@ namespace Mistral {
   };
 
 
+  class AlwaysRestart : public RestartPolicy {
+
+  public:
+
+	  AlwaysRestart();
+    virtual ~AlwaysRestart();
+
+    void reset(unsigned int& limit) {
+      limit += base;
+    }
+
+    void initialise(unsigned int& limit) {
+      limit = base;
+    }
+
+  };
+
+
   class NoRestart : public RestartPolicy {
     
   public:

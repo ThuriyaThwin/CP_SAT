@@ -42,7 +42,7 @@
 //#define _DEBUG_REASONRIWBS (get_solver()->statistics.num_filterings == 10037)
 //#define _DEBUG_WEIGHTEDBOOLSUM (id == 102)
 //#define _DEBUG_CLIQUENOTEQUAL true
-  #define _DEBUG_DOMAINFAITHFULNESS true
+  //#define _DEBUG_DOMAINFAITHFULNESS true
   //#define _DEBUG_DOMAINFAITHFULNESS true//((scope[0].id() == 153)) //&& (solver->level == 22))
 //#define _DEBUG_DOMAINFAITHFULNESS_CHECK ((scope[0].id() == 11) && (scope[0].get_max() == 734))
 
@@ -14553,7 +14553,7 @@ void Mistral::DomainFaithfulnessConstraint::initialise() {
 int Mistral::DomainFaithfulnessConstraint::value_exist(int value){
 
 	//	if (value== 253)
-	std::cout << " \n value_exist? " << value << "\n ub :  " <<  ub << std::endl;
+//	std::cout << " \n value_exist? " << value << "\n ub :  " <<  ub << std::endl;
 
 	for(unsigned int i=0; i<ub.size; ++i)
 		if (ub[i].value == value)

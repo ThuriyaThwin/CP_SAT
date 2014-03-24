@@ -2028,9 +2028,9 @@ int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 
 int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 
-	std::cout << " \n level_of " << std::endl;
-	std::cout << " val " << val << std::endl;
-	std::cout << " lb  " << lb << std::endl;
+//	std::cout << " \n level_of " << std::endl;
+//	std::cout << " val " << val << std::endl;
+//	std::cout << " lb  " << lb << std::endl;
 
 	if (lowerbounds.size != lower_bound_levels.size){
 		std::cout << " ERROR lowerbounds level_of END ? " << std::endl;

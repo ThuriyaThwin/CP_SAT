@@ -1692,6 +1692,12 @@ namespace Mistral {
 
 	  inline Event restore() {
 
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+		  //add chech here!
+	//	  int level = level_of(max
+	//	  solver->level;
+#endif
+
 		  //  std::cout << "restore restore restore "<< std::endl;
 		  trail_.pop();
 		  trail_.pop(max);

@@ -2736,7 +2736,7 @@ void SchedulingSolver::dichotomic_search()
   //BranchingHeuristic *heu = new GenericHeuristic < NoOrder, MinValue > (this);
 
   RestartPolicy *pol = new Geometric();
-
+//  RestartPolicy *pol = new AlwaysRestart();
 
   initialise_search(disjuncts, heu, pol);
 
