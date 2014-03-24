@@ -5116,7 +5116,7 @@ void Mistral::Solver::fdlearn_nogood_nosequence(){
 	//	else
 	{
 #ifdef 	_DEBUG_FD_NOGOOD
-		//	std::cout << " \n\n\n fdlearn_nogood : \n Decisions size" << decisions.size << " and the variables : \n        " << decisions << " \n and level = " << level << std::endl;
+			std::cout << " \n\n\n fdlearn_nogood : \n Decisions size" << decisions.size << " and the variables : \n        " << decisions << " \n and level = " << level << std::endl;
 #endif
 		/*
 		int size = Visited_lower_bound_variables .size;
@@ -5362,6 +5362,9 @@ void Mistral::Solver::fdlearn_nogood_nosequence(){
 							}
 
 #endif
+			//				std::cout << " \n before?? " <<lvl  << std::endl;
+			//				std::cout << " \n visited ?? " << visited << std::endl;
+
 							//todo should be search_root!
 							if(		lvl)
 								if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
@@ -5381,6 +5384,7 @@ void Mistral::Solver::fdlearn_nogood_nosequence(){
 										// we'll need to replace 'a' by its parents since its level is too high
 										++pathC;
 										boolean_vairables_to_explore.add(get_id_boolean_variable(q));
+						//				std::cout << " \n add to boolean_vairables_to_explore : variable b" << get_id_boolean_variable(q) << std::endl;
 
 									} else {
 										// q's level is below the current level, we are not expending it further
@@ -5390,6 +5394,9 @@ void Mistral::Solver::fdlearn_nogood_nosequence(){
 											backtrack_level = lvl;
 									}
 								}
+				//			std::cout << " \n ?? " << get_id_boolean_variable(q) << std::endl;
+				//			std::cout << " \n visited ?? " << visited << std::endl;
+
 						}
 					}
 					while (bound_literals_to_explore.size)
@@ -5523,6 +5530,7 @@ void Mistral::Solver::fdlearn_nogood_nosequence(){
 												 */
 												++pathC;
 												boolean_vairables_to_explore.add(get_id_boolean_variable(q));
+					//							std::cout << " \n add to boolean_vairables_to_explore : variable b" << get_id_boolean_variable(q) << std::endl;
 
 											} else {
 												// q's level is below the current level, we are not expending it further
@@ -5561,7 +5569,7 @@ void Mistral::Solver::fdlearn_nogood_nosequence(){
 */
 
 
-
+			std::cout << "\n \n \n boolean_vairables_to_explore  ==  " << boolean_vairables_to_explore << std::endl;
 			if (boolean_vairables_to_explore.size>0)
 			{
 				boolean_vairables_to_explore.pop(a);
@@ -11166,8 +11174,10 @@ void Mistral::Solver::learn_with_lazygeneration() {
 					std::cout << "\n \n simple_fdlearn_nogood " <<std::endl;
 					simple_fdlearn_nogood();
 					std::cout << "\n \n simple_fdlearn_nogood " <<std::endl;
-					fdlearn_nogood();
+			//		fdlearn_nogood();
 					std::cout << "\n \n fdlearn_nogood_nosequence " <<std::endl;
+					visited.clear();
+
 					fdlearn_nogood_nosequence();
 
 					exit(1);
