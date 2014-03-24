@@ -14579,14 +14579,20 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 
 	Literal virtual_literal ;
 	//value =
-	if (
+/*	if (
 			((!isub) &&  (( value+1)  > _x->lowerbounds[0] ) ) ||
 			( isub   &&    (value < _x->upperbounds[0] ) )
 	)
 
 		virtual_literal = encode_bound_literal(scope[0].id(), value + (!isub), isub);
+*/
+	if (isub)
+		virtual_literal = encode_bound_literal(scope[0].id(), value, 1);
 	else
-		virtual_literal = NULL_ATOM;
+		virtual_literal = encode_bound_literal(scope[0].id(), value +1, 0);
+
+	//else
+	//	virtual_literal = NULL_ATOM;
 	//	dom_constraint->eager_explanations[dom_constraint->eager_explanations.size -1]
 
 	eager_explanations.add(virtual_literal);

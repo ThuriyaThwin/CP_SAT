@@ -2803,7 +2803,7 @@ void SchedulingSolver::dichotomic_search()
   init_obj  = (int)(floor(((double)minfsble + (double)maxfsble)/2));
 #ifdef _CHECK_NOGOOD
   //int init_obj  = (int)(floor(((double)minfsble + (double)maxfsble)/2));
-  Vector<int> old_min, old_max;
+
   int id;
 #endif
 #ifdef _DEBUG_SCHEDULER
@@ -2931,65 +2931,7 @@ void SchedulingSolver::dichotomic_search()
 
 	  // A module for checking learnt nogoods
 #ifdef _CHECK_NOGOOD
-	  /*
-    if (parameters.fd_learning)
-    {
-    	//For each single nogood we create a new solver with exactly the same parameters!
-    	for(int i=0; i<__nogoods.size; ++i) {
-    		//		if(!nogood_origin[i])
-    		{
-    			StatisticList __stats;
-    			__stats.start();
-    			Instance __jsp(*params);
-    			std::cout << std::endl;
-    			__jsp.printStats(std::cout);
-    			params->print(std::cout);
-    			SchedulingSolver *__solver;
-    			if(params->Objective == "makespan") {
-    				std::cout << "c Minimising Makespan" << std::endl;
-    				if(params->Type == "now") __solver = new No_wait_Model(__jsp, params, -1, 0);
-    				else if(params->Type == "now2") {
-    					//params.Type = "now";
-    					__solver = new No_wait_Model(__jsp, params, -1, 1);
-    				}
-    				else __solver = new C_max_Model(&__jsp, params, &__stats);
-    			} else if(params->Objective == "tardiness") {
-    				std::cout << "c Minimising Tardiness" << std::endl;
-    				__solver = new L_sum_Model(__jsp, params, -1);
-    			}
-    			else {
-    				std::cout << "c unknown objective, exiting" << std::endl;
-    				exit(1);
-    			}
-    			__solver->consolidate();
-    			__solver->save();
-    			__solver->set_objective(init_obj);
 
-    			old_max.clear();
-    			old_min.clear();
-    			std::cout << " check learnt nogood :  "<< __nogoods[i] << " -- at node " << node_num[i] << std::endl;
-
-    			std::cout << " learnt nogood i.size :  "<< __nogoods[i].size  << std::endl;
-
-    			for(int j=0; j<__nogoods[i].size; ++j) {
-    				id =get_id_boolean_variable(__nogoods[i][j]);
-    				//		std::cout << " id = " << id << std::endl;
-    				//		std::cout << " the variable is : " << variables[id] <<" and its domain is : " <<  variables[id].get_domain() << std::endl;
-    				old_min.add( __solver->variables[id].get_min());
-    				old_max.add( __solver->variables[id].get_max());
-    				__solver->variables[get_id_boolean_variable(__nogoods[i][j])].set_domain(SIGN(NOT(__nogoods[i][j])));
-    				//		std::cout << " the new domain is : " << __solver->variables[id].get_domain() << " because its literal is " <<  nogood_clause[i][j] <<std::endl;
-    			}
-    			if(__solver->propagate()) {
-    				std::cout << " WRONG NOGOOD!!\n";
-    				exit(1);
-    			}
-    			std::cout << " is a valid nogood !\n";
-    			delete __solver;
-    		}
-    	}
-    }
-	   */
 	  nogood_origin.clear();
 	  nogood_clause.clear();
 	  __nogoods.clear();
@@ -3615,28 +3557,26 @@ void SchedulingSolver::print_solution(std::ostream& os, std::string type)
   os << std::endl;
 }
 #ifdef _CHECK_NOGOOD
-void SchedulingSolver::check_nogood(Vector<Literal> & c)
 //For each single nogood we create a new solver with exactly the same parameters!
-//for(int i=0; i<__nogoods.size; ++i) {//		if(!nogood_origin[i])
-{
+void SchedulingSolver::check_nogood(Vector<Literal> & c){
 	StatisticList __stats;
 	__stats.start();
 	Instance __jsp(*params);
-//	std::cout << std::endl;
-//	__jsp.printStats(std::cout);
+	//	std::cout << std::endl;
+	//	__jsp.printStats(std::cout);
 	params->FD_learning = 0;
 
-//	std::cout << " \n\n c Lower Bound  " << stats->lower_bound ;
-//	std::cout << " c Upper Bound  " << stats->upper_bound ;
-    int obj  = (int)(floor(((double)stats->lower_bound  + (double)stats->upper_bound)/2));
-//	std::cout << " c obj  " << stats->upper_bound ;
+	//	std::cout << " \n\n c Lower Bound  " << stats->lower_bound ;
+	//	std::cout << " c Upper Bound  " << stats->upper_bound ;
+	int obj  = (int)(floor(((double)stats->lower_bound  + (double)stats->upper_bound)/2));
+	//	std::cout << " c obj  " << stats->upper_bound ;
 
 	params->LBinit = stats->lower_bound ;
 	params->UBinit = obj;
-//	params->print(std::cout);
+	//	params->print(std::cout);
 	SchedulingSolver *__solver;
 	if(params->Objective == "makespan") {
-	//	std::cout << "c Minimising Makespan" << std::endl;
+		//	std::cout << "c Minimising Makespan" << std::endl;
 		if(params->Type == "now") __solver = new No_wait_Model(__jsp, params, -1, 0);
 		else if(params->Type == "now2") {
 			//params.Type = "now";
@@ -3644,33 +3584,31 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c)
 		}
 		else __solver = new C_max_Model(&__jsp, params, &__stats);
 	} else if(params->Objective == "tardiness") {
-//		std::cout << "c Minimising Tardiness" << std::endl;
+		//		std::cout << "c Minimising Tardiness" << std::endl;
 		__solver = new L_sum_Model(__jsp, params, -1);
 	}
 	else {
-	//	std::cout << "c unknown objective, exiting" << std::endl;
+		//	std::cout << "c unknown objective, exiting" << std::endl;
 		exit(1);
 	}
 	__solver->consolidate();
 	//__solver->save();
 	__solver->set_objective(init_obj);
-	Vector<int> old_min, old_max;
-	old_max.clear();
-	old_min.clear();
+
 	std::cout << " check learnt nogood :  "<< c << std::endl;
 
-//	std::cout << " learnt nogood size :  "<< c.size  << std::endl;
+	//	std::cout << " learnt nogood size :  "<< c.size  << std::endl;
 
-//	std::cout << " here ?  " << std::endl;
-	for(int j=0; j<c.size; ++j) {
-		int id =get_id_boolean_variable(c[j]);
-		//		std::cout << " id = " << id << std::endl;
-		//		std::cout << " the variable is : " << variables[id] <<" and its domain is : " <<  variables[id].get_domain() << std::endl;
+	//	std::cout << " here ?  " << std::endl;
+
+
+	// c[0] before all others!
+	int id =get_id_boolean_variable(c[0]);
+	//		std::cout << " id = " << id << std::endl;
+	//		std::cout << " the variable is : " << variables[id] <<" and its domain is : " <<  variables[id].get_domain() << std::endl;
 	if (id < initial_variablesize){
-		old_min.add( __solver->variables[id].get_min());
-		old_max.add( __solver->variables[id].get_max());
-		__solver->variables[id].set_domain(SIGN(NOT(c[j])));
 
+		__solver->variables[id].set_domain(SIGN(NOT(c[0])));
 		std::cout << " literal associated to :  " << variables[id] << " = " << variables[id].get_domain() <<  std::endl;
 
 	}
@@ -3680,10 +3618,10 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c)
 			int id_range = 	varsIds_lazy[id - initial_variablesize];
 			int val_range = value_lazy[id - initial_variablesize];
 
-		//	std::cout << " OK : id_range = " << id_range << std::endl;
-		//	std::cout << " OK : val_range = " << val_range << std::endl;
+			//	std::cout << " OK : id_range = " << id_range << std::endl;
+			//	std::cout << " OK : val_range = " << val_range << std::endl;
 
-			if (SIGN(NOT(c[j]))){
+			if (SIGN(NOT(c[0]))){
 				__solver->variables[id_range].set_max(val_range);
 				std::cout << " Bound literal associated to :  " << variables[id_range] << " <=  " << val_range <<  std::endl;
 
@@ -3700,6 +3638,61 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c)
 			std::cout << " ERROR : NOT (i < variables.size " << std::endl;
 			exit(1);
 		}
+
+	if (assignment_level[id] != level){
+
+		std::cout << " ERROR : assignment_level[id] != level" << std::endl;
+		exit(1);
+	}
+
+
+
+	for(int j=1; j<c.size; ++j) {
+		int id =get_id_boolean_variable(c[j]);
+		//		std::cout << " id = " << id << std::endl;
+		//		std::cout << " the variable is : " << variables[id] <<" and its domain is : " <<  variables[id].get_domain() << std::endl;
+		if (id < initial_variablesize){
+
+			__solver->variables[id].set_domain(SIGN(NOT(c[j])));
+			std::cout << " literal associated to :  " << variables[id] << " = " << variables[id].get_domain() <<  std::endl;
+
+		}
+		else
+			if (id < variables.size){
+
+				int id_range = 	varsIds_lazy[id - initial_variablesize];
+				int val_range = value_lazy[id - initial_variablesize];
+
+				//	std::cout << " OK : id_range = " << id_range << std::endl;
+				//	std::cout << " OK : val_range = " << val_range << std::endl;
+
+				if (SIGN(NOT(c[j]))){
+					__solver->variables[id_range].set_max(val_range);
+					std::cout << " Bound literal associated to :  " << variables[id_range] << " <=  " << val_range <<  std::endl;
+
+				}
+				else{
+					__solver->variables[id_range].set_min(val_range+1);
+					std::cout << " Bound literal associated to :  " << variables[id_range] << " >=  " << val_range+1 <<  std::endl;
+				}
+
+
+			}
+			else
+			{
+				std::cout << " ERROR : NOT (i < variables.size " << std::endl;
+				exit(1);
+			}
+
+
+
+		if (assignment_level[id] >= level){
+
+			std::cout << " ERROR : assignment_level[id] >= level" << std::endl;
+			exit(1);
+		}
+
+
 		//		std::cout << " the new domain is : " << __solver->variables[id].get_domain() << " because its literal is " <<  nogood_clause[i][j] <<std::endl;
 	}
 
@@ -3717,14 +3710,14 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c)
 	__solver->initialise_search(__solver->disjuncts, __heu, __pol);
 
 
-//    std::cout << std::left << std::setw(30) << " c | current real range" << ":"
-//	      << std::right << " " << std::setw(5) << __stats.lower_bound
-//	      << " to " << std::setw(5) << __stats.upper_bound << " |" << std::endl;
-    //std::cout << std::left << std::setw(30) << " c | current dichotomic range" << ":"
-	  //    << std::right << " " << std::setw(5) << minfsble
-	 //     << " to " << std::setw(5) << maxfsble << " |" << std::endl;
-    //std::cout << std::left << std::setw(30) << " c | target objective" << ":"
-	     // << std::right << std::setw(15) << objective << " |" << std::endl;
+	//    std::cout << std::left << std::setw(30) << " c | current real range" << ":"
+	//	      << std::right << " " << std::setw(5) << __stats.lower_bound
+	//	      << " to " << std::setw(5) << __stats.upper_bound << " |" << std::endl;
+	//std::cout << std::left << std::setw(30) << " c | current dichotomic range" << ":"
+	//    << std::right << " " << std::setw(5) << minfsble
+	//     << " to " << std::setw(5) << maxfsble << " |" << std::endl;
+	//std::cout << std::left << std::setw(30) << " c | target objective" << ":"
+	// << std::right << std::setw(15) << objective << " |" << std::endl;
 
 
 	Outcome  __result= __solver->restart_search(0);
@@ -3733,15 +3726,15 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c)
 	if(__result)
 	{
 		std::cout << " WRONG NOGOOD!!\n";
-//		params->LBinit = stats->lower_bound ;
-//		params->UBinit = obj;
+		//		params->LBinit = stats->lower_bound ;
+		//		params->UBinit = obj;
 		std::cout << " Lower Bound  " << stats->lower_bound;
 		std::cout << " Upper Bound  " << obj ;
 		std::cout << "Solver level " << level ;
 		std::cout << std::endl;
 
-//		std::cout << " Lower Bound  " << __stats.lower_bound ;
-//		std::cout << " Upper Bound  " << __stats.upper_bound ;
+		//		std::cout << " Lower Bound  " << __stats.lower_bound ;
+		//		std::cout << " Upper Bound  " << __stats.upper_bound ;
 		exit(1);
 	}
 	else
