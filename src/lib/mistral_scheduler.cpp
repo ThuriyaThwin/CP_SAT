@@ -315,6 +315,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   Optimise    = 3600;
   Rngd        = 2;
 
+//  Policy    = "geom";
   Policy    = "geom";
   Factor    = 1.3;
   Decay     = 0.0;

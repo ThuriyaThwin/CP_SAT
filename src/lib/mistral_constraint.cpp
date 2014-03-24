@@ -2062,35 +2062,35 @@ std::ostream& Mistral::ConstraintLess::display(std::ostream& os) const {
 
 Mistral::PropagationOutcome Mistral::ExplainedConstraintLess::propagate() {
 
-//   std::cout << "changes: " << changes << std::endl;
-//   std::cout << "events[0]: " << events[0] << " events[0]: " << events[1] << std::endl;
+	//   std::cout << "changes: " << changes << std::endl;
+	//   std::cout << "events[0]: " << events[0] << " events[0]: " << events[1] << std::endl;
 
-//   if(scope[0].id() == 6 && scope[1].id() == 9) {
-//   std::cout << "propagate " << this << std::endl;
-//   for(unsigned int i=0; i<scope.size; ++i)
-//     std::cout << " " << scope[i].get_domain();
-//   std::cout << std::endl;
-//   }
+	//   if(scope[0].id() == 6 && scope[1].id() == 9) {
+	//   std::cout << "propagate " << this << std::endl;
+	//   for(unsigned int i=0; i<scope.size; ++i)
+	//     std::cout << " " << scope[i].get_domain();
+	//   std::cout << std::endl;
+	//   }
 	//TODO declare  wiped in ExplainedConstraintLess from the beggining
-  Mistral::PropagationOutcome wiped = CONSISTENT;
-  //if((static_cast<VariableRangeWithLearning*> (scope[1].range_domain))->set_min(scope[0].get_min() + offset, this) == FAIL_EVENT) wiped = FAILURE(1);
-  if(scope1->set_min(scope[0].get_min() + offset, this) == FAIL_EVENT) wiped = FAILURE(1);
-//    if(IS_OK(wiped) && (static_cast<VariableRangeWithLearning*> (scope[0].range_domain))->set_max(scope[1].get_max() - offset, this) == FAIL_EVENT) wiped = FAILURE(0);
-  if(IS_OK(wiped) && scope0->set_max(scope[1].get_max() - offset, this) == FAIL_EVENT) wiped = FAILURE(0);
+	Mistral::PropagationOutcome wiped = CONSISTENT;
+	//if((static_cast<VariableRangeWithLearning*> (scope[1].range_domain))->set_min(scope[0].get_min() + offset, this) == FAIL_EVENT) wiped = FAILURE(1);
+	if(scope1->set_min(scope[0].get_min() + offset, this) == FAIL_EVENT) wiped = FAILURE(1);
+	//    if(IS_OK(wiped) && (static_cast<VariableRangeWithLearning*> (scope[0].range_domain))->set_max(scope[1].get_max() - offset, this) == FAIL_EVENT) wiped = FAILURE(0);
+	if(IS_OK(wiped) && scope0->set_max(scope[1].get_max() - offset, this) == FAIL_EVENT) wiped = FAILURE(0);
 
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-  if (wiped != CONSISTENT)
-  {
-	  //  	  std::cout << "wiped == " << wiped << std::endl;
-	  ( (Solver*) solver) ->__failure = this;
+	if (wiped != CONSISTENT)
+	{
+		//  	  std::cout << "wiped == " << wiped << std::endl;
+		( (Solver*) solver) ->__failure = this;
 #ifdef _DEBUG_FAIL
-	  std::cout << " fail : " << *this << std::endl;
+		std::cout << " fail : " << *this << std::endl;
 #endif
-  }
+	}
 #endif
 
-  return wiped;
+	return wiped;
 }
 
 Mistral::PropagationOutcome Mistral::ExplainedConstraintLess::propagate(const int changed_idx, const Event evt) {
@@ -2105,14 +2105,14 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintLess::propagate(const in
 	}
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-  if (wiped != CONSISTENT)
-  {
-	  //  	  std::cout << "wiped == " << wiped << std::endl;
-	  ( (Solver*) solver) ->__failure = this;
+	if (wiped != CONSISTENT)
+	{
+		//  	  std::cout << "wiped == " << wiped << std::endl;
+		( (Solver*) solver) ->__failure = this;
 #ifdef _DEBUG_FAIL
-	  std::cout << " fail : " << *this << std::endl;
+		std::cout << " fail : " << *this << std::endl;
 #endif
-  }
+	}
 #endif
 
 	return wiped;
@@ -2126,11 +2126,11 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintLess::propagate(const in
 #ifdef latest_bounds_learning
 Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(const Atom a, const int lvl, iterator& end){
 
-//		std::cout <<" \n \n \ExplainedConstraintLess  get_reason_for "  << std::endl;
+	//		std::cout <<" \n \n \ExplainedConstraintLess  get_reason_for "  << std::endl;
 
 	if(a == NULL_ATOM) {
 
-	//	std::cout << " fail YY  " << std::endl;
+		//	std::cout << " fail YY  " << std::endl;
 
 		explanation[0] = encode_bound_literal(scope[0].id(),scope[0].get_min(),0 ) ;
 		explanation[1] =  encode_bound_literal(scope[1].id(),scope[1].get_max(),1) ;
@@ -2143,11 +2143,11 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 			if(get_variable_from_literal(a) == scope[1].id())
 			{
 
-					explanation[0] = encode_latest_bound_literal(scope[0].id(),0 ) ;
-					//	else
-					//		std::cout<< " c should be a problem here!! Wrong call for reason" << std::endl;
+				explanation[0] = encode_latest_bound_literal(scope[0].id(),0 ) ;
+				//	else
+				//		std::cout<< " c should be a problem here!! Wrong call for reason" << std::endl;
 
-					end = &(explanation[0])+1;
+				end = &(explanation[0])+1;
 
 			}
 		}
@@ -2156,11 +2156,11 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 			{
 
 
-					explanation[0] = encode_latest_bound_literal(scope[1].id(),1 ) ;
-					//	else
-					//		std::cout<< " c should be a problem here!! Wrong call for reason" << std::endl;
+				explanation[0] = encode_latest_bound_literal(scope[1].id(),1 ) ;
+				//	else
+				//		std::cout<< " c should be a problem here!! Wrong call for reason" << std::endl;
 
-					end = &(explanation[0])+1;
+				end = &(explanation[0])+1;
 
 			}
 	}
@@ -2170,7 +2170,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 
 }
 
-#else
+#endif
 
 Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(const Atom a, const int lvl, iterator& end){
 
@@ -2250,7 +2250,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 	return &(explanation[0]);
 
 }
-#endif
+
 
 
 
@@ -2258,7 +2258,8 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 #ifdef latest_bounds_learning
 Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::get_reason_for(const Atom a, const int lvl, iterator& end){
 
-	//	std::cout <<" \n \n \nExplainedConstraintReifiedDisjunctive  get_reason_for "  << std::endl;
+	std::cout <<" \n \n \nExplainedConstraintReifiedDisjunctive  get_reason_for "  << std::endl;
+	exit(1);
 
 	if(a == NULL_ATOM) {
 		int tmp = -1;
@@ -2266,34 +2267,34 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 		{
 			//ToDo better test using the tightest bound i.e. its explanation is NULL
 			if (
-					 scope[0].get_min() >
-			 (scope0->lowerbounds[0])
-			 )
+					scope[0].get_min() >
+			(scope0->lowerbounds[0])
+			)
 
-				 explanation[++tmp] = encode_bound_literal(scope[0].id(),scope[0].get_min(),0 ) ;
-			 if (
-					 scope[0].get_max() <
-					 scope0->upperbounds[0]
-			 )
+				explanation[++tmp] = encode_bound_literal(scope[0].id(),scope[0].get_min(),0 ) ;
+			if (
+					scope[0].get_max() <
+					scope0->upperbounds[0]
+			)
 
-				 explanation[++tmp] =  encode_bound_literal(scope[0].id(),scope[0].get_max(),1) ;
-			 if (
-					 scope[1].get_min() >
-			 scope1->lowerbounds[0]
-			 )
+				explanation[++tmp] =  encode_bound_literal(scope[0].id(),scope[0].get_max(),1) ;
+			if (
+					scope[1].get_min() >
+			scope1->lowerbounds[0]
+			)
 
-				 explanation[++tmp] = encode_bound_literal(scope[1].id(),scope[1].get_min(),0 ) ;
+				explanation[++tmp] = encode_bound_literal(scope[1].id(),scope[1].get_min(),0 ) ;
 
-			 if (
-					 scope[1].get_max() <
-					 scope1->upperbounds[0]
-			 )
+			if (
+					scope[1].get_max() <
+					scope1->upperbounds[0]
+			)
 
-				 explanation[++tmp] =  encode_bound_literal(scope[1].id(),scope[1].get_max(),1) ;
+				explanation[++tmp] =  encode_bound_literal(scope[1].id(),scope[1].get_max(),1) ;
 
-			 //	std::cout << "tmp = size?  : " << tmp << std::endl;
+			//	std::cout << "tmp = size?  : " << tmp << std::endl;
 
-			 end = &(explanation[0])+tmp+1;
+			end = &(explanation[0])+tmp+1;
 
 
 		}
@@ -2327,7 +2328,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 
 				if (
 						scope[1].get_min() >
-				 scope1->lowerbounds[0]
+				scope1->lowerbounds[0]
 				)
 
 					explanation[++tmp] = encode_bound_literal(scope[1].id(),scope[1].get_min(),0 ) ;
@@ -2398,8 +2399,8 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 				//ToDo Chenge get_value_from_literal. with a variable along all the code!
 				explanation[0] =  NOT (((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), 1));
 
-					explanation[1] = encode_latest_bound_literal(scope[0].id(),0 ) ;
-					end = &(explanation[0])+2;
+				explanation[1] = encode_latest_bound_literal(scope[0].id(),0 ) ;
+				end = &(explanation[0])+2;
 			}
 			else
 				if ( get_variable_from_literal(a) == scope[0].id())
@@ -2429,10 +2430,10 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 
 					explanation[1] = encode_latest_bound_literal(scope[1].id() ,0 ) ;
 
-						//					std::cout << "explanation[0]: " << explanation[0] << std::endl;
-						//				std::cout << "explanation[1]: " << explanation[1] << std::endl;
+					//					std::cout << "explanation[0]: " << explanation[0] << std::endl;
+					//				std::cout << "explanation[1]: " << explanation[1] << std::endl;
 
-						end = &(explanation[0])+2;
+					end = &(explanation[0])+2;
 
 				}
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
@@ -2480,7 +2481,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 
 				}
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-			else
+				else
 				{
 					std::cout << " NOT FOUND! " << std::endl;
 					exit(1);
@@ -2492,8 +2493,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 	return &(explanation[0]);
 
 }
-#else
-
+#endif
 
 Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::get_reason_for(const Atom a, const int lvl, iterator& end){
 
@@ -2505,34 +2505,34 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 		{
 			//ToDo better test using the tightest bound i.e. its explanation is NULL
 			if (
-					 scope[0].get_min() >
-			 (scope0->lowerbounds[0])
-			 )
+					scope[0].get_min() >
+			(scope0->lowerbounds[0])
+			)
 
-				 explanation[++tmp] = encode_bound_literal(scope[0].id(),scope[0].get_min(),0 ) ;
-			 if (
-					 scope[0].get_max() <
-					 scope0->upperbounds[0]
-			 )
+				explanation[++tmp] = encode_bound_literal(scope[0].id(),scope[0].get_min(),0 ) ;
+			if (
+					scope[0].get_max() <
+					scope0->upperbounds[0]
+			)
 
-				 explanation[++tmp] =  encode_bound_literal(scope[0].id(),scope[0].get_max(),1) ;
-			 if (
-					 scope[1].get_min() >
-			 scope1->lowerbounds[0]
-			 )
+				explanation[++tmp] =  encode_bound_literal(scope[0].id(),scope[0].get_max(),1) ;
+			if (
+					scope[1].get_min() >
+			scope1->lowerbounds[0]
+			)
 
-				 explanation[++tmp] = encode_bound_literal(scope[1].id(),scope[1].get_min(),0 ) ;
+				explanation[++tmp] = encode_bound_literal(scope[1].id(),scope[1].get_min(),0 ) ;
 
-			 if (
-					 scope[1].get_max() <
-					 scope1->upperbounds[0]
-			 )
+			if (
+					scope[1].get_max() <
+					scope1->upperbounds[0]
+			)
 
-				 explanation[++tmp] =  encode_bound_literal(scope[1].id(),scope[1].get_max(),1) ;
+				explanation[++tmp] =  encode_bound_literal(scope[1].id(),scope[1].get_max(),1) ;
 
-			 //	std::cout << "tmp = size?  : " << tmp << std::endl;
+			//	std::cout << "tmp = size?  : " << tmp << std::endl;
 
-			 end = &(explanation[0])+tmp+1;
+			end = &(explanation[0])+tmp+1;
 
 
 		}
@@ -2566,7 +2566,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 
 				if (
 						scope[1].get_min() >
-				 scope1->lowerbounds[0]
+				scope1->lowerbounds[0]
 				)
 
 					explanation[++tmp] = encode_bound_literal(scope[1].id(),scope[1].get_min(),0 ) ;
@@ -2763,7 +2763,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 					}
 				}
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-			else
+				else
 				{
 					std::cout << " NOT FOUND! " << std::endl;
 					exit(1);
@@ -2777,15 +2777,13 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 }
 
 
-#endif
-
 Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::propagate(const int changed_idx, const Event evt) {
 	PropagationOutcome wiped = CONSISTENT;
 
 
 #ifdef _DEBUG_RDISJUNCTIVE
 	std::cout << std::endl << "propagate [" << id << "] " << this << " " << event2str(evt)
-	    		<< " on " << scope[changed_idx] << " in " << scope[changed_idx].get_domain() << std::endl;
+	    				<< " on " << scope[changed_idx] << " in " << scope[changed_idx].get_domain() << std::endl;
 	for(unsigned int i=0; i<3; ++i) {
 		std::cout << scope[i] << " in " << scope[i].get_domain() << " ";
 	}
@@ -2795,7 +2793,7 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
 
 	if(changed_idx == 2) {
 
-//		bool_explanation_size=0;
+		//		bool_explanation_size=0;
 #ifdef _DEBUG_RDISJUNCTIVE
 		std::cout << "  -> now it's a precedence" << std::endl;
 #endif
@@ -2850,7 +2848,7 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
 		}
 	} else {
 
-//		bool_explanation_size=0;
+		//		bool_explanation_size=0;
 #ifdef _DEBUG_RDISJUNCTIVE
 		std::cout << "  -> could it be a precedence? ("
 				<< *min_t0_ptr << " + " << processing_time[0]
@@ -3008,81 +3006,81 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
 	//changes.clear();
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-  if (wiped != CONSISTENT)
-  {
-	  //  	  std::cout << "wiped == " << wiped << std::endl;
-	  ( (Solver*) solver) ->__failure = this;
+	if (wiped != CONSISTENT)
+	{
+		//  	  std::cout << "wiped == " << wiped << std::endl;
+		( (Solver*) solver) ->__failure = this;
 #ifdef _DEBUG_FAIL
-	  std::cout << " fail : " << *this << std::endl;
+		std::cout << " fail : " << *this << std::endl;
 #endif
-  }
+	}
 #endif
 
-		return wiped;
+	return wiped;
 }
 
 
 Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::propagate() {
 
 	if (solver->level>0)
-		{
-	    std::cout << "  (solver->level>0) " << std::endl;
+	{
+		std::cout << "  (solver->level>0) " << std::endl;
 		exit(1);
 
+	}
+	PropagationOutcome wiped = CONSISTENT;
+	//std::cout<< " ExplainedConstraintReifiedDisjunctive::propagate ! \n" << std::endl;
+	//		exit(1);
+	if( *min_t0_ptr + processing_time[0] > *max_t1_ptr ) {
+		((Solver* ) solver) -> reason_for[scope[2].id()] = NULL;
+		if( scope[2].set_domain(0) == FAIL_EVENT) wiped = FAILURE(2);
+		// x[1]+p[1] <= x[0] because x[0]'s min is too high or x[1]'s max is too low
+		else if( scope0->set_min( *min_t1_ptr+processing_time[1],NULL ) == FAIL_EVENT) wiped = FAILURE(0);
+		else if( scope1->set_max( *max_t0_ptr-processing_time[1] ,NULL) == FAIL_EVENT) wiped = FAILURE(1);
+
+#ifdef _DEBUG_RDISJUNCTIVE
+		std::cout << "  -> YES!: " ;
+		display(std::cout);
+		std::cout << std::endl;
+#endif
+
+	} else if( *min_t1_ptr + processing_time[1] > *max_t0_ptr ) {
+		((Solver* ) solver) -> reason_for[scope[2].id()] = NULL;
+		if( scope[2].set_domain(1) == FAIL_EVENT) wiped = FAILURE(2);
+		else if( scope0->set_max( *max_t1_ptr-processing_time[0],NULL ) == FAIL_EVENT) wiped = FAILURE(0);
+		else if( scope1->set_min( *min_t0_ptr+processing_time[0], NULL ) == FAIL_EVENT) wiped = FAILURE(1);
+
+#ifdef _DEBUG_RDISJUNCTIVE
+		std::cout << "  -> YES!: " ;
+		display(std::cout);
+		std::cout << std::endl;
+#endif
+
+	}
+
+
+	if(IS_OK(wiped) && *state != 3) {
+		if(*state == 2) {
+			if( scope0->set_max( *max_t1_ptr-processing_time[0],NULL ) == FAIL_EVENT) wiped = FAILURE(0);
+			else if( scope1->set_min( *min_t0_ptr+processing_time[0],NULL ) == FAIL_EVENT) wiped = FAILURE(1);
+		} else {
+			if( scope0->set_min( *min_t1_ptr+processing_time[1],NULL ) == FAIL_EVENT) wiped = FAILURE(0);
+			else if( scope1->set_max( *max_t0_ptr-processing_time[1] ,NULL) == FAIL_EVENT) wiped = FAILURE(1);
 		}
-  PropagationOutcome wiped = CONSISTENT;
-//std::cout<< " ExplainedConstraintReifiedDisjunctive::propagate ! \n" << std::endl;
-//		exit(1);
-  if( *min_t0_ptr + processing_time[0] > *max_t1_ptr ) {
- 	((Solver* ) solver) -> reason_for[scope[2].id()] = NULL;
-    if( scope[2].set_domain(0) == FAIL_EVENT) wiped = FAILURE(2);
-    // x[1]+p[1] <= x[0] because x[0]'s min is too high or x[1]'s max is too low
-    else if( scope0->set_min( *min_t1_ptr+processing_time[1],NULL ) == FAIL_EVENT) wiped = FAILURE(0);
-    else if( scope1->set_max( *max_t0_ptr-processing_time[1] ,NULL) == FAIL_EVENT) wiped = FAILURE(1);
-
-#ifdef _DEBUG_RDISJUNCTIVE
-    std::cout << "  -> YES!: " ;
-    display(std::cout);
-    std::cout << std::endl;
-#endif
-
-  } else if( *min_t1_ptr + processing_time[1] > *max_t0_ptr ) {
-	 ((Solver* ) solver) -> reason_for[scope[2].id()] = NULL;
-    if( scope[2].set_domain(1) == FAIL_EVENT) wiped = FAILURE(2);
-    else if( scope0->set_max( *max_t1_ptr-processing_time[0],NULL ) == FAIL_EVENT) wiped = FAILURE(0);
-    else if( scope1->set_min( *min_t0_ptr+processing_time[0], NULL ) == FAIL_EVENT) wiped = FAILURE(1);
-
-#ifdef _DEBUG_RDISJUNCTIVE
-    std::cout << "  -> YES!: " ;
-    display(std::cout);
-    std::cout << std::endl;
-#endif
-
-  }
-
-
-  if(IS_OK(wiped) && *state != 3) {
-    if(*state == 2) {
-      if( scope0->set_max( *max_t1_ptr-processing_time[0],NULL ) == FAIL_EVENT) wiped = FAILURE(0);
-      else if( scope1->set_min( *min_t0_ptr+processing_time[0],NULL ) == FAIL_EVENT) wiped = FAILURE(1);
-    } else {
-      if( scope0->set_min( *min_t1_ptr+processing_time[1],NULL ) == FAIL_EVENT) wiped = FAILURE(0);
-      else if( scope1->set_max( *max_t0_ptr-processing_time[1] ,NULL) == FAIL_EVENT) wiped = FAILURE(1);
-    }
-  }
+	}
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-  if (wiped != CONSISTENT)
-  {
-	  //  	  std::cout << "wiped == " << wiped << std::endl;
-	  ( (Solver*) solver) ->__failure = this;
+	if (wiped != CONSISTENT)
+	{
+		//  	  std::cout << "wiped == " << wiped << std::endl;
+		( (Solver*) solver) ->__failure = this;
 #ifdef _DEBUG_FAIL
-	  std::cout << " fail : " << *this << std::endl;
+		std::cout << " fail : " << *this << std::endl;
 #endif
-  }
+	}
 #endif
 
-  return wiped;
+	return wiped;
 }
 
 

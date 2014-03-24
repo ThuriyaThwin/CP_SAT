@@ -505,7 +505,7 @@ void Mistral::ConstraintClauseBase::add(Variable x) {
 
 void Mistral::ConstraintClauseBase::extend_scope(Variable x){
 
-//	scope.add(x);
+	//	scope.add(x);
 
 	//add(x);
 	/*
@@ -513,51 +513,51 @@ void Mistral::ConstraintClauseBase::extend_scope(Variable x){
 			is_watched_by.extendStack();
 		if (reason_for.capacity < (scope.size))
 			reason_for.extendStack();
-	*/
-	  unsigned int idx = x.id()-start_from;
-	  if(idx == scope.size) {
-	    scope.add(x);
-	 //   _scope.add(x);
-	 //   reason_for.add(NULL);
+	 */
+	unsigned int idx = x.id()-start_from;
+	if(idx == scope.size) {
+		scope.add(x);
+		//   _scope.add(x);
+		//   reason_for.add(NULL);
 
-	    while(reason_for.capacity <= idx)
-	    	reason_for.extendStack();
-	    reason_for[idx] = NULL;
+		while(reason_for.capacity <= idx)
+			reason_for.extendStack();
+		reason_for[idx] = NULL;
 
-	  } else {
-		  //if(idx > scope.size) {
+	} else {
+		//if(idx > scope.size) {
 
-		  std::cout << "idx > scope.size) ? " << std::endl;
-		  exit(1);
+		std::cout << "idx > scope.size) ? " << std::endl;
+		exit(1);
 
-		  while(scope.capacity <= idx)
-			  scope.extendStack();
-		  scope[idx] = x;
+		while(scope.capacity <= idx)
+			scope.extendStack();
+		scope[idx] = x;
 
-		  while(_scope.capacity <= idx)
-			  _scope.extendStack();
-		  _scope[idx] = x;
+		while(_scope.capacity <= idx)
+			_scope.extendStack();
+		_scope[idx] = x;
 
-	    while(reason_for.capacity <= idx)
-	      reason_for.extendStack();
-	    reason_for[idx] = NULL;
+		while(reason_for.capacity <= idx)
+			reason_for.extendStack();
+		reason_for[idx] = NULL;
 
-	    // while(is_watched_by.capacity <= 2*idx)
-	    //   is_watched_by.extendStack();
-	    // while(lit_activity.capacity <= 2*idx)
-	    //   lit_activity.extendStack();
-	    // while(var_activity.capacity <= idx)
-	    //   var_activity.extendStack();
-	  }
+		// while(is_watched_by.capacity <= 2*idx)
+		//   is_watched_by.extendStack();
+		// while(lit_activity.capacity <= 2*idx)
+		//   lit_activity.extendStack();
+		// while(var_activity.capacity <= idx)
+		//   var_activity.extendStack();
+	}
 
-	  while(is_watched_by.capacity <= 2*idx)
-	    is_watched_by.extendStack();
-	  // while(lit_activity.capacity <= 2*idx)
-	  //   lit_activity.extendStack();
-	  // while(var_activity.capacity <= idx)
-	  //   var_activity.extendStack();
+	while(is_watched_by.capacity <= 2*idx)
+		is_watched_by.extendStack();
+	// while(lit_activity.capacity <= 2*idx)
+	//   lit_activity.extendStack();
+	// while(var_activity.capacity <= idx)
+	//   var_activity.extendStack();
 
-	  //reason = solver->reason.stack_;
+	//reason = solver->reason.stack_;
 
 
 
@@ -596,22 +596,22 @@ void Mistral::ConstraintClauseBase::extend_scope(Variable x){
 	index = tmpindex;
 
 
-/*
+	/*
 	std:: cout << " \n BEFORE : scope.size " << scope.size << std::endl;
 	std:: cout << "changes.size " << changes.size << std::endl;
 	std:: cout << "changes.list_capacity " << changes.list_capacity << std::endl;
 	std:: cout << "changes.index_capacity " << changes.index_capacity << std::endl;
 	std:: cout << "changes " << changes << std::endl;
-*/
-   if ((changes.list_capacity < scope.size) || (changes.index_capacity < scope.size))
-    	changes.extend_lists();
-/*
+	 */
+	if ((changes.list_capacity < scope.size) || (changes.index_capacity < scope.size))
+		changes.extend_lists();
+	/*
 	std:: cout << " \n After : scope.size " << scope.size << std::endl;
 	std:: cout << "changes.size " << changes.size << std::endl;
 	std:: cout << "changes.list_capacity " << changes.list_capacity << std::endl;
 	std:: cout << "changes.index_capacity " << changes.index_capacity << std::endl;
 	std:: cout << "changes " << changes << std::endl;
-*/
+	 */
 
 
 
@@ -620,13 +620,13 @@ void Mistral::ConstraintClauseBase::extend_scope(Variable x){
 	events.list_capacity = changes.list_capacity;
 	events.list_ = changes.list_;
 	events.index_ = changes.index_;
-//	events.start_ = changes.start_;
+	//	events.start_ = changes.start_;
 
 	if (events.start_){
-	std::cout << "start_ " << events.start_ << std::endl;
-	std::cout << "exit start_ " << *events.start_ << std::endl;
+		std::cout << "start_ " << events.start_ << std::endl;
+		std::cout << "exit start_ " << *events.start_ << std::endl;
 
-	exit(1);
+		exit(1);
 	}
 
 	int i = scope.size -1;
