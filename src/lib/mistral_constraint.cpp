@@ -2259,8 +2259,8 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 	int level__ ;
 	Explanation::iterator tmp__iterator =  &(explanation[0]);
 
-	std::cout << " check expklanation in " << this << std::endl;
-	std::cout << "  offset " << offset << std::endl;
+//	std::cout << " check explanation in " << this << std::endl;
+//	std::cout << "  offset " << offset << std::endl;
 	if(a == NULL_ATOM){
 		//	std::cout << " check explanation in " << this << std::endl;
 
@@ -2468,6 +2468,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 		if (!is_a_bound_literal(a))
 		{
 #ifdef _TRACKING_ATOM
+			/*
 			if (scope2->id==_TRACKING_ATOM)
 			{
 				std::cout << " \n \n bool_explanation_size " << bool_explanation_size << std::endl;
@@ -2486,6 +2487,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 				std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
 				std::cout << " var id "<< get_variable_from_literal(q) << std::endl;
 			}
+			*/
 #endif
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
@@ -2629,6 +2631,8 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 		if (!scope[2].is_ground())
 		{
 			//ToDo better test using the tightest bound i.e. its explanation is NULL
+			std::cout <<" \n \n \nExplainedConstraintReifiedDisjunctive  ERROR : !scope[2].is_ground()) "  << std::endl;
+			exit(1);
 			if (
 					scope[0].get_min() >
 			(scope0->lowerbounds[0])
@@ -2897,6 +2901,582 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 			}
 		}
 	}
+
+
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+
+	//Additionnal test - not necessary
+	//std::cout << " check clause " << this << std::endl;
+
+	Solver *s = ((Solver *) solver);
+	//	std::cout << "  offset " << offset << std::endl;
+	if(a == NULL_ATOM){
+		int level__ ;
+		Explanation::iterator tmp__iterator =  &(explanation[0]);
+		int __size = 0;
+		while(tmp__iterator < end){
+			++__size;
+			++tmp__iterator;
+		}
+		tmp__iterator =  &(explanation[0]);
+
+
+		Literal q1, q2, q3;
+		if (__size==3){
+			q1 = *tmp__iterator;
+			tmp__iterator++;
+			q2 = *tmp__iterator;
+			tmp__iterator++;
+			q3 = *tmp__iterator;
+
+			if (is_a_bound_literal(q1)){
+				std::cout << " is_a_bound_literal ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+				exit(1);
+			}
+			if (!is_a_bound_literal(q2)){
+				std::cout << " is_a_bound_literal ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+				exit(1);
+			}
+			if (!is_a_bound_literal(q3)){
+				std::cout << " is_a_bound_literal ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+				exit(1);
+			}
+
+			if (s->get_id_boolean_variable(q1)!= scope[2].id()){
+				std::cout << " scope[2].id() ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+				exit(1);
+			}
+
+			if (SIGN(q1)== scope[2].get_min()){
+				std::cout << "scope[2].get_min() ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+				exit(1);
+			}
+
+			//	 int k = processing_time[NOT(SIGN(q1))];
+
+			if (get_variable_from_literal(q2)!= scope[0].id()){
+				std::cout << " get_variable_from_literal ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+				std::cout << " scope[0].id() " << scope[0].id() << std::endl;
+
+				exit(1);
+			}
+
+			if (get_variable_from_literal(q3)!= scope[1].id()){
+				std::cout << " get_variable_from_literal ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+				exit(1);
+			}
+
+			int value1 = get_value_from_literal(q2);
+			int value2 = get_value_from_literal(q3);
+
+			if (is_lower_bound(q2)!= scope[2].get_min()){
+				std::cout << " is_lower_bound ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+				std::cout << " scope[2].get_min() " <<scope[2].get_min()<< std::endl;
+				std::cout << " is_lower_bound(q2) " << is_lower_bound(q2) << std::endl;
+				exit(1);
+			}
+
+			if (is_upper_bound(q3)!= scope[2].get_min()){
+				std::cout << "is_lower_bound  ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+				exit(1);
+			}
+
+
+			int level1 = scope0->level_of(value1,is_lower_bound(q2));
+			int level2 = scope1->level_of(value2,is_lower_bound(q3));
+
+			if ((level1 > solver->level) || (level2 > solver->level) || (s->assignment_level[scope[2].id()] > solver->level)  )
+			{
+				std::cout << " level ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+				std::cout << " level1 " << level1 << std::endl;
+				std::cout << " level2 " << level2 << std::endl;
+				std::cout << " s->assignment_level[scope[2].id()] " << s->assignment_level[scope[2].id()] << std::endl;
+				std::cout << " solver level " << solver->level << std::endl;
+				exit(1);
+			}
+
+			if ((level1 < solver->level) && (level2 < solver->level) & (s->assignment_level[scope[2].id()] < solver->level)  )
+			{
+
+				std::cout << " level ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+				std::cout << " level1 " << level1 << std::endl;
+				std::cout << " level2 " << level2 << std::endl;
+				std::cout << " s->assignment_level[scope[2].id()] " << s->assignment_level[scope[2].id()] << std::endl;
+				std::cout << " solver level " << solver->level << std::endl;
+				std::cout << " level ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+				exit(1);
+			}
+
+			if (scope[2].get_min()){
+				if (value1+ processing_time[0]<= value2){
+					std::cout << " semantic ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+					exit(1);
+				}
+			}
+			else {
+				if (value2+ processing_time[1]<= value1){
+					std::cout << " semantic ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+					exit(1);
+				}
+			}
+
+
+		}
+		else {
+
+			if (__size==2){
+				Literal q1, q2;
+				q1 = *tmp__iterator;
+				tmp__iterator++;
+				q2 = *tmp__iterator;
+
+
+				if (is_a_bound_literal(q1)){
+					std::cout << " is_a_bound_literal ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+					exit(1);
+				}
+				if (!is_a_bound_literal(q2)){
+					std::cout << " is_a_bound_literal ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+					exit(1);
+				}
+
+
+				if (s->get_id_boolean_variable(q1)!= scope[2].id()){
+					std::cout << " scope[2].id() ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+					exit(1);
+				}
+
+				if (SIGN(q1)== scope[2].get_min()){
+					std::cout << "scope[2].get_min() ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+					exit(1);
+				}
+
+				//	 int k = processing_time[NOT(SIGN(q1))];
+
+				int id__ = get_variable_from_literal(q2);
+				if (id__!= scope[0].id() && id__!= scope[1].id()  ){
+					std::cout << " get_variable_from_literal ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+					std::cout << " scope[0].id() " << scope[0].id() << std::endl;
+
+					exit(1);
+				}
+
+				int value1 , value2;
+				if (id__==scope[0].id()){
+					value1 = get_value_from_literal(q2);
+					if(is_upper_bound(q2))
+						value2 = scope1->lowerbounds[0];
+					else
+						value2 = scope1->upperbounds[0];
+				}
+				else {
+					value2 = get_value_from_literal(q2);
+					if(is_upper_bound(q2))
+						value1 = scope0->lowerbounds[0];
+					else
+						value1 = scope0->upperbounds[0];
+				}
+
+				if (id__==scope[0].id() && is_lower_bound(q2)!= scope[2].get_min()){
+					std::cout << " is_lower_bound ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+					std::cout << " scope[2].get_min() " <<scope[2].get_min()<< std::endl;
+					std::cout << " is_lower_bound(q2) " << is_lower_bound(q2) << std::endl;
+					exit(1);
+				}
+
+				if (id__==scope[1].id() && is_upper_bound(q3)!= scope[2].get_min()){
+					std::cout << "is_lower_bound  ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+					exit(1);
+				}
+
+				std::cout << " id__==scope[0].id() ? " << (id__==scope[0].id()) << std::endl;
+				std::cout << " value 1  ? " << value1 << std::endl;
+				std::cout << " value 2  ? " << value2 << std::endl;
+				std::cout << " is_lower_bound(q2) ? " << is_lower_bound(q2) << std::endl;
+
+				int level1, level2;
+				if (id__==scope[0].id()){
+					level1 = scope0->level_of(value1,is_lower_bound(q2));
+					level2 = scope1->level_of(value2,is_upper_bound(q2));
+				} else {
+					level1 = scope0->level_of(value1,is_upper_bound(q2));
+					level2 = scope1->level_of(value2,is_lower_bound(q2));
+				}
+
+
+				if ((level1 > solver->level) || (level2 > solver->level) || (s->assignment_level[scope[2].id()] > solver->level)  )
+				{
+					std::cout << " level ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+					std::cout << " level1 " << level1 << std::endl;
+					std::cout << " level2 " << level2 << std::endl;
+					std::cout << " s->assignment_level[scope[2].id()] " << s->assignment_level[scope[2].id()] << std::endl;
+					std::cout << " solver level " << solver->level << std::endl;
+					exit(1);
+				}
+
+				if ((level1 < solver->level) && (level2 < solver->level) & (s->assignment_level[scope[2].id()] < solver->level)  )
+				{
+
+					std::cout << " level ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+					std::cout << " level1 " << level1 << std::endl;
+					std::cout << " level2 " << level2 << std::endl;
+					std::cout << " s->assignment_level[scope[2].id()] " << s->assignment_level[scope[2].id()] << std::endl;
+					std::cout << " solver level " << solver->level << std::endl;
+					std::cout << " level ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+					exit(1);
+				}
+
+				if (scope[2].get_min()){
+					if (value1+ processing_time[0]<= value2){
+						std::cout << " semantic ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+						exit(1);
+					}
+				}
+				else {
+					if (value2+ processing_time[1]<= value1){
+						std::cout << " semantic ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+						exit(1);
+					}
+				}
+			}
+			else {
+
+				std::cout << " check ExplainedReifDisj : Not yet " << this << std::endl;
+				exit(1);
+
+			}
+
+		}
+	}
+	else {
+
+		if (is_a_bound_literal(a)){
+
+			//	 std::cout << " is_a_bound_literal check ExplainedReifDisj : Not yet " << this << std::endl;
+			//	 exit(1);
+
+			int value= get_value_from_literal(a);
+			int id__= get_variable_from_literal(a);
+
+			Explanation::iterator tmp__iterator = &(explanation[0]);
+			int __size = 0;
+			while(tmp__iterator < end){
+				++__size;
+				++tmp__iterator;
+			}
+			tmp__iterator =  &(explanation[0]);
+
+			if (__size==2){
+
+
+				Literal q0 = *tmp__iterator;
+				++tmp__iterator;
+				Literal q1 = *tmp__iterator;
+
+				if (is_a_bound_literal(q0)){
+					std::cout << " q0 is a bound literal ! \n ERROR ExplainedReifDisj " << this << std::endl;
+					exit(1);
+				}
+				if (s->get_id_boolean_variable(q0)!= scope[2].id()){
+					std::cout << " q0 ERROR ExplainedReifDisj " << this << std::endl;
+					exit(1);
+				}
+
+				if (!is_a_bound_literal(q1)){
+					std::cout << " q0 is a bound literal ! \n ERROR ExplainedReifDisj " << this << std::endl;
+					exit(1);
+				}
+
+				int islb =is_lower_bound(a);
+				if ((get_variable_from_literal(q1)==scope[0].id()) && (get_variable_from_literal(a)==scope[1].id())){
+					if (islb) {
+
+						if (!is_lower_bound(q1)){
+							std::cout << " ERROR ExplainedReifDisj " << this << std::endl;
+							exit(1);
+						}
+
+						if (!scope[2].get_min()){
+							std::cout << " ERROR ExplainedReifDisj " << this << std::endl;
+							exit(1);
+						}
+
+						int value0 = get_value_from_literal(q1);
+						int value1 = get_value_from_literal(a);
+
+						if (value0 + processing_time[0] != value1){
+							std::cout << " ERROR ExplainedReifDisj " << this << std::endl;
+							exit(1);
+						}
+					}
+					else {
+
+						if (is_lower_bound(q1)){
+							std::cout << " ERROR ExplainedReifDisj " << this << std::endl;
+							exit(1);
+						}
+
+						if (scope[2].get_min()){
+							std::cout << " ERROR ExplainedReifDisj " << this << std::endl;
+							exit(1);
+						}
+
+						int value0 = get_value_from_literal(q1);
+						int value1 = get_value_from_literal(a);
+
+						if (value1 + processing_time[1] != value0){
+							std::cout << " ERROR ExplainedReifDisj " << this << std::endl;
+							exit(1);
+						}
+					}
+				}
+				else if ((get_variable_from_literal(q1)==scope[1].id()) && (get_variable_from_literal(a)==scope[0].id())){
+
+
+					if (islb) {
+
+						if (!is_lower_bound(q1)){
+							std::cout << " ERROR ExplainedReifDisj " << this << std::endl;
+							exit(1);
+						}
+
+						if (scope[2].get_min()){
+							std::cout << " ERROR ExplainedReifDisj " << this << std::endl;
+							exit(1);
+						}
+
+						int value0 = get_value_from_literal(a);
+						int value1 = get_value_from_literal(q1);
+
+						if (value1 + processing_time[1] != value0){
+							std::cout << " ERROR ExplainedReifDisj " << this << std::endl;
+							exit(1);
+						}
+					}
+					else {
+
+						if (is_lower_bound(q1)){
+							std::cout << " ERROR ExplainedReifDisj " << this << std::endl;
+							exit(1);
+						}
+
+						if (!scope[2].get_min()){
+							std::cout << " ERROR ExplainedReifDisj " << this << std::endl;
+							exit(1);
+						}
+
+						int value0 = get_value_from_literal(a);
+						int value1 = get_value_from_literal(q1);
+
+						if (value0 + processing_time[0] != value1){
+							std::cout << " ERROR ExplainedReifDisj " << this << std::endl;
+							exit(1);
+						}
+					}
+				} else {
+					std::cout << " id_ ERROR in verif explanation of ExplainedReifDisj " << this << std::endl;
+					exit(1);
+				}
+			}
+			else{
+
+				if (__size==1){
+					//		std::cout << " SIZE 1 " << this << std::endl;
+					//		exit(1);
+
+					tmp__iterator = &(explanation[0]);
+					Literal q = *tmp__iterator;
+
+					if (is_a_bound_literal(q)){
+						std::cout << " size = 1! and is_a_bound_literal(q) ERROR ExplainedReifDisj " << this << std::endl;
+						exit(1);
+					}
+
+					if (s->get_id_boolean_variable(q) != scope[2].id()){
+						std::cout << " scope[2].id()ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+						exit(1);
+					}
+
+					int value_a = get_value_from_literal(a);
+					int id_a = get_variable_from_literal(a);
+					int islb = is_lower_bound(a);
+
+					if (!scope[2].is_ground()){
+						std::cout << "scope[2] ERROR ExplainedReifDisj " << this << std::endl;
+						exit(1);
+					}
+
+					if (islb) {
+						if (scope[2].get_min()){
+
+							if (id_a != scope[1].id()){
+								std::cout << " id_a != scope[1].id ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+								exit(1);
+							}
+
+							int lbvalue =scope0->lowerbounds[0];
+
+
+							if (lbvalue + processing_time[0] != value_a){
+								std::cout << " lbvalue + processing_time[0] != value_a ERROR ExplainedReifDisj " << this << std::endl;
+								exit(1);
+							}
+
+						}
+						else{
+							if (id_a != scope[0].id()){
+								std::cout << " id_a != scope[0].id( ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+								exit(1);
+							}
+
+							int lbvalue =scope1->lowerbounds[0];
+
+
+							if (lbvalue + processing_time[1] != value_a){
+								std::cout << " lbvalue + processing_time[0] != value_a ERROR ExplainedReifDisj " << this << std::endl;
+								exit(1);
+							}
+
+
+						}
+
+					}
+					else {
+						if (scope[2].get_min()){
+
+							if (id_a != scope[0].id()){
+								std::cout << " id_a != scope[0].id ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+								exit(1);
+							}
+
+							int upvalue =scope1->upperbounds[0];
+
+
+							if (upvalue + processing_time[0] != value_a){
+								std::cout << " lbvalue + processing_time[0] != value_a ERROR ExplainedReifDisj " << this << std::endl;
+								exit(1);
+							}
+
+						}
+						else{
+							if (id_a != scope[1].id()){
+								std::cout << " id_a != scope[1].id ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+								exit(1);
+							}
+
+							int upvalue =scope0->upperbounds[0];
+
+							if (upvalue + processing_time[1] != value_a){
+								std::cout << " lbvalue + processing_time[0] != value_a ERROR ExplainedReifDisj " << this << std::endl;
+								exit(1);
+							}
+						}
+					}
+				}
+				else{
+					std::cout << " is_a_bound_literal (size!=2) check ExplainedReifDisj : Not yet : size  " << __size << " constraint : " << this << std::endl;
+					exit(1);
+				}
+			}
+
+		}
+
+		else{
+			if (a!= scope[2].id()){
+				std::cout << " ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+				exit(1);
+			}
+
+			if (!scope[2].is_ground()){
+				std::cout << " ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+				exit(1);
+			}
+
+			Explanation::iterator tmp__iterator = &(explanation[4]);
+			int __size = 0;
+			while(tmp__iterator < end){
+				++__size;
+				++tmp__iterator;
+			}
+			tmp__iterator =  &(explanation[4]);
+
+			if (__size==2){
+				//	 std::cout << " boolean variable check ExplainedReifDisj : Not yet " << this << std::endl;
+				//	 exit(1);
+
+				Literal q0, q1;
+
+
+				std::cout << " size 2 " << this << std::endl;
+				exit(1);
+
+				q0 = *tmp__iterator;
+				++tmp__iterator;
+				q1 = *tmp__iterator;
+
+				if (get_variable_from_literal(q0)!= scope[0].id()){
+					std::cout << " ERROR ExplainedReifDisj " << this << std::endl;
+					exit(1);
+				}
+
+				if (get_variable_from_literal(q1)!= scope[0].id()){
+					std::cout << " ERROR ExplainedReifDisj " << this << std::endl;
+					exit(1);
+				}
+
+				int value0 = get_value_from_literal(q0);
+				int value1 = get_value_from_literal(q1);
+
+				int level0 = scope0->level_of(value0, is_lower_bound(q0));
+				int level1 = scope1->level_of(value1, is_lower_bound(q1));
+
+
+
+				if ((level0 > lvl) || (level1 > lvl) )
+				{
+					std::cout << " level ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+					std::cout << " level0 " << level0 << std::endl;
+					std::cout << " level1 " << level1 << std::endl;
+					std::cout << " s->assignment_level[scope[2].id()] " << s->assignment_level[scope[2].id()] << std::endl;
+					std::cout << " solver level " << solver->level << std::endl;
+					exit(1);
+				}
+				int max_level=  ( (level0>level1) ? level0 : level1) ;
+
+				if (max_level != s->assignment_level[scope[2].id()] )
+				{
+
+					std::cout << " level ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+					std::cout << " level1 " << level0 << std::endl;
+					std::cout << " level2 " << level1 << std::endl;
+					std::cout << " s->assignment_level[scope[2].id()] " << s->assignment_level[scope[2].id()] << std::endl;
+					std::cout << " solver level " << solver->level << std::endl;
+					std::cout << " level ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+					exit(1);
+				}
+				if (scope[2].get_min()){
+					if (value1 + processing_time[1] <= value0){
+						std::cout << " ERROR ExplainedReifDisj " << this << std::endl;
+						exit(1);
+					}
+				}
+				else {
+					if (value0 + processing_time[0] <= value1){
+						std::cout << " ERROR ExplainedReifDisj " << this << std::endl;
+						exit(1);
+					}
+				}
+			}
+			else {
+				std::cout << " check ExplainedReifDisj : Not yet " << this << std::endl;
+				exit(1);
+			}
+		}
+	}
+
+#endif
+
 	return &(explanation[0]);
 
 }

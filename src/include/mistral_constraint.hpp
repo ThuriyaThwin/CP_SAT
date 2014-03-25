@@ -3451,9 +3451,9 @@ if (enforce_nfc1)
   public:
 
 	  ExplainedConstraintReifiedDisjunctive(Variable x, Variable y, Variable z, const int p0, const int p1):
-		  ConstraintReifiedDisjunctive(x, y, z, p0, p1), scope0(static_cast<VariableRangeWithLearning*> (x.range_domain)), scope1(static_cast<VariableRangeWithLearning*> (y.range_domain)) , scope2(static_cast<VariableRangeWithLearning*> (z.range_domain)) {}
+		  ConstraintReifiedDisjunctive(x, y, z, p0, p1), scope0(static_cast<VariableRangeWithLearning*> (x.range_domain)), scope1(static_cast<VariableRangeWithLearning*> (y.range_domain)) {}
 	  ExplainedConstraintReifiedDisjunctive(Vector< Variable >& scp, const int p0, const int p1) :
-		  ConstraintReifiedDisjunctive(scp,p0, p1), scope0(static_cast<VariableRangeWithLearning*>(scp[0].range_domain)), scope1(static_cast<VariableRangeWithLearning*>(scp[1].range_domain)) , scope2(static_cast<VariableRangeWithLearning*> (scp[2].range_domain)) {
+		  ConstraintReifiedDisjunctive(scp,p0, p1), scope0(static_cast<VariableRangeWithLearning*>(scp[0].range_domain)), scope1(static_cast<VariableRangeWithLearning*>(scp[1].range_domain)) {
 		  if (scp.size > 3) {
 			  std::cout << " c ExplainedConstraintReifiedDisjunctive works only with 3 variables" << std::endl;
 			  exit(1);
@@ -3483,7 +3483,7 @@ if (enforce_nfc1)
   private:
 	  VariableRangeWithLearning* scope0;
 	  VariableRangeWithLearning* scope1;
-	  VariableRangeWithLearning* scope2;
+	  //VariableRangeWithLearning* scope2;
 	  Literal explanation[6];
 	  int bool_explanation_size ;
   };
