@@ -1362,7 +1362,7 @@ template < int N, class T >
   };
 
 
-  
+
   template <class DATA_TYPE>
   class Array : public Explanation {
 

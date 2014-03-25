@@ -10438,6 +10438,33 @@ void Mistral::Solver::learn_with_lazygeneration() {
 						exit(1);
 					}
 #endif
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+
+					//Additionnal test - not necessary
+					//std::cout << " check clause " << this << std::endl;
+					if (dynamic_cast<Array<Literal> *>(current_explanation))
+					{
+						//	std::cout << "is a clause? \n" << current_explanation << std::endl;
+						//exit(1);
+						int level__ ;
+						Explanation::iterator tmp__iterator = tmp;
+
+						while(tmp__iterator < stop) {
+							q = *tmp__iterator;
+							++tmp__iterator;
+							if (get_id_boolean_variable(q)!=a){
+								level__= assignment_level[get_id_boolean_variable(q)];
+								if (level__> level){
+									std::cout << " check clause ERROR : level__> lvl " << std::endl;
+									exit(1);
+								}
+							}
+						}
+
+					}
+
+
+#endif
 					while(tmp < stop) {
 						q = *tmp;
 						++tmp;
@@ -10465,7 +10492,6 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 									exit(1);
 								}
-
 							}
 							else
 								if (variables[get_variable_from_literal(q)].get_max() >  get_value_from_literal(q) )
