@@ -2269,11 +2269,11 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 		++tmp__iterator;
 		Literal q2= *tmp__iterator;
 		if (! is_a_bound_literal(q1)){
-			std::cout << " ERROR in explaning failure on ExplainedConstraintLess" << std::endl;
+			std::cout << " q1 ERROR in explaning failure on ExplainedConstraintLess" << std::endl;
 			exit(1);
 		}
 		if (! is_a_bound_literal(q2)){
-			std::cout << " ERROR in explaning failure on ExplainedConstraintLess " << std::endl;
+			std::cout << " q2 ERROR in explaning failure on ExplainedConstraintLess " << std::endl;
 			exit(1);
 		}
 
@@ -2281,7 +2281,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 		int value2 = get_value_from_literal(q2);
 
 		if (is_lower_bound(q2) || is_upper_bound(q1) ){
-			std::cout << " ERROR in explaning failure on ExplainedConstraintLess" << std::endl;
+			std::cout << " || ERROR in explaning failure on ExplainedConstraintLess" << std::endl;
 			exit(1);
 		}
 
@@ -2290,79 +2290,83 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 
 
 		if (level1> lvl){
-			std::cout << " ERROR in explaning failure on ExplainedConstraintLess" << std::endl;
+			std::cout << " lvl ERROR in explaning failure on ExplainedConstraintLess" << std::endl;
 			exit(1);
 		}
 
 		if (level2> lvl){
-			std::cout << " ERROR in explaning failure on ExplainedConstraintLess" << std::endl;
+			std::cout << " lvl ERROR in explaning failure on ExplainedConstraintLess" << std::endl;
 			exit(1);
 		}
 
 
 		if ((level1< lvl) && (level2< lvl) ){
-			std::cout << " ERROR in explaning failure on ExplainedConstraintLess" << std::endl;
+			std::cout << " lvl ERROR in explaning failure on ExplainedConstraintLess" << std::endl;
 			exit(1);
 		}
 
 		if ((value1+offset) <= value2 ){
-			std::cout << " ERROR in explaning failure on ExplainedConstraintLess" << std::endl;
+			std::cout << " semantic ERROR in explaning failure on ExplainedConstraintLess" << std::endl;
 			exit(1);
 		}
 
 	}
 	else{
 
-		Literal q1= *tmp__iterator;
-		if (! is_a_bound_literal(q1)){
-			std::cout << " ERROR in explaning failure on ExplainedConstraintLess" << std::endl;
-			exit(1);
-		}
-		if (! is_a_bound_literal(a)){
-			std::cout << " ERROR in explaning failure on ExplainedConstraintLess " << std::endl;
-			exit(1);
-		}
+		if (tmp__iterator < end){
+			Literal q1= *tmp__iterator;
+			if (! is_a_bound_literal(q1)){
+				std::cout << " q1 explanation ERROR on ExplainedConstraintLess" << std::endl;
+				exit(1);
+			}
+			if (! is_a_bound_literal(a)){
+				std::cout << "'a' explanation ERROR on ExplainedConstraintLess " << std::endl;
+				exit(1);
+			}
 
-		int value1 = get_value_from_literal(q1);
-		int value2 = get_value_from_literal(a);
+			int value1 = get_value_from_literal(q1);
+			int value2 = get_value_from_literal(a);
 
-		int level1 ;
-		int level2 ;
+			int level1 ;
+			int level2 ;
 
 
-		if (is_lower_bound(a) && is_upper_bound(q1) ){
-			std::cout << " ERROR in explaning failure on ExplainedConstraintLess" << std::endl;
-			exit(1);
-		}
-		if (is_lower_bound(q1) && is_upper_bound(a) ){
-			std::cout << " ERROR in explaning failure on ExplainedConstraintLess" << std::endl;
-			exit(1);
-		}
+			if (is_lower_bound(a) && is_upper_bound(q1) ){
+				std::cout << " a&ub explanation ERROR on ExplainedConstraintLess" << std::endl;
+				exit(1);
+			}
+			if (is_lower_bound(q1) && is_upper_bound(a) ){
+				std::cout << " q1 && ub explanation ERROR on ExplainedConstraintLess" << std::endl;
+				exit(1);
+			}
 
-		if (is_lower_bound(a)){
+			if (is_lower_bound(a)){
 
-			level1 = scope0->level_of(value1,1) ;
-			level2 = scope1->level_of(value2,1) ;
-			if ((value1+offset) != value2 ){
-				std::cout << " ERROR in explaning failure on ExplainedConstraintLess" << std::endl;
+				level1 = scope0->level_of(value1,1) ;
+				level2 = scope1->level_of(value2,1) ;
+				if ((value1+offset) != value2 ){
+					std::cout << " semantic explanation ERROR on ExplainedConstraintLess" << std::endl;
+					exit(1);
+				}
+			}
+			else {
+				level1 = scope1->level_of(value1,0) ;
+				level2 = scope0->level_of(value2,0) ;
+				if ((value2+offset) != value1 ){
+					std::cout << " semantic explanation ERROR on ExplainedConstraintLess" << std::endl;
+					exit(1);
+				}
+			}
+
+			if (level1> level2){
+				std::cout << " lvl explanation ERROR on ExplainedConstraintLess" << std::endl;
 				exit(1);
 			}
 		}
 		else {
-			level1 = scope1->level_of(value1,0) ;
-			level2 = scope0->level_of(value2,0) ;
-			if ((value2+offset) != value1 ){
-				std::cout << " ERROR in explaning failure on ExplainedConstraintLess" << std::endl;
-				exit(1);
-			}
-		}
-
-		if (level1> level2){
-			std::cout << " ERROR in explaning failure on ExplainedConstraintLess" << std::endl;
+			std::cout << " semantic explaning on ExplainedConstraintLess : NOT YET" << std::endl;
 			exit(1);
 		}
-
-
 	}
 #endif
 
