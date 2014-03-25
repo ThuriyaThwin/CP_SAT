@@ -3783,7 +3783,7 @@ bool Mistral::Solver::propagate()
       
     
       if(ASSIGNED(var_evt.second)) {
-      
+
 	assigned.add(vidx);
 	if(parameters.fd_learning){
 		if((variables[vidx].id() < initial_variablesize) && sequence.contain(variables[vidx]))
@@ -3839,6 +3839,27 @@ bool Mistral::Solver::propagate()
 	    
 	      if(ASSIGNED(var_evt.second)) {
 		culprit.notify_assignment();
+		/*	 vidx = var_evt.first;
+				if (vidx==410){
+
+					std::cout << " FOUND vidx==410" << std::endl;
+					//  std::cout << " variable " << this << std::endl;
+					//	  std::cout << " id " << id() << std::endl;
+					std::cout << " get_solver()->assignment_level .size " <<assignment_level.size << std::endl;
+					std::cout << " get_solver()->reason_for : " << reason_for[vidx]<< std::endl;
+					std::cout << " get_solver()->decitions : " << decisions << std::endl;
+					//  std::cout << " domain" << get_domain() << std::endl;
+					std::cout << " get_solver()->assignment_level[id()]" <<assignment_level[vidx]<< std::endl;
+
+					last_solution_lb[var_evt.first] = last_solution_ub[var_evt.first] = variables[var_evt.first].get_value();
+					assignment_level[vidx] = level;
+					assignment_order[vidx] = assignment_rank;
+					++assignment_rank;
+
+					reason_for[vidx] = var_evt.third;
+					exit(1);
+				}
+				 */
 	      }
 	    
 #ifdef _DEBUG_AC
@@ -10651,6 +10672,13 @@ void Mistral::Solver::learn_with_lazygeneration() {
 							}
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+
+							if (lvl > level)
+							{
+								std::cout << " \n ERROR : the level of the literal q is > level. i.e. lvl = "<< lvl << " and level = " << level<< std::endl;
+								exit(1);
+							}
+
 							if ((x.get_size()>1) )
 							{
 								std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
@@ -10973,6 +11001,11 @@ void Mistral::Solver::learn_with_lazygeneration() {
 									}
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+									if (lvl > level)
+									{
+										std::cout << " \n ERROR : the level of the literal q is > level. i.e. lvl = "<< lvl << " and level = " << level<< std::endl;
+										exit(1);
+									}
 									if ((x.get_size()>1) )
 									{
 										std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;

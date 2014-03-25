@@ -1828,12 +1828,16 @@ Mistral::Event Mistral::Variable::restore() {
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 
-	  if (get_solver()->assignment_level[id()] != get_solver()->level)
+	  //std::cout << "restore boolean" << std::endl;
+	  if (get_solver()->parameters.fd_learning &&  get_solver()->assignment_level[id()] != get_solver()->level)
 	  {
 		  std::cout << "ERROR in restore boolean" << std::endl;
 		  std::cout << " variable " << this << std::endl;
 		  std::cout << " id " << id() << std::endl;
 		  std::cout << " get_solver()->assignment_level .size " <<get_solver()->assignment_level.size << std::endl;
+		  std::cout << " get_solver()->constraint_graph : " <<get_solver()->constraint_graph[id()]<< std::endl;
+		  std::cout << " get_solver()->reason_for : " <<get_solver()->reason_for[id()]<< std::endl;
+		  std::cout << " get_solver()->decisions : " <<get_solver()->decisions << std::endl;
 		  std::cout << " domain" << get_domain() << std::endl;
 		  std::cout << " get_solver()->assignment_level[id()]" <<get_solver()->assignment_level[id()]<< std::endl;
 		  exit(1);

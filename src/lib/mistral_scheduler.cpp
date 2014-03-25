@@ -1935,6 +1935,9 @@ void SchedulingSolver::setup() {
 //   }
 
 
+		  //std::cout << " b1491 :  " << variables[1491].get_domain() << std::endl;
+  	  	  //exit(1);
+
 /*
 		  std::cout << " NOGOOD " << std::endl;
   add(variables[346] == 0);
@@ -2744,6 +2747,8 @@ void SchedulingSolver::dichotomic_search()
   //propagate the bounds, with respect to the initial upper bound
   Outcome result = (IS_OK(propagate()) ? UNKNOWN : UNSAT);
 
+  //std::cout << " b1491 after propag:  " << variables[1491].get_domain() << std::endl;
+  //exit(1);
   int init_expression_store_size = expression_store.size;
   int init_constraint_graph_size = constraint_graph.size;
 
