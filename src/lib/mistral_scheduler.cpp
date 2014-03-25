@@ -1665,8 +1665,8 @@ void SchedulingSolver::setup() {
   if (params->FD_learning)
   {
 	  //  1117 to  1321
-	  lb_C_max = 1117;
-	  ub_C_max = 1321;
+	//  lb_C_max = 1117;
+	 // ub_C_max = 1321;
   }
 #endif
 
@@ -1934,6 +1934,7 @@ void SchedulingSolver::setup() {
 //     add(depth == Sum(scope));
 //   }
 
+		 std::cout << " this  " << this << std::endl;
 
 		  //std::cout << " b1491 :  " << variables[1491].get_domain() << std::endl;
   	  	  //exit(1);
@@ -3570,7 +3571,7 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 	//	std::cout << std::endl;
 	//	__jsp.printStats(std::cout);
 	params->FD_learning = 0;
-
+	//solver->parameters.backjump = false;
 	//	std::cout << " \n\n c Lower Bound  " << stats->lower_bound ;
 	//	std::cout << " c Upper Bound  " << stats->upper_bound ;
 	int obj  = (int)(floor(((double)stats->lower_bound  + (double)stats->upper_bound)/2));

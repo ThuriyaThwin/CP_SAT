@@ -14753,6 +14753,9 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 				else{
 					for (int j = 0; j< scope.size; ++j)
 						if ( scope[j].id() == ub[i].x.id()){
+							((Solver* ) solver) -> reason_for[scope[j].id()] = this;
+							((Solver* ) solver) -> assignment_level[scope[j].id()] = solver->level;
+
 							if (
 									_lb >
 							_x->lowerbounds[0]
@@ -14829,6 +14832,10 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 					else
 						for (int j = 0; j< scope.size; ++j)
 							if ( scope[j].id() == ub[idx].x.id()){
+								((Solver* ) solver) -> reason_for[scope[j].id()] = this;
+								((Solver* ) solver) -> assignment_level[scope[j].id()] = solver->level;
+
+
 								if (
 										_ub <
 										_x->upperbounds[0]
@@ -14934,6 +14941,9 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 			else
 				for (int j = 0; j< scope.size; ++j)
 					if ( scope[j].id() == ub[i].x.id()){
+						((Solver* ) solver) -> reason_for[scope[j].id()] = this;
+						((Solver* ) solver) -> assignment_level[scope[j].id()] = solver->level;
+
 						eager_explanations[j]=tmp;
 						break;
 					}
@@ -14978,6 +14988,10 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 				else
 					for (int j = 0; j< scope.size; ++j)
 						if ( scope[j].id() == ub[index_ub-idx].x.id()){
+							((Solver* ) solver) -> reason_for[scope[j].id()] = this;
+							((Solver* ) solver) -> assignment_level[scope[j].id()] = solver->level;
+
+
 							eager_explanations[j]=tmp;
 							break;
 						}
