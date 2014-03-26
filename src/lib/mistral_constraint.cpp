@@ -2972,8 +2972,9 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 		tmp__iterator =  &(explanation[0]);
 
 
-		Literal q1, q2, q3;
+
 		if (__size==3){
+			Literal q1, q2, q3;
 			q1 = *tmp__iterator;
 			tmp__iterator++;
 			q2 = *tmp__iterator;
@@ -3028,7 +3029,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 			}
 
 			if (is_upper_bound(q3)!= scope[2].get_min()){
-				std::cout << "is_lower_bound  ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+				std::cout << "is_upper_bound(q3)!= scope[2].get_min() is_lower_bound  ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
 				exit(1);
 			}
 
@@ -3076,6 +3077,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 		else {
 
 			if (__size==2){
+				tmp__iterator =  &(explanation[0]);
 				Literal q1, q2;
 				q1 = *tmp__iterator;
 				tmp__iterator++;
@@ -3135,8 +3137,8 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 					exit(1);
 				}
 
-				if (id__==scope[1].id() && is_upper_bound(q3)!= scope[2].get_min()){
-					std::cout << "is_lower_bound  ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
+				if (id__==scope[1].id() && is_upper_bound(q2)!= scope[2].get_min()){
+					std::cout << "id__==scope[1].id() is_lower_bound  ERROR in check explanation in ExplainedReifDisj " << this << std::endl;
 					exit(1);
 				}
 
