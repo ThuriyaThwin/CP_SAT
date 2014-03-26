@@ -37,7 +37,7 @@
 //#define _OLD_ true
 //#define _DEBUG_NOGOOD true //(statistics.num_filterings == 491)
 //#define _DEBUG_SEARCH true
-//#define _DEBUG_FD_NOGOOD true //(level==110) //((variables.size== 16678) && (level==20)) //true // ((variables.size == 221)) //&& (solver->level == 22))//true
+#define _DEBUG_FD_NOGOOD true //(level==110) //((variables.size== 16678) && (level==20)) //true // ((variables.size == 221)) //&& (solver->level == 22))//true
 //#define _DEBUG_SHOW_LEARNT_BOUNDS true
 //#define _TRACKING_BOUND 1078
 //#define _TRACKING_ATOM 368
@@ -13357,8 +13357,6 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 										std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 									}
 #endif
-
-
 
 									to_be_explored=q;
 									is_lb = is_lower_bound(to_be_explored);

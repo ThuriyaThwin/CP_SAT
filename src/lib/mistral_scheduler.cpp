@@ -1708,6 +1708,7 @@ void SchedulingSolver::setup() {
     {
     	Variable t(lb, ub);
     	tasks.add(t);
+    	add(t);
     }
 
   }
@@ -1934,18 +1935,27 @@ void SchedulingSolver::setup() {
 //     add(depth == Sum(scope));
 //   }
 
-		// std::cout << " this  " << this << std::endl;
+		 std::cout << " this  " << this << std::endl;
 
 		  //std::cout << " b1491 :  " << variables[1491].get_domain() << std::endl;
   	  	  //exit(1);
 
-/*
+
 		  std::cout << " NOGOOD " << std::endl;
+  //Cut 1:
+  /*
   add(variables[346] == 0);
   add(variables[58] >=  807);
   add(variables[28]  <=  948);
   add(variables[161]   <=  954);
   add(variables[161]  >=  852);
+*/
+/*
+  add(variables[346] == 0);
+  add(variables[58] >=  807);
+  //add(variables[28]  <=  948);
+  add(variables[161]   <=  855);
+  //add(variables[161]  >=  852);
 */
 
 }
@@ -3064,9 +3074,9 @@ void SchedulingSolver::dichotomic_search()
 	  std::cout << " \n trail : " << trail_ << std::endl;
 
 */
-	//  std::cout << " \n end first step " << std::endl;
+	  std::cout << " \n end first step " << std::endl;
 
-	//  exit(1);
+	  exit(1);
 	  ++iteration;
   } 
   //   } else if( status == SAT ) {
