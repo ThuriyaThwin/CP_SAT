@@ -15491,8 +15491,16 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 	int _lb = scope[0].get_min();
 	int _ub = scope[0].get_max();
 	int index_lb = ub.size +1 , index_ub = -2, latestindex_lb, latestindex_ub;
+	//index_lb = ub.size; ??
+	std::cout << " ub " << ub << std::endl;
 
-
+/* index_lb is the index in ub where ub[i].value is equal to :
+ *  _lb if it's included in ub
+ * otherwise: the smallest value in ub that is greater than _lb
+ *
+ *
+ * Note that all the values having an index < index_lb will be assigned to 0.
+ */
 	//Use the current lb to enforce bound literals to be false
 	for (int i = 0; i< ub.size ; ++i)
 		if (ub[i].value >= _lb){
@@ -15571,6 +15579,10 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 	//Use the current ub to enforce bound literals to be true
 
 
+	/* index_ub is the index in ub where ub[i].value is equal to :
+	 * the greatest value in ub that is smaller than _lb
+	 * Note that all the values having an index > index_ub will be assigned to 0.
+	 */
 	int idx = ub.size;
 	if (idx>0)
 		while (idx--){
@@ -15652,13 +15664,14 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 	latestindex_lb = index_lb -1;
 	latestindex_ub = index_ub +1;
 
+	//latestindex_lb is the latest index in ub where the correspondent variable is assigned to 0.
 
 	for (int i = index_lb; i< ub.size ; ++i)
 		if (ub[i].x.is_ground())
 			if (!ub[i].x.get_min())
 				latestindex_lb = i;
 
-
+	//latestindex_lb is the latest index in ub where the correspondent variable is assigned to 1.
 
 	idx = index_ub +1;
 	if (idx>0)
@@ -15684,16 +15697,26 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 
 	Literal tmp;
-	if (latestindex_lb < ub.size)
+	if ((latestindex_lb < ub.size) && (latestindex_lb > (-1)))
 		//tmp = 	2*  ub[latestindex_lb].x.id() +1;
 		tmp = ((Solver *) solver)->encode_boolean_variable_as_literal( ub[latestindex_lb].x.id(),1);
 
-	for (int i = index_lb ; i <latestindex_lb ;  ++i)
+	//Assigning to 0 based on latestindex_lb
+	for (int i = index_lb ; i <latestindex_lb ;  ++i){
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+		//No verification here!
+		/*if ((latestindex_lb >= ub.size))){
+			std::cout << " c not possible! (latestindex_lb >= ub.size) " << std::endl;
+			exit(1);
+		}*/
+
+#endif
+
 		if(!ub[i].x.is_ground()){
 			if( ub[i].x.set_domain(0) == FAIL_EVENT) {
 				std::cout << " c not possible! " << std::endl;
 				exit(1);
-
 			}
 			else
 				for (int j = 0; j< scope.size; ++j)
@@ -15726,14 +15749,70 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 					}
 
 			}
-
+}
 
 	if (latestindex_ub >= 0 &&  latestindex_ub < ub.size)
 		//	tmp = 	2*  ub[latestindex_ub].x.id();
 		tmp = ((Solver *) solver)->encode_boolean_variable_as_literal( ub[latestindex_ub].x.id(),0);
 
-	idx = index_ub - latestindex_ub +1;
-	if (idx)
+
+	if (latestindex_ub < index_ub)
+		for (int i = (latestindex_ub+1) ; i <= index_ub ;  ++i){
+
+
+			if(!ub[i].x.is_ground()){
+				if( ub[i].x.set_domain(1) == FAIL_EVENT) {
+					std::cout << " c not possible! " << std::endl;
+					exit(1);
+
+				}
+				else
+					for (int j = 1; j< scope.size; ++j)
+						if ( scope[j].id() == ub[i].x.id()){
+							((Solver* ) solver) -> reason_for[scope[j].id()] = this;
+							((Solver* ) solver) -> assignment_level[scope[j].id()] = solver->level;
+
+							eager_explanations[j]=tmp;
+							break;
+						}
+			}
+			else
+				if( ub[i].x.set_domain(1) == FAIL_EVENT) {
+					for (int j=1; j< scope.size ; ++j)
+						if (scope[j].id()== ub[i].x.id()){
+							wiped = FAILURE(j);
+
+							explanation[0] = tmp;
+							tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(scope[j].id(), 1));
+							//tmp =  2* scope[j].id() +1;
+							explanation[1] = tmp;
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+							//  	  std::cout << "wiped == " << wiped << std::endl;
+							( (Solver*) solver) ->__failure = this;
+#ifdef _DEBUG_FAIL
+							std::cout << " fail : " << *this << std::endl;
+#endif
+#endif
+							return wiped;
+						}
+				}
+		}
+
+	//Start Verif from HERE!
+	/*
+	 * idx = (index_ub - latestindex_ub) +1;
+	 *
+	if (idx){
+
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+
+		if ((latestindex_ub < 0) ||  (latestindex_ub >= ub.size)){
+			std::cout << " c not possible! (latestindex_ub < 0) ||  (latestindex_ub >= ub.size) " << std::endl;
+							exit(1);
+		}
+
+#endif
 		while (idx--){
 
 			if(!ub[index_ub-idx].x.is_ground()){
@@ -15743,11 +15822,10 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 				}
 				else
-					for (int j = 0; j< scope.size; ++j)
+					for (int j = 1; j< scope.size; ++j)
 						if ( scope[j].id() == ub[index_ub-idx].x.id()){
 							((Solver* ) solver) -> reason_for[scope[j].id()] = this;
 							((Solver* ) solver) -> assignment_level[scope[j].id()] = solver->level;
-
 
 							eager_explanations[j]=tmp;
 							break;
@@ -15774,27 +15852,8 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 						}
 				}
 
-
-
-
-
-
-			//old
-			/*
-		if( ub[index_ub-idx].x.set_domain(1) == FAIL_EVENT) {
-			for (int j=1; j< scope.size ; ++j)
-				if (scope[j].id()== ub[index_ub-idx].x.id())
-					wiped = FAILURE(j);
 		}
-		else
-			for (int j = 0; j< scope.size; ++j)
-				if ( scope[j].id() == ub[index_ub-idx].x.id()){
-					eager_explanations[j]=tmp;
-					break;
-				} */
-
-		}
-
+} */
 	//Preparing the explanation
 	Vector < Literal > tmpclause ;
 
@@ -15966,6 +16025,10 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 		else
 		{
 			end = &(explanation[0])+2;
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+
+#endif
 			return &(explanation[0]);
 		}
 
@@ -16009,8 +16072,52 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 					exit(1);
 				}
 #endif
-				if (eager_explanations[i]==NULL_ATOM)
+				if (eager_explanations[i]==NULL_ATOM){
 					end = &(explanation[0]);
+
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+					int value__ ;
+					int j = 0 ;
+
+					for (; j < ub.size; ++j){
+						if (ub[j].x.id() ==id ){
+							if (ub[j].x.get_min()){
+								value__ = _x->upperbounds[0];
+								if (ub[j].value < value__ ){
+									std::cout <<" \n \n ERROR in Domain Faithfulness explanation ub[i].value < value__ "  << std::endl;
+									exit(1);
+								}
+							}
+							else{
+
+								value__ = _x->lowerbounds[0];
+								if (ub[j].value >= value__ ){
+									std::cout <<" \n \n ERROR in Domain Faithfulness explanation : ub[i].value >= value__ "  << std::endl;
+									std::cout <<" \n \n ub[i].value "  << ub[j].value << std::endl;
+									std::cout <<" \n \n ub "  << ub << std::endl;
+									std::cout <<" \n \n value__ "  << value__ << std::endl;
+									std::cout <<" \n \n  get_variable_from_literal(eager_explanations[i]) "  <<  get_variable_from_literal(eager_explanations[i]) << std::endl;
+									std::cout <<" \n \n  is a bound literal?  "  <<  is_a_bound_literal(eager_explanations[i]) << std::endl;
+									std::cout <<" \n \n  is a lower bound ?  "  <<  is_lower_bound(eager_explanations[i]) << std::endl;
+									std::cout <<" \n \n id "  << id << std::endl;
+									std::cout <<" \n \n  a"  << a << std::endl;
+									std::cout <<" \n \n  variables [a]"  << ((Solver *)solver)->variables[a] << std::endl;
+									exit(1);
+								}
+							}
+							break;
+
+						}
+					}
+					if (j==ub.size ){
+						std::cout <<" \n \n  boolean variable not found in ub!  "  << std::endl;
+						exit(1);
+					}
+
+#endif
+
+				}
 				else {
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING

@@ -3416,6 +3416,16 @@ void SchedulingSolver::branch_and_bound()
 
   //std::cout << (get_run_time() - statistics.start_time) << std::endl;
 
+  //Cancel learning : check this when alowing lazy generation
+  if(base)
+  {
+	  parameters.fd_learning = false;
+	  parameters.backjump = 0;
+	  int __size = base->learnt.size;
+	  while (__size--)
+		  base->remove(__size);
+  }
+
   save();
   set_objective(stats->upper_bound-1);
   addObjective();

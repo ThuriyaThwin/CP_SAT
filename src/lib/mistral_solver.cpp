@@ -13979,11 +13979,11 @@ Mistral::Outcome Mistral::Solver::branch_right() {
 #else
 //    	simple_fdlearn_nogood();
     //fdlearn_nogood();
-    fdlearn_nogood_nosequence();
+   // fdlearn_nogood_nosequence();
     	//fdimprovedlearn_nogood();
     	//learn_withoutClosingPropagation();
       //this should be the one..
- 	//learn_with_lazygeneration();
+ 	learn_with_lazygeneration();
 //    	learn_with_lazygeneration_and_semantic_learning();
     	//HERE
    	//learn_with_lazygeneration_no_bound_at_the_end();
