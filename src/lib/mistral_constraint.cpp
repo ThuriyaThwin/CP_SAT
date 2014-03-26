@@ -2364,8 +2364,54 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 			}
 		}
 		else {
-			std::cout << " semantic explaning on ExplainedConstraintLess : NOT YET" << std::endl;
-			exit(1);
+			int value1 = get_value_from_literal(a);
+			int islb = is_lower_bound(a);
+
+			if (! is_a_bound_literal(a)){
+				std::cout << "'a' explanation ERROR on ExplainedConstraintLess " << std::endl;
+				exit(1);
+			}
+
+			if(islb){
+
+				if (get_variable_from_literal(a) != scope[1].id()){
+					std::cout << "'a' explanation ERROR on ExplainedConstraintLess " << std::endl;
+					exit(1);
+				}
+
+				int level1 = scope1->level_of(value1,1) ;
+
+				if(level1 > solver->level){
+					std::cout << "'a' explanation ERROR on ExplainedConstraintLess " << std::endl;
+					exit(1);
+				}
+
+				int value2 =scope0->lowerbounds[0];
+
+				if ((value2+offset) != value1 ){
+					std::cout << " semantic explanation ERROR on ExplainedConstraintLess" << std::endl;
+					exit(1);
+				}
+			}
+			else {
+				if (get_variable_from_literal(a) != scope[0].id()){
+					std::cout << "'a' explanation ERROR on ExplainedConstraintLess " << std::endl;
+					exit(1);
+				}
+				int level1 = scope0->level_of(value1,0) ;
+
+				if(level1 > solver->level){
+					std::cout << "'a' explanation ERROR on ExplainedConstraintLess " << std::endl;
+					exit(1);
+				}
+				int value2 =scope1->upperbounds[0];
+				if ((value1+offset) != value2 ){
+					std::cout << " semantic explanation ERROR on ExplainedConstraintLess" << std::endl;
+					exit(1);
+				}
+			}
+			//	std::cout << " semantic explaning on ExplainedConstraintLess : NOT YET" << std::endl;
+			//	exit(1);
 		}
 	}
 #endif

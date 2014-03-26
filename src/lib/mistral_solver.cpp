@@ -5590,7 +5590,7 @@ void Mistral::Solver::fdlearn_nogood_nosequence(){
 			 */
 
 
-			std::cout << "\n \n \n boolean_vairables_to_explore  ==  " << boolean_vairables_to_explore << std::endl;
+//			std::cout << "\n \n \n boolean_vairables_to_explore  ==  " << boolean_vairables_to_explore << std::endl;
 			if (boolean_vairables_to_explore.size>0)
 			{
 				boolean_vairables_to_explore.pop(a);
