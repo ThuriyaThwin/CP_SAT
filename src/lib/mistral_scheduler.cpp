@@ -1935,13 +1935,13 @@ void SchedulingSolver::setup() {
 //     add(depth == Sum(scope));
 //   }
 
-		 std::cout << " this  " << this << std::endl;
+		// std::cout << " this  " << this << std::endl;
 
 		  //std::cout << " b1491 :  " << variables[1491].get_domain() << std::endl;
   	  	  //exit(1);
 
 
-		  std::cout << " NOGOOD " << std::endl;
+		 // std::cout << " NOGOOD " << std::endl;
   //Cut 1:
   /*
   add(variables[346] == 0);
