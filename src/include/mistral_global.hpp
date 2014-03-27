@@ -148,7 +148,7 @@ namespace Mistral {
   //#define _DEBUG_OFFSET ((id==1309))
   //#define _DEBUG_AMSC  ((id==2912))
   //#define _DEBUG_AC true //((statistics.num_filterings >= 177))
-#define _CHECK_NOGOOD true
+//#define _CHECK_NOGOOD true
 #define _VERIFY_BEHAVIOUR_WHEN_LEARNING true
   //#define   _DEBUG_FAIL true
 //  #define latest_bounds_learning true

@@ -2943,7 +2943,8 @@ void SchedulingSolver::dichotomic_search()
 	  // 	      << std::right << std::setw(6) << " " << std::setw(5) << minfsble
 	  // 	      << " to " << std::setw(5) << maxfsble << " " << iteration << " " << params->Dichotomy << std::endl;
 	  std::cout << " c +==========[ end dichotomic step ]==========+" << std::endl;
-
+	//  std::cout << " \n end step " << std::endl;
+  	 //exit(1);
 
 	  // A module for checking learnt nogoods
 #ifdef _CHECK_NOGOOD
@@ -3074,9 +3075,7 @@ void SchedulingSolver::dichotomic_search()
 	  std::cout << " \n trail : " << trail_ << std::endl;
 
 */
-	  std::cout << " \n end step " << std::endl;
 
-	 exit(1);
 	  ++iteration;
   } 
   //   } else if( status == SAT ) {

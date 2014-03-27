@@ -1497,6 +1497,7 @@ int Mistral::Solver::lazy_declare(Variable x) {
   constraint_graph.add(array);
   if(extend_struct) {
     //constraint_graph.add(array);
+	  std::cout << " extend_struct in constraint_graph  " << std::endl;
     for(int i = constraint_graph.size-1; i>=0; --i) {
       for(int j = 0; j<3; ++j) {
 	for(int k = constraint_graph[i].on[j].size-1; k>=0; --k) {
@@ -13995,7 +13996,7 @@ Mistral::Outcome Mistral::Solver::branch_right() {
 #endif
     		Literal p = learnt_clause[0];
     		if( get_id_boolean_variable(p) >= initial_variablesize){
-    			std::cout << " initial_variablesize in learnt_clause[0] " << std::endl;
+    			//std::cout << " initial_variablesize in learnt_clause[0] " << std::endl;
     //			exit(1);
     		}
 
