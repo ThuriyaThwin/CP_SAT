@@ -3635,7 +3635,7 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 	if (id < initial_variablesize){
 
 		__solver->variables[id].set_domain(SIGN(NOT(c[0])));
-		std::cout << " literal associated to :  " << variables[id] << " = " << variables[id].get_domain() <<  std::endl;
+	//	std::cout << " literal associated to :  " << variables[id] << " = " << variables[id].get_domain() <<  std::endl;
 
 	}
 	else
@@ -3649,12 +3649,12 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 
 			if (SIGN(NOT(c[0]))){
 				__solver->variables[id_range].set_max(val_range);
-				std::cout << " Bound literal associated to :  " << variables[id_range] << " <=  " << val_range <<  std::endl;
+		//		std::cout << " Bound literal associated to :  " << variables[id_range] << " <=  " << val_range <<  std::endl;
 
 			}
 			else{
 				__solver->variables[id_range].set_min(val_range+1);
-				std::cout << " Bound literal associated to :  " << variables[id_range] << " >=  " << val_range+1 <<  std::endl;
+		//		std::cout << " Bound literal associated to :  " << variables[id_range] << " >=  " << val_range+1 <<  std::endl;
 			}
 
 
@@ -3667,7 +3667,7 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 
 	if (assignment_level[id] != level){
 
-		std::cout << " ERROR : assignment_level[id] != level" << std::endl;
+	//	std::cout << " ERROR : assignment_level[id] != level" << std::endl;
 		exit(1);
 	}
 
@@ -3680,7 +3680,7 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 		if (id < initial_variablesize){
 
 			__solver->variables[id].set_domain(SIGN(NOT(c[j])));
-			std::cout << " literal associated to :  " << variables[id] << " = " << variables[id].get_domain() <<  std::endl;
+		//	std::cout << " literal associated to :  " << variables[id] << " = " << variables[id].get_domain() <<  std::endl;
 
 		}
 		else
@@ -3694,12 +3694,12 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 
 				if (SIGN(NOT(c[j]))){
 					__solver->variables[id_range].set_max(val_range);
-					std::cout << " Bound literal associated to :  " << variables[id_range] << " <=  " << val_range <<  std::endl;
+		//			std::cout << " Bound literal associated to :  " << variables[id_range] << " <=  " << val_range <<  std::endl;
 
 				}
 				else{
 					__solver->variables[id_range].set_min(val_range+1);
-					std::cout << " Bound literal associated to :  " << variables[id_range] << " >=  " << val_range+1 <<  std::endl;
+		//			std::cout << " Bound literal associated to :  " << variables[id_range] << " >=  " << val_range+1 <<  std::endl;
 				}
 
 
@@ -3770,6 +3770,10 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 	delete __solver;
 
 	params->FD_learning = 1;
+	if (! parameters.backjump){
+		std::cout << " !backjump " << std::endl;
+		exit(1);
+	}
 	params->LBinit = -1;
 	params->UBinit = -1 ;
 	/*if(__solver->propagate()) {

@@ -3142,10 +3142,10 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 					exit(1);
 				}
 
-				std::cout << " id__==scope[0].id() ? " << (id__==scope[0].id()) << std::endl;
-				std::cout << " value 1  ? " << value1 << std::endl;
-				std::cout << " value 2  ? " << value2 << std::endl;
-				std::cout << " is_lower_bound(q2) ? " << is_lower_bound(q2) << std::endl;
+		//		std::cout << " id__==scope[0].id() ? " << (id__==scope[0].id()) << std::endl;
+		//		std::cout << " value 1  ? " << value1 << std::endl;
+		//		std::cout << " value 2  ? " << value2 << std::endl;
+		//		std::cout << " is_lower_bound(q2) ? " << is_lower_bound(q2) << std::endl;
 
 				int level1, level2;
 				if (id__==scope[0].id()){
@@ -15492,7 +15492,7 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 	int _ub = scope[0].get_max();
 	int index_lb = ub.size +1 , index_ub = -2, latestindex_lb, latestindex_ub;
 	//index_lb = ub.size; ??
-	std::cout << " ub " << ub << std::endl;
+	//std::cout << " ub " << ub << std::endl;
 
 /* index_lb is the index in ub where ub[i].value is equal to :
  *  _lb if it's included in ub

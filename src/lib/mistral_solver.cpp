@@ -11200,8 +11200,8 @@ void Mistral::Solver::learn_with_lazygeneration() {
 #ifdef _CHECK_NOGOOD
 		//	if (graph_size <35)
 		{
-			std::cout << "graph_size : "  << graph_size  << std::endl;
-			std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
+	//		std::cout << "graph_size : "  << graph_size  << std::endl;
+	//		std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
 			/*
 			for (int i = 0; i< learnt_clause.size; ++i)
 			{
