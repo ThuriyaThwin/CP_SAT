@@ -936,6 +936,7 @@ Mistral::Solver::Solver()
   //reason_index.initialise(0,128);
   constraints.initialise(0,256);
   //constraint_graph.initialise(128);
+  constraint_graph.initialise(0,16900);
   posted_constraints.initialise(0,255,256,false);
   sequence.initialise(this);
   sequence.initialise(128);
@@ -1498,6 +1499,10 @@ int Mistral::Solver::lazy_declare(Variable x) {
   if(extend_struct) {
     //constraint_graph.add(array);
 	  std::cout << " extend_struct in constraint_graph  " << std::endl;
+	  std::cout << " constraint_graph.size " << constraint_graph.size <<std::endl;
+	  std::cout << " constraint_graph.capacity " << constraint_graph.capacity <<std::endl;
+	  exit(1);
+
     for(int i = constraint_graph.size-1; i>=0; --i) {
       for(int j = 0; j<3; ++j) {
 	for(int k = constraint_graph[i].on[j].size-1; k>=0; --k) {
