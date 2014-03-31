@@ -1278,10 +1278,10 @@ public:
 		  tmp = ((literal & 0x4000000000000000) >> 60) ;
 
 		  std::cout <<" \n \n  tmp   "  << tmp << std::endl;
-	*/	  return  ((literal & 0x4000000000000000) >> 60) ;}
+	*/	  return  ((literal & 0x4000000000000000) >> 62) ;}
 
-	  inline bool is_lower_bound (Literal literal) {return (1- ((literal & 0x4000000000000000) >> 60)) ;}
-	  inline bool is_a_bound_literal (Literal literal) {return literal >> 61;}
+	  inline bool is_lower_bound (Literal literal) {return (1- ((literal & 0x4000000000000000) >> 62)) ;}
+	  inline bool is_a_bound_literal (Literal literal) {return literal >> 63;}
 
 #endif
 
