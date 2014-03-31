@@ -150,6 +150,7 @@ namespace Mistral {
   //#define _DEBUG_AC true //((statistics.num_filterings >= 177))
 //#define _CHECK_NOGOOD true
 #define _VERIFY_BEHAVIOUR_WHEN_LEARNING true
+
   //#define   _DEBUG_FAIL true
 //  #define latest_bounds_learning true
 
@@ -163,7 +164,13 @@ namespace Mistral {
 #define MAXINT NOVAL
 #define MININT -NOVAL
 #define MIN_CAPACITY 16
+
+#ifndef _64BITS_LITERALS
 #define NULL_ATOM 0xffffffff
+#else
+  // TODO Try fast implementation?
+#define NULL_ATOM 0x7fffffffffffffff
+#endif
   
 #define BOUND_CONSISTENCY 1
 #define FORWARD_CHECKING 0

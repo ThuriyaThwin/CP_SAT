@@ -32,7 +32,7 @@
 #include <sstream> 
 #include <string.h>
 #include <limits.h>
-
+ #include <stdint.h>
 
 #ifndef __STRUCTURE_HPP
 #define __STRUCTURE_HPP
@@ -1340,8 +1340,24 @@ template < int N, class T >
     \brief Simple array class 
   */
 
+
+#define _64BITS_LITERALS true
+
+
+#ifndef _64BITS_LITERALS
   typedef unsigned int Atom;
+#else
+  // TODO Try fast implementation?
+  typedef uint64_t Atom;
+#endif
+
+
+#ifndef _64BITS_LITERALS
   typedef unsigned int Literal;
+#else
+  // TODO Try fast implementation?
+  typedef uint64_t Literal;
+#endif
 
   //class Decision;
   class Explanation {
@@ -1354,7 +1370,7 @@ template < int N, class T >
     //typedef Decision* iterator;
 
     virtual iterator get_reason_for(const Atom a, const int lvl, iterator& end) = 0;
-
+    virtual iterator get_reason_for_bound(const Literal a, iterator& end) = 0;
     virtual std::ostream& display(std::ostream& os) const = 0;
 
     virtual bool is_clause() {return true;}
@@ -1385,8 +1401,12 @@ template < int N, class T >
 
     // virtual Explanation::iterator begin(Atom a) { return &(data[0]); }
     // virtual Explanation::iterator end  (Atom a) { return &(data[size]); }
-    
+
     virtual iterator get_reason_for(const Atom a, const int lvl, iterator& end) { end = &(data[size]); return &(data[0]); }
+    virtual iterator get_reason_for_bound(const Literal a, iterator& end) {
+    	std::cout << "Can't explain bound in Array " << std::endl;
+    	exit(1);
+    }
 
     static Array<DATA_TYPE>* Array_new(const Vector<DATA_TYPE>& ps)
     {

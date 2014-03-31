@@ -777,6 +777,7 @@ namespace Mistral {
     void fdimprovedlearn_nogood();
     void learn_withoutClosingPropagation();
     void learn_with_lazygeneration();
+    void learn_with_lazygeneration_64bits_implementation();
     void learn_with_lazygeneration_no_bound_at_the_end();
     void learn_with_lazygeneration_and_semantic_learning();
 
@@ -809,7 +810,7 @@ namespace Mistral {
     int initial_variablesize;
     //Here we suppose we index first range variables then boolean variables, hence start_from should be equal to nb_range_variables. I'll be back later to that
     //   inline int get_id_boolean_variable (unsigned int literal ) {return (((literal-start_from) /2) + start_from) ;}
-    inline int get_id_boolean_variable (Literal literal ) {return ((literal /2) + start_from) ;}
+    inline unsigned int get_id_boolean_variable (Literal literal ) {return ((literal /2) + start_from) ;}
     inline Literal encode_boolean_variable_as_literal (unsigned int id_var, int sign) {return (((id_var - start_from)*2 ) + sign);}
    // inline Literal encode_boolean_variable_as_literal_alongsideLatest (unsigned int id_var, int sign) {return (((id_var - start_from)*2 ) + sign);}
     //inline int get_index_of_variable(int var) {return (var>start_from ? start_from : var); }
@@ -1219,6 +1220,7 @@ public:
   //the last 4 bits are for the variable_id : biggest variable_id is 32767.
 
 #ifndef latest_bounds_learning
+#ifndef _64BITS_LITERALS
   inline unsigned int encode_bound_literal (int id_variable, int value,int sign) {
 	  //TODO Add compilation flag
 	  if ((value < 0) || (!value && (!sign)))
@@ -1233,8 +1235,57 @@ public:
   inline bool is_upper_bound (unsigned int literal) {return (literal >> 31) ;}
   inline bool is_lower_bound (unsigned int literal) {return 1- (literal >> 31) ;}
   inline bool is_a_bound_literal (unsigned int literal) {return (literal > 0x7FFF ) ;}
+
+#else
+
+  //The structure is the folowing (from the most significance bit) :
+  //1 bit : is a bound literal?
+  //1 bit : is an upper bound?
+  //32 bits : value
+  //30 bits : variable id
+
+  inline Literal encode_bound_literal (unsigned int id_variable, unsigned int value, unsigned int sign) {
+	  //TODO Add compilation flag
+	  if ((value < 0) || (!value && (!sign)))
+	  {
+		  std::cout <<" \n \n \encode_bound_literal  ERROR "  << std::endl;
+		  exit(1);
+	  }
+	  //TODO add more tests !
+	  return ( (((Literal) 1) << 63) | (((Literal) sign) << 62) | (((Literal) value) << 30) | id_variable);}
+	  //return ( ((((Literal) 1) << 61) | (((Literal) sign) << 60)) | (((Literal) value) << 30));}
+
+  inline unsigned int get_variable_from_literal (Literal literal) { return ( 0x3FFFFFFF & literal) ;}
+	  inline unsigned int get_value_from_literal (Literal literal) {
+	//	  std::cout <<" \n \n  get_value_from_literal "  << std::endl;
+		  Literal tmp;
+		  tmp = (0x3FFFFFFFFFFFFFFF & literal) >> 30;
+		  //TODO : check why it is different !!!!!
+	//	  std::cout <<" \n \n  tmp  "  << tmp << std::endl;
+		  return ( unsigned int) tmp;
+	  }
+//	  inline int get_sign_from_literal (unsigned int literal) {return (literal >> 31);}
+	  inline bool is_upper_bound (Literal literal) {
+		  Literal tmp;
+
+/*		  tmp = literal >>  ;
+
+		  std::cout <<" \n \n  tmp   "  << tmp << std::endl;
+
+		  tmp = ((literal & 0x4000000000000000)) ;
+
+		  std::cout <<" \n \n  tmp   "  << tmp << std::endl;
+		  tmp = ((literal & 0x4000000000000000) >> 60) ;
+
+		  std::cout <<" \n \n  tmp   "  << tmp << std::endl;
+	*/	  return  ((literal & 0x4000000000000000) >> 60) ;}
+
+	  inline bool is_lower_bound (Literal literal) {return (1- ((literal & 0x4000000000000000) >> 60)) ;}
+	  inline bool is_a_bound_literal (Literal literal) {return literal >> 61;}
+
 #endif
 
+#endif
  // inline int negate_literal (unsigned int literal) { return ( 0x7FFF & literal) ;}
 
   //with latest bounds
