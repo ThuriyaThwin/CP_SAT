@@ -936,7 +936,12 @@ Mistral::Solver::Solver()
   //reason_index.initialise(0,128);
   constraints.initialise(0,256);
   //constraint_graph.initialise(128);
+
+#ifndef _64BITS_LITERALS
   constraint_graph.initialise(0,16900);
+#else
+  constraint_graph.initialise(0,524288);
+#endif
   posted_constraints.initialise(0,255,256,false);
   sequence.initialise(this);
   sequence.initialise(128);
@@ -10603,13 +10608,29 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 										index___ = level - lvl;
 
-										if ((variables.size - start_from) > 16383 ){
+#ifndef _64BITS_LITERALS
+  									if ((variables.size - start_from) > 16383 ){
 											std::cout << " \n\n\n variablessize " << variables.size << std::endl;
 											std::cout << " \n\n\n start_from " << start_from << std::endl;
 											std::cout << "  ERRPR variables.size - start_from) > 16383! " << std::endl;
 
 											exit(1);
 										}
+
+#else
+  								// 524288;
+  									if ((variables.size - start_from) > 52000 ){
+											std::cout << " \n\n\n variablessize " << variables.size << std::endl;
+											std::cout << " \n\n\n start_from " << start_from << std::endl;
+											std::cout << "  ERRPR variables.size - start_from) > 52000! " << std::endl;
+
+											exit(1);
+										}
+
+#endif
+
+
+
 #ifdef _CHECK_NOGOOD
 										varsIds_lazy.add(range_id);
 										if (!is_lb)
@@ -10931,7 +10952,7 @@ void Mistral::Solver::learn_with_lazygeneration() {
 												trail_[trail_.size - (5*index___0)]++;
 
 												index___ = level - lvl;
-
+#ifndef _64BITS_LITERALS
 												if ((variables.size - start_from) > 16383 ){
 													std::cout << " \n\n\n variablessize " << variables.size << std::endl;
 													std::cout << " \n\n\n start_from " << start_from << std::endl;
@@ -10939,6 +10960,21 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 													exit(1);
 												}
+#else
+												// 524288;
+												if ((variables.size - start_from) > 52000 ){
+													std::cout << " \n\n\n variablessize " << variables.size << std::endl;
+													std::cout << " \n\n\n start_from " << start_from << std::endl;
+													std::cout << "  ERRPR variables.size - start_from) > 52000! " << std::endl;
+
+													exit(1);
+												}
+
+#endif
+
+
+
+
 #ifdef _CHECK_NOGOOD
 												varsIds_lazy.add(range_id);
 												if (!is_lb)
