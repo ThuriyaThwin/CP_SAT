@@ -777,7 +777,9 @@ namespace Mistral {
     void fdimprovedlearn_nogood();
     void learn_withoutClosingPropagation();
     void learn_with_lazygeneration();
-    void learn_with_lazygeneration_64bits_implementation();
+	Vector<Literal> bound_literals_to_explore;
+	Vector <Atom > boolean_vairables_to_explore;
+
     void learn_with_lazygeneration_no_bound_at_the_end();
     void learn_with_lazygeneration_and_semantic_learning();
 
