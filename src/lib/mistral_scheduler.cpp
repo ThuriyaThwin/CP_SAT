@@ -5,6 +5,12 @@
 #include <math.h>
 #include <assert.h>
 
+
+//For memory test
+//#include <thread>         // std::this_thread::sleep_for
+//#include <chrono>
+
+
 using namespace Mistral;
 
 
@@ -1935,7 +1941,7 @@ void SchedulingSolver::setup() {
 //     add(depth == Sum(scope));
 //   }
 
-		// std::cout << " this  " << this << std::endl;
+		 //std::cout << " this  " << this << std::endl;
 
 		  //std::cout << " b1491 :  " << variables[1491].get_domain() << std::endl;
   	  	  //exit(1);
@@ -1956,6 +1962,78 @@ void SchedulingSolver::setup() {
   //add(variables[28]  <=  948);
   add(variables[161]   <=  855);
   //add(variables[161]  >=  852);
+*/
+
+//Test Memory
+/*
+			 std::cout << " Test Memory  " << std::endl;
+
+  for (int var = 0; var< start_from; ++var){
+
+	  VariableRangeWithLearning* tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
+	  DomainFaithfulnessConstraint* dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
+
+
+	  for (int val =variables[var].get_min(); val<= variables[var].get_max(); ++val){
+
+		  //	lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
+#ifdef 	_DEBUG_FD_NOGOOD
+		  if(_DEBUG_FD_NOGOOD){
+			  //		std::cout << " its level :  " << lvl << std::endl;
+		  }
+#endif
+
+
+		  //if (lvl>0 Search root?
+		  //if (lvl>0){
+		  //	if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
+		  //	{
+
+		  //std::cout << " \n \n sequence before  " << sequence << std::endl;
+		  //std::cout << " \n \n sequence size before  " << sequence.size << std::endl;
+		  //std::cout << " \n \n sequence capacity before  " << sequence.capacity << std::endl;
+
+
+		  Variable tmp__(0,1);
+	  //add(tmp__);
+		  tmp__.lazy_initialise(this);
+		  //								dom_constraint->extend_scope(tmp__ , val,!is_lb, lvl);
+
+		  dom_constraint->extend_scope(tmp__ , val ,1, 2);
+		  base->extend_scope(tmp__);
+		  //	tmp__.set_domain(!is_lb);
+		  assignment_level[tmp__.id()] = 5;
+		  reason_for[tmp__.id()] = dom_constraint;
+
+
+		  *(tmp__.expression->get_self().bool_domain)  = 2;
+
+#ifndef _64BITS_LITERALS
+		  if ((variables.size - start_from) > 16383 ){
+			  std::cout << " \n\n\n variablessize " << variables.size << std::endl;
+			  std::cout << " \n\n\n start_from " << start_from << std::endl;
+			  std::cout << "  ERRPR variables.size - start_from) > 16383! " << std::endl;
+
+			  exit(1);
+		  }
+
+#else
+		  // 524288;
+		  if ((variables.size - start_from) > 52000 ){
+			  std::cout << " \n\n\n variablessize " << variables.size << std::endl;
+			  std::cout << " \n\n\n start_from " << start_from << std::endl;
+			  std::cout << "  ERRPR variables.size - start_from) > 52000! " << std::endl;
+
+			  exit(1);
+		  }
+
+#endif
+
+	  }
+
+  }
+	 std::cout << " end Test Memory?  " << std::endl;
+	 exit(1);
 */
 
 }
@@ -2749,7 +2827,8 @@ void SchedulingSolver::dichotomic_search()
 
   //BranchingHeuristic *heu = new GenericHeuristic < NoOrder, MinValue > (this);
 
-  RestartPolicy *pol = new Geometric();
+    RestartPolicy *pol = new Geometric();
+  // RestartPolicy *pol = new Luby();
 //  RestartPolicy *pol = new AlwaysRestart();
 
   initialise_search(disjuncts, heu, pol);
@@ -2966,6 +3045,8 @@ void SchedulingSolver::dichotomic_search()
 
 	  if (base)
 	  {
+
+		  std::cout << " dichotomy ended with variables.size" << variables.size << std::endl;
 		  if (params->forgetall)
 		  {
 #ifdef _CHECK_NOGOOD
@@ -2974,11 +3055,13 @@ void SchedulingSolver::dichotomic_search()
 			  std::cout << " clear   varsIds_lazy and  value_lazy" << std::endl;
 #endif
 			  __size = base->learnt.size;
+
+			  std::cout << " dichotomy ended with " << __size << " learnt clause" << std::endl;
+
 			  while (__size--)
 				  base->remove(__size);
 
 
-			  std::cout << " dichotomy ended with variables.size" << variables.size << std::endl;
 
 			  for( int i=init_expression_store_size; i<expression_store.size;++i) {
 				  delete expression_store[i];
@@ -3075,6 +3158,8 @@ void SchedulingSolver::dichotomic_search()
 	  std::cout << " \n trail : " << trail_ << std::endl;
 
 */
+	//  std::cout << " SLEEP FOR 10s " << std::endl;
+	//  std::this_thread::sleep_for (std::chrono::seconds(10));
 
 	  ++iteration;
   } 
