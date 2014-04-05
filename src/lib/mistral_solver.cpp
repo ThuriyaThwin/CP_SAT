@@ -15571,8 +15571,8 @@ Mistral::Outcome Mistral::Solver::branch_right() {
       //this should be the one..
 // 	learn_with_lazygeneration();
 
-   	learn_with_lazygeneration_and_semantic_learning();
- //	learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables();
+ //  	learn_with_lazygeneration_and_semantic_learning();
+ 	learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables();
 
  	//HERE
    	//learn_with_lazygeneration_no_bound_at_the_end();
