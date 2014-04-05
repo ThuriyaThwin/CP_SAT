@@ -3049,11 +3049,11 @@ void SchedulingSolver::dichotomic_search()
 		  std::cout << " dichotomy ended with variables.size" << variables.size << std::endl;
 		  if (params->forgetall)
 		  {
-#ifdef _CHECK_NOGOOD
+//#ifdef _CHECK_NOGOOD
 			  varsIds_lazy.clear();
 			  value_lazy.clear();
-			  std::cout << " clear   varsIds_lazy and  value_lazy" << std::endl;
-#endif
+			  std::cout << " c clear   varsIds_lazy and  value_lazy" << std::endl;
+//#endif
 			  __size = base->learnt.size;
 
 			  std::cout << " dichotomy ended with " << __size << " learnt clause" << std::endl;

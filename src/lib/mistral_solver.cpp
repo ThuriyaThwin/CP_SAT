@@ -12786,6 +12786,10 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 
 }
 
+void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning_convert_generated_variables() {
+
+}
+
 void Mistral::Solver::forget() {
 
   //std::cout << lit_activity << " "  << lit_activity[0] << " "  << lit_activity[1] << std::endl;
