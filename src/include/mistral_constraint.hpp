@@ -5154,8 +5154,9 @@ if (enforce_nfc1)
   {
 	  int value;
 	  Variable x;
+	  unsigned int idx;
 
-	  __boundLiteral(int k, const Variable& _x) : value(k), x(_x) {}
+	  __boundLiteral(int k, const Variable& _x, unsigned int _idx) : value(k), x(_x) , idx(_idx) {}
 
 	  __boundLiteral() {}
 

@@ -16353,7 +16353,7 @@ int Mistral::DomainFaithfulnessConstraint::value_exist(int value){
 
 void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value , bool isub, int level){
 
-	ub.add(__boundLiteral(value,x));
+	ub.add(__boundLiteral(value,x, scope.size));
 	ub.sort();
 	scope.add(x);
 	//_scope.add(x);
@@ -16536,28 +16536,29 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 				}
 				else{
-					for (int j = 0; j< scope.size; ++j)
-						if ( scope[j].id() == ub[i].x.id()){
-							((Solver* ) solver) -> reason_for[scope[j].id()] = this;
-							((Solver* ) solver) -> assignment_level[scope[j].id()] = solver->level;
+				//	for (int j = 0; j< scope.size; ++j)
+					//	if ( scope[j].id() == ub[i].x.id())
+						{
+							((Solver* ) solver) -> reason_for[scope[ ub[i].idx].id()] = this;
+							((Solver* ) solver) -> assignment_level[scope[ub[i].idx].id()] = solver->level;
 
 							if (
 									_lb >
 							_x->lowerbounds[0]
 							)
-								eager_explanations[j]=encode_bound_literal(scope[0].id(), _lb, 0);
+								eager_explanations[ub[i].idx]=encode_bound_literal(scope[0].id(), _lb, 0);
 							else
-								eager_explanations[j]=NULL_ATOM;
-							break;
+								eager_explanations[ub[i].idx]=NULL_ATOM;
+						//	break;
 						}
 				}
 			}
 			else{
 				if( ub[i].x.set_domain(0) == FAIL_EVENT) {
-					for (int j=1; j< scope.size ; ++j)
-						if (scope[j].id()== ub[i].x.id())
+					//for (int j=1; j< scope.size ; ++j)
+					//	if (scope[j].id()== ub[i].x.id())
 						{
-							wiped = FAILURE(j);
+							wiped = FAILURE(ub[i].idx);
 							//	break; ?
 							Literal	tmp;
 							if (
@@ -16568,7 +16569,7 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 							else
 								tmp=NULL_ATOM;
 							explanation[0] = tmp;
-							tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(scope[j].id(), 0));
+							tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(scope[ub[i].idx].id(), 0));
 							//							tmp =  2* scope[j].id() ;
 							explanation[1] = tmp;
 
@@ -16619,27 +16620,29 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 					}
 					else
-						for (int j = 0; j< scope.size; ++j)
-							if ( scope[j].id() == ub[idx].x.id()){
-								((Solver* ) solver) -> reason_for[scope[j].id()] = this;
-								((Solver* ) solver) -> assignment_level[scope[j].id()] = solver->level;
+						//for (int j = 0; j< scope.size; ++j)
+						//	if ( scope[j].id() == ub[idx].x.id())
+						{
+								((Solver* ) solver) -> reason_for[scope[ub[idx].idx].id()] = this;
+								((Solver* ) solver) -> assignment_level[scope[ub[idx].idx].id()] = solver->level;
 
 
 								if (
 										_ub <
 										_x->upperbounds[0]
 								)
-									eager_explanations[j]=encode_bound_literal(scope[0].id(), _ub, 1);
+									eager_explanations[ub[idx].idx]=encode_bound_literal(scope[0].id(), _ub, 1);
 								else
-									eager_explanations[j]=NULL_ATOM;
-								break;
+									eager_explanations[ub[idx].idx]=NULL_ATOM;
+								//break;
 							}
 				}
 				else
 					if( ub[idx].x.set_domain(1) == FAIL_EVENT) {
-						for (int j=1; j< scope.size ; ++j)
-							if (scope[j].id()== ub[idx].x.id()){
-								wiped = FAILURE(j);
+						//for (int j=1; j< scope.size ; ++j)
+						//	if (scope[j].id()== ub[idx].x.id())
+						{
+								wiped = FAILURE(ub[idx].idx);
 								Literal	tmp ;
 								if (
 										_ub <
@@ -16650,7 +16653,7 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 								else
 									tmp =NULL_ATOM;
 								explanation[0] = tmp;
-								tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(scope[j].id(), 1));
+								tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(scope[ub[idx].idx].id(), 1));
 								//tmp =  2* scope[j].id() +1;
 								explanation[1] = tmp;
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
@@ -16739,23 +16742,26 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 				exit(1);
 			}
 			else
-				for (int j = 0; j< scope.size; ++j)
-					if ( scope[j].id() == ub[i].x.id()){
-						((Solver* ) solver) -> reason_for[scope[j].id()] = this;
-						((Solver* ) solver) -> assignment_level[scope[j].id()] = solver->level;
+				//for (int j = 0; j< scope.size; ++j)
+				//	if ( scope[j].id() == ub[i].x.id())
+				{
 
-						eager_explanations[j]=tmp;
-						break;
+						((Solver* ) solver) -> reason_for[scope[ub[i].idx].id()] = this;
+						((Solver* ) solver) -> assignment_level[scope[ub[i].idx].id()] = solver->level;
+
+						eager_explanations[ub[i].idx]=tmp;
+						//break;
 					}
 		}
 		else
 			if( ub[i].x.set_domain(0) == FAIL_EVENT) {
-				for (int j=1; j< scope.size ; ++j)
-					if (scope[j].id()== ub[i].x.id()){
-						wiped = FAILURE(j);
+				//for (int j=1; j< scope.size ; ++j)
+				//	if (scope[j].id()== ub[i].x.id())
+				{
+						wiped = FAILURE(ub[i].idx);
 
 						explanation[0] = tmp;
-						tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(scope[j].id(), 0));
+						tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(scope[ub[i].idx].id(), 0));
 						//tmp =  2* scope[j].id() ;
 						explanation[1] = tmp;
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
@@ -16787,23 +16793,25 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 				}
 				else
-					for (int j = 1; j< scope.size; ++j)
-						if ( scope[j].id() == ub[i].x.id()){
-							((Solver* ) solver) -> reason_for[scope[j].id()] = this;
-							((Solver* ) solver) -> assignment_level[scope[j].id()] = solver->level;
+					//for (int j = 1; j< scope.size; ++j)
+					//	if ( scope[j].id() == ub[i].x.id())
+					{
+							((Solver* ) solver) -> reason_for[scope[ub[i].idx].id()] = this;
+							((Solver* ) solver) -> assignment_level[scope[ub[i].idx].id()] = solver->level;
 
-							eager_explanations[j]=tmp;
-							break;
+							eager_explanations[ub[i].idx]=tmp;
+							//break;
 						}
 			}
 			else
 				if( ub[i].x.set_domain(1) == FAIL_EVENT) {
-					for (int j=1; j< scope.size ; ++j)
-						if (scope[j].id()== ub[i].x.id()){
-							wiped = FAILURE(j);
+					//for (int j=1; j< scope.size ; ++j)
+					//	if (scope[j].id()== ub[i].x.id())
+					{
+							wiped = FAILURE(ub[i].idx);
 
 							explanation[0] = tmp;
-							tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(scope[j].id(), 1));
+							tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(scope[ub[i].idx].id(), 1));
 							//tmp =  2* scope[j].id() +1;
 							explanation[1] = tmp;
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
