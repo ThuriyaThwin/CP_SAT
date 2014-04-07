@@ -32,7 +32,8 @@
 #include <sstream> 
 #include <string.h>
 #include <limits.h>
- #include <stdint.h>
+#include <stdint.h>
+//#include <math.h>
 
 #ifndef __STRUCTURE_HPP
 #define __STRUCTURE_HPP
@@ -604,6 +605,45 @@ const int NOVAL = (int)((~(unsigned int)0)/2);
     inline DATA_TYPE& operator[](const int i)
     {
       return stack_[i];
+    }
+
+    bool fast_dichotomy_search_index_of(const DATA_TYPE e, unsigned int& position, bool order = 1) const
+    {
+
+    	if (!size)
+    		return false;
+
+    	//	unsigned int idx = floor((double) (((double)size) / 2.0 )), ub = size -1 , lb = 0 ;
+    	unsigned int idx = (size -1) >>1 , ub = size -1 , lb = 0 ;
+    	//std::cout << " \n BEGIN dicho " <<std::endl;
+    	if (order){
+    		while (stack_[idx] != e){
+
+    			//std::cout << " begin idx :  " << idx <<std::endl;
+    			//std::cout << " ub  " << ub <<std::endl;
+    			//std::cout << " lb :  " << lb <<std::endl;
+
+    			if (ub == lb)
+    				return false;
+
+    			if (stack_[idx]> e)
+    				ub = idx -1;
+    			else
+    				lb = idx +1;
+    			//div2
+    			idx = (ub +lb)>> 1;
+
+    			//	std::cout << " ub  " << ub <<std::endl;
+    			//	std::cout << " lb :  " << lb <<std::endl;
+
+
+    		}
+
+    		//	std::cout << " \n Find with idx" << idx << std::endl;
+    		position = idx;
+    		return true;
+    	}
+
     }
 
     inline const DATA_TYPE operator[](const int i) const
