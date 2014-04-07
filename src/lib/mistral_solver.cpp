@@ -146,7 +146,7 @@ void Mistral::SolverParameters::initialise() {
   activity_decay = 0.96;
   checked = 1;
   backjump = 0;
-  fd_learning = false;
+  fd_learning = 0;
   value_selection = 2;
   dynamic_value = 0; //1;
 
@@ -15563,16 +15563,20 @@ Mistral::Outcome Mistral::Solver::branch_right() {
 #ifdef latest_bounds_learning
     	fdlearn_nogood_using_only_latest_bounds();
 #else
-//    	simple_fdlearn_nogood();
-    //fdlearn_nogood();
-   // fdlearn_nogood_nosequence();
+
+    	if(parameters.fd_learning==1)
+    		simple_fdlearn_nogood();
+    	//fdlearn_nogood();
+    	// fdlearn_nogood_nosequence();
     	//fdimprovedlearn_nogood();
     	//learn_withoutClosingPropagation();
-      //this should be the one..
-// 	learn_with_lazygeneration();
+    	else if(parameters.fd_learning==2)
+    		learn_with_lazygeneration();
+    	else if(parameters.fd_learning==3)
+    		learn_with_lazygeneration_and_semantic_learning();
+    	else if(parameters.fd_learning==4)
+    		learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables();
 
- //  	learn_with_lazygeneration_and_semantic_learning();
- 	learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables();
 
  	//HERE
    	//learn_with_lazygeneration_no_bound_at_the_end();
@@ -17718,11 +17722,11 @@ void Mistral::Solver::initialise_random_seed(const int seed) {
 }
 
 
-void Mistral::Solver::set_fdlearning_on() {
+void Mistral::Solver::set_fdlearning_on(int learning_method) {
 
 	//	parameters.jsp_backjump = true;
 	parameters.backjump = true;
-	parameters.fd_learning = true;
+	parameters.fd_learning = learning_method;
 	parameters.forgetfulness = 0.0;
 	std::cout << " start_from : " << start_from << std::endl;
 	visitedUpperBounds.initialise(0, start_from  , BitSet::empt);

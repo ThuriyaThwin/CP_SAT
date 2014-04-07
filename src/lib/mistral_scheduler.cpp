@@ -1856,7 +1856,7 @@ void SchedulingSolver::setup() {
   if (params->FD_learning)
   {
 	  start_from = tasks.size +1;
-	  set_fdlearning_on();
+	  set_fdlearning_on(params->FD_learning);
   }
 
 #ifdef _MONITOR
@@ -3513,7 +3513,7 @@ void SchedulingSolver::branch_and_bound()
   //Cancel learning : check this when alowing lazy generation
   if(base)
   {
-	  parameters.fd_learning = false;
+	  parameters.fd_learning = 0;
 	  parameters.backjump = 0;
 	  int __size = base->learnt.size;
 	  while (__size--)

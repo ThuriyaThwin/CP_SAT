@@ -87,7 +87,7 @@ int main( int argc, char** argv )
   if(!stats.solved()) {
 	  //TODO we should reload a new model without ExplainedConstraints
 	  solver->parameters.backjump = false;
-	  solver->parameters.fd_learning = false;
+	  solver->parameters.fd_learning = 0;
     if(params.Algorithm == "bnb")
       solver->branch_and_bound();
     //else if(params.Algorithm == "lns")

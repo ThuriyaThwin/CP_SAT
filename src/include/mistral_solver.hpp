@@ -107,7 +107,7 @@ namespace Mistral {
 
 
     int backjump;
-    bool fd_learning;
+    int fd_learning;
 
     /// whether solutions are checked
     // 0 -> not checked
@@ -872,7 +872,7 @@ namespace Mistral {
     void initialise_random_seed(const int seed);
     void set_time_limit(const double limit);
     void set_learning_on();
-    void set_fdlearning_on();
+    void set_fdlearning_on(int learning_method);
     void close_propagation();
 
     Explanation * __failure;
