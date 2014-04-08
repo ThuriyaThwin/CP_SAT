@@ -16332,20 +16332,59 @@ void Mistral::DomainFaithfulnessConstraint::initialise() {
 
 
 int Mistral::DomainFaithfulnessConstraint::value_exist(int value){
+	//std::cout << " \n BEGIN dicho " <<std::endl;
+	//std::cout << " \n ub " << ub << std::endl;
+
+	if (!ub.size)
+		return -1;
+
+	//	unsigned int idx = floor((double) (((double)size) / 2.0 )), ub = size -1 , lb = 0 ;
+	int idx = (ub.size -1) >>1 , idx_ub = ub.size -1 , idx_lb = 0 ;
+
+	//if (order)
+	{
+		while (ub[idx].value != value){
+
+//			std::cout << " \n begin idx :  " << idx <<std::endl;
+//			std::cout << " idx_ub  " << idx_ub <<std::endl;
+//			std::cout << " idx_lb :  " << idx_lb <<std::endl;
+
+			if (idx_ub == idx_lb){
+				return -1;
+			}
+			if (ub[idx].value > value)
+				idx_ub = idx -1;
+			else
+				idx_lb = idx +1;
+			//div2
+			idx = (idx_ub + idx_lb)>> 1;
+
+//				std::cout << " idx_ub  " << idx_ub <<std::endl;
+//				std::cout << " idx_lb :  " << idx_lb <<std::endl;
+		}
+
+//			std::cout << " \n Find with idx" << idx << std::endl;
+		//	position = idx;
+		//return true;
+		return ub[idx].x.id();
+	}
+
+
 
 	//	if (value== 253)
-//	std::cout << " \n value_exist? " << value << "\n ub :  " <<  ub << std::endl;
+	//	std::cout << " \n value_exist? " << value << "\n ub :  " <<  ub << std::endl;
 
-	for(unsigned int i=0; i<ub.size; ++i)
+
+	/*	for(unsigned int i=0; i<ub.size; ++i)
 		if (ub[i].value == value)
 			return ub[i].x.id();
-
+	 */
 	//	if (value== 253)
 	//	std::cout << " \n NO ?  \n ub :  " <<  ub << std::endl;
 
 	//	std::cout << " \n NO ?  " <<  std::endl;
 
-	return -1;
+	//	return -1;
 
 }
 

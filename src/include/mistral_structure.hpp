@@ -607,14 +607,14 @@ const int NOVAL = (int)((~(unsigned int)0)/2);
       return stack_[i];
     }
 
-    bool fast_dichotomy_search_index_of(const DATA_TYPE e, unsigned int& position, bool order = 1) const
+    int fast_dichotomy_search_index_of(const DATA_TYPE e, bool order = 1) const
     {
 
     	if (!size)
-    		return false;
+    		return -1;
 
     	//	unsigned int idx = floor((double) (((double)size) / 2.0 )), ub = size -1 , lb = 0 ;
-    	unsigned int idx = (size -1) >>1 , ub = size -1 , lb = 0 ;
+    	int idx = (size -1) >>1 , ub = size -1 , lb = 0 ;
     	//std::cout << " \n BEGIN dicho " <<std::endl;
     	if (order){
     		while (stack_[idx] != e){
@@ -624,7 +624,7 @@ const int NOVAL = (int)((~(unsigned int)0)/2);
     			//std::cout << " lb :  " << lb <<std::endl;
 
     			if (ub == lb)
-    				return false;
+    				return -1;
 
     			if (stack_[idx]> e)
     				ub = idx -1;
@@ -635,15 +635,13 @@ const int NOVAL = (int)((~(unsigned int)0)/2);
 
     			//	std::cout << " ub  " << ub <<std::endl;
     			//	std::cout << " lb :  " << lb <<std::endl;
-
-
     		}
 
     		//	std::cout << " \n Find with idx" << idx << std::endl;
-    		position = idx;
-    		return true;
+    		//	position = idx;
+    		//return true;
+    		return idx;
     	}
-
     }
 
     inline const DATA_TYPE operator[](const int i) const
