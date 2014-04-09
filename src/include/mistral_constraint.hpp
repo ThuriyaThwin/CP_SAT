@@ -5180,12 +5180,19 @@ if (enforce_nfc1)
 
 
 	  // Vector<__boundLiteral> lb;
+	  //_capacity used to eagerly allocate memory for generated variables
+	  unsigned int _capacity;
+	  unsigned int _currentsize;
 	  Vector<__boundLiteral> ub;
 	  VariableRangeWithLearning * _x;
 	  DomainFaithfulnessConstraint() : GlobalConstraint() { //priority = 2;?
+		  std::cout <<" \n \n ERROR : this Constructor in DomainFaithfulness not yet allowed"  << std::endl;
+		  exit(1);
 	  }
 	  DomainFaithfulnessConstraint(Vector< Variable >& scp);
 	  DomainFaithfulnessConstraint(Variable x){
+		  std::cout <<" \n \n ERROR : this Constructor in DomainFaithfulness not yet allowed"  << std::endl;
+		  exit(1);
 		  scope.add(x);
 		  _x =   static_cast<VariableRangeWithLearning*>(x.range_domain) ;
 		  _x-> domainConstraint = this;

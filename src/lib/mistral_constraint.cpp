@@ -16236,15 +16236,40 @@ Mistral::DomainFaithfulnessConstraint::DomainFaithfulnessConstraint(Vector< Vari
 		exit(1);
 	}
 	//lb.clear();
-	ub.clear();
-	eager_explanations.clear();
-	eager_explanations.add(NULL_ATOM);
-
-	enforce_nfc1 = false;
 }
 
 void Mistral::DomainFaithfulnessConstraint::set_init_changes() {
 
+
+	{
+		Event * tmp_event_type = new Event[_capacity];
+		int * tmp_solution = new int[_capacity];
+		Constraint* tmpself = new Constraint[_capacity];
+		int*  tmpindex = new int[_capacity];
+
+		for(unsigned int i=0; i<on.size; ++i)
+			tmp_event_type[i] = event_type[i];
+		delete [] event_type;
+		event_type = tmp_event_type;
+
+		//		event_type[scope.size-1] = NO_EVENT;
+
+		for(unsigned int i=0; i<on.size; ++i)
+			tmp_solution[i] = solution[i];
+		delete [] solution;
+		solution = tmp_solution;
+		//		solution [scope.size-1]  = 0;
+
+		for(unsigned int i=0; i<on.size; ++i)
+			tmpself[i] = self[i];
+		delete [] self;
+		self = tmpself;
+
+		for(unsigned int i=0; i<on.size; ++i)
+			tmpindex[i] = index[i];
+		delete [] index;
+		index = tmpindex;
+	}
 
 	initial_list__of_changes.clear();
 	for (int i = 0; i < changes.size; ++i)
@@ -16261,6 +16286,10 @@ void Mistral::DomainFaithfulnessConstraint::start_over() {
 	_scope.size = 1;
 	eager_explanations.size = 1;
 	on.size = 1;
+	_currentsize = 1;
+
+//	std::cout << " Not yet" << std::endl;
+//	exit(1);
 
 	for(int i=0; i<changes.index_capacity; ++i)
 	{
@@ -16281,7 +16310,7 @@ void Mistral::DomainFaithfulnessConstraint::start_over() {
 	events.list_ = changes.list_;
 	events.index_ = changes.index_;
 
-
+/*
 	int old_size = scope.size;
 	Event * tmp_event_type = new Event[scope.size];
 	int * tmp_solution = new int[scope.size];
@@ -16315,10 +16344,11 @@ void Mistral::DomainFaithfulnessConstraint::start_over() {
 
 	delete [] index;
 	index = tmpindex;
-
+*/
 
 }
 void Mistral::DomainFaithfulnessConstraint::initialise() {
+
 	ConstraintImplementation::initialise();
 	for(unsigned int i=0; i<scope.size; ++i) {
 		//trigger_on(_VALUE_, scope[i]);
@@ -16326,6 +16356,14 @@ void Mistral::DomainFaithfulnessConstraint::initialise() {
 	}
 	GlobalConstraint::initialise();
 	//GlobalConstraint::set_idempotent(true);
+
+	ub.clear();
+	eager_explanations.clear();
+	eager_explanations.add(NULL_ATOM);
+	enforce_nfc1 = false;
+	_capacity = 300;
+	_currentsize = on.size;
+
 }
 
 // if a variable alreagy exist then return its id, otherwise return false
@@ -16503,41 +16541,41 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 
 	eager_explanations.add(virtual_literal);
 
-	Event * tmp_event_type = new Event[scope.size];
-	int * tmp_solution = new int[scope.size];
-	Constraint* tmpself = new Constraint[scope.size];
-	int*  tmpindex = new int[scope.size];
+	++_currentsize;
+	if (_currentsize>= _capacity)
+	{
+		_capacity+=300;
 
+		std::cout << " c _currentsize>= _capacity " << std::endl;
+		Event * tmp_event_type = new Event[_capacity];
+		int * tmp_solution = new int[_capacity];
+		Constraint* tmpself = new Constraint[_capacity];
+		int*  tmpindex = new int[_capacity];
 
-	for(unsigned int i=0; i<on.size; ++i)
-		tmp_event_type[i] = event_type[i];
+		for(unsigned int i=0; i<on.size; ++i)
+			tmp_event_type[i] = event_type[i];
+		delete [] event_type;
+		event_type = tmp_event_type;
 
-	delete [] event_type;
-	event_type = tmp_event_type;
+		for(unsigned int i=0; i<on.size; ++i)
+			tmp_solution[i] = solution[i];
+		delete [] solution;
+		solution = tmp_solution;
+
+		for(unsigned int i=0; i<on.size; ++i)
+			tmpself[i] = self[i];
+		delete [] self;
+		self = tmpself;
+
+		for(unsigned int i=0; i<on.size; ++i)
+			tmpindex[i] = index[i];
+		delete [] index;
+		index = tmpindex;
+	}
+
 
 	event_type[scope.size-1] = NO_EVENT;
-
-	for(unsigned int i=0; i<on.size; ++i)
-		tmp_solution[i] = solution[i];
-
-	delete [] solution;
-	solution = tmp_solution;
 	solution [scope.size-1]  = 0;
-
-
-
-	for(unsigned int i=0; i<on.size; ++i)
-		tmpself[i] = self[i];
-
-	delete [] self;
-	self = tmpself;
-
-	for(unsigned int i=0; i<on.size; ++i)
-		tmpindex[i] = index[i];
-
-	delete [] index;
-	index = tmpindex;
-
 
 	/*	std:: cout << " \n BEFORE : scope.size " << scope.size << std::endl;
 	std:: cout << "changes.size " << changes.size << std::endl;
