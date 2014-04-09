@@ -16448,7 +16448,8 @@ int Mistral::DomainFaithfulnessConstraint::value_exist(int value){
 		}
 #endif
 
-		return ub[idx].x.id();
+//		return ub[idx].x.id();
+		return scope[ub[idx].idx].id();
 	}
 
 
@@ -16477,7 +16478,7 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 //	ub.add(__boundLiteral(value,x, scope.size));
 //	ub.sort();
 
-	ub.fast_sorted_add(__boundLiteral(value,x, scope.size));
+	ub.fast_sorted_add(__boundLiteral(value, scope.size));
 
 	scope.add(x);
 	//_scope.add(x);
@@ -16652,10 +16653,12 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 			break;
 		}
 		else{
-			if(!ub[i].x.is_ground())
+//			if(!ub[i].x.is_ground())
+			if(!scope[ub[i].idx].is_ground())
 			{
-				if( ub[i].x.set_domain(0) == FAIL_EVENT) {
-					std::cout << " c not possible! " << std::endl;
+//				if( ub[i].x.set_domain(0) == FAIL_EVENT) {
+				if( scope[ub[i].idx].set_domain(0) == FAIL_EVENT) {
+						std::cout << " c not possible! " << std::endl;
 					exit(1);
 
 				}
@@ -16678,7 +16681,8 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 				}
 			}
 			else{
-				if( ub[i].x.set_domain(0) == FAIL_EVENT) {
+//				if( ub[i].x.set_domain(0) == FAIL_EVENT) {
+				if( scope[ub[i].idx].set_domain(0) == FAIL_EVENT) {
 					//for (int j=1; j< scope.size ; ++j)
 					//	if (scope[j].id()== ub[i].x.id())
 						{
@@ -16736,8 +16740,10 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 				break;
 			}
 			else{
-				if(!ub[idx].x.is_ground()){
-					if( ub[idx].x.set_domain(1) == FAIL_EVENT) {
+//				if(!ub[idx].x.is_ground()){
+				if(!scope[ub[idx].idx].is_ground()){
+//					if( ub[idx].x.set_domain(1) == FAIL_EVENT) {
+					if( scope[ub[idx].idx].set_domain(1) == FAIL_EVENT) {
 						std::cout << " c not possible! " << std::endl;
 						exit(1);
 
@@ -16762,7 +16768,8 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 							}
 				}
 				else
-					if( ub[idx].x.set_domain(1) == FAIL_EVENT) {
+//					if( ub[idx].x.set_domain(1) == FAIL_EVENT) {
+					if( scope[ub[idx].idx].set_domain(1) == FAIL_EVENT) {
 						//for (int j=1; j< scope.size ; ++j)
 						//	if (scope[j].id()== ub[idx].x.id())
 						{
@@ -16814,8 +16821,10 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 	//latestindex_lb is the latest index in ub where the correspondent variable is assigned to 0.
 
 	for (int i = index_lb; i< ub.size ; ++i)
-		if (ub[i].x.is_ground())
-			if (!ub[i].x.get_min())
+//		if (ub[i].x.is_ground())
+		if (scope[ub[i].idx].is_ground())
+//			if (!ub[i].x.get_min())
+			if (!scope[ub[i].idx].get_min())
 				latestindex_lb = i;
 
 	//latestindex_lb is the latest index in ub where the correspondent variable is assigned to 1.
@@ -16823,8 +16832,10 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 	idx = index_ub +1;
 	if (idx>0)
 		while (idx--){
-			if (ub[idx].x.is_ground())
-				if (ub[idx].x.get_min())
+//			if (ub[idx].x.is_ground())
+			if (scope[ub[idx].idx].is_ground())
+//				if (ub[idx].x.get_min())
+				if (scope[ub[idx].idx].get_min())
 					latestindex_ub = idx;
 		}
 
@@ -16846,7 +16857,8 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 	Literal tmp;
 	if ((latestindex_lb < ub.size) && (latestindex_lb > (-1)))
 		//tmp = 	2*  ub[latestindex_lb].x.id() +1;
-		tmp = ((Solver *) solver)->encode_boolean_variable_as_literal( ub[latestindex_lb].x.id(),1);
+//		tmp = ((Solver *) solver)->encode_boolean_variable_as_literal( ub[latestindex_lb].x.id(),1);
+		tmp = ((Solver *) solver)->encode_boolean_variable_as_literal( scope[ub[latestindex_lb].idx].id(),1);
 
 	//Assigning to 0 based on latestindex_lb
 	for (int i = index_lb ; i <latestindex_lb ;  ++i){
@@ -16860,8 +16872,10 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 #endif
 
-		if(!ub[i].x.is_ground()){
-			if( ub[i].x.set_domain(0) == FAIL_EVENT) {
+//		if(!ub[i].x.is_ground()){
+		if(!scope[ub[i].idx].is_ground()){
+//			if( ub[i].x.set_domain(0) == FAIL_EVENT) {
+			if( scope[ub[i].idx].set_domain(0) == FAIL_EVENT) {
 				std::cout << " c not possible! " << std::endl;
 				exit(1);
 			}
@@ -16878,7 +16892,8 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 					}
 		}
 		else
-			if( ub[i].x.set_domain(0) == FAIL_EVENT) {
+//			if( ub[i].x.set_domain(0) == FAIL_EVENT) {
+			if( scope[ub[i].idx].set_domain(0) == FAIL_EVENT) {
 				//for (int j=1; j< scope.size ; ++j)
 				//	if (scope[j].id()== ub[i].x.id())
 				{
@@ -16903,15 +16918,18 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 	if (latestindex_ub >= 0 &&  latestindex_ub < ub.size)
 		//	tmp = 	2*  ub[latestindex_ub].x.id();
-		tmp = ((Solver *) solver)->encode_boolean_variable_as_literal( ub[latestindex_ub].x.id(),0);
+//		tmp = ((Solver *) solver)->encode_boolean_variable_as_literal( ub[latestindex_ub].x.id(),0);
+		tmp = ((Solver *) solver)->encode_boolean_variable_as_literal( scope[ub[latestindex_ub].idx].id(),0);
 
 
 	if (latestindex_ub < index_ub)
 		for (int i = (latestindex_ub+1) ; i <= index_ub ;  ++i){
 
 
-			if(!ub[i].x.is_ground()){
-				if( ub[i].x.set_domain(1) == FAIL_EVENT) {
+//			if(!ub[i].x.is_ground()){
+			if(!scope[ub[i].idx].is_ground()){
+//				if( ub[i].x.set_domain(1) == FAIL_EVENT) {
+				if( scope[ub[i].idx].set_domain(1) == FAIL_EVENT) {
 					std::cout << " c not possible! " << std::endl;
 					exit(1);
 
@@ -16928,7 +16946,8 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 						}
 			}
 			else
-				if( ub[i].x.set_domain(1) == FAIL_EVENT) {
+//				if( ub[i].x.set_domain(1) == FAIL_EVENT) {
+				if( scope[ub[i].idx].set_domain(1) == FAIL_EVENT) {
 					//for (int j=1; j< scope.size ; ++j)
 					//	if (scope[j].id()== ub[i].x.id())
 					{
@@ -17011,7 +17030,8 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 	if (latestindex_lb < ub.size)
 		//	tmp = 	2*  ub[latestindex_lb].x.id() +1;
-		tmp = ((Solver *) solver)->encode_boolean_variable_as_literal(ub[latestindex_lb].x.id(),1);
+//		tmp = ((Solver *) solver)->encode_boolean_variable_as_literal(ub[latestindex_lb].x.id(),1);
+		tmp = ((Solver *) solver)->encode_boolean_variable_as_literal(scope[ub[latestindex_lb].idx].id(),1);
 
 	tmpclause.add (tmp);
 
@@ -17031,7 +17051,8 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 			else
 				tmp=NULL_ATOM;
 			explanation[0] = tmp;
-			tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(ub[latestindex_lb].x.id() ,1));
+//			tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(ub[latestindex_lb].x.id() ,1));
+			tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(scope[ub[latestindex_lb].idx].id() ,1));
 			//tmp = 	2*  ub[latestindex_lb].x.id() +1;
 			explanation[1] = tmp;
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
@@ -17049,7 +17070,8 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 	if (latestindex_ub >= 0 &&  latestindex_ub < ub.size)
 		//tmp = 	2*  ub[latestindex_ub].x.id();
-		tmp = ((Solver *) solver)->encode_boolean_variable_as_literal( ub[latestindex_ub].x.id(),0);
+//		tmp = ((Solver *) solver)->encode_boolean_variable_as_literal( ub[latestindex_ub].x.id(),0);
+		tmp = ((Solver *) solver)->encode_boolean_variable_as_literal( scope[ub[latestindex_ub].idx].id(),0);
 
 	tmpclause.add(tmp);
 
@@ -17068,7 +17090,8 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 			else
 				tmp = NULL_ATOM;
 			explanation[0] = tmp;
-			tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(ub[latestindex_ub].x.id() ,0));
+//			tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(ub[latestindex_ub].x.id() ,0));
+			tmp = (((Solver *) solver)->encode_boolean_variable_as_literal(scope[ub[latestindex_ub].idx].id() ,0));
 			//			tmp = 	2*  ub[latestindex_ub].x.id();
 			explanation[1] = tmp;
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
@@ -17129,7 +17152,8 @@ int Mistral::DomainFaithfulnessConstraint::check( const int* s ) const {
 
 	for (int i = 1 ; i < scope.size ; ++i)
 		for (int j = 0; j < ub.size; ++j)
-			if (ub[j].x.id() == scope [i].id()){
+//			if (ub[j].x.id() == scope [i].id()){
+			if (scope[ub[j].idx].id() == scope [i].id()){
 				value = ub[j].value;
 				if (s[i] && v > value)
 					return 1;
@@ -17375,7 +17399,8 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 
 
 std::ostream& Mistral::operator<< (std::ostream& os, const Mistral::__boundLiteral & x) {
-	os << x.value << "--" << x.x.id() ;
+//	os << x.value << "--" << x.x.id() ;
+	os << x.value << "--" << x.idx ;
 	return os;
 }
 

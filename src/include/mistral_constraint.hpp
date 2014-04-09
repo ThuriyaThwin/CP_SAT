@@ -5153,10 +5153,10 @@ if (enforce_nfc1)
   struct __boundLiteral
   {
 	  int value;
-	  Variable x;
+	  //Variable x;
 	  unsigned int idx;
 
-	  __boundLiteral(int k, const Variable& _x, unsigned int _idx) : value(k), x(_x) , idx(_idx) {}
+	  __boundLiteral(int k, unsigned int _idx) : value(k), idx(_idx) {}
 
 	  __boundLiteral() {}
 
