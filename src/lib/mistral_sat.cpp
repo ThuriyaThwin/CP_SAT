@@ -560,7 +560,13 @@ void Mistral::ConstraintClauseBase::extend_scope(Variable x){
 	//reason = solver->reason.stack_;
 
 
+	++_currentsize;
+	if (_currentsize>= _capacity)
+	{
+		extend_vectors(5000);
+		std::cout << " c _currentsize>= _capacity in ConstraintClauseBase" << std::endl;
 
+	/*
 	Event * tmp_event_type = new Event[scope.size];
 	int * tmp_solution = new int[scope.size];
 	Constraint* tmpself = new Constraint[scope.size];
@@ -572,14 +578,12 @@ void Mistral::ConstraintClauseBase::extend_scope(Variable x){
 	delete [] event_type;
 	event_type = tmp_event_type;
 
-	event_type[scope.size-1] = NO_EVENT;
 
 	for(unsigned int i=0; i<on.size; ++i)
 		tmp_solution[i] = solution[i];
 
 	delete [] solution;
 	solution = tmp_solution;
-	solution [scope.size-1]  = 0;
 
 
 
@@ -594,7 +598,11 @@ void Mistral::ConstraintClauseBase::extend_scope(Variable x){
 
 	delete [] index;
 	index = tmpindex;
+	*/
+	}
 
+	event_type[scope.size-1] = NO_EVENT;
+	solution [scope.size-1]  = 0;
 
 	/*
 	std:: cout << " \n BEFORE : scope.size " << scope.size << std::endl;
@@ -764,6 +772,7 @@ void Mistral::ConstraintClauseBase::start_over() {
 
 	on.size = init_var_size;
 	reason_for.size =init_var_size ;
+
 	//is_watched_by.
 	for (int i =  init_var_size*2 ; i < ((2* scope.size) -1) ; ++i)
 	  if (is_watched_by[i].size)
@@ -795,6 +804,9 @@ void Mistral::ConstraintClauseBase::start_over() {
 	events.index_ = changes.index_;
 
 
+
+	_currentsize = init_var_size;
+/*
 	int old_size = scope.size;
 	Event * tmp_event_type = new Event[scope.size];
 	int * tmp_solution = new int[scope.size];
@@ -828,7 +840,7 @@ void Mistral::ConstraintClauseBase::start_over() {
 
 	delete [] index;
 	index = tmpindex;
-
+*/
 
 
 

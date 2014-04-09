@@ -2888,7 +2888,7 @@ void SchedulingSolver::dichotomic_search()
   */
   if (base){
 
-	//  base->extend_vectors();
+	  base->extend_vectors(10000);
 	  for (int i = 0; i < start_from; ++i)
 		  (static_cast<VariableRangeWithLearning*> (variables[i].range_domain))->domainConstraint->extend_vectors();
 

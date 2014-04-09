@@ -1385,6 +1385,10 @@ void Mistral::GlobalConstraint::initialise() {
   active.initialise(solver, 0, on.size-1, on.size, true);
 
   GlobalConstraint::set_idempotent();
+
+  //used only by base and DomainFaithfulness
+  _capacity =  on.size;
+  _currentsize = on.size;
 }
 
 void Mistral::GlobalConstraint::initialise_activity(double *lact, double *vact, double norm) {
@@ -1399,6 +1403,38 @@ void Mistral::GlobalConstraint::initialise_activity(double *lact, double *vact, 
 }
 
 
+
+void Mistral::GlobalConstraint::extend_vectors(unsigned int increment ){
+
+	_capacity +=increment;
+	Event * tmp_event_type = new Event[_capacity];
+	int * tmp_solution = new int[_capacity];
+	Constraint* tmpself = new Constraint[_capacity];
+	int*  tmpindex = new int[_capacity];
+
+	for(unsigned int i=0; i<on.size; ++i)
+		tmp_event_type[i] = event_type[i];
+	delete [] event_type;
+	event_type = tmp_event_type;
+
+	//		event_type[scope.size-1] = NO_EVENT;
+
+	for(unsigned int i=0; i<on.size; ++i)
+		tmp_solution[i] = solution[i];
+	delete [] solution;
+	solution = tmp_solution;
+	//		solution [scope.size-1]  = 0;
+
+	for(unsigned int i=0; i<on.size; ++i)
+		tmpself[i] = self[i];
+	delete [] self;
+	self = tmpself;
+
+	for(unsigned int i=0; i<on.size; ++i)
+		tmpindex[i] = index[i];
+	delete [] index;
+	index = tmpindex;
+}
 
 std::ostream& Mistral::ConstraintImplementation::display(std::ostream& os) const {
   return os;
@@ -16239,38 +16275,6 @@ Mistral::DomainFaithfulnessConstraint::DomainFaithfulnessConstraint(Vector< Vari
 }
 
 
-void Mistral::DomainFaithfulnessConstraint::extend_vectors(){
-
-	_capacity +=300;
-	Event * tmp_event_type = new Event[_capacity];
-	int * tmp_solution = new int[_capacity];
-	Constraint* tmpself = new Constraint[_capacity];
-	int*  tmpindex = new int[_capacity];
-
-	for(unsigned int i=0; i<on.size; ++i)
-		tmp_event_type[i] = event_type[i];
-	delete [] event_type;
-	event_type = tmp_event_type;
-
-	//		event_type[scope.size-1] = NO_EVENT;
-
-	for(unsigned int i=0; i<on.size; ++i)
-		tmp_solution[i] = solution[i];
-	delete [] solution;
-	solution = tmp_solution;
-	//		solution [scope.size-1]  = 0;
-
-	for(unsigned int i=0; i<on.size; ++i)
-		tmpself[i] = self[i];
-	delete [] self;
-	self = tmpself;
-
-	for(unsigned int i=0; i<on.size; ++i)
-		tmpindex[i] = index[i];
-	delete [] index;
-	index = tmpindex;
-}
-
 void Mistral::DomainFaithfulnessConstraint::set_init_changes() {
 
 
@@ -16365,8 +16369,6 @@ void Mistral::DomainFaithfulnessConstraint::initialise() {
 	eager_explanations.clear();
 	eager_explanations.add(NULL_ATOM);
 	enforce_nfc1 = false;
-	_capacity = 1;
-	_currentsize = on.size;
 }
 
 // if a variable alreagy exist then return its id, otherwise return false

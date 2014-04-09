@@ -1828,6 +1828,12 @@ if (enforce_nfc1)
     }
 
 
+    //_capacity used to eagerly allocate memory for event_type, solution, self and index
+
+    unsigned int _capacity;
+	unsigned int _currentsize;
+    void extend_vectors(unsigned int increment = 300);
+
     std::ostream& display(std::ostream& os) const;  
   };
 
@@ -5180,9 +5186,7 @@ if (enforce_nfc1)
 
 
 	  // Vector<__boundLiteral> lb;
-	  //_capacity used to eagerly allocate memory for generated variables
-	  unsigned int _capacity;
-	  unsigned int _currentsize;
+
 	  Vector<__boundLiteral> ub;
 	  VariableRangeWithLearning * _x;
 	  DomainFaithfulnessConstraint() : GlobalConstraint() { //priority = 2;?
@@ -5209,8 +5213,6 @@ if (enforce_nfc1)
 		  //	  solver->DomainFaithfulnessList[x.id()] = this;
 	  }
 
-
-	  void extend_vectors();
 	  void extend_scope(Variable & x, int value, bool isub, int level);
 	  int value_exist(int value);
 	  virtual Constraint clone() { return Constraint(new DomainFaithfulnessConstraint(scope)); }
