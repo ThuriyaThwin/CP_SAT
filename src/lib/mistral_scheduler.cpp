@@ -2926,7 +2926,7 @@ void SchedulingSolver::dichotomic_search()
 #ifdef _DEBUG_SCHEDULER
 	  //objective = 1245;
 #endif
-	  std::cout << "\n c +=========[ start dichotomic step ]=========+" << std::endl;
+	  std::cout << " c \n c+=========[ start dichotomic step ]=========+" << std::endl;
 	  //       setPropagsLimit(params->NodeCutoff);
 
 	  parameters.propagation_limit = params->NodeCutoff;
@@ -3046,7 +3046,7 @@ void SchedulingSolver::dichotomic_search()
 	  if (base)
 	  {
 
-		  std::cout << " dichotomy ended with variables.size" << variables.size << std::endl;
+		  std::cout << " c dichotomy ended with variables.size" << variables.size << std::endl;
 		  if (params->forgetall)
 		  {
 //#ifdef _CHECK_NOGOOD
@@ -3056,7 +3056,7 @@ void SchedulingSolver::dichotomic_search()
 //#endif
 			  __size = base->learnt.size;
 
-			  std::cout << " dichotomy ended with " << __size << " learnt clause" << std::endl;
+			  std::cout << " c dichotomy ended with " << __size << " learnt clause" << std::endl;
 
 			  while (__size--)
 				  base->remove(__size);

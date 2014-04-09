@@ -17,7 +17,7 @@ int main( int argc, char** argv )
 
   Instance jsp(params);
   
-  std::cout << std::endl;
+  //std::cout << std::endl;
   //jsp.print(std::cout);
   jsp.printStats(std::cout);
   params.print(std::cout);
@@ -25,7 +25,7 @@ int main( int argc, char** argv )
 
   SchedulingSolver *solver;
   if(params.Objective == "makespan") {
-    std::cout << "c Minimising Makespan" << std::endl;
+    std::cout << " c Minimising Makespan" << std::endl;
     if(params.Type == "now") solver = new No_wait_Model(jsp, &params, -1, 0);
     else if(params.Type == "now2") {
       //params.Type = "now";

@@ -10546,7 +10546,8 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 							//if (lvl>0 Search root?
 							if (lvl>0){
-								if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
+					//			if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
+								if (lvl < level)
 								{
 
 									//std::cout << " \n \n sequence before  " << sequence << std::endl;
@@ -10892,7 +10893,9 @@ void Mistral::Solver::learn_with_lazygeneration() {
 
 									//if (lvl>0 Search root?
 									if (lvl>0){
-										if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
+
+										//								if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
+										if (lvl < level)
 										{
 
 											//std::cout << " \n \n sequence before  " << sequence << std::endl;
@@ -11679,7 +11682,8 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 
 							//if (lvl>0 Search root?
 							if (lvl>0){
-								if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
+//								if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
+								if (lvl < level)
 								{
 
 									//std::cout << " \n \n sequence before  " << sequence << std::endl;
@@ -12082,7 +12086,8 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 
 									//if (lvl>0 Search root?
 									if (lvl>0){
-										if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
+//										if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
+										if (lvl < level)
 										{
 
 											//std::cout << " \n \n sequence before  " << sequence << std::endl;
@@ -12961,8 +12966,9 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning_with_conve
 									}
 
 								if (!already_explored){
-								if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
-								{
+//								if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
+									if (lvl < level)
+									{
 									//std::cout << " \n \n sequence before  " << sequence << std::endl;
 									//std::cout << " \n \n sequence size before  " << sequence.size << std::endl;
 									//std::cout << " \n \n sequence capacity before  " << sequence.capacity << std::endl;
@@ -13440,7 +13446,9 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning_with_conve
 											}
 
 										if (!already_explored) {
-										if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
+
+											//								if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
+											if (lvl < level)
 										{
 
 											//std::cout << " \n \n sequence before  " << sequence << std::endl;
@@ -14317,7 +14325,9 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning_with_conve
 
 							//if (lvl>0 Search root?
 							if (lvl>0){
-								if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
+
+								//								if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
+								if (lvl < level)
 								{
 
 									//std::cout << " \n \n sequence before  " << sequence << std::endl;
@@ -14795,7 +14805,9 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning_with_conve
 
 									//if (lvl>0 Search root?
 									if (lvl>0){
-										if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
+
+										//								if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
+										if (lvl < level)
 										{
 
 											//std::cout << " \n \n sequence before  " << sequence << std::endl;
@@ -15750,7 +15762,9 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning2() {
 									}
 
 								if (!already_explored){
-								if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
+
+									//								if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
+									if (lvl < level)
 								{
 
 									//std::cout << " \n \n sequence before  " << sequence << std::endl;
@@ -16154,7 +16168,9 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning2() {
 											}
 
 										if (!already_explored) {
-										if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
+
+											//								if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
+											if (lvl < level)
 										{
 
 											//std::cout << " \n \n sequence before  " << sequence << std::endl;
@@ -18959,7 +18975,7 @@ void Mistral::Solver::set_fdlearning_on(int learning_method) {
 	parameters.backjump = true;
 	parameters.fd_learning = learning_method;
 	parameters.forgetfulness = 0.0;
-	std::cout << " start_from : " << start_from << std::endl;
+	std::cout << " c start_from : " << start_from << std::endl;
 	visitedUpperBounds.initialise(0, start_from  , BitSet::empt);
 	visitedLowerBounds.initialise(0,  start_from  ,BitSet::empt);
 	visitedUpperBoundvalues = new unsigned int [start_from ];
