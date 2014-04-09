@@ -16378,7 +16378,8 @@ int Mistral::DomainFaithfulnessConstraint::value_exist(int value){
 	int expected = -1;
 	for(unsigned int i=0; i<ub.size; ++i)
 		if (ub[i].value == value){
-			expected =  ub[i].x.id();
+//			expected =  ub[i].x.id();
+			expected =  scope[ub[i].idx].id();
 			break;
 		}
 #endif
@@ -16480,7 +16481,8 @@ int Mistral::DomainFaithfulnessConstraint::value_exist(int value){
 		//return true;
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-		if (expected != ub[idx].x.id()){
+//		if (expected != ub[idx].x.id()){
+		if (expected != scope[ub[idx].idx].id()){
 			std::cout << "Dicho Error" << std::endl;
 			exit(1);
 		}
@@ -17309,8 +17311,10 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 					int j = 0 ;
 
 					for (; j < ub.size; ++j){
-						if (ub[j].x.id() ==id ){
-							if (ub[j].x.get_min()){
+//						if (ub[j].x.id() ==id ){
+						if (scope[ub[j].idx].id() ==id ){
+//							if (ub[j].x.get_min()){
+							if (scope[ub[j].idx].get_min()){
 								value__ = _x->upperbounds[0];
 								if (ub[j].value < value__ ){
 									std::cout <<" \n \n ERROR in Domain Faithfulness explanation ub[i].value < value__ "  << std::endl;
@@ -17354,8 +17358,10 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 						value__ = get_value_from_literal(eager_explanations[i]);
 
 						for (int j = 0 ; j < ub.size; ++j){
-							if (ub[j].x.id() ==id ){
-								if (ub[j].x.get_min()){
+//							if (ub[j].x.id() ==id ){
+							if (scope[ub[j].idx].id() ==id ){
+//								if (ub[j].x.get_min()){
+								if (scope[ub[j].idx].get_min()){
 									if (ub[j].value < value__ ){
 										std::cout <<" \n \n ERROR in Domain Faithfulness explanation ub[i].value < value__ "  << std::endl;
 										exit(1);
@@ -17385,15 +17391,18 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 					else{
 						int id__explanation = ((Solver*)solver)->get_id_boolean_variable(eager_explanations[i]);
 						for (int j = 0 ; j < ub.size; ++j)
-							if (ub[j].x.id() ==id__explanation ){
+//							if (ub[j].x.id() ==id__explanation ){
+							if (scope[ub[j].idx].id() ==id__explanation ){
 								value__= ub[j].value;
 								break;
 							}
 
 
 						for (int j = 0 ; j < ub.size; ++j)
-							if (ub[j].x.id() ==id ){
-								if (ub[j].x.get_min()){
+//							if (ub[j].x.id() ==id ){
+							if (scope[ub[j].idx].id() ==id ){
+//								if (ub[j].x.get_min()){
+								if (scope[ub[j].idx].get_min()){
 									if (ub[j].value < value__ ){
 										std::cout <<" \n \n ERROR in Domain Faithfulness explanation ub[i].value < value__ "  << std::endl;
 										exit(1);
