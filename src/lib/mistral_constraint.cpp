@@ -16474,8 +16474,11 @@ int Mistral::DomainFaithfulnessConstraint::value_exist(int value){
 
 void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value , bool isub, int level){
 
-	ub.add(__boundLiteral(value,x, scope.size));
-	ub.sort();
+//	ub.add(__boundLiteral(value,x, scope.size));
+//	ub.sort();
+
+	ub.fast_sorted_add(__boundLiteral(value,x, scope.size));
+
 	scope.add(x);
 	//_scope.add(x);
 

@@ -644,6 +644,30 @@ const int NOVAL = (int)((~(unsigned int)0)/2);
     	}
     }
 
+    /*We suppose that
+     * the the vetor is already sorted
+     * we want to insert a new element x
+     * All elements, inclusing x, are distinct
+     */
+    inline void fast_sorted_add(DATA_TYPE x)
+    {
+    	if (size){
+    		unsigned int __iterator = size -1;
+    		add(x);
+    		while (stack_[__iterator]> x)
+    		{
+    			stack_[__iterator+1] = stack_[__iterator];
+    			stack_[__iterator] = x;
+    			if (__iterator)
+    				--__iterator;
+    			else
+    				return;
+    		}
+    	}
+    	else
+    		add(x);
+    }
+
     inline const DATA_TYPE operator[](const int i) const
     {
       return stack_[i];
