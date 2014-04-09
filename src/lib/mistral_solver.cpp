@@ -147,6 +147,7 @@ void Mistral::SolverParameters::initialise() {
   checked = 1;
   backjump = 0;
   fd_learning = 0;
+  reduce_learnt_clause = 0;
   value_selection = 2;
   dynamic_value = 0; //1;
 
@@ -13949,6 +13950,10 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning_with_conve
 			//   }
 			// }
 
+			if (parameters.reduce_learnt_clause){
+				std::cout << "reducing clause  "  << learnt_clause <<  std::endl;
+				reduce_clause(learnt_clause);
+			}
 			base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
 			//add_clause( learnt, learnt_clause, stats.learnt_avg_size );
 			//reason[UNSIGNED(p)] = base->learnt.back();
@@ -16665,6 +16670,9 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning2() {
 }
 
 
+void Mistral::Solver::reduce_clause( Vector < Literal >& clause){
+
+}
 
 void Mistral::Solver::forget() {
 
@@ -16683,7 +16691,6 @@ void Mistral::Solver::forget() {
   //    exit(1);
   //  }
 }
-
 
 void Mistral::Solver::close_propagation() {
   unsigned int vidx;
@@ -18969,11 +18976,12 @@ void Mistral::Solver::initialise_random_seed(const int seed) {
 }
 
 
-void Mistral::Solver::set_fdlearning_on(int learning_method) {
+void Mistral::Solver::set_fdlearning_on(int learning_method, int reduce) {
 
 	//	parameters.jsp_backjump = true;
 	parameters.backjump = true;
 	parameters.fd_learning = learning_method;
+	parameters.reduce_learnt_clause = reduce;
 	parameters.forgetfulness = 0.0;
 	std::cout << " c start_from : " << start_from << std::endl;
 	visitedUpperBounds.initialise(0, start_from  , BitSet::empt);

@@ -108,6 +108,7 @@ namespace Mistral {
 
     int backjump;
     int fd_learning;
+    int reduce_learnt_clause;
 
     /// whether solutions are checked
     // 0 -> not checked
@@ -780,6 +781,9 @@ namespace Mistral {
 	Vector<Literal> bound_literals_to_explore;
 	Vector <Atom > boolean_vairables_to_explore;
 
+	//reduce clause after learning
+	void reduce_clause( Vector < Literal >& clause);
+
     void learn_with_lazygeneration_no_bound_at_the_end();
     void learn_with_lazygeneration_and_semantic_learning();
     void learn_with_lazygeneration_and_semantic_learning2();
@@ -874,7 +878,7 @@ namespace Mistral {
     void initialise_random_seed(const int seed);
     void set_time_limit(const double limit);
     void set_learning_on();
-    void set_fdlearning_on(int learning_method);
+    void set_fdlearning_on(int learning_method, int reduce);
     void close_propagation();
 
     Explanation * __failure;
