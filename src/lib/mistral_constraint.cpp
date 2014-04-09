@@ -16238,38 +16238,42 @@ Mistral::DomainFaithfulnessConstraint::DomainFaithfulnessConstraint(Vector< Vari
 	//lb.clear();
 }
 
+
+void Mistral::DomainFaithfulnessConstraint::extend_vectors(){
+
+	_capacity +=300;
+	Event * tmp_event_type = new Event[_capacity];
+	int * tmp_solution = new int[_capacity];
+	Constraint* tmpself = new Constraint[_capacity];
+	int*  tmpindex = new int[_capacity];
+
+	for(unsigned int i=0; i<on.size; ++i)
+		tmp_event_type[i] = event_type[i];
+	delete [] event_type;
+	event_type = tmp_event_type;
+
+	//		event_type[scope.size-1] = NO_EVENT;
+
+	for(unsigned int i=0; i<on.size; ++i)
+		tmp_solution[i] = solution[i];
+	delete [] solution;
+	solution = tmp_solution;
+	//		solution [scope.size-1]  = 0;
+
+	for(unsigned int i=0; i<on.size; ++i)
+		tmpself[i] = self[i];
+	delete [] self;
+	self = tmpself;
+
+	for(unsigned int i=0; i<on.size; ++i)
+		tmpindex[i] = index[i];
+	delete [] index;
+	index = tmpindex;
+}
+
 void Mistral::DomainFaithfulnessConstraint::set_init_changes() {
 
 
-	{
-		Event * tmp_event_type = new Event[_capacity];
-		int * tmp_solution = new int[_capacity];
-		Constraint* tmpself = new Constraint[_capacity];
-		int*  tmpindex = new int[_capacity];
-
-		for(unsigned int i=0; i<on.size; ++i)
-			tmp_event_type[i] = event_type[i];
-		delete [] event_type;
-		event_type = tmp_event_type;
-
-		//		event_type[scope.size-1] = NO_EVENT;
-
-		for(unsigned int i=0; i<on.size; ++i)
-			tmp_solution[i] = solution[i];
-		delete [] solution;
-		solution = tmp_solution;
-		//		solution [scope.size-1]  = 0;
-
-		for(unsigned int i=0; i<on.size; ++i)
-			tmpself[i] = self[i];
-		delete [] self;
-		self = tmpself;
-
-		for(unsigned int i=0; i<on.size; ++i)
-			tmpindex[i] = index[i];
-		delete [] index;
-		index = tmpindex;
-	}
 
 	initial_list__of_changes.clear();
 	for (int i = 0; i < changes.size; ++i)
@@ -16361,9 +16365,8 @@ void Mistral::DomainFaithfulnessConstraint::initialise() {
 	eager_explanations.clear();
 	eager_explanations.add(NULL_ATOM);
 	enforce_nfc1 = false;
-	_capacity = 300;
+	_capacity = 1;
 	_currentsize = on.size;
-
 }
 
 // if a variable alreagy exist then return its id, otherwise return false
@@ -16546,7 +16549,11 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 	++_currentsize;
 	if (_currentsize>= _capacity)
 	{
-		_capacity+=300;
+
+		extend_vectors();
+
+		std::cout << " c _currentsize>= _capacity " << std::endl;
+/*		_capacity+=300;
 
 		std::cout << " c _currentsize>= _capacity " << std::endl;
 		Event * tmp_event_type = new Event[_capacity];
@@ -16573,6 +16580,7 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 			tmpindex[i] = index[i];
 		delete [] index;
 		index = tmpindex;
+		*/
 	}
 
 

@@ -5210,7 +5210,7 @@ if (enforce_nfc1)
 	  }
 
 
-
+	  void extend_vectors();
 	  void extend_scope(Variable & x, int value, bool isub, int level);
 	  int value_exist(int value);
 	  virtual Constraint clone() { return Constraint(new DomainFaithfulnessConstraint(scope)); }
