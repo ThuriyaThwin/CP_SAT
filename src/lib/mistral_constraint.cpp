@@ -16334,38 +16334,120 @@ void Mistral::DomainFaithfulnessConstraint::initialise() {
 int Mistral::DomainFaithfulnessConstraint::value_exist(int value){
 	//std::cout << " \n BEGIN dicho " <<std::endl;
 	//std::cout << " \n ub " << ub << std::endl;
+	//std::cout << " \n value " << value << std::endl;
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+	int expected = -1;
+	for(unsigned int i=0; i<ub.size; ++i)
+		if (ub[i].value == value){
+			expected =  ub[i].x.id();
+			break;
+		}
+#endif
 
 	if (!ub.size)
 		return -1;
 
 	//	unsigned int idx = floor((double) (((double)size) / 2.0 )), ub = size -1 , lb = 0 ;
-	int idx = (ub.size -1) >>1 , idx_ub = ub.size -1 , idx_lb = 0 ;
+	unsigned int idx = (ub.size -1) >>1 , idx_ub = ub.size -1 , idx_lb = 0 ;
+
+	if (ub[idx_ub].value < value){
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+		if (expected != -1){
+			std::cout << "Dicho Error" << std::endl;
+			exit(1);
+		}
+#endif
+
+		return -1;
+	}
+
+	if (ub[idx_lb].value > value){
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+		if (expected != -1){
+			std::cout << "Dicho Error" << std::endl;
+			exit(1);
+		}
+#endif
+
+		return -1;
+	}
+
+
 
 	//if (order)
 	{
 		while (ub[idx].value != value){
 
-//			std::cout << " \n begin idx :  " << idx <<std::endl;
-//			std::cout << " idx_ub  " << idx_ub <<std::endl;
-//			std::cout << " idx_lb :  " << idx_lb <<std::endl;
+			//		std::cout << " \n begin idx :  " << idx <<std::endl;
+			//		std::cout << " idx_ub  " << idx_ub <<std::endl;
+			//		std::cout << " idx_lb :  " << idx_lb <<std::endl;
 
 			if (idx_ub == idx_lb){
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+				if (expected != -1){
+					std::cout << "Dicho Error" << std::endl;
+					exit(1);
+				}
+#endif
+
 				return -1;
 			}
-			if (ub[idx].value > value)
-				idx_ub = idx -1;
-			else
-				idx_lb = idx +1;
+			if (ub[idx].value > value){
+				if (idx < idx_lb +1){
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+					if (expected != -1){
+						std::cout << "Dicho Error" << std::endl;
+						exit(1);
+					}
+#endif
+
+					return -1;
+				}
+				else
+					idx_ub = idx -1;
+			}
+			else{
+				if (idx_ub < idx +1){
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+					if (expected != -1){
+						std::cout << "Dicho Error" << std::endl;
+						exit(1);
+					}
+#endif
+
+					return -1;
+				}
+				else
+					idx_lb = idx +1;
+			}
 			//div2
+			//			if (idx_ub < idx_lb){
+			//				return -1;
+			//			}
+
 			idx = (idx_ub + idx_lb)>> 1;
 
-//				std::cout << " idx_ub  " << idx_ub <<std::endl;
-//				std::cout << " idx_lb :  " << idx_lb <<std::endl;
+			//		std::cout << " idx_ub  " << idx_ub <<std::endl;
+			//		std::cout << " idx_lb :  " << idx_lb <<std::endl;
 		}
 
-//			std::cout << " \n Find with idx" << idx << std::endl;
+		//	std::cout << " \n Find with idx" << idx << std::endl;
 		//	position = idx;
 		//return true;
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+		if (expected != ub[idx].x.id()){
+			std::cout << "Dicho Error" << std::endl;
+			exit(1);
+		}
+#endif
+
 		return ub[idx].x.id();
 	}
 
