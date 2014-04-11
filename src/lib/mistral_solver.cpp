@@ -12703,6 +12703,158 @@ unsigned int Mistral::Solver::generate_new_variable(DomainFaithfulnessConstraint
 }
 
 
+
+void Mistral::Solver::treat_assignment_literal(Literal* lit){
+
+
+	Literal q = *lit;
+	//Literal to_be_explored;
+	//bool is_lb ;
+	int val ;
+	int var ;
+	//VariableRangeWithLearning* tmp_VariableRangeWithLearning ;
+	//unsigned int range_id ;
+	int lvl ;
+	bool already_explored = false;
+
+	//DomainFaithfulnessConstraint * dom_constraint ;
+
+
+	int x = variables[get_id_boolean_variable(q)].id();
+	lvl = assignment_level[get_id_boolean_variable(q)];
+
+#ifdef 	_DEBUG_FD_NOGOOD
+	if(_DEBUG_FD_NOGOOD){
+		std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
+	}
+#endif
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+	if (lvl > level)
+	{
+		std::cout << " \n ERROR : the level of the literal q is > level. i.e. lvl = "<< lvl << " and level = " << level<< std::endl;
+		exit(1);
+	}
+	if ((x.get_size()>1) )
+	{
+		std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+		exit(1);
+	}
+
+	if ((a != x.id()) && x.get_min()== SIGN(q))
+	{
+		std::cout << " \n (x.get_min()== SIGN(q))" << x << "  and its domain is " << x.get_domain() << " ; its assignment_level : " << assignment_level[x.id()] << " ; while the literal q = " << q << std::endl;
+		exit(1);
+	}
+#endif
+
+	int id__ = get_id_boolean_variable(q);
+	already_explored = false;
+	if (id__ >= initial_variablesize){
+
+		var = 	varsIds_lazy[id__ - initial_variablesize];
+		val = value_lazy[id__ - initial_variablesize];
+
+		//	std::cout << " OK : id_range = " << id_range << std::endl;
+		//	std::cout << " OK : val_range = " << val_range << std::endl;
+
+		if (SIGN(NOT(q))){
+			//		set_max(val_range);
+			//		std::cout << " Bound literal associated to :  " << variables[id_range] << " <=  " << val_range <<  std::endl;
+
+
+			if (visitedUpperBounds.fast_contain(var)){
+				if (visitedUpperBoundvalues[var] <= val){
+					/*								std::cout << " \n \n is_lb : " << is_lb << std::endl;
+									 											std::cout << " var	 : " << var << std::endl;
+									 											std::cout << " val	 : " << val << std::endl;
+
+									 											std::cout << " visitedUpperBounds.fast_contain(var) : " << visitedUpperBounds.fast_contain(var) << std::endl;
+									 											std::cout << " visitedLowerBounds.  : " << visitedUpperBounds << std::endl;
+
+									 											std::cout << " visitedUpperBoundvalues[var] : " << visitedUpperBoundvalues[var] << std::endl;
+					 */
+					already_explored = true;
+				}
+				//			else
+			}
+
+
+			if ((!already_explored) && (lvl < level) )	{
+				//	std::cout << " \n \n \ learn val	 : " << val << std::endl;
+				if (!visitedUpperBounds.fast_contain(var))
+					visitedUpperBounds.fast_add(var);
+				visitedUpperBoundvalues[var]= val;
+			}
+
+		}
+		else{
+			//	set_min(val_range+1);
+			//		std::cout << " Bound literal associated to :  " << variables[id_range] << " >=  " << val_range+1 <<  std::endl;
+
+			++val;
+			if (visitedLowerBounds.fast_contain(var)){
+				if (visitedLowerBoundvalues[var] >= val){
+					/*				std::cout << " \n \n is_lb : " << is_lb << std::endl;
+			 										std::cout << " var	 : " << var << std::endl;
+			 										std::cout << " val	 : " << val << std::endl;
+
+			 										std::cout << " visitedLowerBounds.fast_contain(var) : " << visitedLowerBounds.fast_contain(var) << std::endl;
+			 										std::cout << " visitedLowerBounds.  : " << visitedLowerBounds << std::endl;
+
+			 										std::cout << " visitedLowerBoundvalues[var] : " << visitedLowerBoundvalues[var] << std::endl;
+					 */
+					already_explored = true;
+				}
+				//			else
+			}
+
+			if ((!already_explored) && (lvl < level) )	{
+				//	std::cout << " \n \n \ learn val	 : " << val << std::endl;
+				if (!visitedLowerBounds.fast_contain(var))
+					visitedLowerBounds.fast_add(var);
+				visitedLowerBoundvalues[var]= val;
+			}
+
+
+
+		}
+	}
+	//todo should be search_root!
+	if (!already_explored)
+		//todo should be search_root!
+		if(		lvl > 0 )
+			if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
+				//Sould be done later!
+				/*
+if(lit_activity) {
+	//lit_activity[q] += 0.5 * parameters.activity_increment;
+	lit_activity[NOT(q)] += // 0.5 *
+			parameters.activity_increment;
+	var_activity[get_id_boolean_variable(q)] += parameters.activity_increment;
+}
+				 */
+				visited.fast_add(get_id_boolean_variable(q));
+
+				if(lvl >= level) {
+					//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+					// we'll need to replace 'a' by its parents since its level is too high
+				//	++pathC;
+					boolean_vairables_to_explore.add(get_id_boolean_variable(q));
+
+				} else {
+					// q's level is below the current level, we are not expending it further
+					learnt_clause.add(q);
+#ifdef 	_DEBUG_FD_NOGOOD
+					if(_DEBUG_FD_NOGOOD){
+						std::cout << " \n learn :  " <<x << "  = " << x.get_domain() << " ; assignment_level : " << assignment_level[x.id()]<< std::endl;
+					}
+#endif
+					if(lvl > backtrack_level)
+						backtrack_level = lvl;
+				}
+			}
+
+}
 void Mistral::Solver::treat_bound_literal (Literal* lit){
 
 	Literal to_be_explored;
@@ -13188,142 +13340,7 @@ void Mistral::Solver::clean_fdlearn() {
 							treat_bound_literal(&q);
 						}
 						else{
-							x = variables[get_id_boolean_variable(q)];
-							lvl = assignment_level[get_id_boolean_variable(q)];
-
-#ifdef 	_DEBUG_FD_NOGOOD
-							if(_DEBUG_FD_NOGOOD){
-								std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
-							}
-#endif
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-
-							if (lvl > level)
-							{
-								std::cout << " \n ERROR : the level of the literal q is > level. i.e. lvl = "<< lvl << " and level = " << level<< std::endl;
-								exit(1);
-							}
-
-							if ((x.get_size()>1) )
-							{
-								std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
-								exit(1);
-							}
-
-							if ((a != x.id()) && x.get_min()== SIGN(q))
-							{
-								std::cout << " \n (x.get_min()== SIGN(q))" << x << "  and its domain is " << x.get_domain() << " ; its assignment_level : " << assignment_level[x.id()] << " ; while the literal q = " << q << std::endl;
-								exit(1);
-							}
-#endif
-
-							int id__ = get_id_boolean_variable(q);
-							already_explored = false;
-							if (id__ >= initial_variablesize){
-
-								var = 	varsIds_lazy[id__ - initial_variablesize];
-								val = value_lazy[id__ - initial_variablesize];
-
-								//	std::cout << " OK : id_range = " << id_range << std::endl;
-								//	std::cout << " OK : val_range = " << val_range << std::endl;
-
-								if (SIGN(NOT(q))){
-									//		set_max(val_range);
-									//		std::cout << " Bound literal associated to :  " << variables[id_range] << " <=  " << val_range <<  std::endl;
-
-
-									if (visitedUpperBounds.fast_contain(var)){
-										if (visitedUpperBoundvalues[var] <= val){
-											/*								std::cout << " \n \n is_lb : " << is_lb << std::endl;
-															 											std::cout << " var	 : " << var << std::endl;
-															 											std::cout << " val	 : " << val << std::endl;
-
-															 											std::cout << " visitedUpperBounds.fast_contain(var) : " << visitedUpperBounds.fast_contain(var) << std::endl;
-															 											std::cout << " visitedLowerBounds.  : " << visitedUpperBounds << std::endl;
-
-															 											std::cout << " visitedUpperBoundvalues[var] : " << visitedUpperBoundvalues[var] << std::endl;
-											 */
-											already_explored = true;
-										}
-										//			else
-									}
-
-
-									if (!already_explored && (lvl < level) )	{
-										//	std::cout << " \n \n \ learn val	 : " << val << std::endl;
-										if (!visitedUpperBounds.fast_contain(var))
-											visitedUpperBounds.fast_add(var);
-										visitedUpperBoundvalues[var]= val;
-									}
-
-
-								}
-								else{
-									//	set_min(val_range+1);
-									//		std::cout << " Bound literal associated to :  " << variables[id_range] << " >=  " << val_range+1 <<  std::endl;
-
-									++val;
-									if (visitedLowerBounds.fast_contain(var)){
-										if (visitedLowerBoundvalues[var] >= val){
-											/*				std::cout << " \n \n is_lb : " << is_lb << std::endl;
-									 										std::cout << " var	 : " << var << std::endl;
-									 										std::cout << " val	 : " << val << std::endl;
-
-									 										std::cout << " visitedLowerBounds.fast_contain(var) : " << visitedLowerBounds.fast_contain(var) << std::endl;
-									 										std::cout << " visitedLowerBounds.  : " << visitedLowerBounds << std::endl;
-
-									 										std::cout << " visitedLowerBoundvalues[var] : " << visitedLowerBoundvalues[var] << std::endl;
-											 */
-											already_explored = true;
-										}
-										//			else
-									}
-
-									if ((!already_explored) && (lvl < level) )	{
-										//	std::cout << " \n \n \ learn val	 : " << val << std::endl;
-										if (!visitedLowerBounds.fast_contain(var))
-											visitedLowerBounds.fast_add(var);
-										visitedLowerBoundvalues[var]= val;
-									}
-
-
-
-								}
-							}
-							//todo should be search_root!
-							if (!already_explored)
-								if(		lvl > 0 )
-									if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
-										//Sould be done later!
-										/*
-						if(lit_activity) {
-							//lit_activity[q] += 0.5 * parameters.activity_increment;
-							lit_activity[NOT(q)] += // 0.5 *
-									parameters.activity_increment;
-							var_activity[get_id_boolean_variable(q)] += parameters.activity_increment;
-						}
-										 */
-										visited.fast_add(get_id_boolean_variable(q));
-
-										if(lvl >= level) {
-											//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
-											// we'll need to replace 'a' by its parents since its level is too high
-											++pathC;
-											boolean_vairables_to_explore.add(get_id_boolean_variable(q));
-
-										} else {
-											// q's level is below the current level, we are not expending it further
-											learnt_clause.add(q);
-#ifdef 	_DEBUG_FD_NOGOOD
-											if(_DEBUG_FD_NOGOOD){
-												std::cout << " \n learn :  " <<x << "  = " << x.get_domain() << " ; assignment_level : " << assignment_level[x.id()]<< std::endl;
-											}
-#endif
-											if(lvl > backtrack_level)
-												backtrack_level = lvl;
-										}
-									}
-						}
+							treat_assignment_literal(&q);}
 					}
 					while (bound_literals_to_explore.size)
 					{
@@ -13381,139 +13398,7 @@ void Mistral::Solver::clean_fdlearn() {
 									treat_bound_literal(&q);
 								}
 								else{
-									x = variables[get_id_boolean_variable(q)];
-									lvl = assignment_level[get_id_boolean_variable(q)];
-
-#ifdef 	_DEBUG_FD_NOGOOD
-									if(_DEBUG_FD_NOGOOD){
-										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << " ; explanation comes from " << current_explanation << std::endl;
-									}
-#endif
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-									if (lvl > level)
-									{
-										std::cout << " \n ERROR : the level of the literal q is > level. i.e. lvl = "<< lvl << " and level = " << level<< std::endl;
-										exit(1);
-									}
-									if ((x.get_size()>1) )
-									{
-										std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
-										exit(1);
-									}
-
-									if ((a != x.id()) && x.get_min()== SIGN(q))
-									{
-										std::cout << " \n (x.get_min()== SIGN(q))" << x << "  and its domain is " << x.get_domain() << " ; its assignment_level : " << assignment_level[x.id()] << " ; while the literal q = " << q << std::endl;
-										exit(1);
-									}
-#endif
-
-									int id__ = get_id_boolean_variable(q);
-									already_explored = false;
-									if (id__ >= initial_variablesize){
-
-										var = 	varsIds_lazy[id__ - initial_variablesize];
-										val = value_lazy[id__ - initial_variablesize];
-
-										//	std::cout << " OK : id_range = " << id_range << std::endl;
-										//	std::cout << " OK : val_range = " << val_range << std::endl;
-
-										if (SIGN(NOT(q))){
-											//		set_max(val_range);
-											//		std::cout << " Bound literal associated to :  " << variables[id_range] << " <=  " << val_range <<  std::endl;
-
-
-											if (visitedUpperBounds.fast_contain(var)){
-												if (visitedUpperBoundvalues[var] <= val){
-													/*								std::cout << " \n \n is_lb : " << is_lb << std::endl;
-																	 											std::cout << " var	 : " << var << std::endl;
-																	 											std::cout << " val	 : " << val << std::endl;
-
-																	 											std::cout << " visitedUpperBounds.fast_contain(var) : " << visitedUpperBounds.fast_contain(var) << std::endl;
-																	 											std::cout << " visitedLowerBounds.  : " << visitedUpperBounds << std::endl;
-
-																	 											std::cout << " visitedUpperBoundvalues[var] : " << visitedUpperBoundvalues[var] << std::endl;
-													 */
-													already_explored = true;
-												}
-												//			else
-											}
-
-
-											if ((!already_explored) && (lvl < level) )	{
-												//	std::cout << " \n \n \ learn val	 : " << val << std::endl;
-												if (!visitedUpperBounds.fast_contain(var))
-													visitedUpperBounds.fast_add(var);
-												visitedUpperBoundvalues[var]= val;
-											}
-
-										}
-										else{
-											//	set_min(val_range+1);
-											//		std::cout << " Bound literal associated to :  " << variables[id_range] << " >=  " << val_range+1 <<  std::endl;
-
-											++val;
-											if (visitedLowerBounds.fast_contain(var)){
-												if (visitedLowerBoundvalues[var] >= val){
-													/*				std::cout << " \n \n is_lb : " << is_lb << std::endl;
-											 										std::cout << " var	 : " << var << std::endl;
-											 										std::cout << " val	 : " << val << std::endl;
-
-											 										std::cout << " visitedLowerBounds.fast_contain(var) : " << visitedLowerBounds.fast_contain(var) << std::endl;
-											 										std::cout << " visitedLowerBounds.  : " << visitedLowerBounds << std::endl;
-
-											 										std::cout << " visitedLowerBoundvalues[var] : " << visitedLowerBoundvalues[var] << std::endl;
-													 */
-													already_explored = true;
-												}
-												//			else
-											}
-
-											if ((!already_explored) && (lvl < level) )	{
-												//	std::cout << " \n \n \ learn val	 : " << val << std::endl;
-												if (!visitedLowerBounds.fast_contain(var))
-													visitedLowerBounds.fast_add(var);
-												visitedLowerBoundvalues[var]= val;
-											}
-
-
-
-										}
-									}
-									//todo should be search_root!
-									if (!already_explored)
-										//todo should be search_root!
-										if(		lvl > 0 )
-											if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
-												//Sould be done later!
-												/*
-								if(lit_activity) {
-									//lit_activity[q] += 0.5 * parameters.activity_increment;
-									lit_activity[NOT(q)] += // 0.5 *
-											parameters.activity_increment;
-									var_activity[get_id_boolean_variable(q)] += parameters.activity_increment;
-								}
-												 */
-												visited.fast_add(get_id_boolean_variable(q));
-
-												if(lvl >= level) {
-													//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
-													// we'll need to replace 'a' by its parents since its level is too high
-													++pathC;
-													boolean_vairables_to_explore.add(get_id_boolean_variable(q));
-
-												} else {
-													// q's level is below the current level, we are not expending it further
-													learnt_clause.add(q);
-#ifdef 	_DEBUG_FD_NOGOOD
-													if(_DEBUG_FD_NOGOOD){
-														std::cout << " \n learn :  " <<x << "  = " << x.get_domain() << " ; assignment_level : " << assignment_level[x.id()]<< std::endl;
-													}
-#endif
-													if(lvl > backtrack_level)
-														backtrack_level = lvl;
-												}
-											}
+									treat_assignment_literal(&q);
 								}
 
 							}
