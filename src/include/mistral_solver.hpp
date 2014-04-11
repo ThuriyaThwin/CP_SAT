@@ -795,6 +795,7 @@ namespace Mistral {
     unsigned int generate_new_variable(DomainFaithfulnessConstraint * dom_constraint, int val, bool is_lb, int lvl , int range_id);
     void treat_bound_literal (Literal* lit);
     void treat_assignment_literal (Literal* lit);
+    void treat_explanation (Explanation* explanation,  Explanation::iterator start,Explanation::iterator end );
 //TODO declare them only when needen!
 //#ifdef _CHECK_NOGOOD
     //used to get the variable id of a lazily generated variable
@@ -832,7 +833,7 @@ namespace Mistral {
 //    inline int get_varID_from_index(int index) {return (index<start_from ? index : variables.size -1); }
     inline int get_varID_from_index(int index) {return index;}
 
-    void treat_explanation(Explanation::iterator & lit, Explanation::iterator & stop, int& pathC );
+    //void treat_explanation(Explanation::iterator & lit, Explanation::iterator & stop, int& pathC );
 
     BranchingHeuristic *heuristic_factory(std::string var_ordering, std::string branching, const int randomness=1);
     // {

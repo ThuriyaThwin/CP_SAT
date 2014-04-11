@@ -13086,6 +13086,30 @@ if( !visited.fast_contain(tmp__id) ) {
 }
 
 }
+
+
+
+void Mistral::Solver::treat_explanation (Explanation* explanation,  Explanation::iterator start,Explanation::iterator end ){
+	Literal q;
+	while(start < end) {
+		q = *start;
+		++start;
+#ifdef 	_DEBUG_FD_NOGOOD
+		if(_DEBUG_FD_NOGOOD){
+			std::cout << " q : "<< q << std::endl;
+		}
+#endif
+		//	std::cout << " q : "<< q << std::endl;
+		if (is_a_bound_literal(q))
+		{
+			treat_bound_literal(&q);
+		}
+		else{
+			treat_assignment_literal(&q);}
+	}
+
+}
+
 void Mistral::Solver::clean_fdlearn() {
 
 
@@ -13326,22 +13350,9 @@ void Mistral::Solver::clean_fdlearn() {
 
 
 #endif
-					while(tmp < stop) {
-						q = *tmp;
-						++tmp;
-#ifdef 	_DEBUG_FD_NOGOOD
-						if(_DEBUG_FD_NOGOOD){
-							std::cout << " q : "<< q << std::endl;
-						}
-#endif
-						//	std::cout << " q : "<< q << std::endl;
-						if (is_a_bound_literal(q))
-						{
-							treat_bound_literal(&q);
-						}
-						else{
-							treat_assignment_literal(&q);}
-					}
+
+					treat_explanation(current_explanation, lit, stop);
+
 					while (bound_literals_to_explore.size)
 					{
 						//should be checked
@@ -13381,53 +13392,13 @@ void Mistral::Solver::clean_fdlearn() {
 							//Note that we do not need the level here ! I should remove that later
 							Explanation::iterator start_tmp_iterator = bound_explanation->get_reason_for(q, level, end_tmp_iterator);
 
-							tmp = start_tmp_iterator;
+							treat_explanation(bound_explanation, start_tmp_iterator, end_tmp_iterator);
 
-							while(tmp < end_tmp_iterator) {
-
-								q = *tmp;
-								++tmp;
-#ifdef 	_DEBUG_FD_NOGOOD
-								if(_DEBUG_FD_NOGOOD){
-									std::cout << " q : "<< q << std::endl;
-								}
-#endif
-								//	std::cout << " q : "<< q << std::endl;
-								if (is_a_bound_literal(q))
-								{
-									treat_bound_literal(&q);
-								}
-								else{
-									treat_assignment_literal(&q);
-								}
-
-							}
 						}
 
 					}
 				}
 			}
-			/*
-			//			if( pathC > 0 )
-			//check index!
-			while(!visited.fast_contain(sequence[++index].id())) {
-
-				//	std::cout << " c new index " <<  index << std::endl;
-
-				//	std::cout << " c sequence[++index].id() == " <<  sequence[index].id() << std::endl;
-
-#ifdef _DEBUG_NOGOOD
-				if(_DEBUG_NOGOOD) {
-					if(index >= variables.size-1) {
-						std::cout << "reached the end of the stack!!" << std::endl;
-					}
-				}
-#endif
-
-			};
-			 */
-
-
 
 			if (boolean_vairables_to_explore.size>0)
 			{
