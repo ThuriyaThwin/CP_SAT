@@ -13325,7 +13325,6 @@ void Mistral::Solver::clean_fdlearn() {
 						Literal old = q;
 #endif
 
-
 						current_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->reason_for(q) ;
 						graph_size++;
 #ifdef 	_DEBUG_FD_NOGOOD
@@ -13339,20 +13338,15 @@ void Mistral::Solver::clean_fdlearn() {
 #endif
 						if(current_explanation)
 						{
-
 #ifdef 	_DEBUG_FD_NOGOOD
 							if(_DEBUG_FD_NOGOOD){
 								std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
 							}
 #endif
-
 							//Note that we do not need the level here ! I should remove that later
 							start = current_explanation->get_reason_for(q, level, end);
-
 							treat_explanation(current_explanation, start, end);
-
 						}
-
 					}
 				}
 			}
@@ -13370,12 +13364,8 @@ void Mistral::Solver::clean_fdlearn() {
 				}
 
 				x = variables[a];
-				//			if( pathC > 0 ) {
-				//		x = sequence[index];
 				a = x.id();
-				//  p = ((2*a) | (x.get_min()));
 				p= encode_boolean_variable_as_literal(x.id(),x.get_min() );
-				//		p = ((2*a) | (x.get_min())) + start_from;
 				lvl = assignment_level[a];
 				/*
 				std::cout << " we will explore the variable  " << x << std::endl;
@@ -13386,21 +13376,12 @@ void Mistral::Solver::clean_fdlearn() {
 				//std::cout << " explore the variable x " << x << std::endl;
 						std::cout << " pathC " << pathC << std::endl;
 				 */
-				//	}
-				//		if( pathC > 0 ) {
 
-				// there are still atoms to expend, we start with 'a'
-
-				// EXPL
 				current_explanation = reason_for[a];
-
-				//				std::cout << " reason_for[a] " << reason_for[a] << std::endl;
-
-				//		current_explanation = jsp_reason_for[a-start_from];
 				visited.fast_add(a);
 				//		}
 			}
-			else //if (pathC==0)
+			else
 			{
 				//TODO check if we can have paTHC=0 + give explanation in a failure on ExplainedContDisjunctioReif
 				std::cout << "\n \n \n PatyhC == 0 !!!!! " << pathC << std::endl;
@@ -13503,13 +13484,13 @@ void Mistral::Solver::clean_fdlearn() {
 
 		if (parameters.reduce_learnt_clause){
 			if (learnt_clause.size != 1){
-			//	std::cout << "reducing clause  "  << learnt_clause <<  std::endl;
+				//	std::cout << "reducing clause  "  << learnt_clause <<  std::endl;
 
-		//		std::cout << "  \n clause being reduced from  \n "  << learnt_clause.size ;
+				//		std::cout << "  \n clause being reduced from  \n "  << learnt_clause.size ;
 				reduce_clause(old_generation_size);
 
 				//std::cout << "reduced clause \n "  << learnt_clause <<  std::endl;
-		//		std::cout << " to "  << learnt_clause.size <<  std::endl;
+				//		std::cout << " to "  << learnt_clause.size <<  std::endl;
 #ifdef _CHECK_NOGOOD
 				//	if (graph_size <35)
 				{
