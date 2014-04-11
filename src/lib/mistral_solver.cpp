@@ -13946,10 +13946,13 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning_with_conve
 
 		if (parameters.reduce_learnt_clause){
 			if (learnt_clause.size != 1){
-				//std::cout << "reducing clause  "  << learnt_clause <<  std::endl;
+			//	std::cout << "reducing clause  "  << learnt_clause <<  std::endl;
+
+		//		std::cout << "  \n clause being reduced from  \n "  << learnt_clause.size ;
 				reduce_clause(old_generation_size);
 
 				//std::cout << "reduced clause \n "  << learnt_clause <<  std::endl;
+		//		std::cout << " to "  << learnt_clause.size <<  std::endl;
 #ifdef _CHECK_NOGOOD
 				//	if (graph_size <35)
 				{
@@ -16737,7 +16740,7 @@ void Mistral::Solver::reduce_clause(unsigned int old_generation_size){
 	Explanation* explanation;
 	int __size = tmp_learnt_clause.size;
 	learnt_clause.add(tmp_learnt_clause[0]);
-
+	int id_range, val_range;
 	for (int i = 1; i< __size; ++i)
 	{
 		explored_so_far = true;
@@ -16748,10 +16751,8 @@ void Mistral::Solver::reduce_clause(unsigned int old_generation_size){
 
 			std::cout << " Cant't be a_bound_literal " << std::endl;
 			exit(1);
-			explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->reason_for(q) ;
-
-			start_tmp_iterator = explanation->get_reason_for(under_exploration, level, end_tmp_iterator);
 		}
+
 		else {
 
 
@@ -16774,39 +16775,11 @@ void Mistral::Solver::reduce_clause(unsigned int old_generation_size){
 				//		std::cout << " yes :  " << get_id_boolean_variable(under_exploration) << std::endl;
 
 
-				//if (id < variables.size)
+				if (end_tmp_iterator== (start_tmp_iterator+1))
 				{
-
-					int id_range = 	varsIds_lazy[get_id_boolean_variable(under_exploration) - initial_variablesize];
-					int val_range = value_lazy[get_id_boolean_variable(under_exploration) - initial_variablesize];
-
-					//	std::cout << " OK : id_range = " << id_range << std::endl;
-					//	std::cout << " OK : val_range = " << val_range << std::endl;
-					int val = 0;
-					if (SIGN(NOT(under_exploration))){
-						val= val_range;
-						//			std::cout << " Bound literal associated to :  " << variables[id_range] << " <=  " << val_range <<  std::endl;
-
-					}
-					else{
-						val = val_range+1;
-						//			std::cout << " Bound literal associated to :  " << variables[id_range] << " >=  " << val_range+1 <<  std::endl;
-					}
-
-
 					q = *start_tmp_iterator;
-					if((end_tmp_iterator== (start_tmp_iterator+1)) && is_a_bound_literal(q)) {
+					if(is_a_bound_literal(q)) {
 
-						//			std::cout << " replacing :  " << get_id_boolean_variable(under_exploration) << std::endl;
-
-						//	else{
-						//					std::cout << " end_tmp_iterator== start_tmp_iterator+1)  " << std::endl;
-						//					exit(1);
-						//	}
-
-
-						q = *start_tmp_iterator;
-						//			++start_tmp_iterator;
 #ifdef 	_DEBUG_FD_NOGOOD
 						if(_DEBUG_FD_NOGOOD){
 							std::cout << " q : "<< q << std::endl;
@@ -16869,7 +16842,7 @@ void Mistral::Solver::reduce_clause(unsigned int old_generation_size){
 
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-						int id_range = get_variable_from_literal(q);
+						id_range = get_variable_from_literal(q);
 
 						if ((is_lower_bound(q)))
 						{
@@ -16882,15 +16855,42 @@ void Mistral::Solver::reduce_clause(unsigned int old_generation_size){
 						}
 #endif
 
-						explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->reason_for(q) ;
-						start_tmp_iterator = explanation->get_reason_for(q, level, end_tmp_iterator);
 
+						id_range = 	varsIds_lazy[get_id_boolean_variable(under_exploration) - initial_variablesize];
+						val_range = value_lazy[get_id_boolean_variable(under_exploration) - initial_variablesize];
+
+						//	std::cout << " OK : id_range = " << id_range << std::endl;
+						//	std::cout << " OK : val_range = " << val_range << std::endl;
+						//int val = 0;
+						if (SIGN(NOT(under_exploration))){
+							//val= val_range;
+
+							//			std::cout << " Bound literal associated to :  " << variables[id_range] << " <=  " << val_range <<  std::endl;
+
+						}
+						else{
+							++val_range;
+							//	val = val_range+1;
+							//			std::cout << " Bound literal associated to :  " << variables[id_range] << " >=  " << val_range+1 <<  std::endl;
+						}
+
+
+
+						//			std::cout << " replacing :  " << get_id_boolean_variable(under_exploration) << std::endl;
+
+						//	else{
+						//					std::cout << " end_tmp_iterator== start_tmp_iterator+1)  " << std::endl;
+						//					exit(1);
 						//	}
-						/*			else{
-					std::cout << " not bound !  " << std::endl;
-					exit(1);
-				}
-						 */
+
+						if ((id_range == get_variable_from_literal(q)) ){
+							if (val_range==get_value_from_literal(q))
+							{
+								explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->reason_for(q) ;
+								start_tmp_iterator = explanation->get_reason_for(q, level, end_tmp_iterator);
+							}
+
+						}
 					}
 				}
 			}
