@@ -789,6 +789,7 @@ namespace Mistral {
     void learn_with_lazygeneration_and_semantic_learning2();
     void learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables();
     void learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables2();
+    void clean_fdlearn();
 //TODO declare them only when needen!
 //#ifdef _CHECK_NOGOOD
     //used to get the variable id of a lazily generated variable
