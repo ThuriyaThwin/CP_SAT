@@ -13200,8 +13200,6 @@ void Mistral::Solver::clean_fdlearn() {
 			std::cout << "Should be UNSAT! " << std::endl;
 			exit (1);
 		}
-		Explanation *bound_explanation;
-
 		// Variable *scope = culprit.get_scope();
 		// int arity = culprit.arity();
 		// for(int i=0; i<arity; ++i) {
@@ -13228,6 +13226,10 @@ void Mistral::Solver::clean_fdlearn() {
 		unsigned int range_id;
 
 		unsigned int tmp__id;
+
+
+		Explanation::iterator end;
+		Explanation::iterator start ;
 		do {
 
 
@@ -13238,7 +13240,6 @@ void Mistral::Solver::clean_fdlearn() {
 
 			if(a == NULL_ATOM || assignment_level[a]) {
 
-				Explanation::iterator stop;
 				/*			std::cout << "?? current_explanation == NULL "  << std::endl;
 			std::cout << "a =  "<< a << std::endl;
 			std::cout << "NULL_ATOM =  "<< NULL_ATOM << std::endl;
@@ -13249,44 +13250,7 @@ void Mistral::Solver::clean_fdlearn() {
 
 				if(current_explanation == NULL) {
 					std::cout << "?? current_explanation == NULL "  << std::endl;
-					std::cout << "pathC =  "<< pathC << std::endl;
-					std::cout << "id of the variable =  "<< a << std::endl;
-					std::cout << " variable[id] =  "<< variables[a] << std::endl;
-					//	std::cout << " min =  "<< variables[a].get_min() << std::endl;
-					//	std::cout << " max =  "<< variables[a].get_max() << std::endl;
-					std::cout << " domain =  "<< variables[a].get_domain() << std::endl;
-					std::cout << " reason_for =  "<< reason_for[a] << std::endl;
-					std::cout << "its literal without negation =  "<< encode_boolean_variable_as_literal(a, variables[a].get_min() ) << std::endl;
-					std::cout << " the value of NULL_ATOM is "<< NULL_ATOM << std::endl;
-					std::cout << " assignment_level "  << assignment_level[a] << std::endl;
-					std::cout << "  currentlevel "  << level << std::endl;
-					std::cout << "  current decisions "  << decisions << std::endl;
-					std::cout << "  current sequence "  << sequence << std::endl;
-
 					exit (1);
-					/*
-					if (assignment_level[a]!= INFTY)
-					{
-						p = ((2*a) | (x.get_min())) + start_from;
-
-						visited.fast_add(a);
-
-						learnt_clause.add(NOT(p));
-
-						if(assignment_level[a] > backtrack_level)
-							backtrack_level = assignment_level[a];
-
-					}
-					else {
-
-
-						//				std::cout << "NULL POINTER!!! " << (statistics.num_filterings) << std::endl;
-						//				std::cout << "a =  "<< a << std::endl;
-						//				std::cout << "assignment_level[a] =  "<< assignment_level[a] << std::endl;
-
-						exit(1);
-					}
-					 */
 				}
 				else{
 
@@ -13298,9 +13262,9 @@ void Mistral::Solver::clean_fdlearn() {
 					store_reason(current_explanation, a);
 #endif
 
-					Explanation::iterator lit = current_explanation->get_reason_for(a, (a != NULL_ATOM ? assignment_level[a] : level), stop);
+					start = current_explanation->get_reason_for(a, (a != NULL_ATOM ? assignment_level[a] : level), end);
 					graph_size++;
-					tmp = lit;
+					tmp = start;
 					bound_literals_to_explore.clear();
 
 #ifdef 	_DEBUG_FD_NOGOOD
@@ -13351,7 +13315,7 @@ void Mistral::Solver::clean_fdlearn() {
 
 #endif
 
-					treat_explanation(current_explanation, lit, stop);
+					treat_explanation(current_explanation, start, end);
 
 					while (bound_literals_to_explore.size)
 					{
@@ -13360,16 +13324,9 @@ void Mistral::Solver::clean_fdlearn() {
 #ifdef _TRACKING_BOUND
 						Literal old = q;
 #endif
-						/*
-						if ( static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->first_time_visited(is_lower_bound(q)) )
-						{
-							if (is_lower_bound(q))
-								Visited_lower_bound_variables.add(static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain));
-							else
-								Visited_upper_bound_variables.add(static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain));
-						}
-						 */
-						bound_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->reason_for(q) ;
+
+
+						current_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->reason_for(q) ;
 						graph_size++;
 #ifdef 	_DEBUG_FD_NOGOOD
 						if(_DEBUG_FD_NOGOOD){
@@ -13380,7 +13337,7 @@ void Mistral::Solver::clean_fdlearn() {
 							std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 						}
 #endif
-						if(bound_explanation)
+						if(current_explanation)
 						{
 
 #ifdef 	_DEBUG_FD_NOGOOD
@@ -13388,11 +13345,11 @@ void Mistral::Solver::clean_fdlearn() {
 								std::cout << " \n \n  new explanation coming from : " << bound_explanation << std::endl;
 							}
 #endif
-							Explanation::iterator end_tmp_iterator;
-							//Note that we do not need the level here ! I should remove that later
-							Explanation::iterator start_tmp_iterator = bound_explanation->get_reason_for(q, level, end_tmp_iterator);
 
-							treat_explanation(bound_explanation, start_tmp_iterator, end_tmp_iterator);
+							//Note that we do not need the level here ! I should remove that later
+							start = current_explanation->get_reason_for(q, level, end);
+
+							treat_explanation(current_explanation, start, end);
 
 						}
 
