@@ -382,6 +382,8 @@ namespace Mistral {
   class Goal;
   class VariableImplementation;
   class ConstraintClauseBase;
+
+//  class DomainFaithfulness;
   class Solver : public Environment {
 
   public:
@@ -790,6 +792,9 @@ namespace Mistral {
     void learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables();
     void learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables2();
     void clean_fdlearn();
+    unsigned int generate_new_variable(DomainFaithfulnessConstraint * dom_constraint, int val, bool is_lb, int lvl , int range_id);
+    void treat_bound_literal (Literal* lit);
+    void treat_assignment_literal (Literal* lit);
 //TODO declare them only when needen!
 //#ifdef _CHECK_NOGOOD
     //used to get the variable id of a lazily generated variable
