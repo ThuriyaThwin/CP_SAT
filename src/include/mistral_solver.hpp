@@ -782,7 +782,7 @@ namespace Mistral {
 	Vector <Atom > boolean_vairables_to_explore;
 
 	//reduce clause after learning
-	void reduce_clause( Vector < Literal >& clause);
+	void reduce_clause(unsigned int old_generation_size= 0);
 
     void learn_with_lazygeneration_no_bound_at_the_end();
     void learn_with_lazygeneration_and_semantic_learning();
