@@ -17093,13 +17093,13 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 	tmpclause.add (tmp);
 
-	Clause *cl = (Clause*)(Clause::Array_new(tmpclause));
+	//Clause *cl = (Clause*)(Clause::Array_new(tmpclause));
 
 
 
 	if (latestindex_lb >= index_lb && latestindex_lb < ub.size )
-		//		if(_x->set_min(ub[latestindex_lb].value +1  ,this ) == FAIL_EVENT) wiped = FAILURE(0);
-		if(_x->set_min(ub[latestindex_lb].value +1  ,cl ) == FAIL_EVENT) {
+//		if(_x->set_min(ub[latestindex_lb].value +1  ,cl ) == FAIL_EVENT) {
+		if(_x->set_min(ub[latestindex_lb].value +1  ,this ) == FAIL_EVENT) {
 			wiped = FAILURE(0);
 			if (
 					_ub <
@@ -17133,11 +17133,11 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 
 	tmpclause.add(tmp);
 
-	cl = (Clause*)(Clause::Array_new(tmpclause));
+	//cl = (Clause*)(Clause::Array_new(tmpclause));
 
 	if (latestindex_ub <= index_ub && latestindex_ub >=0 )
-		//	if(_x->set_max(ub[latestindex_ub].value ,this ) == FAIL_EVENT) wiped = FAILURE(0);
-		if(_x->set_max(ub[latestindex_ub].value ,cl ) == FAIL_EVENT) {
+//		if(_x->set_max(ub[latestindex_ub].value ,cl ) == FAIL_EVENT) {
+		if(_x->set_max(ub[latestindex_ub].value ,this ) == FAIL_EVENT) {
 			wiped = FAILURE(0);
 
 			if (
@@ -17297,14 +17297,60 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 			}
 #endif
 
-			std::cout <<" \n \n is_a_bound_literal? "  << std::endl;
+		//	std::cout <<" \n \n is_a_bound_literal? "  << std::endl;
+
+			int val = get_value_from_literal(a);
+
+			if (is_lower_bound(a))
+				--val;
+
+			int var = value_exist(val);
+			Explanation * e = get_solver()->reason_for[var];
+
+			//Note that we do not need the level here ! I should remove that later
+			return e->get_reason_for(var, lvl, end);
+
+			/*if (is_upper_bound(a)){
+				for (int i = 0; i<ub.size; ++i ){
+
+					if (ub[i].value == val){
+
+						int var = scope[ub[i].idx].id();
+						Explanation * e = get_solver()->reason_for[var];
+
+						//Note that we do not need the level here ! I should remove that later
+						return e->get_reason_for(var, lvl, end);
+					}
+				}
+				std::cout <<" \n \n value not found ? "  << std::endl;
+				exit(1);
+			}
+			else
+			{
+
+				for (int i = 0; i<ub.size; ++i ){
+
+					if (ub[i].value == (val-1)){
+
+						int var = scope[ub[i].idx].id();
+						Explanation * e = get_solver()->reason_for[var];
+
+						//Note that we do not need the level here ! I should remove that later
+						return e->get_reason_for(var, lvl, end);
+					}
+				}
+				std::cout <<" \n \n value not found ? "  << std::endl;
+				exit(1);
+
+			}
+*/
 			/*
 			if (is_lower_bound(a))
 				id = value_exist(get_value_from_literal(a) -1 );
 			else
 				id = value_exist(get_value_from_literal(a));
 			 */
-			exit(1);
+			//exit(1);
 		}
 
 		//		int id = a/2 ;
