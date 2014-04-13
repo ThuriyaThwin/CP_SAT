@@ -1517,7 +1517,8 @@ int Mistral::Solver::lazy_declare(Variable x) {
       }
     }
   }
-  constraint_graph.back().initialise(4);
+  //constraint_graph.back().initialise(4);
+  constraint_graph.back().initialise_list(_VALUE_,2);
 
 
   // while(lit_activity.capacity < 2*variables.size)

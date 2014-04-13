@@ -116,6 +116,12 @@ void Mistral::ConstraintTriggerArray::initialise(const int size) {
   for(int i=0; i<3; ++i) on[i].initialise(size);
 }
 
+void Mistral::ConstraintTriggerArray::initialise_list(int k, const int size) {
+  //for(int i=0; i<3; ++i) on[i].initialise(size);
+	on[k].initialise(size);
+
+}
+
 Mistral::ConstraintTriggerArray::~ConstraintTriggerArray() {
 #ifdef _DEBUG_MEMORY
   std::cout << "c delete constraint trigger array" << std::endl;

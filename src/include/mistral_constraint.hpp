@@ -376,6 +376,7 @@ namespace Mistral {
     ConstraintTriggerArray() ;
     ConstraintTriggerArray(const int size) ;
     void initialise(const int size) ;
+    void initialise_list(int k, const int size);
 
     virtual ~ConstraintTriggerArray() ;
 
