@@ -611,7 +611,7 @@ void Mistral::ConstraintClauseBase::extend_scope(Variable x){
 	std:: cout << "changes.index_capacity " << changes.index_capacity << std::endl;
 	std:: cout << "changes " << changes << std::endl;
 	 */
-	if ((changes.list_capacity < scope.size) || (changes.index_capacity < scope.size))
+	if ((changes.list_capacity < scope.size) || (changes.index_capacity < scope.size)){
 		changes.extend_lists();
 	/*
 	std:: cout << " \n After : scope.size " << scope.size << std::endl;
@@ -623,11 +623,13 @@ void Mistral::ConstraintClauseBase::extend_scope(Variable x){
 
 
 
-	events.size = changes.size;
+	//events.size = changes.size;
 	events.index_capacity = changes.index_capacity;
 	events.list_capacity = changes.list_capacity;
 	events.list_ = changes.list_;
 	events.index_ = changes.index_;
+	}
+
 	//	events.start_ = changes.start_;
 
 	if (events.start_){

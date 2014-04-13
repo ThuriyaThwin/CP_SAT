@@ -803,8 +803,8 @@ namespace Mistral {
 	Vector<unsigned int> value_lazy ;
 //#endif
 
-	Vector<Literal> graph_premise ;
-	Vector<Literal> graph_implied;
+	//Vector<Literal> graph_premise ;
+	//Vector<Literal> graph_implied;
 
 	BitSet visitedUpperBounds;
 	BitSet visitedLowerBounds;
