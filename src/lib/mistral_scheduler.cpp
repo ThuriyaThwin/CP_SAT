@@ -3121,6 +3121,8 @@ void SchedulingSolver::dichotomic_search()
 			  for (int i = 0; i < start_from; ++i)
 				  (static_cast<VariableRangeWithLearning*> (variables[i].range_domain))->domainConstraint->start_over();
 
+			  //TODO
+			  //variables[i].free_object();?
 
 		  }
 		  else{
