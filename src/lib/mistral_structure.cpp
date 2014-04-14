@@ -125,9 +125,10 @@ void Mistral::IntStack::extend_lists()
 
 	delete [] list_;
 	list_ = new int[list_capacity];
-	delete [] index_;
-	index_ =  new unsigned int[index_capacity];
+	delete [] start_;
+	start_ =  new unsigned int[index_capacity];
 
+	index_ = start_ ;
 
 	for(int i=0; i<index_capacity; ++i)
 	{
