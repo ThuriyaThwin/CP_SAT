@@ -17084,14 +17084,13 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 		}
 } */
 	//Preparing the explanation
-	Vector < Literal > tmpclause ;
+	/*Vector < Literal > tmpclause ;
 
 	if (latestindex_lb < ub.size)
-		//	tmp = 	2*  ub[latestindex_lb].x.id() +1;
-//		tmp = ((Solver *) solver)->encode_boolean_variable_as_literal(ub[latestindex_lb].x.id(),1);
 		tmp = ((Solver *) solver)->encode_boolean_variable_as_literal(scope[ub[latestindex_lb].idx].id(),1);
 
 	tmpclause.add (tmp);
+	*/
 
 	//Clause *cl = (Clause*)(Clause::Array_new(tmpclause));
 
@@ -17124,7 +17123,7 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 			return wiped;
 		}
 
-	tmpclause.clear();
+	/*tmpclause.clear();
 
 	if (latestindex_ub >= 0 &&  latestindex_ub < ub.size)
 		//tmp = 	2*  ub[latestindex_ub].x.id();
@@ -17132,6 +17131,7 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 		tmp = ((Solver *) solver)->encode_boolean_variable_as_literal( scope[ub[latestindex_ub].idx].id(),0);
 
 	tmpclause.add(tmp);
+*/
 
 	//cl = (Clause*)(Clause::Array_new(tmpclause));
 
