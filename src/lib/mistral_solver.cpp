@@ -11634,22 +11634,23 @@ void Mistral::Solver::treat_assignment_literal(Literal* lit){
 		std::cout << " \n ERROR : the level of the literal q is > level. i.e. lvl = "<< lvl << " and level = " << level<< std::endl;
 		exit(1);
 	}
-	if ((x.get_size()>1) )
+	if ((variables[x].get_size()>1) )
 	{
-		std::cout << " \n nota assigned error!!  boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+		std::cout << " \n not assigned error!!  boolean literal s.t. its variable is" << variables[x] << " ;  its domain is " << variables[x].get_domain() << " and its assignment_level : " << assignment_level[x] << std::endl;
 		exit(1);
 	}
 
-	if ((a != x.id()) && x.get_min()== SIGN(q))
+	if (variables[x].get_min()== SIGN(q))
 	{
-		std::cout << " \n (x.get_min()== SIGN(q))" << x << "  and its domain is " << x.get_domain() << " ; its assignment_level : " << assignment_level[x.id()] << " ; while the literal q = " << q << std::endl;
+		std::cout << " \n (x.get_min()== SIGN(q))" << variables[x] << "  ; its domain is " << variables[x].get_domain() << " ; its assignment_level : " << assignment_level[x] << " ; while the literal q = " << q << std::endl;
 		exit(1);
 	}
 #endif
 
 	int id__ = get_id_boolean_variable(q);
 	already_explored = false;
-	if (id__ >= initial_variablesize){
+
+	if ((id__ >= initial_variablesize) && (lvl < level)){
 
 		var = 	varsIds_lazy[id__ - initial_variablesize];
 		val = value_lazy[id__ - initial_variablesize];
@@ -11720,9 +11721,9 @@ void Mistral::Solver::treat_assignment_literal(Literal* lit){
 		}
 	}
 	//todo should be search_root!
-	if (!already_explored)
+	//if (!already_explored)
 		//todo should be search_root!
-		if(		lvl > 0 )
+	else	if(		lvl > 0 )
 			if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
 				//Sould be done later!
 				/*
@@ -11777,7 +11778,7 @@ void Mistral::Solver::treat_bound_literal (Literal* lit){
 		{
 			std::cout << "\n \n \n \n \n                        FUTURE PROBLEM  "<< std::endl;
 			std::cout << "\n is_lower_bound  "<< std::endl;
-			std::cout << " Problem comes from : "<< current_explanation << std::endl;
+		//	std::cout << " Problem comes from : "<< current_explanation << std::endl;
 			std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
 			std::cout << " value: "<<  get_value_from_literal(q) << std::endl;
 
@@ -11792,7 +11793,7 @@ void Mistral::Solver::treat_bound_literal (Literal* lit){
 		{
 			std::cout << "\n \n \n \n \n                        FUTURE PROBLEM  "<< std::endl;
 			std::cout << "\n is_upper_bound  "<< std::endl;
-			std::cout << " Problem comes from : "<< current_explanation << std::endl;
+		//	std::cout << " Problem comes from : "<< current_explanation << std::endl;
 			std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
 			std::cout << " value: "<<  get_value_from_literal(q) << std::endl;
 
@@ -11879,7 +11880,7 @@ if (lvl>0){
 			//std::cout << " \n \n sequence capacity before  " << sequence.capacity << std::endl;
 
 			dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
-			unsigned int tmp__id = -1;
+			int tmp__id = -1;
 			if (!is_lb)
 				tmp__id = dom_constraint->value_exist( val ) ;
 			else
@@ -11898,15 +11899,16 @@ if (lvl>0){
  */
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+			if (tmp__id>0)
 			if ( assignment_level[ tmp__id ] != lvl)
 			{
-				std::cout << " ERROR : \n assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
+				std::cout << " ERROR : \n assignment_level[var] " <<  assignment_level[ tmp__id ] << std::endl;
 				std::cout << " lvl " <<  lvl << std::endl;
-				std::cout << " \n \n VVV tmp__ Domain " << tmp__.get_domain() << std::endl;
-				std::cout << " tmp__.id() " << tmp__.id() << std::endl;
+				std::cout << " \n \n VVV tmp__ Domain " << variables[tmp__id].get_domain() << std::endl;
+				std::cout << " tmp__.id() " << tmp__id << std::endl;
 				std::cout << " var  " << var<< std::endl;
-				std::cout << " reason_for[var] " << reason_for[ tmp__.id() ] << std::endl;
-				std::cout << " assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
+				std::cout << " reason_for[var] " << reason_for[ tmp__id ] << std::endl;
+				std::cout << " assignment_level[var] " <<  assignment_level[ tmp__id] << std::endl;
 				std::cout << " lvl " <<  lvl << std::endl;
 
 				std::cout << " current level  " <<  level << std::endl;
@@ -11914,7 +11916,8 @@ if (lvl>0){
 				exit (1);
 
 			}
-			if (! tmp__.is_ground())
+			if (tmp__id > 0)
+			if (! variables[tmp__id].is_ground())
 			{
 				std::cout << " ERROR : \n not ground !! " << std::endl;
 				//std::cout << " lvl " <<  lvl << std::endl;
@@ -12304,7 +12307,7 @@ void Mistral::Solver::clean_fdlearn() {
 
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-					if(tmp >= stop)
+					if(tmp >= end)
 					{
 						std::cout << " tmp >= stop \n"  ;
 						exit(1);
@@ -12321,7 +12324,7 @@ void Mistral::Solver::clean_fdlearn() {
 						int level__ ;
 						Explanation::iterator tmp__iterator = tmp;
 
-						while(tmp__iterator < stop) {
+						while(tmp__iterator < end) {
 							q = *tmp__iterator;
 							++tmp__iterator;
 							if (get_id_boolean_variable(q)!=a){

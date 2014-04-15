@@ -83,7 +83,7 @@ namespace Mistral {
     static const int nia = 23;
     static const char* int_ident[nia];
     
-    static const int nsa = 11;
+    static const int nsa = 12;
     static const char* str_ident[nsa];
     
     
@@ -122,6 +122,7 @@ namespace Mistral {
     double Decay;
 
     std::string Policy;
+    std::string BandBPolicy;
     std::string Heuristic;
     std::string Type; 
     std::string Value;
@@ -132,6 +133,7 @@ namespace Mistral {
     std::string Presolve;
 
     int PolicyRestart;
+    int BandBPolicyRestart;
     int FD_learning;
     int reduce_clauses;
     int forgetall;

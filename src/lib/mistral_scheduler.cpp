@@ -261,8 +261,8 @@ const char* ParameterList::int_ident[ParameterList::nia] =
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
   {"-heuristic", "-restart", "-factor", "-decay", "-type", 
-   "-value", "-dvalue", "-ivalue", "-objective", 
-   "-algo", "-presolve"};
+   "-value", "-dvalue", "-ivalue", "-objective", "-algo",
+   "-presolve", "-bandbrestart"};
 
 
 // ParameterList::ParameterList() {
@@ -324,6 +324,7 @@ ParameterList::ParameterList(int length, char **commandline) {
 
 //  Policy    = "geom";
   Policy    = "geom";
+  BandBPolicy    = "geom";
   Factor    = 1.3;
   Decay     = 0.0;
   Value     = "guided";
@@ -335,6 +336,7 @@ ParameterList::ParameterList(int length, char **commandline) {
 
   Heuristic = "none";
   PolicyRestart = GEOMETRIC;
+  BandBPolicyRestart = GEOMETRIC;
   FixTasks  = 0;
   NgdType   = 2;
   OrderTasks = 1;
@@ -417,6 +419,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(strcmp(str_param[8 ],"nil")) Objective  = str_param[8];
   if(strcmp(str_param[9 ],"nil")) Algorithm  = str_param[9 ];
   if(strcmp(str_param[10],"nil")) Presolve   = str_param[10];
+  if(strcmp(str_param[11 ],"nil")) BandBPolicy     = str_param[11];
 
 }
 
@@ -436,6 +439,13 @@ void ParameterList::initialise(SchedulingSolver *s) {
     PolicyRestart = GEOMETRIC;
   else
     PolicyRestart = NORESTART;
+
+  if(BandBPolicy == "luby")
+	  BandBPolicyRestart = LUBY;
+  else if(BandBPolicy == "geom")
+	  BandBPolicyRestart = GEOMETRIC;
+  else
+	  BandBPolicyRestart = NORESTART;
 }
 
 
@@ -452,7 +462,8 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | time cutoff " << ":" << std::right << std::setw(15) << Cutoff << " |" << std::endl;
   os << std::left << std::setw(30) << " c | node cutoff " << ":" << std::right << std::setw(15) << NodeCutoff << " |" << std::endl;
   os << std::left << std::setw(30) << " c | dichotomy " << ":" << std::right << std::setw(15) << (Dichotomy ? "yes" : "no") << " |" << std::endl;
-  os << std::left << std::setw(30) << " c | restart policy " << ":" << std::right << std::setw(15) << Policy << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | Dicho restart policy " << ":" << std::right << std::setw(15) << Policy << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | B&B restart policy " << ":" << std::right << std::setw(15) << BandBPolicy << " |" << std::endl;
   os << std::left << std::setw(30) << " c | base " << ":" << std::right << std::setw(15) << Base << " |" << std::endl;
   os << std::left << std::setw(30) << " c | factor " << ":" << std::right << std::setw(15) << Factor << " |" << std::endl;
   os << std::left << std::setw(30) << " c | heuristic " << ":" << std::right << std::setw(15) << Heuristic << " (" << abs(Randomized) << ")" << " |" << std::endl;
@@ -3539,6 +3550,28 @@ void SchedulingSolver::branch_and_bound()
 	  while (__size--)
 		  base->remove(__size);
   }
+
+
+//  if (params->PolicyRestart==GEOMETRIC)
+//	 policy = new Geometric();
+//  else if (params->PolicyRestart==LUBY)
+
+  delete policy ;
+  if (params->BandBPolicyRestart==GEOMETRIC)
+	  policy = new Geometric();
+  else if (params->BandBPolicyRestart==LUBY)
+	  policy = new Luby();
+  else {
+	  std::cout << " RestartPolicy not found " << std::endl;
+	  exit(1);
+  }
+
+
+//  else {
+//	  std::cout << " RestartPolicy not found " << std::endl;
+//	  exit(1);
+//  }
+
 
   save();
   set_objective(stats->upper_bound-1);
