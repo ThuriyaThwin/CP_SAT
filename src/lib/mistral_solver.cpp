@@ -11879,104 +11879,107 @@ if (lvl>0){
 			//std::cout << " \n \n sequence capacity before  " << sequence.capacity << std::endl;
 
 			dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
-			unsigned int tmp__id;
+			unsigned int tmp__id = -1;
 			if (!is_lb)
-				var = dom_constraint->value_exist( val ) ;
+				tmp__id = dom_constraint->value_exist( val ) ;
 			else
-				var = dom_constraint->value_exist( val-1 ) ;
+				tmp__id = dom_constraint->value_exist( val-1 ) ;
 
+			/*
 			if ( var< 0)
 			{
-				tmp__id = generate_new_variable(dom_constraint, val, is_lb,  lvl, range_id );
+							tmp__id = generate_new_variable(dom_constraint, val, is_lb,  lvl, range_id );
 			}
-			else
+
+			if (var>0)
 			{
 				tmp__id= variables[var].id();
 			}
-
+ */
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-if ( assignment_level[ tmp__id ] != lvl)
-{
-	std::cout << " ERROR : \n assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
-	std::cout << " lvl " <<  lvl << std::endl;
-	std::cout << " \n \n VVV tmp__ Domain " << tmp__.get_domain() << std::endl;
-	std::cout << " tmp__.id() " << tmp__.id() << std::endl;
-	std::cout << " var  " << var<< std::endl;
-	std::cout << " reason_for[var] " << reason_for[ tmp__.id() ] << std::endl;
-	std::cout << " assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
-	std::cout << " lvl " <<  lvl << std::endl;
+			if ( assignment_level[ tmp__id ] != lvl)
+			{
+				std::cout << " ERROR : \n assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
+				std::cout << " lvl " <<  lvl << std::endl;
+				std::cout << " \n \n VVV tmp__ Domain " << tmp__.get_domain() << std::endl;
+				std::cout << " tmp__.id() " << tmp__.id() << std::endl;
+				std::cout << " var  " << var<< std::endl;
+				std::cout << " reason_for[var] " << reason_for[ tmp__.id() ] << std::endl;
+				std::cout << " assignment_level[var] " <<  assignment_level[ tmp__.id() ] << std::endl;
+				std::cout << " lvl " <<  lvl << std::endl;
 
-	std::cout << " current level  " <<  level << std::endl;
+				std::cout << " current level  " <<  level << std::endl;
 
-	exit (1);
+				exit (1);
 
-}
-if (! tmp__.is_ground())
-{
-	std::cout << " ERROR : \n not ground !! " << std::endl;
-	//std::cout << " lvl " <<  lvl << std::endl;
-	exit (1);
+			}
+			if (! tmp__.is_ground())
+			{
+				std::cout << " ERROR : \n not ground !! " << std::endl;
+				//std::cout << " lvl " <<  lvl << std::endl;
+				exit (1);
 
-}
+			}
 #endif
 
-//assignment_level[var]=lvl;
-//todo should be search_root!
-//if(	lvl)
-if( !visited.fast_contain(tmp__id) ) {
-	//Sould be done later!
-	/*
+			//assignment_level[var]=lvl;
+			//todo should be search_root!
+			//if(	lvl)
+			if (tmp__id>0)
+				if( !visited.fast_contain(tmp__id) ) {
+					//Sould be done later!
+					/*
 														if(lit_activity) {
 															//lit_activity[q] += 0.5 * parameters.activity_increment;
 															lit_activity[NOT(q)] += // 0.5 *
 																	parameters.activity_increment;
 															var_activity[get_id_boolean_variable(q)] += parameters.activity_increment;
 														}
-	 */
+					 */
 
 
-	visited.fast_add(tmp__id);
+					visited.fast_add(tmp__id);
 
-	//learnt_clause.add(encode_bool2*tmp__.id() + is_lb);
-	learnt_clause.add(encode_boolean_variable_as_literal(tmp__id, is_lb));
+					//learnt_clause.add(encode_bool2*tmp__.id() + is_lb);
+					//learnt_clause.add(encode_boolean_variable_as_literal(tmp__id, is_lb));
 #ifdef 	_DEBUG_FD_NOGOOD
-	if(_DEBUG_FD_NOGOOD){
-		std::cout << " \n learn :  " << encode_boolean_variable_as_literal(tmp__.id(), is_lb) << " : var  : " << tmp__ << " = " << tmp__.get_domain() ; //<< std::endl;
-		std::cout << " ---> corresponds to (nogood)  : " ;
-		std::cout << "\n is_a_bound_literal  "<< std::endl;
-		std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-		std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-		std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-	}
+					if(_DEBUG_FD_NOGOOD){
+						std::cout << " \n learn :  " << encode_boolean_variable_as_literal(tmp__.id(), is_lb) << " : var  : " << tmp__ << " = " << tmp__.get_domain() ; //<< std::endl;
+						std::cout << " ---> corresponds to (nogood)  : " ;
+						std::cout << "\n is_a_bound_literal  "<< std::endl;
+						std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+						std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+						std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+					}
 #endif
 
-	if(lvl > backtrack_level)
-		backtrack_level = lvl;
+		//			if(lvl > backtrack_level)
+		//				backtrack_level = lvl;
+				}
+
+			if (is_lb){
+
+				//	std::cout << " \n \n learn  val	 : " << val << std::endl;
+				if (!visitedLowerBounds.fast_contain(range_id))
+					visitedLowerBounds.fast_add(range_id);
+				visitedLowerBoundvalues[range_id]= val;
+
+			}
+			else
+			{
+				//	std::cout << " \n \n \ learn val	 : " << val << std::endl;
+				if (!visitedUpperBounds.fast_contain(range_id))
+					visitedUpperBounds.fast_add(range_id);
+				visitedUpperBoundvalues[range_id]= val;
+			}
 
 
-	if (is_lb){
-
-		//	std::cout << " \n \n learn  val	 : " << val << std::endl;
-		if (!visitedLowerBounds.fast_contain(range_id))
-			visitedLowerBounds.fast_add(range_id);
-		visitedLowerBoundvalues[range_id]= val;
-
-	}
-	else
-	{
-		//	std::cout << " \n \n \ learn val	 : " << val << std::endl;
-		if (!visitedUpperBounds.fast_contain(range_id))
-			visitedUpperBounds.fast_add(range_id);
-		visitedUpperBoundvalues[range_id]= val;
-	}
 
 
-}
-
-//std::cout << " \n \n sequence after " << sequence << std::endl;
-//std::cout << " \n \n sequence size after  " << sequence.size << std::endl;
-//std::cout << " \n \n sequence capacity after  " << sequence.capacity << std::endl;
+			//std::cout << " \n \n sequence after " << sequence << std::endl;
+			//std::cout << " \n \n sequence size after  " << sequence.size << std::endl;
+			//std::cout << " \n \n sequence capacity after  " << sequence.capacity << std::endl;
 
 
 		}
@@ -11987,6 +11990,126 @@ if( !visited.fast_contain(tmp__id) ) {
 
 }
 
+
+
+void Mistral::Solver::generate_variables(){
+
+	/*
+	std::cout << " \n \n is_lb : " << is_lb << std::endl;
+	std::cout << " var	 : " << var << std::endl;
+	std::cout << " val	 : " << val << std::endl;
+
+	std::cout << " visitedLowerBounds.fast_contain(var) : " << visitedLowerBounds.fast_contain(var) << std::endl;
+	std::cout << " visitedLowerBounds.  : " << visitedLowerBounds << std::endl;
+
+	std::cout << " visitedLowerBoundvalues[var] : " << visitedLowerBoundvalues[var] << std::endl;
+
+	std::cout << " \n \n is_lb : " << is_lb << std::endl;
+	std::cout << " var	 : " << var << std::endl;
+	std::cout << " val	 : " << val << std::endl;
+
+	std::cout << " visitedUpperBounds.fast_contain(var) : " << visitedUpperBounds.fast_contain(var) << std::endl;
+	std::cout << " visitedLowerBounds.  : " << visitedUpperBounds << std::endl;
+
+	std::cout << " visitedUpperBoundvalues[var] : " << visitedUpperBoundvalues[var] << std::endl;
+	 */
+
+
+
+
+
+	//std::cout << " \n \n \n  iterate " << std::endl;
+	int var = visitedLowerBounds.min();
+	int val, lvl , tmp_id;
+	VariableRangeWithLearning* __x;
+	for (int i = visitedLowerBounds.size() ; i>0; --i ){
+		//std::cout << "visitedLowerBounds [i]? " << min <<std::endl;
+
+		val = visitedLowerBoundvalues[var] ;
+		__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
+		lvl = __x->level_of(val,1);
+
+		tmp_id = __x->domainConstraint->value_exist( val-1 ) ;
+
+
+		if ( tmp_id< 0)
+		{
+
+			tmp_id= generate_new_variable(__x->domainConstraint, val, true, lvl, var);
+
+		}
+//		else
+//		{
+//			tmp_id= variables[var].id();
+//		}
+
+
+
+		learnt_clause.add(encode_boolean_variable_as_literal(tmp_id, 1));
+		var= visitedLowerBounds.next(var);
+
+
+		if(lvl > backtrack_level)
+			backtrack_level = lvl;
+	}
+
+	var = visitedUpperBounds.min();
+	for (int i = visitedUpperBounds.size() ; i>0; --i ){
+		//std::cout << "visitedLowerBounds [i]? " << min <<std::endl;
+
+		val = visitedUpperBoundvalues[var] ;
+		__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
+
+		lvl = __x->level_of(val,0);
+
+		tmp_id = __x->domainConstraint->value_exist( val) ;
+		if ( tmp_id< 0)
+		{
+			tmp_id= generate_new_variable(__x->domainConstraint, val, false, lvl, var);
+		}
+	//	else
+	//	{
+	//		tmp_id= variables[var].id();
+	//	}
+
+		learnt_clause.add(encode_boolean_variable_as_literal(tmp_id, 0));
+		var= visitedUpperBounds.next(var);
+
+
+
+		if(lvl > backtrack_level)
+			backtrack_level = lvl;
+
+	}
+
+
+	//exit(1);
+
+
+	/*
+	if (is_lb && visitedLowerBounds.fast_contain(var)){
+		if (visitedLowerBoundvalues[var] >= val){
+
+			already_explored = true;
+		}
+
+	}
+	else
+
+		if ((!is_lb) && visitedUpperBounds.fast_contain(var)){
+			if (visitedUpperBoundvalues[var] <= val){
+
+				already_explored = true;
+			}
+
+		}
+
+learnt_clause.add(encode_boolean_variable_as_literal(tmp__id, is_lb));
+	if(lvl > backtrack_level)
+		backtrack_level = lvl;
+	 */
+
+}
 
 
 void Mistral::Solver::treat_explanation (Explanation* explanation,  Explanation::iterator start,Explanation::iterator end ){
@@ -12290,6 +12413,8 @@ void Mistral::Solver::clean_fdlearn() {
 
 			//		std::cout << "latest before while =" << pathC << std::endl;
 		} while( boolean_vairables_to_explore.size );
+
+		generate_variables();
 
 		//		std::cout << "after while !!!!! " << std::endl;
 		//		std::cout << "\n p =" << p << std::endl;
@@ -19277,6 +19402,8 @@ void Mistral::Solver::set_fdlearning_on(int learning_method, int reduce) {
 	visitedUpperBoundvalues = new unsigned int [start_from ];
 	visitedLowerBoundvalues = new unsigned int [start_from ];
 
+
+	visited.extend(54000);
 	bounds_under_exploration.initialise(0,  start_from +1 , BitSet::empt);
 	boundvalues_under_exploration = new unsigned int [start_from +1 ];
 	//graph_premise.initialise(10000);

@@ -793,6 +793,8 @@ namespace Mistral {
     void learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables2();
     void clean_fdlearn();
     unsigned int generate_new_variable(DomainFaithfulnessConstraint * dom_constraint, int val, bool is_lb, int lvl , int range_id);
+
+    void generate_variables();
     void treat_bound_literal (Literal* lit);
     void treat_assignment_literal (Literal* lit);
     void treat_explanation (Explanation* explanation,  Explanation::iterator start,Explanation::iterator end );
