@@ -256,7 +256,8 @@ const char* ParameterList::int_ident[ParameterList::nia] =
   {"-ub", "-lb", "-check", "-seed", "-cutoff", "-dichotomy", 
    "-base", "-randomized", "-verbose", "-optimise", "-nogood", 
    "-dyncutoff", "-nodes", "-hlimit", "-init", "-neighbor", 
-   "-initstep", "-fixtasks", "-order", "-ngdt" , "-fdlearning" , "-forgetall" , "-reduce"};
+   "-initstep", "-fixtasks", "-order", "-ngdt" , "-fdlearning" ,
+   "-forgetall" , "-reduce"};
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
   {"-heuristic", "-restart", "-factor", "-decay", "-type", 
@@ -2829,8 +2830,16 @@ void SchedulingSolver::dichotomic_search()
   BranchingHeuristic *heu = new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
 
   //BranchingHeuristic *heu = new GenericHeuristic < NoOrder, MinValue > (this);
+  RestartPolicy *pol ;
+  if (params->PolicyRestart==GEOMETRIC)
+	  pol = new Geometric();
+  else if (params->PolicyRestart==LUBY)
+	  pol = new Luby();
+  else {
+	  std::cout << " RestartPolicy not found " << std::endl;
+	  exit(1);
+  }
 
-    RestartPolicy *pol = new Geometric();
   // RestartPolicy *pol = new Luby();
 //  RestartPolicy *pol = new AlwaysRestart();
 
