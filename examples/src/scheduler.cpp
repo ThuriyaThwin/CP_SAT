@@ -20,7 +20,6 @@ int main( int argc, char** argv )
   //std::cout << std::endl;
   //jsp.print(std::cout);
   jsp.printStats(std::cout);
-  params.print(std::cout);
 
 
   SchedulingSolver *solver;
@@ -49,6 +48,7 @@ int main( int argc, char** argv )
 
   // SchedulingSolver solver(model, &params, &stats);
   usrand(params.Seed);
+  params.print(std::cout);
 
   solver->consolidate();
 
