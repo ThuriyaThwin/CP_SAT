@@ -19403,7 +19403,7 @@ void Mistral::Solver::set_fdlearning_on(int learning_method, int reduce) {
 	visitedLowerBoundvalues = new unsigned int [start_from ];
 
 
-	visited.extend(54000);
+	//visited.extend(54000);
 	bounds_under_exploration.initialise(0,  start_from +1 , BitSet::empt);
 	boundvalues_under_exploration = new unsigned int [start_from +1 ];
 	//graph_premise.initialise(10000);
