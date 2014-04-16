@@ -11470,48 +11470,32 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 
 unsigned int Mistral::Solver::generate_new_variable(DomainFaithfulnessConstraint*dom_constraint, int val, bool is_lb, int lvl, int range_id ){
 
-	//add(tmp__);
 	Variable tmp__(0,1);
 	tmp__.lazy_initialise(this);
-	//								dom_constraint->extend_scope(tmp__ , val,!is_lb, lvl);
-
+	//dom_constraint->extend_scope(tmp__ , val,!is_lb, lvl);
 	dom_constraint->extend_scope(tmp__ , val - is_lb,!is_lb, lvl);
 	base->extend_scope(tmp__);
+	int tmp__id = tmp__.id();
+	assignment_level[tmp__id] = lvl;
+	reason_for[tmp__id] = dom_constraint;
 	//	tmp__.set_domain(!is_lb);
-	assignment_level[tmp__.id()] = lvl;
-	reason_for[tmp__.id()] = dom_constraint;
-
-
 	*(tmp__.expression->get_self().bool_domain)  = (1+ (!is_lb));
 	int index___ = level - lvl;
 	int index___0 = 1;
-
 	int saved_vars_size_at_level =  saved_vars.size;
-
-
-	index___ = level - lvl;
-
-
-	saved_vars.add(saved_vars[trail_[trail_.size -5]]);
-
+	int trail_size = trail_.size ;
+	saved_vars.add(saved_vars[trail_[trail_size -5]]);
 
 	while(index___0 < index___){
-
-		saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
-
-		saved_vars[saved_vars_size_at_level] = saved_vars[trail_[trail_.size - (5*(index___0+1))]];
-
-		trail_[trail_.size - (5*index___0)]++;
+		saved_vars_size_at_level = trail_[trail_size - (5*index___0)];
+		saved_vars[saved_vars_size_at_level] = saved_vars[trail_[trail_size - (5*(index___0+1))]];
+		trail_[trail_size - (5*index___0)]++;
 		++index___0;
 	}
-
-	saved_vars_size_at_level = trail_[trail_.size - (5*index___0)];
-
-	saved_vars[saved_vars_size_at_level] =  tmp__.id();
-
-	trail_[trail_.size - (5*index___0)]++;
-
-	index___ = level - lvl;
+	saved_vars_size_at_level = trail_[trail_size - (5*index___0)];
+	saved_vars[saved_vars_size_at_level] =  tmp__id;
+	trail_[trail_size - (5*index___0)]++;
+	//index___ = level - lvl;
 #ifndef _64BITS_LITERALS
 	if ((variables.size - start_from) > 16383 ){
 		std::cout << " \n\n\n variablessize " << variables.size << std::endl;
@@ -11529,12 +11513,7 @@ unsigned int Mistral::Solver::generate_new_variable(DomainFaithfulnessConstraint
 
 		exit(1);
 	}
-
 #endif
-
-
-
-
 #ifdef _RECOVER_GENERATED
 	varsIds_lazy.add(range_id);
 	if (!is_lb)
@@ -11543,27 +11522,15 @@ unsigned int Mistral::Solver::generate_new_variable(DomainFaithfulnessConstraint
 		value_lazy.add(val -1);
 #endif
 
-	return tmp__.id();
+	return tmp__id;
 }
 
 
 
 void Mistral::Solver::treat_assignment_literal(Literal q){
 
-
-//	Literal q = *lit;
-	//Literal to_be_explored;
-	//bool is_lb ;
-	//VariableRangeWithLearning* tmp_VariableRangeWithLearning ;
-	//unsigned int range_id ;
-	int lvl ;
-//	bool already_explored = false;
-
-	//DomainFaithfulnessConstraint * dom_constraint ;
-	//int id__ = get_id_boolean_variable(q);
-
 	int x = get_id_boolean_variable(q);
-	lvl = assignment_level[x];
+	int lvl = assignment_level[x];
 
 #ifdef 	_DEBUG_FD_NOGOOD
 	if(_DEBUG_FD_NOGOOD){
@@ -11585,41 +11552,39 @@ void Mistral::Solver::treat_assignment_literal(Literal q){
 
 	if (variables[x].get_min()== SIGN(q))
 	{
-//		std::cout << " \n (x.get_min()== SIGN(q))" << variables[x] << "  ; its domain is " << variables[x].get_domain() << " ; its assignment_level : " << assignment_level[x] << " ; while the literal q = " << q << std::endl;
-//		exit(1);
+		//		std::cout << " \n (x.get_min()== SIGN(q))" << variables[x] << "  ; its domain is " << variables[x].get_domain() << " ; its assignment_level : " << assignment_level[x] << " ; while the literal q = " << q << std::endl;
+		//		exit(1);
 	}
 #endif
 
 
-//	already_explored = false;
-
-
+	//	already_explored = false;
 	//todo should be search_root!
 	//if (!already_explored)
-		//todo should be search_root!
+	//todo should be search_root!
 	//else
 	if(lvl > 0 )
-			if( !visited.fast_contain(x) ) {
-				//Sould be done later!
-				/*
+		if( !visited.fast_contain(x) ) {
+			//Sould be done later!
+			/*
 if(lit_activity) {
 	//lit_activity[q] += 0.5 * parameters.activity_increment;
 	lit_activity[NOT(q)] += // 0.5 *
 			parameters.activity_increment;
 	var_activity[get_id_boolean_variable(q)] += parameters.activity_increment;
 }
-				 */
-				visited.fast_add(x);
+			 */
+			visited.fast_add(x);
 
-				if(lvl >= level) {
-					//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
-					// we'll need to replace 'a' by its parents since its level is too high
+			if(lvl >= level) {
+				//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+				// we'll need to replace 'a' by its parents since its level is too high
 				//	++pathC;
-					boolean_vairables_to_explore.add(x);
+				boolean_vairables_to_explore.add(x);
 
-				} else {
-					//TODO RECOVER GENERATED VARIABLES
-					/*
+			} else {
+				//TODO RECOVER GENERATED VARIABLES
+				/*
 					if ((x >= initial_variablesize) && (lvl < level)){
 
 						int var = varsIds_lazy[x - initial_variablesize];
@@ -11672,19 +11637,19 @@ if(lit_activity) {
 						return;
 					}
 
- */
+				 */
 
-					// q's level is below the current level, we are not expending it further
-					learnt_clause.add(q);
+				// q's level is below the current level, we are not expending it further
+				learnt_clause.add(q);
 #ifdef 	_DEBUG_FD_NOGOOD
-					if(_DEBUG_FD_NOGOOD){
-						std::cout << " \n learn :  " <<variables[x] << "  = " <<variables[x].get_domain() << " ; assignment_level : " << assignment_level[x]<< std::endl;
-					}
-#endif
-					if(lvl > backtrack_level)
-						backtrack_level = lvl;
+				if(_DEBUG_FD_NOGOOD){
+					std::cout << " \n learn :  " <<variables[x] << "  = " <<variables[x].get_domain() << " ; assignment_level : " << assignment_level[x]<< std::endl;
 				}
+#endif
+				if(lvl > backtrack_level)
+					backtrack_level = lvl;
 			}
+		}
 }
 
 
@@ -11907,105 +11872,44 @@ void Mistral::Solver::generate_variables(){
 
 	std::cout << " visitedUpperBoundvalues[var] : " << visitedUpperBoundvalues[var] << std::endl;
 	 */
-
-
-
-
-
 	//std::cout << " \n \n \n  iterate " << std::endl;
 	int var = visitedLowerBounds.min();
 	int val, lvl , tmp_id;
 	VariableRangeWithLearning* __x;
+	//std::cout << "visitedLowerBounds [i]? " << min <<std::endl;
 	for (int i = visitedLowerBounds.size() ; i>0; --i ){
-		//std::cout << "visitedLowerBounds [i]? " << min <<std::endl;
-
 		val = visitedLowerBoundvalues[var] ;
 		__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
 		lvl = __x->level_of(val,1);
-
 		tmp_id = __x->domainConstraint->value_exist( val-1 ) ;
-
-
-		if ( tmp_id< 0)
-		{
-
+		if ( tmp_id< 0){
 			tmp_id= generate_new_variable(__x->domainConstraint, val, true, lvl, var);
-
 		}
-//		else
-//		{
-//			tmp_id= variables[var].id();
-//		}
-
-
-
 		learnt_clause.add(encode_boolean_variable_as_literal(tmp_id, 1));
-
-		//should be __x->lowerbounds[0] -1
+		//?? should be __x->lowerbounds[0] -1
 		//visitedLowerBoundvalues[var] = __x->lowerbounds[0];
-		var= visitedLowerBounds.next(var);
-
-
 		if(lvl > backtrack_level)
 			backtrack_level = lvl;
+		var= visitedLowerBounds.next(var);
 	}
 
-	var = visitedUpperBounds.min();
-	for (int i = visitedUpperBounds.size() ; i>0; --i ){
-		//std::cout << "visitedLowerBounds [i]? " << min <<std::endl;
 
+	var = visitedUpperBounds.min();
+	//std::cout << "visitedLowerBounds [i]? " << min <<std::endl;
+	for (int i = visitedUpperBounds.size() ; i>0; --i ){
 		val = visitedUpperBoundvalues[var] ;
 		__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
-
 		lvl = __x->level_of(val,0);
-
 		tmp_id = __x->domainConstraint->value_exist( val) ;
 		if ( tmp_id< 0)
 		{
 			tmp_id= generate_new_variable(__x->domainConstraint, val, false, lvl, var);
 		}
-	//	else
-	//	{
-	//		tmp_id= variables[var].id();
-	//	}
-
 		learnt_clause.add(encode_boolean_variable_as_literal(tmp_id, 0));
-		var= visitedUpperBounds.next(var);
-
-
-
 		if(lvl > backtrack_level)
 			backtrack_level = lvl;
-
+		var= visitedUpperBounds.next(var);
 	}
-
-
-	//exit(1);
-
-
-	/*
-	if (is_lb && visitedLowerBounds.fast_contain(var)){
-		if (visitedLowerBoundvalues[var] >= val){
-
-			already_explored = true;
-		}
-
-	}
-	else
-
-		if ((!is_lb) && visitedUpperBounds.fast_contain(var)){
-			if (visitedUpperBoundvalues[var] <= val){
-
-				already_explored = true;
-			}
-
-		}
-
-learnt_clause.add(encode_boolean_variable_as_literal(tmp__id, is_lb));
-	if(lvl > backtrack_level)
-		backtrack_level = lvl;
-	 */
-
 }
 
 
