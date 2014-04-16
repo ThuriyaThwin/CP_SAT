@@ -799,11 +799,11 @@ namespace Mistral {
     void treat_assignment_literal (Literal* lit);
     void treat_explanation (Explanation* explanation,  Explanation::iterator start,Explanation::iterator end );
 //TODO declare them only when needen!
-//#ifdef _CHECK_NOGOOD
+#ifdef _RECOVER_GENERATED
     //used to get the variable id of a lazily generated variable
 	Vector<unsigned int> varsIds_lazy ;
 	Vector<unsigned int> value_lazy ;
-//#endif
+#endif
 
 	//Vector<Literal> graph_premise ;
 	//Vector<Literal> graph_implied;

@@ -10703,13 +10703,13 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 
 
 
-											//#ifdef _CHECK_NOGOOD
+#ifdef _RECOVER_GENERATED
 											varsIds_lazy.add(range_id);
 											if (!is_lb)
 												value_lazy.add(val);
 											else
 												value_lazy.add(val -1);
-											//#endif
+#endif
 
 										}
 										else
@@ -11110,13 +11110,13 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {
 
 
 
-													//#ifdef _CHECK_NOGOOD
+#ifdef _RECOVER_GENERATED
 													varsIds_lazy.add(range_id);
 													if (!is_lb)
 														value_lazy.add(val);
 													else
 														value_lazy.add(val -1);
-													//#endif
+#endif
 
 												}
 												else
@@ -11591,13 +11591,13 @@ unsigned int Mistral::Solver::generate_new_variable(DomainFaithfulnessConstraint
 
 
 
-	//#ifdef _CHECK_NOGOOD
+#ifdef _RECOVER_GENERATED
 	varsIds_lazy.add(range_id);
 	if (!is_lb)
 		value_lazy.add(val);
 	else
 		value_lazy.add(val -1);
-	//#endif
+#endif
 
 	return tmp__.id();
 }
@@ -11610,12 +11610,10 @@ void Mistral::Solver::treat_assignment_literal(Literal* lit){
 	Literal q = *lit;
 	//Literal to_be_explored;
 	//bool is_lb ;
-	int val ;
-	int var ;
 	//VariableRangeWithLearning* tmp_VariableRangeWithLearning ;
 	//unsigned int range_id ;
 	int lvl ;
-	bool already_explored = false;
+//	bool already_explored = false;
 
 	//DomainFaithfulnessConstraint * dom_constraint ;
 	//int id__ = get_id_boolean_variable(q);
@@ -11649,7 +11647,7 @@ void Mistral::Solver::treat_assignment_literal(Literal* lit){
 #endif
 
 
-	already_explored = false;
+//	already_explored = false;
 
 
 	//todo should be search_root!
@@ -11676,11 +11674,12 @@ if(lit_activity) {
 					boolean_vairables_to_explore.add(x);
 
 				} else {
-
+					//TODO RECOVER GENERATED VARIABLES
+					/*
 					if ((x >= initial_variablesize) && (lvl < level)){
 
-						var = varsIds_lazy[x - initial_variablesize];
-						val = value_lazy[x - initial_variablesize];
+						int var = varsIds_lazy[x - initial_variablesize];
+						int val = value_lazy[x - initial_variablesize];
 
 						//	std::cout << " OK : id_range = " << id_range << std::endl;
 						//	std::cout << " OK : val_range = " << val_range << std::endl;
@@ -11689,10 +11688,9 @@ if(lit_activity) {
 							//		set_max(val_range);
 							//		std::cout << " Bound literal associated to :  " << variables[id_range] << " <=  " << val_range <<  std::endl;
 
-
 							if (visitedUpperBounds.fast_contain(var)){
 								if (visitedUpperBoundvalues[var] <= val){
-									already_explored = true;
+		//							already_explored = true;
 								}
 								else {
 									visitedUpperBoundvalues[var]= val;
@@ -11704,14 +11702,7 @@ if(lit_activity) {
 
 							}
 
-							/*
-							if ((!already_explored) )	{
-								//	std::cout << " \n \n \ learn val	 : " << val << std::endl;
-								if (!visitedUpperBounds.fast_contain(var))
-									visitedUpperBounds.fast_add(var);
-								visitedUpperBoundvalues[var]= val;
-							}
-							 */
+
 
 						}
 						else{
@@ -11721,9 +11712,7 @@ if(lit_activity) {
 							++val;
 							if (visitedLowerBounds.fast_contain(var)){
 								if (visitedLowerBoundvalues[var] >= val){
-
-
-									already_explored = true;
+//						already_explored = true;
 								}
 								else {
 									visitedLowerBoundvalues[var]= val;
@@ -11733,18 +11722,13 @@ if(lit_activity) {
 								visitedLowerBounds.fast_add(var);
 								visitedLowerBoundvalues[var]= val;
 							}
-							/*
-							if ((!already_explored)  )	{
-								//	std::cout << " \n \n \ learn val	 : " << val << std::endl;
-								if (!visitedLowerBounds.fast_contain(var))
-									visitedLowerBounds.fast_add(var);
-								visitedLowerBoundvalues[var]= val;
-							}
-							 */
+
 						}
 
 						return;
 					}
+
+ */
 
 					// q's level is below the current level, we are not expending it further
 					learnt_clause.add(q);
@@ -13077,13 +13061,13 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning_with_conve
 
 
 
-											//#ifdef _CHECK_NOGOOD
+#ifdef _RECOVER_GENERATED
 											varsIds_lazy.add(range_id);
 											if (!is_lb)
 												value_lazy.add(val);
 											else
 												value_lazy.add(val -1);
-											//#endif
+#endif
 
 										}
 										else
@@ -13214,7 +13198,9 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning_with_conve
 #endif
 
 							int id__ = get_id_boolean_variable(q);
+#ifdef _RECOVER_GENERATED
 							already_explored = false;
+
 							if (id__ >= initial_variablesize){
 
 								var = 	varsIds_lazy[id__ - initial_variablesize];
@@ -13286,8 +13272,11 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning_with_conve
 
 								}
 							}
+
+
 							//todo should be search_root!
 							if (!already_explored)
+#endif
 								if(		lvl > 0 )
 									if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
 										//Sould be done later!
@@ -13556,13 +13545,13 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning_with_conve
 
 
 
-													//#ifdef _CHECK_NOGOOD
+#ifdef  _RECOVER_GENERATED
 													varsIds_lazy.add(range_id);
 													if (!is_lb)
 														value_lazy.add(val);
 													else
 														value_lazy.add(val -1);
-													//#endif
+#endif
 
 												}
 												else
@@ -13690,6 +13679,7 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning_with_conve
 #endif
 
 									int id__ = get_id_boolean_variable(q);
+#ifdef _RECOVER_GENERATED
 									already_explored = false;
 									if (id__ >= initial_variablesize){
 
@@ -13763,6 +13753,7 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning_with_conve
 									}
 									//todo should be search_root!
 									if (!already_explored)
+#endif
 										//todo should be search_root!
 										if(		lvl > 0 )
 											if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
@@ -14534,13 +14525,13 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning_with_conve
 
 
 
-											//#ifdef _CHECK_NOGOOD
+#ifdef _RECOVER_GENERATED
 											varsIds_lazy.add(range_id);
 											if (!is_lb)
 												value_lazy.add(val);
 											else
 												value_lazy.add(val -1);
-											//#endif
+#endif
 
 										}
 										else
@@ -14670,6 +14661,7 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning_with_conve
 #endif
 
 							int id__ = get_id_boolean_variable(q);
+#ifdef _RECOVER_GENERATED
 							already_explored = false;
 							if (id__ >= initial_variablesize){
 
@@ -14744,6 +14736,7 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning_with_conve
 							}
 							//todo should be search_root!
 							if (!already_explored)
+#endif
 								if(		lvl > 0 )
 									if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
 										//Sould be done later!
@@ -15017,13 +15010,13 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning_with_conve
 
 
 
-													//#ifdef _CHECK_NOGOOD
+#ifdef _RECOVER_GENERATED
 													varsIds_lazy.add(range_id);
 													if (!is_lb)
 														value_lazy.add(val);
 													else
 														value_lazy.add(val -1);
-													//#endif
+													#endif
 
 												}
 												else
@@ -15150,6 +15143,7 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning_with_conve
 #endif
 
 									int id__ = get_id_boolean_variable(q);
+#ifdef _RECOVER_GENERATED
 									already_explored = false;
 									if (id__ >= initial_variablesize){
 
@@ -15223,6 +15217,7 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning_with_conve
 									}
 									//todo should be search_root!
 									if (!already_explored)
+#endif
 										//todo should be search_root!
 										if(		lvl > 0 )
 											if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
@@ -15934,13 +15929,13 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning2() {
 
 
 
-											//#ifdef _CHECK_NOGOOD
+#ifdef _RECOVER_GENERATED
 											varsIds_lazy.add(range_id);
 											if (!is_lb)
 												value_lazy.add(val);
 											else
 												value_lazy.add(val -1);
-											//#endif
+#endif
 
 										}
 										else
@@ -16339,13 +16334,13 @@ void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning2() {
 
 
 
-													//#ifdef _CHECK_NOGOOD
+#ifdef _RECOVER_GENERATED
 													varsIds_lazy.add(range_id);
 													if (!is_lb)
 														value_lazy.add(val);
 													else
 														value_lazy.add(val -1);
-													//#endif
+#endif
 
 												}
 												else
@@ -16880,7 +16875,7 @@ void Mistral::Solver::reduce_clause(unsigned int old_generation_size){
 						}
 #endif
 
-
+#ifdef _RECOVER_GENERATED
 						id_range = 	varsIds_lazy[get_id_boolean_variable(under_exploration) - initial_variablesize];
 						val_range = value_lazy[get_id_boolean_variable(under_exploration) - initial_variablesize];
 
@@ -16916,6 +16911,9 @@ void Mistral::Solver::reduce_clause(unsigned int old_generation_size){
 							}
 
 						}
+
+#endif
+
 					}
 				}
 			}
