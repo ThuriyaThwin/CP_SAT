@@ -781,8 +781,9 @@ namespace Mistral {
     void learn_withoutClosingPropagation();
     void learn_with_lazygeneration();
 	Vector<Literal> bound_literals_to_explore;
+	//Instead of using sequence we will use this vector to select the next literal to explore
 	Vector <Atom > boolean_vairables_to_explore;
-
+	int graph_size;
 	//reduce clause after learning
 	void reduce_clause(unsigned int old_generation_size= 0);
 
@@ -795,8 +796,8 @@ namespace Mistral {
     unsigned int generate_new_variable(DomainFaithfulnessConstraint * dom_constraint, int val, bool is_lb, int lvl , int range_id);
 
     void generate_variables();
-    void treat_bound_literal (Literal* lit);
-    void treat_assignment_literal (Literal* lit);
+    void treat_bound_literal (Literal q);
+    void treat_assignment_literal (Literal q);
     void treat_explanation (Explanation* explanation,  Explanation::iterator start,Explanation::iterator end );
 //TODO declare them only when needen!
 #ifdef _RECOVER_GENERATED
