@@ -11650,67 +11650,12 @@ void Mistral::Solver::treat_assignment_literal(Literal* lit){
 
 
 	already_explored = false;
-	/*
-	if ((id__ >= initial_variablesize) && (lvl < level)){
-
-		var = 	varsIds_lazy[id__ - initial_variablesize];
-		val = value_lazy[id__ - initial_variablesize];
-
-		//	std::cout << " OK : id_range = " << id_range << std::endl;
-		//	std::cout << " OK : val_range = " << val_range << std::endl;
-
-		if (SIGN(NOT(q))){
-			//		set_max(val_range);
-			//		std::cout << " Bound literal associated to :  " << variables[id_range] << " <=  " << val_range <<  std::endl;
 
 
-			if (visitedUpperBounds.fast_contain(var)){
-				if (visitedUpperBoundvalues[var] <= val){
-
-
-					already_explored = true;
-				}
-				//			else
-			}
-
-
-			if ((!already_explored) && (lvl < level) )	{
-				//	std::cout << " \n \n \ learn val	 : " << val << std::endl;
-				if (!visitedUpperBounds.fast_contain(var))
-					visitedUpperBounds.fast_add(var);
-				visitedUpperBoundvalues[var]= val;
-			}
-
-		}
-		else{
-			//	set_min(val_range+1);
-			//		std::cout << " Bound literal associated to :  " << variables[id_range] << " >=  " << val_range+1 <<  std::endl;
-
-			++val;
-			if (visitedLowerBounds.fast_contain(var)){
-				if (visitedLowerBoundvalues[var] >= val){
-
-
-					already_explored = true;
-				}
-				//			else
-			}
-
-			if ((!already_explored) && (lvl < level) )	{
-				//	std::cout << " \n \n \ learn val	 : " << val << std::endl;
-				if (!visitedLowerBounds.fast_contain(var))
-					visitedLowerBounds.fast_add(var);
-				visitedLowerBoundvalues[var]= val;
-			}
-
-
-		}
-	}
 	//todo should be search_root!
 	//if (!already_explored)
 		//todo should be search_root!
-	else
-		*/
+	//else
 	if(lvl > 0 )
 			if( !visited.fast_contain(x) ) {
 				//Sould be done later!
@@ -11731,6 +11676,76 @@ if(lit_activity) {
 					boolean_vairables_to_explore.add(x);
 
 				} else {
+
+					if ((x >= initial_variablesize) && (lvl < level)){
+
+						var = varsIds_lazy[x - initial_variablesize];
+						val = value_lazy[x - initial_variablesize];
+
+						//	std::cout << " OK : id_range = " << id_range << std::endl;
+						//	std::cout << " OK : val_range = " << val_range << std::endl;
+
+						if (SIGN(NOT(q))){
+							//		set_max(val_range);
+							//		std::cout << " Bound literal associated to :  " << variables[id_range] << " <=  " << val_range <<  std::endl;
+
+
+							if (visitedUpperBounds.fast_contain(var)){
+								if (visitedUpperBoundvalues[var] <= val){
+									already_explored = true;
+								}
+								else {
+									visitedUpperBoundvalues[var]= val;
+								}
+							}
+							else{
+								visitedUpperBounds.fast_add(var);
+								visitedUpperBoundvalues[var]= val;
+
+							}
+
+							/*
+							if ((!already_explored) )	{
+								//	std::cout << " \n \n \ learn val	 : " << val << std::endl;
+								if (!visitedUpperBounds.fast_contain(var))
+									visitedUpperBounds.fast_add(var);
+								visitedUpperBoundvalues[var]= val;
+							}
+							 */
+
+						}
+						else{
+							//	set_min(val_range+1);
+							//		std::cout << " Bound literal associated to :  " << variables[id_range] << " >=  " << val_range+1 <<  std::endl;
+
+							++val;
+							if (visitedLowerBounds.fast_contain(var)){
+								if (visitedLowerBoundvalues[var] >= val){
+
+
+									already_explored = true;
+								}
+								else {
+									visitedLowerBoundvalues[var]= val;
+								}
+							}
+							else {
+								visitedLowerBounds.fast_add(var);
+								visitedLowerBoundvalues[var]= val;
+							}
+							/*
+							if ((!already_explored)  )	{
+								//	std::cout << " \n \n \ learn val	 : " << val << std::endl;
+								if (!visitedLowerBounds.fast_contain(var))
+									visitedLowerBounds.fast_add(var);
+								visitedLowerBoundvalues[var]= val;
+							}
+							 */
+						}
+
+						return;
+					}
+
 					// q's level is below the current level, we are not expending it further
 					learnt_clause.add(q);
 #ifdef 	_DEBUG_FD_NOGOOD
