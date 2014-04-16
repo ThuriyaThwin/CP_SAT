@@ -17283,7 +17283,7 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 	}
 	else
 	{
-		int id = a ;
+		//	int id = a ;
 		//TODO we do not need this if generated literals are accepted at the end of learnt nogoods
 		if (is_a_bound_literal(a)){
 
@@ -17297,7 +17297,7 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 			}
 #endif
 
-		//	std::cout <<" \n \n is_a_bound_literal? "  << std::endl;
+			//	std::cout <<" \n \n is_a_bound_literal? "  << std::endl;
 
 			int val = get_value_from_literal(a);
 
@@ -17343,7 +17343,7 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 				exit(1);
 
 			}
-*/
+			 */
 			/*
 			if (is_lower_bound(a))
 				id = value_exist(get_value_from_literal(a) -1 );
@@ -17352,12 +17352,55 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 			 */
 			//exit(1);
 		}
+		else{
+			//Dichomy search on scope[i].id
+			int size = scope.size;
+			//	unsigned int idx = floor((double) (((double)size) / 2.0 )), ub = size -1 , lb = 0 ;
+			int i , idx = (size -1) >>1 , ub = size -1 , lb = 1 ;
+			//std::cout << " \n BEGIN dicho " <<std::endl;
+			//if (order)
+			{
 
-		//		int id = a/2 ;
+//				std::cout << "  size :  " << size <<std::endl;
+				i=scope[idx].id();
+				while (i != a){
 
+	/*				std::cout << " begin idx :  " << idx <<std::endl;
+					std::cout << " ub  " << ub <<std::endl;
+					std::cout << " lb :  " << lb <<std::endl;*/
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+					if (ub == lb){
+						std::cout << "  (ub == lb)" <<std::endl;
+						exit(1);
+					}
+#endif
 
-		for (int i = 0 ; i < scope.size; ++i)
-			if (scope[i].id() == id) {
+					if (i> a)
+						ub = idx -1;
+					else
+						lb = idx +1;
+					//div2
+					idx = (ub +lb)>> 1;
+//					std::cout << " \n after idx :  " << idx <<std::endl;
+
+					i=scope[idx].id();
+			/*			std::cout << " ub  " << ub <<std::endl;
+						std::cout << " lb :  " << lb <<std::endl;
+						std::cout << " i :  " << i <<std::endl;
+						std::cout << " a :  " << a <<std::endl;
+						*/
+
+				}
+
+				//	std::cout << " \n Find with idx" << idx << std::endl;
+				//	position = idx;
+				//return true;
+				//	return idx;
+			}
+
+			i=idx;
+			//	for (int i = 1 ; i < scope.size; ++i)
+			if (scope[i].id() == a) {
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 
 				if (! scope[i].is_ground()) {
@@ -17375,9 +17418,9 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 					int j = 0 ;
 
 					for (; j < ub.size; ++j){
-//						if (ub[j].x.id() ==id ){
+						//						if (ub[j].x.id() ==id ){
 						if (scope[ub[j].idx].id() ==id ){
-//							if (ub[j].x.get_min()){
+							//							if (ub[j].x.get_min()){
 							if (scope[ub[j].idx].get_min()){
 								value__ = _x->upperbounds[0];
 								if (ub[j].value < value__ ){
@@ -17412,19 +17455,17 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 					}
 
 #endif
-
 				}
 				else {
-
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 					int value__ ;
 					if (is_a_bound_literal(eager_explanations[i])) {
 						value__ = get_value_from_literal(eager_explanations[i]);
 
 						for (int j = 0 ; j < ub.size; ++j){
-//							if (ub[j].x.id() ==id ){
+							//							if (ub[j].x.id() ==id ){
 							if (scope[ub[j].idx].id() ==id ){
-//								if (ub[j].x.get_min()){
+								//								if (ub[j].x.get_min()){
 								if (scope[ub[j].idx].get_min()){
 									if (ub[j].value < value__ ){
 										std::cout <<" \n \n ERROR in Domain Faithfulness explanation ub[i].value < value__ "  << std::endl;
@@ -17455,7 +17496,7 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 					else{
 						int id__explanation = ((Solver*)solver)->get_id_boolean_variable(eager_explanations[i]);
 						for (int j = 0 ; j < ub.size; ++j)
-//							if (ub[j].x.id() ==id__explanation ){
+							//							if (ub[j].x.id() ==id__explanation ){
 							if (scope[ub[j].idx].id() ==id__explanation ){
 								value__= ub[j].value;
 								break;
@@ -17463,9 +17504,9 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 
 
 						for (int j = 0 ; j < ub.size; ++j)
-//							if (ub[j].x.id() ==id ){
+							//							if (ub[j].x.id() ==id ){
 							if (scope[ub[j].idx].id() ==id ){
-//								if (ub[j].x.get_min()){
+								//								if (ub[j].x.get_min()){
 								if (scope[ub[j].idx].get_min()){
 									if (ub[j].value < value__ ){
 										std::cout <<" \n \n ERROR in Domain Faithfulness explanation ub[i].value < value__ "  << std::endl;
@@ -17493,16 +17534,17 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 				return &(explanation[0]);
 			}
 
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+			else
+			{
+				std::cout <<" \n \n boolean variable not found "  << std::endl;
+				exit(1);
+			}
+#endif
+
+		}
 		std::cout <<" \n \n boolean variable not found "  << std::endl;
 		exit(1);
-		/*
-		for int (i= 1 ; i< scope.size ; ++i)
-				if (  == scope[0].id())
-					explanation[0] = NOT ( ((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), 1));
-		explanation[1] = encode_bound_literal(scope[1].id(),get_value_from_literal(a)+processing_time[0],1 ) ;
-		end = &(explanation[0])+2;
-		 */
-
 	}
 	//return &(explanation[0]);
 
