@@ -1532,8 +1532,12 @@ namespace Mistral {
   public:
 	  VariableRangeWithLearning(const int lb, const int ub) : VariableRange(lb,ub) {
 		  //	  std::cout << "HERE \n \n " << std::endl;
+
+#ifdef latest_bounds_learning
 		  latest_visited_upper_bound = INFTY;
 		  latest_visited_lower_bound = -INFTY;
+#endif
+
 		  lowerbounds.clear();
 		  upperbounds.clear();
 		  lower_bound_reasons.clear();
@@ -1553,12 +1557,8 @@ namespace Mistral {
 
 #ifdef latest_bounds_learning
 		  latest = true;
-#endif
-
 		  LB_Explanation = NULL;
 		  UB_Explanation = NULL;
-
-#ifdef latest_bounds_learning
 		  explanation_trail.add(LB_Explanation);
 		  explanation_trail.add(UB_Explanation);
 #endif
@@ -1567,15 +1567,19 @@ namespace Mistral {
 	  };
 	  Explanation* reason_for(Literal l);
 
+#ifdef latest_bounds_learning
 	  void set_latest_visited_lower_bound(int l){latest_visited_lower_bound=l;} ;
 	  int get_latest_visited_lower_bound(){ return latest_visited_lower_bound;} ;
-
 	  void set_latest_visited_upper_bound(int u){latest_visited_upper_bound = u;} ;
 	  int get_latest_visited_upper_bound(){return latest_visited_upper_bound;} ;
+#endif
 
+#ifdef latest_bounds_learning
 	  void initialise_latest_visited_upper_bounds () {latest_visited_upper_bound = INFTY;}
 	  void initialise_latest_visited_lower_bounds () {latest_visited_lower_bound = -INFTY;}
-	  bool first_time_visited (bool is_a_lowerbound) ;
+#endif
+
+//	  bool first_time_visited (bool is_a_lowerbound) ;
 	  DomainFaithfulnessConstraint* domainConstraint;
 	  bool should_be_learnt(Literal q);
 	  int level_of(int val, bool lb) ;
@@ -1830,23 +1834,22 @@ namespace Mistral {
 	  Vector<int> lowerbounds;
 	  Vector<int> upperbounds;
 
-	  //Reasoning about latest changes
-	  Explanation* LB_Explanation;
-	  Explanation* UB_Explanation;
-
-
 #ifdef latest_bounds_learning
 	  bool latest;
 	  Vector<Explanation* > explanation_trail;
+	  //Reasoning about latest changes
+	  Explanation* LB_Explanation;
+	  Explanation* UB_Explanation;
 #endif
 
+	  //TODO : private ???
   private:
 	  Vector<Explanation*> lower_bound_reasons;
 	  Vector<Explanation*> upper_bound_reasons;
 	  Vector<int> lower_bound_levels;
 	  Vector<int> upper_bound_levels;
-	  int latest_visited_lower_bound ;
-	  int latest_visited_upper_bound ;
+	//  int latest_visited_lower_bound ;
+	//  int latest_visited_upper_bound ;
 
   };
   class VariableVirtual : public VariableBitmap {};

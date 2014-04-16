@@ -2047,10 +2047,11 @@ int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 
 int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 
-//	std::cout << " \n level_of " << std::endl;
-//	std::cout << " val " << val << std::endl;
-//	std::cout << " lb  " << lb << std::endl;
+	//	std::cout << " \n level_of " << std::endl;
+	//	std::cout << " val " << val << std::endl;
+	//	std::cout << " lb  " << lb << std::endl;
 
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 	if (lowerbounds.size != lower_bound_levels.size){
 		std::cout << " ERROR lowerbounds level_of END ? " << std::endl;
 		exit(1);
@@ -2060,6 +2061,7 @@ int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 		std::cout << " ERROR lowerbounds level_of END ? " << std::endl;
 		exit(1);
 	}
+#endif
 
 	int size;
 	if (lb)
@@ -2113,15 +2115,6 @@ int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 	exit(1);
 
 }
-
-
-bool Mistral::VariableRangeWithLearning::first_time_visited (bool is_a_lowerbound) {
-	if (is_a_lowerbound)
-		return (latest_visited_lower_bound == -INFTY);
-	else
-		return (latest_visited_upper_bound == INFTY);
-}
-
 
 
 //TODO rewrite reason_for
