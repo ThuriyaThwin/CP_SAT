@@ -10662,10 +10662,21 @@ unsigned int Mistral::Solver::generate_new_variable(DomainFaithfulnessConstraint
 }
 
 
+void Mistral::Solver::add_atom_tobe_explored(Atom a){
+
+	bool orderedExploration = true;
+	if (!orderedExploration)
+		boolean_vairables_to_explore.add(a);
+	else
+		//boolean_vairables_to_explore.add(a);
+		ordered_boolean_vairables_to_explore.fast_sorted_add(_valued_atom(assignment_order[a], a));
+
+
+}
 
 void Mistral::Solver::treat_assignment_literal(Literal q){
 
-	int x = get_id_boolean_variable(q);
+	Atom x = get_id_boolean_variable(q);
 	int lvl = assignment_level[x];
 
 #ifdef 	_DEBUG_FD_NOGOOD
@@ -10716,8 +10727,9 @@ if(lit_activity) {
 				//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
 				// we'll need to replace 'a' by its parents since its level is too high
 				//	++pathC;
-				boolean_vairables_to_explore.add(x);
 
+				add_atom_tobe_explored(x);
+				++remainPathC;
 			} else {
 				//TODO RECOVER GENERATED VARIABLES
 				/*
@@ -11149,7 +11161,7 @@ void Mistral::Solver::clean_fdlearn() {
 		//			current_explanation=__failure;
 		//		else
 		current_explanation= culprit.propagator;
-
+		remainPathC=0;
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 		if (culprit.propagator!=__failure)
 		{
@@ -11184,7 +11196,12 @@ void Mistral::Solver::clean_fdlearn() {
 		learnt_clause.add(0);
 
 
-		boolean_vairables_to_explore.clear();
+		bool orderedExploration = true;
+		if (orderedExploration)
+			ordered_boolean_vairables_to_explore.clear();
+		else
+			boolean_vairables_to_explore.clear();
+
 		visitedLowerBounds.clear();
 		visitedUpperBounds.clear();
 		do {
@@ -11308,46 +11325,12 @@ void Mistral::Solver::clean_fdlearn() {
 #endif
 			}
 
-			//Find the next variable to explore
-			if (boolean_vairables_to_explore.size>0)
-			{
-				boolean_vairables_to_explore.pop(a);
-				if (reason_for[a] == NULL)
-				{
-					if (boolean_vairables_to_explore.size){
-						boolean_vairables_to_explore.add(boolean_vairables_to_explore[0]);
-						boolean_vairables_to_explore[0]=a;
-						boolean_vairables_to_explore.pop(a);
-					}
-				}
+			current_explanation = get_next_to_explore(a);
 
-				//x = variables[a];
-				//a = x.id();
-				q= encode_boolean_variable_as_literal(variables[a].id(),variables[a].get_min() );
-				//lvl = assignment_level[a];
-				/*
-				std::cout << " we will explore the variable  " << x << std::endl;
-				std::cout << " its min is " << x.get_min() << std::endl;
-				std::cout << " its max is " << x.get_max() << std::endl;
-				std::cout << " assignment level of x " << lvl << std::endl;
-				std::cout << " level is " << level << std::endl;
-				//std::cout << " explore the variable x " << x << std::endl;
-						std::cout << " pathC " << pathC << std::endl;
-				 */
-
-				current_explanation = reason_for[a];
-				//visited.fast_add(a);
-				//		}
-			}
-			else
-			{
-				//TODO check if we can have paTHC=0 + give explanation in a failure on ExplainedContDisjunctioReif
-				std::cout << "\n \n \n boolean_vairables_to_explore.size  == 0 !!!!! " << std::endl;
-				exit(1);
-			}
 
 			//		std::cout << "latest before while =" << pathC << std::endl;
-		} while( boolean_vairables_to_explore.size );
+//		} while( boolean_vairables_to_explore.size );
+		} while( --remainPathC );
 
 
 		bool no_semantic = true;
@@ -11365,6 +11348,8 @@ void Mistral::Solver::clean_fdlearn() {
 
 		// p is the last decision, since all atoms above it in the
 		// assumption stack have been skipped or expended.
+
+		q= encode_boolean_variable_as_literal(variables[a].id(),variables[a].get_min() );
 		learnt_clause[0] = NOT(q);
 #ifdef 	_DEBUG_FD_NOGOOD
 		if(_DEBUG_FD_NOGOOD){
@@ -11581,6 +11566,105 @@ void Mistral::Solver::clean_fdlearn() {
 		//exit(1);
 	}
 }
+
+
+Explanation * Mistral::Solver::get_next_to_explore(Atom & a) {
+
+
+	bool orderedExploration = true;
+	if (!orderedExploration) {
+
+		//Find the next variable to explore
+		if (boolean_vairables_to_explore.size>0)
+		{
+			boolean_vairables_to_explore.pop(a);
+			if (reason_for[a] == NULL)
+			{
+				if (boolean_vairables_to_explore.size){
+					boolean_vairables_to_explore.add(boolean_vairables_to_explore[0]);
+					boolean_vairables_to_explore[0]=a;
+					boolean_vairables_to_explore.pop(a);
+				}
+			}
+
+			//x = variables[a];
+			//a = x.id();
+
+			//q= encode_boolean_variable_as_literal(variables[a].id(),variables[a].get_min() );
+			//lvl = assignment_level[a];
+			/*
+	std::cout << " we will explore the variable  " << x << std::endl;
+	std::cout << " its min is " << x.get_min() << std::endl;
+	std::cout << " its max is " << x.get_max() << std::endl;
+	std::cout << " assignment level of x " << lvl << std::endl;
+	std::cout << " level is " << level << std::endl;
+	//std::cout << " explore the variable x " << x << std::endl;
+			std::cout << " pathC " << pathC << std::endl;
+			 */
+
+			return reason_for[a];
+			//visited.fast_add(a);
+			//		}
+		}
+		else
+		{
+			//TODO check if we can have paTHC=0 + give explanation in a failure on ExplainedContDisjunctioReif
+			std::cout << "\n \n \n boolean_vairables_to_explore.size  == 0 !!!!! " << std::endl;
+			exit(1);
+		}
+	}
+
+	else {
+
+
+		//Find the next variable to explore
+		if (ordered_boolean_vairables_to_explore.size>0)
+		{
+			a= ordered_boolean_vairables_to_explore.pop().a;
+			/*
+			if (reason_for[a] == NULL)
+
+			{
+				if (ordered_boolean_vairables_to_explore.size){
+					ordered_boolean_vairables_to_explore.add(_valued_atom( assign, boolean_vairables_to_explore[0]);
+					ordered_boolean_vairables_to_explore[0]=a;
+					a= ordered_boolean_vairables_to_explore.pop().a;
+
+				}
+
+			}
+			 */
+			//x = variables[a];
+			//a = x.id();
+
+			//q= encode_boolean_variable_as_literal(variables[a].id(),variables[a].get_min() );
+			//lvl = assignment_level[a];
+			/*
+	std::cout << " we will explore the variable  " << x << std::endl;
+	std::cout << " its min is " << x.get_min() << std::endl;
+	std::cout << " its max is " << x.get_max() << std::endl;
+	std::cout << " assignment level of x " << lvl << std::endl;
+	std::cout << " level is " << level << std::endl;
+	//std::cout << " explore the variable x " << x << std::endl;
+			std::cout << " pathC " << pathC << std::endl;
+			 */
+
+			return reason_for[a];
+			//visited.fast_add(a);
+			//		}
+		}
+		else
+		{
+			//TODO check if we can have paTHC=0 + give explanation in a failure on ExplainedContDisjunctioReif
+			std::cout << "\n \n \n boolean_vairables_to_explore.size  == 0 !!!!! " << std::endl;
+			exit(1);
+		}
+
+	}
+}
+
+
+
 void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables2() {
 
 	//std::cout << " \n\n\n fdlearn_ " << std::endl;
@@ -18334,6 +18418,7 @@ void Mistral::Solver::set_fdlearning_on(int learning_method, int reduce) {
 
 	visited.extend(SIZEOF_VARIABLES);
 	boolean_vairables_to_explore.initialise(SIZEOF_VARIABLES);
+	ordered_boolean_vairables_to_explore.initialise(SIZEOF_VARIABLES);
 	bound_literals_to_explore.initialise(100000);
 	//visited.extend(54000);
 	//bounds_under_exploration.initialise(0,  start_from +1 , BitSet::empt);

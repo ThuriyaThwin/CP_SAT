@@ -782,7 +782,7 @@ namespace Mistral {
     void learn_with_lazygeneration();
 	Vector<Literal> bound_literals_to_explore;
 	//Instead of using sequence we will use this vector to select the next literal to explore
-	Vector <Atom > boolean_vairables_to_explore;
+
 	int graph_size;
 	//reduce clause after learning
 	void reduce_clause(unsigned int old_generation_size= 0);
@@ -793,6 +793,33 @@ namespace Mistral {
     void learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables();
     void learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables2();
     void clean_fdlearn();
+    unsigned int remainPathC;
+
+    struct _valued_atom
+    {
+    	int assignment_order;
+    	Atom a;
+    	_valued_atom(int _assignment_order, Atom _a) : assignment_order(_assignment_order), a(_a) {}
+    	_valued_atom() {}
+    	bool operator < (const _valued_atom& atom) const
+    	{
+    		return (assignment_order < atom.assignment_order);
+    	}
+    	bool operator > (const _valued_atom& atom) const
+    	{
+    		return (assignment_order > atom.assignment_order);
+    	}
+    };
+
+
+   // std::ostream& operator<< (std::ostream& os, const __boundLiteral & x) ;
+
+
+    Vector <Atom > boolean_vairables_to_explore;
+    Vector <_valued_atom > ordered_boolean_vairables_to_explore;
+
+    Explanation * get_next_to_explore(Atom & a);
+    void add_atom_tobe_explored(Atom a);
     unsigned int generate_new_variable(DomainFaithfulnessConstraint * dom_constraint, int val, bool is_lb, int lvl , int range_id);
 
     void generate_variables();
