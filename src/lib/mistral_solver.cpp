@@ -11142,11 +11142,10 @@ void Mistral::Solver::clean_fdlearn() {
 	propagate_literal_in_learnt_clause= true;
 #endif
 
-	if (parameters.simple_learn &&  decisions.size < parameters.simple_learn)
+	if (parameters.simple_learn &&  decisions.size < (unsigned int) parameters.simple_learn)
 		simple_fdlearn_nogood();
 	else
 	{
-
 		//	int pathC = 0, index = sequence.size-1;
 		Literal q;
 		Atom a = NULL_ATOM;
@@ -11208,7 +11207,7 @@ void Mistral::Solver::clean_fdlearn() {
 		learnt_clause.add(0);
 
 
-//		bool orderedExploration = true;
+		//		bool orderedExploration = true;
 		if (parameters.orderedExploration)
 			ordered_boolean_vairables_to_explore.clear();
 		else
@@ -11341,7 +11340,7 @@ void Mistral::Solver::clean_fdlearn() {
 
 
 			//		std::cout << "latest before while =" << pathC << std::endl;
-//		} while( boolean_vairables_to_explore.size );
+			//		} while( boolean_vairables_to_explore.size );
 		} while( --remainPathC );
 
 
