@@ -10947,7 +10947,7 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 					//assignment_level[var]=lvl;
 					//todo should be search_root!
 					//if(	lvl)
-					if (tmp__id>0)
+					if (tmp__id>0) {
 						if( !visited.fast_contain(tmp__id) ) {
 							//Sould be done later!
 							/*
@@ -10977,28 +10977,45 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 
 							//			if(lvl > backtrack_level)
 							//				backtrack_level = lvl;
+
+
+							if (no_semantic) {
+								learnt_clause.add(encode_boolean_variable_as_literal(tmp__id, is_lb));
+								//?? should be __x->lowerbounds[0] -1
+								//visitedLowerBoundvalues[var] = __x->lowerbounds[0];
+								if(lvl > backtrack_level)
+									backtrack_level = lvl;
+
+							}
+							else
+								if (is_lb){
+									if (!visitedLowerBounds.fast_contain(var))
+										visitedLowerBounds.fast_add(var);
+									visitedLowerBoundvalues[var]= val;
+								}
+								else
+								{
+									if (!visitedUpperBounds.fast_contain(var))
+										visitedUpperBounds.fast_add(var);
+									visitedUpperBoundvalues[var]= val;
+								}
+						}
+					}
+					else
+					if (!no_semantic)
+						if (is_lb){
+							if (!visitedLowerBounds.fast_contain(var))
+								visitedLowerBounds.fast_add(var);
+							visitedLowerBoundvalues[var]= val;
+						}
+						else
+						{
+							if (!visitedUpperBounds.fast_contain(var))
+								visitedUpperBounds.fast_add(var);
+							visitedUpperBoundvalues[var]= val;
 						}
 
-					if (no_semantic) {
-						learnt_clause.add(encode_boolean_variable_as_literal(tmp__id, is_lb));
-						//?? should be __x->lowerbounds[0] -1
-						//visitedLowerBoundvalues[var] = __x->lowerbounds[0];
-						if(lvl > backtrack_level)
-							backtrack_level = lvl;
 
-					}
-					else
-					if (is_lb){
-						if (!visitedLowerBounds.fast_contain(var))
-							visitedLowerBounds.fast_add(var);
-						visitedLowerBoundvalues[var]= val;
-					}
-					else
-					{
-						if (!visitedUpperBounds.fast_contain(var))
-							visitedUpperBounds.fast_add(var);
-						visitedUpperBoundvalues[var]= val;
-					}
 				}
 				else
 					bound_literals_to_explore.add(q);
