@@ -257,7 +257,9 @@ const char* ParameterList::int_ident[ParameterList::nia] =
    "-base", "-randomized", "-verbose", "-optimise", "-nogood", 
    "-dyncutoff", "-nodes", "-hlimit", "-init", "-neighbor", 
    "-initstep", "-fixtasks", "-order", "-ngdt" , "-fdlearning" ,
-   "-forgetall" , "-reduce" ,  "-orderedexploration" , "-lazygeneration" , "-semantic" };
+   "-forgetall" , "-reduce" ,  "-orderedexploration" , "-lazygeneration" , "-semantic" ,
+   "-simplelearn" , "-maxnogoodsize" , "-boundedbydecision"
+  };
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
   {"-heuristic", "-restart", "-factor", "-decay", "-type", 
@@ -301,7 +303,7 @@ ParameterList::ParameterList(int length, char **commandline) {
     Type = "jsp";
     std::cout << " c Warning: no type specified, treating the data as Taillard's jsp" << std::endl;
   }
-
+  std::cout << " 1" << std::endl;
   UBinit      = -1;
   LBinit      = -1;
   Checked     = true;
@@ -346,6 +348,11 @@ ParameterList::ParameterList(int length, char **commandline) {
   orderedExploration = 1;
   lazy_generation= 0;
   semantic_learning = 0;
+
+  simple_learn= 0;
+  max_nogood_size =0;
+  bounded_by_decision = 0;
+
 
   FD_learning=0;
   reduce_clauses =0;
@@ -417,7 +424,9 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[23] != NOVAL) orderedExploration  = int_param[23];
   if(int_param[24] != NOVAL) lazy_generation  = int_param[24];
   if(int_param[25] != NOVAL) semantic_learning  = int_param[25];
-
+  if(int_param[26] != NOVAL) simple_learn  = int_param[26];
+  if(int_param[27] != NOVAL) max_nogood_size  = int_param[27];
+  if(int_param[28] != NOVAL) bounded_by_decision  = int_param[28];
 
   if(strcmp(str_param[0 ],"nil")) Heuristic  = str_param[0];
   if(strcmp(str_param[1 ],"nil")) Policy     = str_param[1];
@@ -467,6 +476,9 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | orderedExploration " << ":" << std::right << std::setw(15) << orderedExploration << " |" << std::endl;
   os << std::left << std::setw(30) << " c | lazy_generation " << ":" << std::right << std::setw(15) << lazy_generation << " |" << std::endl;
   os << std::left << std::setw(30) << " c | semantic_learning " << ":" << std::right << std::setw(15) << semantic_learning << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | simple_learn " << ":" << std::right << std::setw(15) << simple_learn << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | max_nogood_size " << ":" << std::right << std::setw(15) << max_nogood_size << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | bounded_by_decision " << ":" << std::right << std::setw(15) << bounded_by_decision << " |" << std::endl;
   os << std::left << std::setw(30) << " c | forget all clauses " << ":" << std::right << std::setw(15) << (forgetall? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | reduce learnt clause " << ":" << std::right << std::setw(15) << (reduce_clauses? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | seed " << ":" << std::right << std::setw(15) << Seed << " |" << std::endl;
@@ -1884,7 +1896,7 @@ void SchedulingSolver::setup() {
   if (params->FD_learning)
   {
 	  start_from = tasks.size +1;
-	  set_fdlearning_on(params->FD_learning, params->reduce_clauses,params->orderedExploration, params->lazy_generation, params->semantic_learning );
+	  set_fdlearning_on(params->FD_learning, params->reduce_clauses,params->orderedExploration, params->lazy_generation, params->semantic_learning, params->simple_learn, params->max_nogood_size, params->bounded_by_decision);
   }
 
 #ifdef _MONITOR

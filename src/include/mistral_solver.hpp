@@ -134,6 +134,9 @@ namespace Mistral {
     bool orderedExploration;
     bool lazy_generation ;
     bool semantic_learning;
+    int simple_learn ;
+    int max_nogood_size;
+    int bounded_by_decision;
 
     /// MISC
     std::string prefix_comment;
@@ -919,7 +922,7 @@ namespace Mistral {
     void initialise_random_seed(const int seed);
     void set_time_limit(const double limit);
     void set_learning_on();
-    void set_fdlearning_on(int learning_method, int reduce, int orderedExploration, int lazy_generation, int semantic_learning);
+    void set_fdlearning_on(int learning_method, int reduce, int orderedExploration, int lazy_generation, int semantic_learning, int simple_learn, int max_nogood_size, int bounded_by_decision);
     void close_propagation();
 
     Explanation * __failure;

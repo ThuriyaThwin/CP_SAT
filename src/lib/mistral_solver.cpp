@@ -155,6 +155,12 @@ void Mistral::SolverParameters::initialise() {
   lazy_generation= false;
   semantic_learning = false;
 
+  simple_learn= 0;
+  max_nogood_size =0;
+  bounded_by_decision = 0;
+
+
+
   prefix_comment = "c";
   prefix_statistics = "d";
   prefix_objective = "o";
@@ -11136,9 +11142,9 @@ void Mistral::Solver::clean_fdlearn() {
 	propagate_literal_in_learnt_clause= true;
 #endif
 
-	//	if (level < 3)
-	//		simple_fdlearn_nogood();
-	//	else
+	if (parameters.simple_learn &&  decisions.size < parameters.simple_learn)
+		simple_fdlearn_nogood();
+	else
 	{
 
 		//	int pathC = 0, index = sequence.size-1;
@@ -11439,29 +11445,34 @@ void Mistral::Solver::clean_fdlearn() {
 				/ ((double)(++statistics.num_failures));
 
 
-		if (parameters.reduce_learnt_clause){
-			if (learnt_clause.size != 1){
-				//	std::cout << "reducing clause  "  << learnt_clause <<  std::endl;
+		if (parameters.bounded_by_decision && learnt_clause.size > decisions.size)
+			simple_fdlearn_nogood();
+		else if (parameters.max_nogood_size && learnt_clause.size > parameters.max_nogood_size)
+			simple_fdlearn_nogood();
+		else {
+			if (parameters.reduce_learnt_clause){
+				if (learnt_clause.size != 1){
+					//	std::cout << "reducing clause  "  << learnt_clause <<  std::endl;
 
-				//		std::cout << "  \n clause being reduced from  \n "  << learnt_clause.size ;
-				reduce_clause();
+					//		std::cout << "  \n clause being reduced from  \n "  << learnt_clause.size ;
+					reduce_clause();
 
-				//std::cout << "reduced clause \n "  << learnt_clause <<  std::endl;
-				//		std::cout << " to "  << learnt_clause.size <<  std::endl;
+					//std::cout << "reduced clause \n "  << learnt_clause <<  std::endl;
+					//		std::cout << " to "  << learnt_clause.size <<  std::endl;
 #ifdef _CHECK_NOGOOD
-				//	if (graph_size <35)
-				{
-					//		std::cout << "graph_size : "  << graph_size  << std::endl;
-					//		std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
-					/*
+					//	if (graph_size <35)
+					{
+						//		std::cout << "graph_size : "  << graph_size  << std::endl;
+						//		std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
+						/*
 		for (int i = 0; i< learnt_clause.size; ++i)
 		{
 			std::cout << "assignment level [i] = " << assignment_level[get_id_boolean_variable(learnt_clause[i])] << std::endl;
 		}
 		std::cout << "END! current level  "  << level << " \n and backtrack_level :     " << backtrack_level << std::endl;
-					 */
-					// bug in instance 1
-					/*	Vector<Literal > tmp_nogood;
+						 */
+						// bug in instance 1
+						/*	Vector<Literal > tmp_nogood;
 		tmp_nogood.add(241) ;
 		tmp_nogood.add(3811) ;
 		tmp_nogood.add(3798) ;
@@ -11490,38 +11501,39 @@ void Mistral::Solver::clean_fdlearn() {
 				exit(1);
 			}
 		}
-					 */
-					((SchedulingSolver *) this)->	check_nogood(learnt_clause);
-					//	store_nogood(learnt_clause);
-				}
+						 */
+						((SchedulingSolver *) this)->	check_nogood(learnt_clause);
+						//	store_nogood(learnt_clause);
+					}
 #endif
+				}
 			}
-		}
 
-		if( learnt_clause.size != 1 ) {
+			if( learnt_clause.size != 1 ) {
 
-			// if(lit_activity) {
-			//   int i=learnt_clause.size;
-			//   while(i--) {
-			// 	var_activity[UNSIGNED(learnt_clause[i])] += parameters.activity_increment;
-			//   }
-			// }
+				// if(lit_activity) {
+				//   int i=learnt_clause.size;
+				//   while(i--) {
+				// 	var_activity[UNSIGNED(learnt_clause[i])] += parameters.activity_increment;
+				//   }
+				// }
 
-			base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
-			//add_clause( learnt, learnt_clause, stats.learnt_avg_size );
-			//reason[UNSIGNED(p)] = base->learnt.back();
+				base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
+				//add_clause( learnt, learnt_clause, stats.learnt_avg_size );
+				//reason[UNSIGNED(p)] = base->learnt.back();
 
-			// EXPL
-			//base->reason_for[UNSIGNED(p)] = base->learnt.back();
+				// EXPL
+				//base->reason_for[UNSIGNED(p)] = base->learnt.back();
 
-			//base->reason_for[UNSIGNED(p)] = base->learnt.back();
-			//reason_for[UNSIGNED(p)] = base;
-			//taboo_constraint = base;
+				//base->reason_for[UNSIGNED(p)] = base->learnt.back();
+				//reason_for[UNSIGNED(p)] = base;
+				//taboo_constraint = base;
 
-			taboo_constraint = (ConstraintImplementation*)(base->learnt.back());
-			//reason_for[UNSIGNED(p)].store_reason_for_change(VALUE_EVENT, base->learnt.back());
-		} else {
-			taboo_constraint = NULL;
+				taboo_constraint = (ConstraintImplementation*)(base->learnt.back());
+				//reason_for[UNSIGNED(p)].store_reason_for_change(VALUE_EVENT, base->learnt.back());
+			} else {
+				taboo_constraint = NULL;
+			}
 		}
 		visited.clear();
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
@@ -18414,17 +18426,25 @@ void Mistral::Solver::set_fdlearning_on(
 		int reduce ,
 	    int orderedExploration,
 	    int lazy_generation,
-	    int semantic_learning
+	    int semantic_learning,
+	    int simple_learn,
+	    int max_nogood_size,
+	    int bounded_by_decision
 	    ) {
 
 	//	parameters.jsp_backjump = true;
+	//Init learning parameters
 	parameters.backjump = true;
 	parameters.fd_learning = learning_method;
 	parameters.reduce_learnt_clause = reduce;
 	parameters.orderedExploration = orderedExploration;
 	parameters.lazy_generation = lazy_generation ;
+	parameters.simple_learn= simple_learn;
+	parameters.max_nogood_size =max_nogood_size;
+	parameters.bounded_by_decision =bounded_by_decision;
 	parameters.semantic_learning = semantic_learning ;
 	parameters.forgetfulness = 0.0;
+
 	std::cout << " c start_from : " << start_from << std::endl;
 	visitedUpperBounds.initialise(0, start_from  , BitSet::empt);
 	visitedLowerBounds.initialise(0,  start_from  ,BitSet::empt);
