@@ -153,7 +153,7 @@ void Mistral::SolverParameters::initialise() {
 
   orderedExploration = true;
   lazy_generation= false;
-  no_semantic = true;
+  semantic_learning = false;
 
   prefix_comment = "c";
   prefix_statistics = "d";
@@ -10870,7 +10870,7 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 	//if (lvl>0 Search root?
 	if (lvl>0){
 
-		if (!parameters.no_semantic)
+		if (parameters.semantic_learning)
 		{
 			if (is_lb && visitedLowerBounds.fast_contain(var)){
 				if (visitedLowerBoundvalues[var] >= val){
@@ -10915,7 +10915,7 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 
 
 
-				if (parameters.no_semantic)
+				if (!parameters.semantic_learning)
 					if ( tmp__id< 0){
 						tmp__id= generate_new_variable(dom_constraint, val, is_lb, lvl, var);
 					}
@@ -10994,7 +10994,7 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 						//				backtrack_level = lvl;
 
 
-						if (parameters.no_semantic) {
+						if (!parameters.semantic_learning) {
 							learnt_clause.add(encode_boolean_variable_as_literal(tmp__id, is_lb));
 							//?? should be __x->lowerbounds[0] -1
 							//visitedLowerBoundvalues[var] = __x->lowerbounds[0];
@@ -11017,7 +11017,7 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 					}
 				}
 				else
-					if (!parameters.no_semantic)
+					if (parameters.semantic_learning)
 						if (is_lb){
 							if (!visitedLowerBounds.fast_contain(var))
 								visitedLowerBounds.fast_add(var);
@@ -11342,7 +11342,7 @@ void Mistral::Solver::clean_fdlearn() {
 		//bool no_semantic = true;
 		//bool lazy_generation = false;
 
-		if (parameters.lazy_generation && (!parameters.no_semantic))
+		if (parameters.lazy_generation && (parameters.semantic_learning))
 			generate_variables();
 
 		//		std::cout << "after while !!!!! " << std::endl;
@@ -18409,12 +18409,21 @@ void Mistral::Solver::initialise_random_seed(const int seed) {
 }
 
 
-void Mistral::Solver::set_fdlearning_on(int learning_method, int reduce) {
+void Mistral::Solver::set_fdlearning_on(
+		int learning_method,
+		int reduce ,
+	    int orderedExploration,
+	    int lazy_generation,
+	    int semantic_learning
+	    ) {
 
 	//	parameters.jsp_backjump = true;
 	parameters.backjump = true;
 	parameters.fd_learning = learning_method;
 	parameters.reduce_learnt_clause = reduce;
+	parameters.orderedExploration = orderedExploration;
+	parameters.lazy_generation = lazy_generation ;
+	parameters.semantic_learning = semantic_learning ;
 	parameters.forgetfulness = 0.0;
 	std::cout << " c start_from : " << start_from << std::endl;
 	visitedUpperBounds.initialise(0, start_from  , BitSet::empt);

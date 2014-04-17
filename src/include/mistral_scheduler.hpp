@@ -80,7 +80,7 @@ namespace Mistral {
     static const int RGUIDED =  3;
     static const int RAND    =  4;
 
-    static const int nia = 23;
+    static const int nia = 26;
     static const char* int_ident[nia];
     
     static const int nsa = 12;
@@ -117,6 +117,10 @@ namespace Mistral {
     //int MinRank; // Whether the sum of the disjunct should be minimised
     int OrderTasks; // Whetheer tasks should be ordered within the disjuncts
     int NgdType; // nogood type for solution removal
+
+    int orderedExploration;
+    int lazy_generation;
+    int semantic_learning;
 
     double Factor;
     double Decay;

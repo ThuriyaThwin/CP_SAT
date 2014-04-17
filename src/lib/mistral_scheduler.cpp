@@ -257,7 +257,7 @@ const char* ParameterList::int_ident[ParameterList::nia] =
    "-base", "-randomized", "-verbose", "-optimise", "-nogood", 
    "-dyncutoff", "-nodes", "-hlimit", "-init", "-neighbor", 
    "-initstep", "-fixtasks", "-order", "-ngdt" , "-fdlearning" ,
-   "-forgetall" , "-reduce"};
+   "-forgetall" , "-reduce" ,  "-orderedexploration" , "-lazygeneration" , "-semantic" };
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
   {"-heuristic", "-restart", "-factor", "-decay", "-type", 
@@ -341,6 +341,12 @@ ParameterList::ParameterList(int length, char **commandline) {
   NgdType   = 2;
   OrderTasks = 1;
 
+
+
+  orderedExploration = 1;
+  lazy_generation= 0;
+  semantic_learning = 0;
+
   FD_learning=0;
   reduce_clauses =0;
   forgetall=1;
@@ -408,6 +414,10 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[20] != NOVAL) FD_learning     = int_param[20];
   if(int_param[21] != NOVAL) forgetall     = int_param[21];
   if(int_param[22] != NOVAL) reduce_clauses  = int_param[22];
+  if(int_param[23] != NOVAL) orderedExploration  = int_param[23];
+  if(int_param[24] != NOVAL) lazy_generation  = int_param[24];
+  if(int_param[25] != NOVAL) semantic_learning  = int_param[25];
+
 
   if(strcmp(str_param[0 ],"nil")) Heuristic  = str_param[0];
   if(strcmp(str_param[1 ],"nil")) Policy     = str_param[1];
@@ -454,6 +464,9 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | data file " << ":" << std::right << std::setw(15) << data_file_name << " |" << std::endl;
   os << std::left << std::setw(30) << " c | type " << ":" << std::right << std::setw(15) << Type << " |" << std::endl;
   os << std::left << std::setw(30) << " c | learning " << ":" << std::right << std::setw(15) << FD_learning << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | orderedExploration " << ":" << std::right << std::setw(15) << orderedExploration << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | lazy_generation " << ":" << std::right << std::setw(15) << lazy_generation << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | semantic_learning " << ":" << std::right << std::setw(15) << semantic_learning << " |" << std::endl;
   os << std::left << std::setw(30) << " c | forget all clauses " << ":" << std::right << std::setw(15) << (forgetall? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | reduce learnt clause " << ":" << std::right << std::setw(15) << (reduce_clauses? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | seed " << ":" << std::right << std::setw(15) << Seed << " |" << std::endl;
@@ -1871,7 +1884,7 @@ void SchedulingSolver::setup() {
   if (params->FD_learning)
   {
 	  start_from = tasks.size +1;
-	  set_fdlearning_on(params->FD_learning, params->reduce_clauses);
+	  set_fdlearning_on(params->FD_learning, params->reduce_clauses,params->orderedExploration, params->lazy_generation, params->semantic_learning );
   }
 
 #ifdef _MONITOR
