@@ -938,11 +938,8 @@ Mistral::Solver::Solver()
   constraints.initialise(0,256);
   //constraint_graph.initialise(128);
 
-#ifndef _64BITS_LITERALS
-  constraint_graph.initialise(0,16900);
-#else
-  constraint_graph.initialise(0,524288);
-#endif
+  constraint_graph.initialise(0,SIZEOF_VARIABLES);
+
   posted_constraints.initialise(0,255,256,false);
   sequence.initialise(this);
   sequence.initialise(128);
@@ -1484,7 +1481,7 @@ int Mistral::Solver::lazy_declare(Variable x) {
   x.variable->initialise(this);
   //x.variable->id = variables.size;
   //x.variable->solver = this;
-  visited.extend(variables.size);
+  //visited.extend(variables.size);
   variables.add(x);
 
   //declared_variables.add(x);
@@ -19150,6 +19147,8 @@ void Mistral::Solver::set_fdlearning_on(int learning_method, int reduce) {
 	visitedUpperBoundvalues = new unsigned int [start_from ];
 	visitedLowerBoundvalues = new unsigned int [start_from ];
 
+	visited.extend(SIZEOF_VARIABLES);
+	boolean_vairables_to_explore.initialise(SIZEOF_VARIABLES);
 
 	//visited.extend(54000);
 	bounds_under_exploration.initialise(0,  start_from +1 , BitSet::empt);

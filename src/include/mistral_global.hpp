@@ -217,6 +217,13 @@ namespace Mistral {
 #define CTYPE      0x007fffff
 #define ITYPE      0xff800000
 
+#ifndef _64BITS_LITERALS
+#define SIZEOF_VARIABLES 16900
+#else
+  // TODO Try fast implementation?
+#define SIZEOF_VARIABLES 524288
+#endif
+
   static const int size_byte[8] = {0,1,1,2,1,2,2,3};
 
 #ifdef _PROFILING
