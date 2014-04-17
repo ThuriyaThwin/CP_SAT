@@ -453,7 +453,7 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << " c +==============[ parameters ]===============+" << std::endl;
   os << std::left << std::setw(30) << " c | data file " << ":" << std::right << std::setw(15) << data_file_name << " |" << std::endl;
   os << std::left << std::setw(30) << " c | type " << ":" << std::right << std::setw(15) << Type << " |" << std::endl;
-  os << std::left << std::setw(30) << " c | learning " << ":" << std::right << std::setw(15) << (FD_learning? "yes" : "no") << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | learning " << ":" << std::right << std::setw(15) << FD_learning << " |" << std::endl;
   os << std::left << std::setw(30) << " c | forget all clauses " << ":" << std::right << std::setw(15) << (forgetall? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | reduce learnt clause " << ":" << std::right << std::setw(15) << (reduce_clauses? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | seed " << ":" << std::right << std::setw(15) << Seed << " |" << std::endl;
@@ -3727,6 +3727,8 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 	Instance __jsp(*params);
 	//	std::cout << std::endl;
 	//	__jsp.printStats(std::cout);
+
+	int old_fd_learning = params->FD_learning;
 	params->FD_learning = 0;
 	//solver->parameters.backjump = false;
 	//	std::cout << " \n\n c Lower Bound  " << stats->lower_bound ;
@@ -3758,7 +3760,7 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 	//__solver->save();
 	__solver->set_objective(init_obj);
 
-	std::cout << " check learnt nogood :  "<< c << std::endl;
+	//std::cout << " check learnt nogood :  "<< c << std::endl;
 
 	//	std::cout << " learnt nogood size :  "<< c.size  << std::endl;
 
@@ -3901,12 +3903,14 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 		exit(1);
 	}
 	else
-		std::cout << " Is a valid nogood !\n" << std::endl;
+//		std::cout << " Is a valid nogood !\n" << std::endl;
+
+	std::cout << " 1 ";
 	//delete __pol;
 	//delete __heu;
 	delete __solver;
 
-	params->FD_learning = 1;
+	params->FD_learning = old_fd_learning;
 	if (! parameters.backjump){
 		std::cout << " !backjump " << std::endl;
 		exit(1);

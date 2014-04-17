@@ -17354,41 +17354,40 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 		}
 		else{
 			//Dichomy search on scope[i].id
-			int size = scope.size;
+			//int size = scope.size;
 			//	unsigned int idx = floor((double) (((double)size) / 2.0 )), ub = size -1 , lb = 0 ;
-			int i , idx = (size -1) >>1 , ub = size -1 , lb = 1 ;
+			int i , idx = (scope.size) >>1 , _ub = scope.size -1 , _lb = 1 ;
 			//std::cout << " \n BEGIN dicho " <<std::endl;
-			//if (order)
-			{
 
-//				std::cout << "  size :  " << size <<std::endl;
+	//		std::cout << " \n \n \n \n  scope.size :  " << size <<std::endl;
+	//		std::cout << "  ub :  " << ub <<std::endl;
+
 				i=scope[idx].id();
 				while (i != a){
 
-	/*				std::cout << " begin idx :  " << idx <<std::endl;
-					std::cout << " ub  " << ub <<std::endl;
-					std::cout << " lb :  " << lb <<std::endl;*/
+	//				std::cout << " begin idx :  " << idx <<std::endl;
+	//				std::cout << " ub  " << _ub <<std::endl;
+	//				std::cout << " lb :  " << _lb <<std::endl;
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-					if (ub == lb){
+					if (_ub == _lb){
 						std::cout << "  (ub == lb)" <<std::endl;
 						exit(1);
 					}
 #endif
 
 					if (i> a)
-						ub = idx -1;
+						_ub = idx -1;
 					else
-						lb = idx +1;
+						_lb = idx +1;
 					//div2
-					idx = (ub +lb)>> 1;
-//					std::cout << " \n after idx :  " << idx <<std::endl;
+					idx = (_ub +_lb)>> 1;
+	//				std::cout << " \n after idx :  " << idx <<std::endl;
 
 					i=scope[idx].id();
-			/*			std::cout << " ub  " << ub <<std::endl;
-						std::cout << " lb :  " << lb <<std::endl;
-						std::cout << " i :  " << i <<std::endl;
-						std::cout << " a :  " << a <<std::endl;
-						*/
+	//				std::cout << " ub  " << _ub <<std::endl;
+	//				std::cout << " lb :  " << _lb <<std::endl;
+	//				std::cout << " i :  " << i <<std::endl;
+	//				std::cout << " a :  " << a <<std::endl;
 
 				}
 
@@ -17396,7 +17395,7 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 				//	position = idx;
 				//return true;
 				//	return idx;
-			}
+
 
 			i=idx;
 			//	for (int i = 1 ; i < scope.size; ++i)

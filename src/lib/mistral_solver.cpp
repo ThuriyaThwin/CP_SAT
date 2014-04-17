@@ -10622,6 +10622,13 @@ unsigned int Mistral::Solver::generate_new_variable(DomainFaithfulnessConstraint
 	saved_vars[saved_vars_size_at_level] =  tmp__id;
 	trail_[trail_size - (5*index___0)]++;
 	//index___ = level - lvl;
+
+	if (variables.size > (SIZEOF_VARIABLES -50) ){
+			std::cout << " \n\n\n Limit of variablessize reached" << variables.size << std::endl;
+			std::cout << " \n\n\n start_from " << start_from << std::endl;
+			exit(1);
+	}
+/*
 #ifndef _64BITS_LITERALS
 	if ((variables.size - start_from) > 16383 ){
 		std::cout << " \n\n\n variablessize " << variables.size << std::endl;
@@ -10640,6 +10647,8 @@ unsigned int Mistral::Solver::generate_new_variable(DomainFaithfulnessConstraint
 		exit(1);
 	}
 #endif
+*/
+
 #ifdef _RECOVER_GENERATED
 	varsIds_lazy.add(range_id);
 	if (!is_lb)
@@ -11194,7 +11203,7 @@ void Mistral::Solver::clean_fdlearn() {
 
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-					if(tmp >= end)
+					if(start >= end)
 					{
 						std::cout << " tmp >= stop \n"  ;
 						exit(1);
@@ -11209,7 +11218,7 @@ void Mistral::Solver::clean_fdlearn() {
 						//	std::cout << "is a clause? \n" << current_explanation << std::endl;
 						//exit(1);
 						int level__ ;
-						Explanation::iterator tmp__iterator = tmp;
+						Explanation::iterator tmp__iterator = start;
 
 						while(tmp__iterator < end) {
 							q = *tmp__iterator;
@@ -16102,8 +16111,12 @@ Mistral::Outcome Mistral::Solver::branch_right() {
     	//fdimprovedlearn_nogood();
     	//learn_withoutClosingPropagation();
     	else if(parameters.fd_learning==2)
-    		learn_with_lazygeneration();
+    		fdlearn_nogood();
     	else if(parameters.fd_learning==3)
+    		fdlearn_nogood_nosequence();
+    	else if(parameters.fd_learning==4)
+    		learn_with_lazygeneration();
+    	/*    	else if(parameters.fd_learning==3)
     		learn_with_lazygeneration_and_semantic_learning();
     	else if(parameters.fd_learning==4)
     		learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables();
@@ -16111,7 +16124,8 @@ Mistral::Outcome Mistral::Solver::branch_right() {
     		learn_with_lazygeneration_and_semantic_learning2();
     	else if(parameters.fd_learning==6)
     		learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables2();
-    	else if(parameters.fd_learning==7)
+    	 */
+    	else if(parameters.fd_learning==5)
     		clean_fdlearn();
     	else {
     		std::cout << " c Model not implemented" << std::endl;

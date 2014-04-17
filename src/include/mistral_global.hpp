@@ -150,9 +150,9 @@ namespace Mistral {
   //#define _DEBUG_AC true //((statistics.num_filterings >= 177))
 
   //NOTE Enable _RECOVER_GENERATED whenever _CHECK_NOGOOD
-  //#define _CHECK_NOGOOD true
+//#define _CHECK_NOGOOD true
 //#define _VERIFY_BEHAVIOUR_WHEN_LEARNING true
-//#define _RECOVER_GENERATED true
+#define _RECOVER_GENERATED true
 
   //#define   _DEBUG_FAIL true
 //  #define latest_bounds_learning true
