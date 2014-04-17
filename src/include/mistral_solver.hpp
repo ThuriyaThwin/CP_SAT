@@ -130,6 +130,8 @@ namespace Mistral {
     int               value_selection;
     int               dynamic_value;
 
+    //Used with fd learning
+    bool orderedExploration,lazy_generation, no_semantic;
 
     /// MISC
     std::string prefix_comment;

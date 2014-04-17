@@ -151,6 +151,10 @@ void Mistral::SolverParameters::initialise() {
   value_selection = 2;
   dynamic_value = 0; //1;
 
+  orderedExploration = true;
+  lazy_generation= false;
+  no_semantic = true;
+
   prefix_comment = "c";
   prefix_statistics = "d";
   prefix_objective = "o";
@@ -10664,8 +10668,8 @@ unsigned int Mistral::Solver::generate_new_variable(DomainFaithfulnessConstraint
 
 void Mistral::Solver::add_atom_tobe_explored(Atom a){
 
-	bool orderedExploration = true;
-	if (!orderedExploration)
+//	bool orderedExploration = true;
+	if (!parameters.orderedExploration)
 		boolean_vairables_to_explore.add(a);
 	else
 		//boolean_vairables_to_explore.add(a);
@@ -10858,13 +10862,15 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 	}
 #endif
 
-	bool no_semantic = true;
-	bool lazy_generation = false;
+	//bool no_semantic = true;
+	//bool lazy_generation = false;
 	bool already_explored = false;
+
+
 	//if (lvl>0 Search root?
 	if (lvl>0){
 
-		if (!no_semantic)
+		if (!parameters.no_semantic)
 		{
 			if (is_lb && visitedLowerBounds.fast_contain(var)){
 				if (visitedLowerBoundvalues[var] >= val){
@@ -10899,7 +10905,7 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 				}
 		}
 		if (!already_explored) {
-			if (lazy_generation && (lvl < level) ){
+			if (parameters.lazy_generation && (lvl < level) ){
 				DomainFaithfulnessConstraint * dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
 				int tmp__id = -1;
 				if (!is_lb)
@@ -10909,7 +10915,7 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 
 
 
-				if (no_semantic)
+				if (parameters.no_semantic)
 					if ( tmp__id< 0){
 						tmp__id= generate_new_variable(dom_constraint, val, is_lb, lvl, var);
 					}
@@ -10988,7 +10994,7 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 						//				backtrack_level = lvl;
 
 
-						if (no_semantic) {
+						if (parameters.no_semantic) {
 							learnt_clause.add(encode_boolean_variable_as_literal(tmp__id, is_lb));
 							//?? should be __x->lowerbounds[0] -1
 							//visitedLowerBoundvalues[var] = __x->lowerbounds[0];
@@ -11011,7 +11017,7 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 					}
 				}
 				else
-					if (!no_semantic)
+					if (!parameters.no_semantic)
 						if (is_lb){
 							if (!visitedLowerBounds.fast_contain(var))
 								visitedLowerBounds.fast_add(var);
@@ -11196,8 +11202,8 @@ void Mistral::Solver::clean_fdlearn() {
 		learnt_clause.add(0);
 
 
-		bool orderedExploration = true;
-		if (orderedExploration)
+//		bool orderedExploration = true;
+		if (parameters.orderedExploration)
 			ordered_boolean_vairables_to_explore.clear();
 		else
 			boolean_vairables_to_explore.clear();
@@ -11333,10 +11339,10 @@ void Mistral::Solver::clean_fdlearn() {
 		} while( --remainPathC );
 
 
-		bool no_semantic = true;
-		bool lazy_generation = false;
+		//bool no_semantic = true;
+		//bool lazy_generation = false;
 
-		if (lazy_generation && (!no_semantic))
+		if (parameters.lazy_generation && (!parameters.no_semantic))
 			generate_variables();
 
 		//		std::cout << "after while !!!!! " << std::endl;
@@ -11571,8 +11577,8 @@ void Mistral::Solver::clean_fdlearn() {
 Explanation * Mistral::Solver::get_next_to_explore(Atom & a) {
 
 
-	bool orderedExploration = true;
-	if (!orderedExploration) {
+//	bool orderedExploration = true;
+	if (!parameters.orderedExploration) {
 
 		//Find the next variable to explore
 		if (boolean_vairables_to_explore.size>0)
