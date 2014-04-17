@@ -10847,19 +10847,16 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 #endif
 
 	bool no_semantic = true;
+	bool lazy_generation = false;
 	bool already_explored = false;
 	//if (lvl>0 Search root?
 	if (lvl>0){
-	//	if (no_semantic) {
 
-	//	}
-	//	else
+		if (!no_semantic)
 		{
-			if (!no_semantic)
-			{
-				if (is_lb && visitedLowerBounds.fast_contain(var)){
-					if (visitedLowerBoundvalues[var] >= val){
-						/*				std::cout << " \n \n is_lb : " << is_lb << std::endl;
+			if (is_lb && visitedLowerBounds.fast_contain(var)){
+				if (visitedLowerBoundvalues[var] >= val){
+					/*				std::cout << " \n \n is_lb : " << is_lb << std::endl;
 										 										std::cout << " var	 : " << var << std::endl;
 										 										std::cout << " val	 : " << val << std::endl;
 
@@ -10867,15 +10864,15 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 										 										std::cout << " visitedLowerBounds.  : " << visitedLowerBounds << std::endl;
 
 										 										std::cout << " visitedLowerBoundvalues[var] : " << visitedLowerBoundvalues[var] << std::endl;
-						 */
-						already_explored = true;
-					}
-					//			else
+					 */
+					already_explored = true;
 				}
-				else
-					if ((!is_lb) && visitedUpperBounds.fast_contain(var)){
-						if (visitedUpperBoundvalues[var] <= val){
-							/*								std::cout << " \n \n is_lb : " << is_lb << std::endl;
+				//			else
+			}
+			else
+				if ((!is_lb) && visitedUpperBounds.fast_contain(var)){
+					if (visitedUpperBoundvalues[var] <= val){
+						/*								std::cout << " \n \n is_lb : " << is_lb << std::endl;
 										 											std::cout << " var	 : " << var << std::endl;
 										 											std::cout << " val	 : " << val << std::endl;
 
@@ -10883,29 +10880,29 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 										 											std::cout << " visitedLowerBounds.  : " << visitedUpperBounds << std::endl;
 
 										 											std::cout << " visitedUpperBoundvalues[var] : " << visitedUpperBoundvalues[var] << std::endl;
-							 */
-							already_explored = true;
-						}
-						//			else
+						 */
+						already_explored = true;
 					}
-			}
-			if (!already_explored) {
-				if (lvl < level){
-					DomainFaithfulnessConstraint * dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
-					int tmp__id = -1;
-					if (!is_lb)
-						tmp__id = dom_constraint->value_exist( val ) ;
-					else
-						tmp__id = dom_constraint->value_exist( val-1 ) ;
+					//			else
+				}
+		}
+		if (!already_explored) {
+			if (lazy_generation && (lvl < level) ){
+				DomainFaithfulnessConstraint * dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
+				int tmp__id = -1;
+				if (!is_lb)
+					tmp__id = dom_constraint->value_exist( val ) ;
+				else
+					tmp__id = dom_constraint->value_exist( val-1 ) ;
 
 
 
-					if (no_semantic)
-						if ( tmp__id< 0){
-							tmp__id= generate_new_variable(dom_constraint, val, is_lb, lvl, var);
-						}
+				if (no_semantic)
+					if ( tmp__id< 0){
+						tmp__id= generate_new_variable(dom_constraint, val, is_lb, lvl, var);
+					}
 
-					/*
+				/*
 			if ( var< 0)
 			{
 							tmp__id = generate_new_variable(dom_constraint, val, is_lb,  lvl, range_id );
@@ -10915,93 +10912,93 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 			{
 				tmp__id= variables[var].id();
 			}
-					 */
+				 */
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-					if (tmp__id>0)
-						if ( assignment_level[ tmp__id ] != lvl)
-						{
-							std::cout << " ERROR : \n assignment_level[var] " <<  assignment_level[ tmp__id ] << std::endl;
-							std::cout << " lvl " <<  lvl << std::endl;
-							std::cout << " \n \n VVV tmp__ Domain " << variables[tmp__id].get_domain() << std::endl;
-							std::cout << " tmp__.id() " << tmp__id << std::endl;
-							std::cout << " var  " << var<< std::endl;
-							std::cout << " reason_for[var] " << reason_for[ tmp__id ] << std::endl;
-							std::cout << " assignment_level[var] " <<  assignment_level[ tmp__id] << std::endl;
-							std::cout << " lvl " <<  lvl << std::endl;
+				if (tmp__id>0)
+					if ( assignment_level[ tmp__id ] != lvl)
+					{
+						std::cout << " ERROR : \n assignment_level[var] " <<  assignment_level[ tmp__id ] << std::endl;
+						std::cout << " lvl " <<  lvl << std::endl;
+						std::cout << " \n \n VVV tmp__ Domain " << variables[tmp__id].get_domain() << std::endl;
+						std::cout << " tmp__.id() " << tmp__id << std::endl;
+						std::cout << " var  " << var<< std::endl;
+						std::cout << " reason_for[var] " << reason_for[ tmp__id ] << std::endl;
+						std::cout << " assignment_level[var] " <<  assignment_level[ tmp__id] << std::endl;
+						std::cout << " lvl " <<  lvl << std::endl;
 
-							std::cout << " current level  " <<  level << std::endl;
+						std::cout << " current level  " <<  level << std::endl;
 
-							exit (1);
+						exit (1);
 
-						}
-					if (tmp__id > 0)
-						if (! variables[tmp__id].is_ground())
-						{
-							std::cout << " ERROR : \n not ground !! " << std::endl;
-							//std::cout << " lvl " <<  lvl << std::endl;
-							exit (1);
-						}
+					}
+				if (tmp__id > 0)
+					if (! variables[tmp__id].is_ground())
+					{
+						std::cout << " ERROR : \n not ground !! " << std::endl;
+						//std::cout << " lvl " <<  lvl << std::endl;
+						exit (1);
+					}
 #endif
 
-					//assignment_level[var]=lvl;
-					//todo should be search_root!
-					//if(	lvl)
-					if (tmp__id>0) {
-						if( !visited.fast_contain(tmp__id) ) {
-							//Sould be done later!
-							/*
+				//assignment_level[var]=lvl;
+				//todo should be search_root!
+				//if(	lvl)
+				if (tmp__id>0) {
+					if( !visited.fast_contain(tmp__id) ) {
+						//Sould be done later!
+						/*
 														if(lit_activity) {
 															//lit_activity[q] += 0.5 * parameters.activity_increment;
 															lit_activity[NOT(q)] += // 0.5 *
 																	parameters.activity_increment;
 															var_activity[get_id_boolean_variable(q)] += parameters.activity_increment;
 														}
-							 */
+						 */
 
 
-							visited.fast_add(tmp__id);
+						visited.fast_add(tmp__id);
 
-							//learnt_clause.add(encode_bool2*tmp__.id() + is_lb);
-							//learnt_clause.add(encode_boolean_variable_as_literal(tmp__id, is_lb));
+						//learnt_clause.add(encode_bool2*tmp__.id() + is_lb);
+						//learnt_clause.add(encode_boolean_variable_as_literal(tmp__id, is_lb));
 #ifdef 	_DEBUG_FD_NOGOOD
-							if(_DEBUG_FD_NOGOOD){
-								std::cout << " \n learn :  " << encode_boolean_variable_as_literal(tmp__id, is_lb) << " : var  : " << tmp__id << " = " << variables[tmp__id].get_domain() ; //<< std::endl;
-								std::cout << " ---> corresponds to (nogood)  : " ;
-								std::cout << "\n is_a_bound_literal  "<< std::endl;
-								std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-								std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-								std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-							}
+						if(_DEBUG_FD_NOGOOD){
+							std::cout << " \n learn :  " << encode_boolean_variable_as_literal(tmp__id, is_lb) << " : var  : " << tmp__id << " = " << variables[tmp__id].get_domain() ; //<< std::endl;
+							std::cout << " ---> corresponds to (nogood)  : " ;
+							std::cout << "\n is_a_bound_literal  "<< std::endl;
+							std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+							std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+							std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+						}
 #endif
 
-							//			if(lvl > backtrack_level)
-							//				backtrack_level = lvl;
+						//			if(lvl > backtrack_level)
+						//				backtrack_level = lvl;
 
 
-							if (no_semantic) {
-								learnt_clause.add(encode_boolean_variable_as_literal(tmp__id, is_lb));
-								//?? should be __x->lowerbounds[0] -1
-								//visitedLowerBoundvalues[var] = __x->lowerbounds[0];
-								if(lvl > backtrack_level)
-									backtrack_level = lvl;
+						if (no_semantic) {
+							learnt_clause.add(encode_boolean_variable_as_literal(tmp__id, is_lb));
+							//?? should be __x->lowerbounds[0] -1
+							//visitedLowerBoundvalues[var] = __x->lowerbounds[0];
+							if(lvl > backtrack_level)
+								backtrack_level = lvl;
 
+						}
+						else
+							if (is_lb){
+								if (!visitedLowerBounds.fast_contain(var))
+									visitedLowerBounds.fast_add(var);
+								visitedLowerBoundvalues[var]= val;
 							}
 							else
-								if (is_lb){
-									if (!visitedLowerBounds.fast_contain(var))
-										visitedLowerBounds.fast_add(var);
-									visitedLowerBoundvalues[var]= val;
-								}
-								else
-								{
-									if (!visitedUpperBounds.fast_contain(var))
-										visitedUpperBounds.fast_add(var);
-									visitedUpperBoundvalues[var]= val;
-								}
-						}
+							{
+								if (!visitedUpperBounds.fast_contain(var))
+									visitedUpperBounds.fast_add(var);
+								visitedUpperBoundvalues[var]= val;
+							}
 					}
-					else
+				}
+				else
 					if (!no_semantic)
 						if (is_lb){
 							if (!visitedLowerBounds.fast_contain(var))
@@ -11016,10 +11013,9 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 						}
 
 
-				}
-				else
-					bound_literals_to_explore.add(q);
 			}
+			else
+				bound_literals_to_explore.add(q);
 		}
 	}
 }
@@ -11355,7 +11351,9 @@ void Mistral::Solver::clean_fdlearn() {
 
 
 		bool no_semantic = true;
-		if (!no_semantic)
+		bool lazy_generation = false;
+
+		if (lazy_generation && (!no_semantic))
 			generate_variables();
 
 		//		std::cout << "after while !!!!! " << std::endl;
