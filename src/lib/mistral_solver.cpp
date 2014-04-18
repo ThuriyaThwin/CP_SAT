@@ -11156,15 +11156,15 @@ void Mistral::Solver::clean_fdlearn() {
 	propagate_literal_in_learnt_clause= true;
 #endif
 
-	std::cout << " \n\n\n clean_fdlearn " << std::endl;
+	/*std::cout << " \n\n\n clean_fdlearn " << std::endl;
 	std::cout << " parameters.bounded_by_decision  " << parameters.bounded_by_decision  << std::endl;
 	std::cout << " parameters.max_nogood_size  " << parameters.max_nogood_size  << std::endl;
 	std::cout << " parameters.simple_learn  " << parameters.simple_learn  << std::endl;
 	//	std::cout << " parameters.simple_learn  " << parameters.simple_learn  << std::endl;
 	std::cout << " parameters.lazy_generation  " << parameters.lazy_generation  << std::endl;
 	std::cout << " parameters.semantic_learning  " << parameters.semantic_learning  << std::endl;
-
-
+	exit(1);
+*/
 
 	if (parameters.simple_learn &&  decisions.size < (unsigned int) parameters.simple_learn)
 		simple_fdlearn_nogood();
@@ -11469,7 +11469,7 @@ void Mistral::Solver::clean_fdlearn() {
 			}
 					 */
 
-					std::cout << " CHECK NOGOOD IN clean_fdlearn " << std::endl;
+					//std::cout << " CHECK NOGOOD IN clean_fdlearn " << std::endl;
 					((SchedulingSolver *) this)->	check_nogood(learnt_clause);
 					//	store_nogood(learnt_clause);
 				}
