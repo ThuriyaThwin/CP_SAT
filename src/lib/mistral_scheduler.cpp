@@ -211,7 +211,9 @@ std::ostream& StatisticList::print(std::ostream& os,
      << " d " << prefix << std::left << std::setw(25-plength)  << " PROPAGS "       << std::right << std::setw(19) << total_propags << std::endl
      << " d " << prefix << std::left << std::setw(25-plength)  << " NOGOODS "       << std::right << std::setw(19) << num_nogoods << std::endl;
   if(num_nogoods)
-    std::cout << " d " << prefix << std::left << std::setw(25-plength)  << " NOGOODSIZE "    << std::right << std::setw(19) << avg_nogood_size/(double)num_nogoods << std::endl;
+	    std::cout << " d " << prefix << std::left << std::setw(25-plength)  << " NOGOODSIZE "    << std::right << std::setw(19) << avg_nogood_size/(double)num_nogoods << std::endl;
+  std::cout << " d " << prefix << std::left << std::setw(25-plength)  << " NOGOODSIZE "    << std::right << std::setw(19) << solver->statistics.avg_learned_size << std::endl;
+
   std::cout << " d " << prefix << std::left << std::setw(25-plength)  << " NODES/s "       << std::right << std::setw(19) ;
   if(total_time > 0)
     std::cout << (int)((double)total_nodes/total_time);

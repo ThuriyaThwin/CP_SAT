@@ -94,6 +94,8 @@ int main( int argc, char** argv )
     //solver.large_neighborhood_search();
   }
 
+  //solver->parameters.fd_learning = 1;
+  //solver->parameters.backjump = 1;
   stats.print(std::cout, "");  
   std::cout << "s " << (stats.num_solutions ? "SATISFIABLE" : "UNSATISFIABLE") 
    	    << " \nv 00" << std::endl;
