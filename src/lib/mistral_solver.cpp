@@ -11475,11 +11475,16 @@ void Mistral::Solver::clean_fdlearn() {
 				}
 #endif
 
+
 				statistics.size_learned += learnt_clause.size;
 				statistics.avg_learned_size =
 						((statistics.avg_learned_size * (double)(statistics.num_failures)) + (double)(learnt_clause.size))
 						/ ((double)(++statistics.num_failures));
 
+		/*		std::cout << "  \n \n statistics" <<std::endl;
+				std::cout << "  statistics.size_learned   "   << statistics.size_learned <<std::endl;
+				std::cout << "  statistics.avg_learned_size "   << statistics.avg_learned_size <<std::endl;
+		*/
 
 				if (parameters.reduce_learnt_clause){
 					if (learnt_clause.size != 1){

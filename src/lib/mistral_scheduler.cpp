@@ -2986,7 +2986,7 @@ void SchedulingSolver::dichotomic_search()
 #ifdef _DEBUG_SCHEDULER
 	  //objective = 1245;
 #endif
-	  std::cout << " c \n c+=========[ start dichotomic step ]=========+" << std::endl;
+	  std::cout << " c \n c \n c+=========[ start dichotomic step ]=========+" << std::endl;
 	  //       setPropagsLimit(params->NodeCutoff);
 
 	  parameters.propagation_limit = params->NodeCutoff;
@@ -3075,6 +3075,19 @@ void SchedulingSolver::dichotomic_search()
 	  //std::cout << "LEVEL: " << level << " " << this << std::endl;
 
 	  restore();
+
+	  if (base)
+	  {
+		  std::cout << std::left << std::setw(30) << " c | nb variables " << ":" << std::right << std::setw(15) << variables.size<< " |" << std::endl;
+		  std::cout << std::left << std::setw(30) << " c | learnt clauses " << ":" << std::right << std::setw(15) << base->learnt.size << " |" << std::endl;
+		  std::cout << std::left << std::setw(30) << " c | avg nogood size " << ":" << std::right << std::setw(15) <<(int)statistics.avg_learned_size<< " |" << std::endl;
+	/*	  __size = base->learnt.size;
+		  std::cout << " c dichotomy ended with " << __size << " learnt clause" << std::endl;
+		  std::cout << " c dichotomy ended with AVG Nogood size" <<  << std::endl;
+		  std::cout << " c dichotomy ended with variables.size" << variables.size << std::endl;
+	*/
+
+	  }
 	  statistics.initialise(this);
 	  pol->initialise(parameters.restart_limit);
 
@@ -3105,8 +3118,12 @@ void SchedulingSolver::dichotomic_search()
 
 	  if (base)
 	  {
-
-		  std::cout << " c dichotomy ended with variables.size" << variables.size << std::endl;
+		  __size = base->learnt.size;
+	/*	  std::cout << " c dichotomy ended with variables.size" << variables.size << std::endl;
+		  __size = base->learnt.size;
+		  std::cout << " c dichotomy ended with " << __size << " learnt clause" << std::endl;
+		  std::cout << " c dichotomy ended with AVG Nogood size" <<  statistics.avg_learned_size<< std::endl;
+	*/
 		  if (params->forgetall)
 		  {
 #ifdef _RECOVER_GENERATED
@@ -3114,9 +3131,8 @@ void SchedulingSolver::dichotomic_search()
 			  value_lazy.clear();
 			  std::cout << " c clear   varsIds_lazy and  value_lazy" << std::endl;
 #endif
-			  __size = base->learnt.size;
 
-			  std::cout << " c dichotomy ended with " << __size << " learnt clause" << std::endl;
+
 
 			  while (__size--)
 				  base->remove(__size);
