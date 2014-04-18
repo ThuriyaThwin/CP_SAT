@@ -3787,11 +3787,6 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 
 	//std::cout << " check learnt nogood :  "<< c << std::endl;
 
-	//	std::cout << " learnt nogood size :  "<< c.size  << std::endl;
-
-	//	std::cout << " here ?  " << std::endl;
-
-
 	// c[0] before all others!
 	int id =get_id_boolean_variable(c[0]);
 	//		std::cout << " id = " << id << std::endl;
@@ -3831,7 +3826,7 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 
 	if (assignment_level[id] != level){
 
-	//	std::cout << " ERROR : assignment_level[id] != level" << std::endl;
+		std::cout << " ERROR : assignment_level[id] != level" << std::endl;
 		exit(1);
 	}
 
@@ -3839,7 +3834,8 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 
 	for(int j=1; j<c.size; ++j) {
 		int id =get_id_boolean_variable(c[j]);
-		//		std::cout << " id = " << id << std::endl;
+	//	std::cout << " j = " << j << std::endl;
+	//	std::cout << " id = " << id << std::endl;
 		//		std::cout << " the variable is : " << variables[id] <<" and its domain is : " <<  variables[id].get_domain() << std::endl;
 		if (id < initial_variablesize){
 
@@ -3879,6 +3875,8 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 		if (assignment_level[id] >= level){
 
 			std::cout << " ERROR : assignment_level[id] >= level" << std::endl;
+			std::cout << " assignment_level[id]" << assignment_level[id] << std::endl;
+			std::cout << " assignment_level[id]" << level<< std::endl;
 			exit(1);
 		}
 

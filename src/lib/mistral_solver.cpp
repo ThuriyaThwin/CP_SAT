@@ -2450,7 +2450,12 @@ void Mistral::Solver::restore() {
 }
 
 void Mistral::Solver::restore(const int lvl) {
-  decisions.size = lvl;
+
+	//std::cout << " \n lvl" << lvl << std::endl;
+	//std::cout << " \n search root" << search_root << std::endl;
+	//std::cout << "level" << level << std::endl;
+
+  decisions.size = lvl -search_root;
   while(lvl < level) restore();
 }
 
@@ -5080,18 +5085,27 @@ void Mistral::Solver::simple_fdlearn_nogood() {
 #endif
 
 	backtrack_level = level-1;
+	visited.clear();
 	//	backtrack_level = level-2;
 
+	/*std::cout << " \n \n simple_fdlearn_nogood \n Decisions size"  << decisions.size << " and the vector  : \n        " << decisions << std::endl;
+	std::cout << " \n \n level"  << level << std::endl;
+	std::cout << " Assignment levels "  << std::endl;
 
-	//	std::cout << "decisions "  << decisions.size << " and the values : \n        " << decisions << std::endl;
+	for (int i = (decisions.size -1); i >=0 ; --i)
+	{
+
+		std::cout << " \n i "  << i << " assignement level "  << assignment_level[decisions[i].var.id()] << std::endl;
+
+	}
+	 */
 
 	//did decision starts from 0 or1 ? also
 	learnt_clause.clear();
 	for (int i = 1; i <= decisions.size; ++i)
 	{
-
 		if(assignment_level[decisions[decisions.size-i].var.id()])
-			learnt_clause.add(NOT (encode_boolean_variable_as_literal(decisions[decisions.size-i].var.id(), decisions[decisions.size-i].var.get_min())) );
+			learnt_clause.add(NOT(encode_boolean_variable_as_literal(decisions[decisions.size-i].var.id(), decisions[decisions.size-i].var.get_min())) );
 	}
 
 	statistics.size_learned += learnt_clause.size;
@@ -5103,6 +5117,7 @@ void Mistral::Solver::simple_fdlearn_nogood() {
 #ifdef _CHECK_NOGOOD
 	store_nogood(learnt_clause);
 
+	//std::cout << " CHECK NOGOOD IN simple_fdlearn_nogood " << std::endl;
 	((SchedulingSolver *) this)->	check_nogood(learnt_clause);
 
 #endif
@@ -11132,7 +11147,6 @@ void Mistral::Solver::treat_explanation (Explanation* explanation,  Explanation:
 
 void Mistral::Solver::clean_fdlearn() {
 
-
 	//std::cout << " \n\n\n fdlearn_ " << std::endl;
 	//std::cout << " \n\n\n variablessize " << variables.size << std::endl;
 	//std::cout << " \n\n\n start_from " << start_from << std::endl;
@@ -11141,6 +11155,16 @@ void Mistral::Solver::clean_fdlearn() {
 #ifdef latest_bounds_learning
 	propagate_literal_in_learnt_clause= true;
 #endif
+
+	std::cout << " \n\n\n clean_fdlearn " << std::endl;
+	std::cout << " parameters.bounded_by_decision  " << parameters.bounded_by_decision  << std::endl;
+	std::cout << " parameters.max_nogood_size  " << parameters.max_nogood_size  << std::endl;
+	std::cout << " parameters.simple_learn  " << parameters.simple_learn  << std::endl;
+	//	std::cout << " parameters.simple_learn  " << parameters.simple_learn  << std::endl;
+	std::cout << " parameters.lazy_generation  " << parameters.lazy_generation  << std::endl;
+	std::cout << " parameters.semantic_learning  " << parameters.semantic_learning  << std::endl;
+
+
 
 	if (parameters.simple_learn &&  decisions.size < (unsigned int) parameters.simple_learn)
 		simple_fdlearn_nogood();
@@ -11215,6 +11239,8 @@ void Mistral::Solver::clean_fdlearn() {
 
 		visitedLowerBounds.clear();
 		visitedUpperBounds.clear();
+
+		visited.clear();
 		do {
 
 
@@ -11344,66 +11370,75 @@ void Mistral::Solver::clean_fdlearn() {
 		} while( --remainPathC );
 
 
-		//bool no_semantic = true;
-		//bool lazy_generation = false;
+		if (parameters.bounded_by_decision && (learnt_clause.size > decisions.size))
+			simple_fdlearn_nogood();
+		else {
+			if (parameters.max_nogood_size && (learnt_clause.size > parameters.max_nogood_size)) {
+				std::cout << "parameters.max_nogood_size " << parameters.max_nogood_size  << std::endl;
+				std::cout << "learnt_clause.size  " <<learnt_clause.size   << std::endl;
+				simple_fdlearn_nogood();
+			}
+			else {
+				//bool no_semantic = true;
+				//bool lazy_generation = false;
 
-		if (parameters.lazy_generation && (parameters.semantic_learning))
-			generate_variables();
+				if (parameters.lazy_generation && (parameters.semantic_learning))
+					generate_variables();
 
-		//		std::cout << "after while !!!!! " << std::endl;
-		//		std::cout << "\n p =" << p << std::endl;
-		//		std::cout << "\n NULLATOM =" << NULL_ATOM << std::endl;
-		//		std::cout << "learnt_clause size =" << learnt_clause.size << std::endl;
-		//		std::cout << "learnt_clause =" << learnt_clause << std::endl;
+				//		std::cout << "after while !!!!! " << std::endl;
+				//		std::cout << "\n p =" << p << std::endl;
+				//		std::cout << "\n NULLATOM =" << NULL_ATOM << std::endl;
+				//		std::cout << "learnt_clause size =" << learnt_clause.size << std::endl;
+				//		std::cout << "learnt_clause =" << learnt_clause << std::endl;
 
 
-		// p is the last decision, since all atoms above it in the
-		// assumption stack have been skipped or expended.
+				// p is the last decision, since all atoms above it in the
+				// assumption stack have been skipped or expended.
 
-		q= encode_boolean_variable_as_literal(variables[a].id(),variables[a].get_min() );
-		learnt_clause[0] = NOT(q);
+				q= encode_boolean_variable_as_literal(variables[a].id(),variables[a].get_min() );
+				learnt_clause[0] = NOT(q);
 #ifdef 	_DEBUG_FD_NOGOOD
-		if(_DEBUG_FD_NOGOOD){
-			std::cout << " \n learn :  " << variables[a] << "  = " <<  variables[a].get_domain() << " ; assignment_level : " << assignment_level[a]<< std::endl;
-		}
+				if(_DEBUG_FD_NOGOOD){
+					std::cout << " \n learn :  " << variables[a] << "  = " <<  variables[a].get_domain() << " ; assignment_level : " << assignment_level[a]<< std::endl;
+				}
 #endif
 #ifdef _DEBUG_SEARCH
-		if(_DEBUG_SEARCH) {
-			for(int i=0; i<level; ++i) std::cout << " ";
-			std::cout << "learn " << learnt_clause.size << " (";
-			print_literal(std::cout, learnt_clause[0]);
-			for(unsigned int i=1; i<learnt_clause.size; ++i) {
-				std::cout << " v " ;//<< learnt_clause[i];
-				print_literal(std::cout, learnt_clause[i]);
-			}
-			std::cout << " ) " << (backtrack_level<level-1 ? "-backjump" : "") << std::endl;
-		}
+				if(_DEBUG_SEARCH) {
+					for(int i=0; i<level; ++i) std::cout << " ";
+					std::cout << "learn " << learnt_clause.size << " (";
+					print_literal(std::cout, learnt_clause[0]);
+					for(unsigned int i=1; i<learnt_clause.size; ++i) {
+						std::cout << " v " ;//<< learnt_clause[i];
+						print_literal(std::cout, learnt_clause[i]);
+					}
+					std::cout << " ) " << (backtrack_level<level-1 ? "-backjump" : "") << std::endl;
+				}
 #endif
 
-		//exit(1);
+				//exit(1);
 #ifdef 	_DEBUG_FD_NOGOOD
-		if(_DEBUG_FD_NOGOOD){
-			std::cout << " c END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
-			std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
-			std::cout << "learnt_clause : "  << learnt_clause.size  << std::endl;
-			exit(1);
-		}
+				if(_DEBUG_FD_NOGOOD){
+					std::cout << " c END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
+					std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
+					std::cout << "learnt_clause : "  << learnt_clause.size  << std::endl;
+					exit(1);
+				}
 #endif
 
 #ifdef _CHECK_NOGOOD
-		//	if (graph_size <35)
-		{
-			//		std::cout << "graph_size : "  << graph_size  << std::endl;
-			//		std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
-			/*
+				//	if (graph_size <35)
+				{
+					//		std::cout << "graph_size : "  << graph_size  << std::endl;
+					//		std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
+					/*
 			for (int i = 0; i< learnt_clause.size; ++i)
 			{
 				std::cout << "assignment level [i] = " << assignment_level[get_id_boolean_variable(learnt_clause[i])] << std::endl;
 			}
 			std::cout << "END! current level  "  << level << " \n and backtrack_level :     " << backtrack_level << std::endl;
-			 */
-			// bug in instance 1
-			/*	Vector<Literal > tmp_nogood;
+					 */
+					// bug in instance 1
+					/*	Vector<Literal > tmp_nogood;
 			tmp_nogood.add(241) ;
 			tmp_nogood.add(3811) ;
 			tmp_nogood.add(3798) ;
@@ -11432,46 +11467,43 @@ void Mistral::Solver::clean_fdlearn() {
 					exit(1);
 				}
 			}
-			 */
-			((SchedulingSolver *) this)->	check_nogood(learnt_clause);
-			//	store_nogood(learnt_clause);
-		}
+					 */
+
+					std::cout << " CHECK NOGOOD IN clean_fdlearn " << std::endl;
+					((SchedulingSolver *) this)->	check_nogood(learnt_clause);
+					//	store_nogood(learnt_clause);
+				}
 #endif
 
-		statistics.size_learned += learnt_clause.size;
-		statistics.avg_learned_size =
-				((statistics.avg_learned_size * (double)(statistics.num_failures)) + (double)(learnt_clause.size))
-				/ ((double)(++statistics.num_failures));
+				statistics.size_learned += learnt_clause.size;
+				statistics.avg_learned_size =
+						((statistics.avg_learned_size * (double)(statistics.num_failures)) + (double)(learnt_clause.size))
+						/ ((double)(++statistics.num_failures));
 
 
-		if (parameters.bounded_by_decision && learnt_clause.size > decisions.size)
-			simple_fdlearn_nogood();
-		else if (parameters.max_nogood_size && learnt_clause.size > parameters.max_nogood_size)
-			simple_fdlearn_nogood();
-		else {
-			if (parameters.reduce_learnt_clause){
-				if (learnt_clause.size != 1){
-					//	std::cout << "reducing clause  "  << learnt_clause <<  std::endl;
+				if (parameters.reduce_learnt_clause){
+					if (learnt_clause.size != 1){
+						//	std::cout << "reducing clause  "  << learnt_clause <<  std::endl;
 
-					//		std::cout << "  \n clause being reduced from  \n "  << learnt_clause.size ;
-					reduce_clause();
+						std::cout << "  \n clause being reduced from  \n "  << learnt_clause.size ;
+						reduce_clause();
 
-					//std::cout << "reduced clause \n "  << learnt_clause <<  std::endl;
-					//		std::cout << " to "  << learnt_clause.size <<  std::endl;
+						//std::cout << "reduced clause \n "  << learnt_clause <<  std::endl;
+						//		std::cout << " to "  << learnt_clause.size <<  std::endl;
 #ifdef _CHECK_NOGOOD
-					//	if (graph_size <35)
-					{
-						//		std::cout << "graph_size : "  << graph_size  << std::endl;
-						//		std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
-						/*
+						//	if (graph_size <35)
+						{
+							//		std::cout << "graph_size : "  << graph_size  << std::endl;
+							//		std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
+							/*
 		for (int i = 0; i< learnt_clause.size; ++i)
 		{
 			std::cout << "assignment level [i] = " << assignment_level[get_id_boolean_variable(learnt_clause[i])] << std::endl;
 		}
 		std::cout << "END! current level  "  << level << " \n and backtrack_level :     " << backtrack_level << std::endl;
-						 */
-						// bug in instance 1
-						/*	Vector<Literal > tmp_nogood;
+							 */
+							// bug in instance 1
+							/*	Vector<Literal > tmp_nogood;
 		tmp_nogood.add(241) ;
 		tmp_nogood.add(3811) ;
 		tmp_nogood.add(3798) ;
@@ -11500,49 +11532,49 @@ void Mistral::Solver::clean_fdlearn() {
 				exit(1);
 			}
 		}
-						 */
-						((SchedulingSolver *) this)->	check_nogood(learnt_clause);
-						//	store_nogood(learnt_clause);
+							 */
+							((SchedulingSolver *) this)->	check_nogood(learnt_clause);
+							//	store_nogood(learnt_clause);
+						}
+#endif
 					}
-#endif
 				}
-			}
 
-			if( learnt_clause.size != 1 ) {
+				if( learnt_clause.size != 1 ) {
 
-				// if(lit_activity) {
-				//   int i=learnt_clause.size;
-				//   while(i--) {
-				// 	var_activity[UNSIGNED(learnt_clause[i])] += parameters.activity_increment;
-				//   }
-				// }
+					// if(lit_activity) {
+					//   int i=learnt_clause.size;
+					//   while(i--) {
+					// 	var_activity[UNSIGNED(learnt_clause[i])] += parameters.activity_increment;
+					//   }
+					// }
 
-				base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
-				//add_clause( learnt, learnt_clause, stats.learnt_avg_size );
-				//reason[UNSIGNED(p)] = base->learnt.back();
+					base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
+					//add_clause( learnt, learnt_clause, stats.learnt_avg_size );
+					//reason[UNSIGNED(p)] = base->learnt.back();
 
-				// EXPL
-				//base->reason_for[UNSIGNED(p)] = base->learnt.back();
+					// EXPL
+					//base->reason_for[UNSIGNED(p)] = base->learnt.back();
 
-				//base->reason_for[UNSIGNED(p)] = base->learnt.back();
-				//reason_for[UNSIGNED(p)] = base;
-				//taboo_constraint = base;
+					//base->reason_for[UNSIGNED(p)] = base->learnt.back();
+					//reason_for[UNSIGNED(p)] = base;
+					//taboo_constraint = base;
 
-				taboo_constraint = (ConstraintImplementation*)(base->learnt.back());
-				//reason_for[UNSIGNED(p)].store_reason_for_change(VALUE_EVENT, base->learnt.back());
-			} else {
-				taboo_constraint = NULL;
-			}
-		}
-		visited.clear();
+					taboo_constraint = (ConstraintImplementation*)(base->learnt.back());
+					//reason_for[UNSIGNED(p)].store_reason_for_change(VALUE_EVENT, base->learnt.back());
+				} else {
+					taboo_constraint = NULL;
+				}
+
+
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-		__failure=NULL;
+				__failure=NULL;
 #endif
 
-		//#ifdef _DEBUG
-		//		std::cout << "END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
-		//			std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
-		/*		std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
+				//#ifdef _DEBUG
+				//		std::cout << "END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
+				//			std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
+				/*		std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
 		for (int i = 0; i< learnt_clause.size; ++i)
 		{
 			std::cout << "assignment level [i] = " << assignment_level[get_id_boolean_variable(learnt_clause[i])] << std::endl;
@@ -11550,37 +11582,38 @@ void Mistral::Solver::clean_fdlearn() {
 		std::cout << "END! current level  "  << level << " \n and backtrack_level :     " << backtrack_level << std::endl;
 
 		std::cout << "endl no_recursive \n"  << std::endl;
-		 */
-		// int real_size = 0;
-		// for(int i=0; i<base->learnt.size; ++i) {
-		//   real_size += base->learnt[i]->size;
-		// }
-		// if(real_size != statistics.size_learned) {
-		//   std::cout << "discrepancy after learning!!\n" ;
-		//   exit(1);
-		// }
+				 */
+				// int real_size = 0;
+				// for(int i=0; i<base->learnt.size; ++i) {
+				//   real_size += base->learnt[i]->size;
+				// }
+				// if(real_size != statistics.size_learned) {
+				//   std::cout << "discrepancy after learning!!\n" ;
+				//   exit(1);
+				// }
 
 
-		//backjump_decision = decision(variables[UNSIGNED(p)], Decision::REMOVAL, SIGN(p));
+				//backjump_decision = decision(variables[UNSIGNED(p)], Decision::REMOVAL, SIGN(p));
 
 #ifdef _DEBUG_NOGOOD
-		if(_DEBUG_NOGOOD) {
-			//for(int i=0; i<level; ++i) std::cout << " ";
-			std::cout << "backtrackLevel = " << backtrack_level << "/" << (decisions.size) << std::endl;
-		}
+				if(_DEBUG_NOGOOD) {
+					//for(int i=0; i<level; ++i) std::cout << " ";
+					std::cout << "backtrackLevel = " << backtrack_level << "/" << (decisions.size) << std::endl;
+				}
 #endif
 
-		//   while(level>backtrack_level) {
-		//     restore();
-		//     decisions.pop();
-		//   }
+				//   while(level>backtrack_level) {
+				//     restore();
+				//     decisions.pop();
+				//   }
 
-		//return decision;
+				//return decision;
 
 
-		//	std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
+				//	std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
 
-		//exit(1);
+			}	//exit(1);
+		}
 	}
 }
 
@@ -16198,6 +16231,18 @@ void Mistral::Solver::close_propagation() {
 
 Mistral::Outcome Mistral::Solver::branch_right() {
   //std::cout << "level :: " << level << std::endl;
+	//std::cout << " \n \n BEGIN branch_right \n Decisions size"  << decisions.size << " and the vector  : \n        " << decisions << std::endl;
+	//std::cout << " \n \n level"  << level << std::endl;
+	//std::cout << " Assignment levels "  << std::endl;
+
+/*	for (int i = (decisions.size -1); i >=0 ; --i)
+	{
+
+		std::cout << " \n i "  << i << " assignement level i "  << assignment_level[decisions[i].var.id()] << std::endl;
+
+	}
+*/
+
 
   int status = UNKNOWN;
 
@@ -16287,10 +16332,10 @@ Mistral::Outcome Mistral::Solver::branch_right() {
     	{
 #endif
     		Literal p = learnt_clause[0];
-    		if( get_id_boolean_variable(p) >= initial_variablesize){
+ //   		if( get_id_boolean_variable(p) >= initial_variablesize){
     			//std::cout << " initial_variablesize in learnt_clause[0] " << std::endl;
     //			exit(1);
-    		}
+    	//	}
 
     	deduction = Decision(variables[get_id_boolean_variable(p)], Decision::REMOVAL, NOT(SIGN(p)));
 #ifdef latest_bounds_learning
@@ -16358,7 +16403,11 @@ Mistral::Outcome Mistral::Solver::branch_right() {
     
     
   }
-
+	//std::cout << " \n \n END  branch_right \n Decisions size"  << decisions.size << " and the vector  : \n        " << decisions << std::endl;
+	//std::cout << " \n \n level"  << level << std::endl;
+	//std::cout << " Assignment levels "  << std::endl;
+	//std::cout << " status  "  << status << std::endl;
+	//exit(1);
   return status;
 }
 
