@@ -264,7 +264,7 @@ const char* ParameterList::int_ident[ParameterList::nia] =
 const char* ParameterList::str_ident[ParameterList::nsa] = 
   {"-heuristic", "-restart", "-factor", "-decay", "-type", 
    "-value", "-dvalue", "-ivalue", "-objective", "-algo",
-   "-presolve", "-bandbrestart"};
+   "-presolve", "-bandbrestart" , "-forgetfulness"};
 
 
 // ParameterList::ParameterList() {
@@ -329,6 +329,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   BandBPolicy    = "geom";
   Factor    = 1.3;
   Decay     = 0.0;
+  Forgetfulness = 0.0;
   Value     = "guided";
   DValue    = "guided";
   IValue    = "promise";
@@ -432,6 +433,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(strcmp(str_param[1 ],"nil")) Policy     = str_param[1];
   if(strcmp(str_param[2 ],"nil")) Factor     = atof(str_param[2]);
   if(strcmp(str_param[3 ],"nil")) Decay      = atof(str_param[3]);
+
   if(strcmp(str_param[5 ],"nil")) Value      = str_param[5];
   if(strcmp(str_param[6 ],"nil")) DValue     = str_param[6];
   if(strcmp(str_param[7 ],"nil")) IValue     = str_param[7];
@@ -439,6 +441,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(strcmp(str_param[9 ],"nil")) Algorithm  = str_param[9 ];
   if(strcmp(str_param[10],"nil")) Presolve   = str_param[10];
   if(strcmp(str_param[11 ],"nil")) BandBPolicy     = str_param[11];
+  if(strcmp(str_param[12],"nil")) Forgetfulness    = atof(str_param[12]);
 
 }
 
@@ -481,6 +484,7 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | bounded_by_decision " << ":" << std::right << std::setw(15) << bounded_by_decision << " |" << std::endl;
   os << std::left << std::setw(30) << " c | forget all clauses " << ":" << std::right << std::setw(15) << (forgetall? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | reduce learnt clause " << ":" << std::right << std::setw(15) << (reduce_clauses? "yes" : "no") << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | clause forgetfulness %" << ":" << std::right << std::setw(15) << Forgetfulness << " |" << std::endl;
   os << std::left << std::setw(30) << " c | seed " << ":" << std::right << std::setw(15) << Seed << " |" << std::endl;
   os << std::left << std::setw(30) << " c | greedy iterations " << ":" << std::right << std::setw(15) << InitBound << " |" << std::endl;
   os << std::left << std::setw(30) << " c | use initial probe " << ":" << std::right << std::setw(15) << (InitStep ? "yes" : "no") << " |" << std::endl;
@@ -1896,7 +1900,7 @@ void SchedulingSolver::setup() {
   if (params->FD_learning)
   {
 	  start_from = tasks.size +1;
-	  set_fdlearning_on(params->FD_learning, params->reduce_clauses,params->orderedExploration, params->lazy_generation, params->semantic_learning, params->simple_learn, params->max_nogood_size, params->bounded_by_decision);
+	  set_fdlearning_on(params->FD_learning, params->reduce_clauses,params->orderedExploration, params->lazy_generation, params->semantic_learning, params->simple_learn, params->max_nogood_size, params->bounded_by_decision, params->Forgetfulness);
   }
 
 #ifdef _MONITOR

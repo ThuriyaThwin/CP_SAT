@@ -18477,7 +18477,8 @@ void Mistral::Solver::set_fdlearning_on(
 	    int semantic_learning,
 	    int simple_learn,
 	    int max_nogood_size,
-	    int bounded_by_decision
+	    int bounded_by_decision,
+	    double forgetfulness
 	    ) {
 
 	//	parameters.jsp_backjump = true;
@@ -18491,7 +18492,7 @@ void Mistral::Solver::set_fdlearning_on(
 	parameters.max_nogood_size =max_nogood_size;
 	parameters.bounded_by_decision =bounded_by_decision;
 	parameters.semantic_learning = semantic_learning ;
-	parameters.forgetfulness = 0.0;
+	parameters.forgetfulness = forgetfulness;
 
 	std::cout << " c start_from : " << start_from << std::endl;
 	visitedUpperBounds.initialise(0, start_from  , BitSet::empt);
