@@ -348,7 +348,7 @@ ParameterList::ParameterList(int length, char **commandline) {
 
 
 
-  orderedExploration = 1;
+  orderedExploration = 0;
   lazy_generation= 0;
   semantic_learning = 0;
 

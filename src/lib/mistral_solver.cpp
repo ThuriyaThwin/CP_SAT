@@ -11374,8 +11374,8 @@ void Mistral::Solver::clean_fdlearn() {
 			simple_fdlearn_nogood();
 		else {
 			if (parameters.max_nogood_size && (learnt_clause.size > parameters.max_nogood_size)) {
-				std::cout << "parameters.max_nogood_size " << parameters.max_nogood_size  << std::endl;
-				std::cout << "learnt_clause.size  " <<learnt_clause.size   << std::endl;
+		//		std::cout << "parameters.max_nogood_size " << parameters.max_nogood_size  << std::endl;
+		//		std::cout << "learnt_clause.size  " <<learnt_clause.size   << std::endl;
 				simple_fdlearn_nogood();
 			}
 			else {
