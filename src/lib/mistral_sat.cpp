@@ -1081,6 +1081,25 @@ void Mistral::ConstraintClauseBase::remove( const int cidx )
   free(clause);
 }
 
+
+void Mistral::ConstraintClauseBase::hard_forget(){
+
+//	std::cout << "\n c hard_forget " << std::endl;
+//	std::cout << " c will_be_forgotten size" << will_be_forgotten.size << std::endl;
+//	std::cout << " c learnt size" << learnt.size << std::endl;
+
+	for (int i = (will_be_forgotten.size -1); i >=0 ; --i){
+		remove(will_be_forgotten[i]);
+	}
+	will_be_forgotten.clear();
+
+//	std::cout << " c END hard_forget" << std::endl;
+//	std::cout << " c will_be_forgotten size" << will_be_forgotten.size << std::endl;
+//	std::cout << " c learnt size" << learnt.size << std::endl;
+
+}
+
+
 //#define _DEBUG_FORGET true
 
 

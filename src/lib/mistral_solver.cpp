@@ -5134,6 +5134,11 @@ void Mistral::Solver::simple_fdlearn_nogood() {
 
 
 		base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
+		if (parameters.forget_relatedto_nogood_size)
+			if (learnt_clause.size > parameters.forget_relatedto_nogood_size) {
+				base->forget_last();
+			}
+
 		//add_clause( learnt, learnt_clause, stats.learnt_avg_size );
 		//reason[UNSIGNED(p)] = base->learnt.back();
 
@@ -11559,6 +11564,11 @@ void Mistral::Solver::clean_fdlearn() {
 					// }
 
 					base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
+					if (parameters.forget_relatedto_nogood_size)
+						if (learnt_clause.size > parameters.forget_relatedto_nogood_size) {
+							base->forget_last();
+						}
+
 					//add_clause( learnt, learnt_clause, stats.learnt_avg_size );
 					//reason[UNSIGNED(p)] = base->learnt.back();
 
@@ -16157,6 +16167,9 @@ void Mistral::Solver::forget() {
 
   //std::cout << lit_activity << " "  << lit_activity[0] << " "  << lit_activity[1] << std::endl;
 
+	if(base)
+		base->hard_forget();
+
   if(base) statistics.size_learned -= base->forget(parameters.forgetfulness, var_activity, lit_activity);
 
   //exit(1);
@@ -18496,7 +18509,8 @@ void Mistral::Solver::set_fdlearning_on(
 	    int simple_learn,
 	    int max_nogood_size,
 	    int bounded_by_decision,
-	    double forgetfulness
+	    double forgetfulness,
+	    int forget_relatedto_nogood_size
 	    ) {
 
 	//	parameters.jsp_backjump = true;
@@ -18511,6 +18525,7 @@ void Mistral::Solver::set_fdlearning_on(
 	parameters.bounded_by_decision =bounded_by_decision;
 	parameters.semantic_learning = semantic_learning ;
 	parameters.forgetfulness = forgetfulness;
+	parameters.forget_relatedto_nogood_size =forget_relatedto_nogood_size;
 
 	std::cout << " c start_from : " << start_from << std::endl;
 	visitedUpperBounds.initialise(0, start_from  , BitSet::empt);

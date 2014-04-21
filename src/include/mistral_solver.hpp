@@ -109,6 +109,7 @@ namespace Mistral {
     int backjump;
     int fd_learning;
     int reduce_learnt_clause;
+    int forget_relatedto_nogood_size;
 
     /// whether solutions are checked
     // 0 -> not checked
@@ -922,7 +923,7 @@ namespace Mistral {
     void initialise_random_seed(const int seed);
     void set_time_limit(const double limit);
     void set_learning_on();
-    void set_fdlearning_on(int learning_method, int reduce, int orderedExploration, int lazy_generation, int semantic_learning, int simple_learn, int max_nogood_size, int bounded_by_decision, double forgetfulness);
+    void set_fdlearning_on(int learning_method, int reduce, int orderedExploration, int lazy_generation, int semantic_learning, int simple_learn, int max_nogood_size, int bounded_by_decision, double forgetfulness , int forget_relatedto_nogood_size);
     void close_propagation();
 
     Explanation * __failure;

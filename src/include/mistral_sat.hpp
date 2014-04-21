@@ -321,6 +321,14 @@ namespace Mistral {
     void add( Vector < Literal >& clause, double init_activity=0.0 );
     void learn( Vector < Literal >& clause, double init_activity=0.0 );
     void remove( const int cidx );
+
+    //NEw way of forgetting clauses directly when learnt
+    Vector<unsigned int> will_be_forgotten;
+    void forget_last(){
+    	will_be_forgotten.add(learnt.size -1);
+    }
+
+    void hard_forget();
     //void forget( const double forgetfulness, const Vector< double >& activity );
     // (returns the toal removed size)
     int forget( const double forgetfulness, const double * vactivity, const double * lactivity );

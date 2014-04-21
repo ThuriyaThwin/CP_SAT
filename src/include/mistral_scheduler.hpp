@@ -80,7 +80,7 @@ namespace Mistral {
     static const int RGUIDED =  3;
     static const int RAND    =  4;
 
-    static const int nia = 29;
+    static const int nia = 30;
     static const char* int_ident[nia];
     
     static const int nsa = 13;
@@ -124,6 +124,7 @@ namespace Mistral {
     int simple_learn ;
     int max_nogood_size;
     int bounded_by_decision;
+    int forget_relatedto_nogood_size;
 
     double Factor;
     double Decay;
