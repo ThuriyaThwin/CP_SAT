@@ -11567,16 +11567,24 @@ void Mistral::Solver::clean_fdlearn() {
 
 					base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
 					if ((parameters.forget_relatedto_nogood_size) && (learnt_clause.size > parameters.forget_relatedto_nogood_size)) {
-							base->forget_last();
-						}
-					else if ((parameters.forget_retatedto_backjump) && (learnt_clause.size > parameters.forget_relatedto_nogood_size)) {
+						//std::cout << " c static learnt_clause.size  forget "  << learnt_clause.size  << std::endl;
+
 						base->forget_last();
 					}
-					else if ((parameters.Forgetfulness_retated_to_backjump>0.0) && (learnt_clause.size > parameters.forget_relatedto_nogood_size)) {
-											base->forget_last();
-										}
+					else if ((parameters.forget_retatedto_backjump) && (backtrack_level > parameters.forget_retatedto_backjump)) {
+						//std::cout << " c static bjm forget "  << backtrack_level << std::endl;
 
+						base->forget_last();
+					}
+					else if (parameters.Forgetfulness_retated_to_backjump>0.0) {
+						double tmp = ((double) (level- backtrack_level) / (double)level);
 
+						//a lower value of tmp means a close bts!
+						if (tmp <parameters.Forgetfulness_retated_to_backjump ){
+							//std::cout << " c % of backjump "  << tmp << std::endl;
+							base->forget_last();
+						}
+					}
 
 
 					//add_clause( learnt, learnt_clause, stats.learnt_avg_size );
