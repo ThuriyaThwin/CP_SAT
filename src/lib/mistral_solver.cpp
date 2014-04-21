@@ -10735,7 +10735,8 @@ void Mistral::Solver::treat_assignment_literal(Literal q){
 	//if (!already_explored)
 	//todo should be search_root!
 	//else
-	if(lvl > 0 )
+//	if(lvl > 0 )
+	if(lvl > search_root )
 		if( !visited.fast_contain(x) ) {
 			//Sould be done later!
 			/*
@@ -10889,7 +10890,8 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 
 
 	//if (lvl>0 Search root?
-	if (lvl>0){
+//	if (lvl>0){
+	if (lvl>search_root){
 
 		if (parameters.semantic_learning)
 		{
@@ -11223,7 +11225,9 @@ void Mistral::Solver::clean_fdlearn() {
 		//   var_activity[scope[i].id()] += 10 * parameters.activity_increment;
 		// }
 
-		backtrack_level = 0;
+	//	backtrack_level = 0;
+		//search_root!
+		backtrack_level = search_root;
 		graph_size = 0;
 		// the resulting nogood is stored in the vector 'learnt_clause'
 		learnt_clause.clear();
@@ -16373,6 +16377,15 @@ Mistral::Outcome Mistral::Solver::branch_right() {
     		deduction.invert();
     	}
     }
+
+    if( backtrack_level < search_root ) {
+    	status = exhausted();
+    	std::cout << " backtrack_level < search_root )" << std::endl;
+    	std::cout << " backtrack_level" << backtrack_level <<std::endl;
+    	std::cout << "  < search_root )" << search_root <<std::endl;
+    	exit(1);
+    }
+
     restore(backtrack_level);  
     
 #ifdef _DEBUG_SEARCH
