@@ -100,6 +100,13 @@ void StatisticList::add_info(const int objective, int tp) {
       best_solution_index = outcome.size()-1;
     } else if(outcome.back() == UNSAT) {
       lower_bound = objective+1;
+    } else {
+      //upper_bound = objective;
+      if((outcome.back() == SAT) || upper_bound> objective ){
+     // ++num_solutions;
+      best_solution_index = outcome.size()-1;
+      upper_bound = objective;
+      }
     }
   } else {
     if(outcome.back() == SAT || outcome.back() == OPT) {
@@ -3578,6 +3585,7 @@ void SchedulingSolver::dichotomic_search()
 
 void SchedulingSolver::branch_and_bound()
 {
+  stats->num_solutions++;
   int ngd_stamp = 0;
   int lit_stamp = 0;
   //resetNodeLimit();
