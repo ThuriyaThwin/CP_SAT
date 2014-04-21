@@ -267,13 +267,14 @@ const char* ParameterList::int_ident[ParameterList::nia] =
    "-dyncutoff", "-nodes", "-hlimit", "-init", "-neighbor", 
    "-initstep", "-fixtasks", "-order", "-ngdt" , "-fdlearning" ,
    "-forgetall" , "-reduce" ,  "-orderedexploration" , "-lazygeneration" , "-semantic" ,
-   "-simplelearn" , "-maxnogoodsize" , "-boundedbydecision" , "-forgetsize"
+   "-simplelearn" , "-maxnogoodsize" , "-boundedbydecision" , "-forgetsize" , "-forgetbackjump"
   };
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
   {"-heuristic", "-restart", "-factor", "-decay", "-type", 
    "-value", "-dvalue", "-ivalue", "-objective", "-algo",
-   "-presolve", "-bandbrestart" , "-forgetfulness"};
+   "-presolve", "-bandbrestart" , "-forgetfulness", "-bjmforgetfulness"
+  };
 
 
 // ParameterList::ParameterList() {
@@ -339,6 +340,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   Factor    = 1.3;
   Decay     = 0.0;
   Forgetfulness = 0.0;
+  Forgetfulness_retated_to_backjump = 0.0;
   Value     = "guided";
   DValue    = "guided";
   IValue    = "promise";
@@ -363,6 +365,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   max_nogood_size =0;
   bounded_by_decision = 0;
   forget_relatedto_nogood_size = 0;
+  forget_retatedto_backjump = 0;
 
   FD_learning=0;
   reduce_clauses =0;
@@ -438,6 +441,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[27] != NOVAL) max_nogood_size  = int_param[27];
   if(int_param[28] != NOVAL) bounded_by_decision  = int_param[28];
   if(int_param[29] != NOVAL) forget_relatedto_nogood_size  = int_param[29];
+  if(int_param[30] != NOVAL) forget_retatedto_backjump  = int_param[30];
 
 
   if(strcmp(str_param[0 ],"nil")) Heuristic  = str_param[0];
@@ -453,6 +457,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(strcmp(str_param[10],"nil")) Presolve   = str_param[10];
   if(strcmp(str_param[11 ],"nil")) BandBPolicy     = str_param[11];
   if(strcmp(str_param[12],"nil")) Forgetfulness    = atof(str_param[12]);
+  if(strcmp(str_param[13],"nil")) Forgetfulness_retated_to_backjump    = atof(str_param[13]);
 
 }
 
@@ -496,6 +501,8 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | forget all clauses " << ":" << std::right << std::setw(15) << (forgetall? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | reduce learnt clause " << ":" << std::right << std::setw(15) << (reduce_clauses? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | clause forgetfulness %" << ":" << std::right << std::setw(15) << Forgetfulness << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | backjump forgetfulness %" << ":" << std::right << std::setw(15) << Forgetfulness_retated_to_backjump << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | static backjump forgetfulness%" << ":" << std::right << std::setw(15) << forget_retatedto_backjump << " |" << std::endl;
   os << std::left << std::setw(30) << " c | forget bounded by nogood size" << ":" << std::right << std::setw(15) << forget_relatedto_nogood_size  << " |" << std::endl;
   os << std::left << std::setw(30) << " c | seed " << ":" << std::right << std::setw(15) << Seed << " |" << std::endl;
   os << std::left << std::setw(30) << " c | greedy iterations " << ":" << std::right << std::setw(15) << InitBound << " |" << std::endl;
@@ -1912,7 +1919,11 @@ void SchedulingSolver::setup() {
   if (params->FD_learning)
   {
 	  start_from = tasks.size +1;
-	  set_fdlearning_on(params->FD_learning, params->reduce_clauses,params->orderedExploration, params->lazy_generation, params->semantic_learning, params->simple_learn, params->max_nogood_size, params->bounded_by_decision, params->Forgetfulness, params->forget_relatedto_nogood_size);
+	  set_fdlearning_on(
+			  params->FD_learning, params->reduce_clauses,params->orderedExploration,
+			  params->lazy_generation, params->semantic_learning, params->simple_learn,
+			  params->max_nogood_size, params->bounded_by_decision, params->Forgetfulness,
+			  params->forget_relatedto_nogood_size , params->forget_retatedto_backjump ,params->Forgetfulness_retated_to_backjump);
   }
 
 #ifdef _MONITOR

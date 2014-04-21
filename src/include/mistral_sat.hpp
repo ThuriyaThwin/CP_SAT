@@ -322,7 +322,7 @@ namespace Mistral {
     void learn( Vector < Literal >& clause, double init_activity=0.0 );
     void remove( const int cidx );
 
-    //NEw way of forgetting clauses directly when learnt
+    //New way of forgetting clauses (directly whithin learning)
     Vector<unsigned int> will_be_forgotten;
     void forget_last(){
     	will_be_forgotten.add(learnt.size -1);

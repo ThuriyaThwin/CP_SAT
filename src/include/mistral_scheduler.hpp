@@ -80,10 +80,10 @@ namespace Mistral {
     static const int RGUIDED =  3;
     static const int RAND    =  4;
 
-    static const int nia = 30;
+    static const int nia = 31;
     static const char* int_ident[nia];
     
-    static const int nsa = 13;
+    static const int nsa = 14;
     static const char* str_ident[nsa];
     
     
@@ -125,10 +125,13 @@ namespace Mistral {
     int max_nogood_size;
     int bounded_by_decision;
     int forget_relatedto_nogood_size;
+    int forget_retatedto_backjump;
 
     double Factor;
     double Decay;
     double Forgetfulness;
+    // % of backtrach level needed to keep the clause
+    double Forgetfulness_retated_to_backjump;
 
     std::string Policy;
     std::string BandBPolicy;

@@ -159,7 +159,9 @@ void Mistral::SolverParameters::initialise() {
   max_nogood_size =0;
   bounded_by_decision = 0;
 
-
+  forget_relatedto_nogood_size = 0;
+  forget_retatedto_backjump  = 0;
+  Forgetfulness_retated_to_backjump = 0.0 ;
 
   prefix_comment = "c";
   prefix_statistics = "d";
@@ -11564,10 +11566,18 @@ void Mistral::Solver::clean_fdlearn() {
 					// }
 
 					base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
-					if (parameters.forget_relatedto_nogood_size)
-						if (learnt_clause.size > parameters.forget_relatedto_nogood_size) {
+					if ((parameters.forget_relatedto_nogood_size) && (learnt_clause.size > parameters.forget_relatedto_nogood_size)) {
 							base->forget_last();
 						}
+					else if ((parameters.forget_retatedto_backjump) && (learnt_clause.size > parameters.forget_relatedto_nogood_size)) {
+						base->forget_last();
+					}
+					else if ((parameters.Forgetfulness_retated_to_backjump>0.0) && (learnt_clause.size > parameters.forget_relatedto_nogood_size)) {
+											base->forget_last();
+										}
+
+
+
 
 					//add_clause( learnt, learnt_clause, stats.learnt_avg_size );
 					//reason[UNSIGNED(p)] = base->learnt.back();
@@ -18510,7 +18520,9 @@ void Mistral::Solver::set_fdlearning_on(
 	    int max_nogood_size,
 	    int bounded_by_decision,
 	    double forgetfulness,
-	    int forget_relatedto_nogood_size
+	    int forget_relatedto_nogood_size,
+	    int forget_retatedto_backjump ,
+	    double Forgetfulness_retated_to_backjump
 	    ) {
 
 	//	parameters.jsp_backjump = true;
@@ -18526,6 +18538,9 @@ void Mistral::Solver::set_fdlearning_on(
 	parameters.semantic_learning = semantic_learning ;
 	parameters.forgetfulness = forgetfulness;
 	parameters.forget_relatedto_nogood_size =forget_relatedto_nogood_size;
+	parameters.forget_retatedto_backjump = forget_retatedto_backjump ;
+	parameters.Forgetfulness_retated_to_backjump = Forgetfulness_retated_to_backjump ;
+
 
 	std::cout << " c start_from : " << start_from << std::endl;
 	visitedUpperBounds.initialise(0, start_from  , BitSet::empt);
