@@ -1771,7 +1771,9 @@ void SchedulingSolver::setup() {
     	//Variable t(lb, ub);
     	Variable t(lb, ub,RANGE_VAR_WITHLEARNING);
     	tasks.add(t);
-    	add(DomainFaithfulness(t));
+    	if (params->lazy_generation)
+    		add(DomainFaithfulness(t));
+    	else add(t);
     }
     else
     {
@@ -1786,7 +1788,11 @@ void SchedulingSolver::setup() {
   {
 	  Variable x_cmax(lb_C_max, ub_C_max, RANGE_VAR_WITHLEARNING);
 	  C_max = x_cmax;
-	  add(DomainFaithfulness(C_max));
+
+	  if (params->lazy_generation)
+		  add(DomainFaithfulness(C_max));
+  	else add(C_max);
+
 
   }
   else
@@ -2103,6 +2109,7 @@ void SchedulingSolver::setup() {
 	 exit(1);
 */
 
+			// std::cout << " end setup with :  " << this << std::endl;
 }
 
 SchedulingSolver::~SchedulingSolver() {
@@ -2958,6 +2965,7 @@ void SchedulingSolver::dichotomic_search()
 
   std::cout << " \n \n \n initial_list__of_changes : "  << std::endl;
   */
+  if (params->lazy_generation)
   if (base){
 
 	  base->extend_vectors(10000);
@@ -3159,24 +3167,24 @@ void SchedulingSolver::dichotomic_search()
 				  base->remove(__size);
 
 
+			  if (params->lazy_generation){
+				  for( int i=init_expression_store_size; i<expression_store.size;++i) {
+					  delete expression_store[i];
+				  }
 
-			  for( int i=init_expression_store_size; i<expression_store.size;++i) {
-				  delete expression_store[i];
-			  }
-
-			  expression_store.size =  init_expression_store_size;
-			  variables.size =initial_variablesize;
-			  assignment_level.size = initial_variablesize;
-			  assignment_order.size = initial_variablesize;
-			  reason_for.size = initial_variablesize;
-			  domain_types.size=initial_variablesize;
-			  last_solution_lb.size=initial_variablesize;
-			  last_solution_ub.size=initial_variablesize;
-			  constraint_graph.size=init_constraint_graph_size;
-			  //variable_triggers.size = 1;
+				  expression_store.size =  init_expression_store_size;
+				  variables.size =initial_variablesize;
+				  assignment_level.size = initial_variablesize;
+				  assignment_order.size = initial_variablesize;
+				  reason_for.size = initial_variablesize;
+				  domain_types.size=initial_variablesize;
+				  last_solution_lb.size=initial_variablesize;
+				  last_solution_ub.size=initial_variablesize;
+				  constraint_graph.size=init_constraint_graph_size;
+				  //variable_triggers.size = 1;
 
 
-			  /*
+				  /*
     		if(size.back() < 1024) {
     		    x->bool_domain = slots.back()+size.back();
     		    ++size.back();
@@ -3187,27 +3195,28 @@ void SchedulingSolver::dichotomic_search()
     		    slots.add(nslot);
     		    x->bool_domain = nslot;
     		  }
-			   */
+				   */
 
-			  //booleans.size.size = init_booleans_slot_size;
+				  //booleans.size.size = init_booleans_slot_size;
 
-			  for (int i = init_booleans_last_size_size; i <1024; ++i )
-				  booleans.slots[init_booleans_slot_size-1][i]=3;
+				  for (int i = init_booleans_last_size_size; i <1024; ++i )
+					  booleans.slots[init_booleans_slot_size-1][i]=3;
 
-			  for (int j = init_booleans_slot_size; j <booleans.slots.size; ++j )
-				  delete [] booleans.slots[j];
+				  for (int j = init_booleans_slot_size; j <booleans.slots.size; ++j )
+					  delete [] booleans.slots[j];
 
 
 
-			  booleans.size.size = init_booleans_slot_size;
-			  booleans.size[init_booleans_slot_size-1] = init_booleans_last_size_size;
-			  booleans.slots.size = init_booleans_slot_size;
+				  booleans.size.size = init_booleans_slot_size;
+				  booleans.size[init_booleans_slot_size-1] = init_booleans_last_size_size;
+				  booleans.slots.size = init_booleans_slot_size;
 
-			  base->start_over();
-			  //    		VariableRangeWithLearning *__x;
+				  base->start_over();
+				  //    		VariableRangeWithLearning *__x;
 
-			  for (int i = 0; i < start_from; ++i)
-				  (static_cast<VariableRangeWithLearning*> (variables[i].range_domain))->domainConstraint->start_over();
+				  for (int i = 0; i < start_from; ++i)
+					  (static_cast<VariableRangeWithLearning*> (variables[i].range_domain))->domainConstraint->start_over();
+			  }
 
 			  //TODO
 			  //variables[i].free_object();?

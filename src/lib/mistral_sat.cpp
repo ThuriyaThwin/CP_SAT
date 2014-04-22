@@ -410,11 +410,9 @@ Mistral::ConstraintClauseBase::ConstraintClauseBase(Vector< Variable >& scp, boo
   : GlobalConstraint(scp), fd_variables(__fd_variables), start_from(st_from) {
   conflict = NULL;
   priority = 1;
-  //Todo only when not lazy generation
-  if (__fd_variables)
-	  enforce_nfc1 = false;
 
   init_var_size = scp.size;
+
 
 }
 
@@ -448,6 +446,11 @@ void Mistral::ConstraintClauseBase::initialise() {
 
   reason_for.initialise(0,scope.size);
   
+  //Only when not lazy generation
+  if (fd_variables && get_solver()->parameters.lazy_generation ){
+	  std::cout << " c will enforce_nfc1 to false" << std::endl;
+	  enforce_nfc1 = false;
+  }
 
   // for(unsigned int i=0; i<scope.size; ++i) {
   //   reason.add(NULL);

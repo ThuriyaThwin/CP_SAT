@@ -18558,7 +18558,9 @@ void Mistral::Solver::set_fdlearning_on(
 	parameters.fd_learning = learning_method;
 	parameters.reduce_learnt_clause = reduce;
 	parameters.orderedExploration = orderedExploration;
+	//std::cout << " parameters.lazy_generation  : " << parameters.lazy_generation  << std::endl;
 	parameters.lazy_generation = lazy_generation ;
+	//std::cout << " parameters.lazy_generation  : " << lazy_generation<< std::endl;
 	parameters.simple_learn= simple_learn;
 	parameters.max_nogood_size =max_nogood_size;
 	parameters.bounded_by_decision =bounded_by_decision;
