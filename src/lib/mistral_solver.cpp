@@ -16504,6 +16504,20 @@ void Mistral::Solver::branch_left() {
 
 
 
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+  if(decision.var.is_ground()) {
+    std::cout << "The variable " << decision.var
+	      << " is ground but still in the sequence!! (abort)" << std::endl;
+    exit(1);
+  }
+
+  if((decision.var.id() < start_from) || (decision.var.id() >= initial_variablesize)) {
+    std::cout << " (decision.var.id() < start_from) || (decision.var.id() >= initial_variablesize)) " << std::endl;
+    exit(1);
+  }
+#endif
+
+
 #ifdef _SAFE
   if(decision.var.is_ground()) {
 
