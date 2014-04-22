@@ -758,7 +758,7 @@ int Mistral::ConstraintClauseBase::check( const int* sol ) const {
   return falsified;
 }
 
-//#define _DEBUG_UNITPROP true
+#define _DEBUG_UNITPROP true
 
 
 
@@ -851,7 +851,7 @@ void Mistral::ConstraintClauseBase::start_over() {
 
 
 }
-//#define _CHECKED_CLAUSES
+#define _CHECKED_CLAUSES
 
 Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
   conflict=NULL;
@@ -927,6 +927,21 @@ Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
       if(violated || num_literals==1) {
 	std::cout << "unit propagation was not complete!!" << std::endl;
 	print_clause(std::cout, learnt[i]);
+	Clause& clause = *(learnt[i]);
+	std::cout << "\n Literals " <<  std::endl;
+
+	for (j = 0; j <clause.size ; ++j )
+		std::cout << "  " << clause[j] ;
+
+	std::cout << " \n  variables " <<  std::endl;
+
+	for (j = 0; j <clause.size; ++j )
+		//std::cout << get_solver()->get_id_boolean_variable(learnt[i][j])
+		std::cout << " " << scope[UNSIGNED(clause[j])].get_domain();
+
+
+	std::cout << std::endl;
+
 	std::cout << std::endl;
 	exit(1);
       }
