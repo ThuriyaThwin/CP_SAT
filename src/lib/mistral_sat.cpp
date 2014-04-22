@@ -410,6 +410,7 @@ Mistral::ConstraintClauseBase::ConstraintClauseBase(Vector< Variable >& scp, boo
   : GlobalConstraint(scp), fd_variables(__fd_variables), start_from(st_from) {
   conflict = NULL;
   priority = 1;
+  //Todo only when not lazy generation
   if (__fd_variables)
 	  enforce_nfc1 = false;
 

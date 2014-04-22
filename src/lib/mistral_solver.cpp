@@ -2321,6 +2321,11 @@ void Mistral::Solver::restore() {
   std::cout << "Restore to level " << previous_level << std::endl;
 #endif
 
+//  if (previous_level >9){
+//  std::cout << "  \n Will restore but this is saved_cons : " << saved_cons<< std::endl;
+ // exit(1);
+ // }
+
   while( saved_cons.size > previous_level ) {
 
 #ifdef _DEBUG_RESTORE

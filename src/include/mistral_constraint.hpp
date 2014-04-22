@@ -1511,6 +1511,7 @@ std::cout << "[" << std::setw(4) << id << "](" << name() << "): restore" << std:
     inline void post() {
 
       // save 
+    	 if(enforce_nfc1)
       solver->save( Constraint(this, type|POSTED) );
       //solver->save( Constraint(this, type|2) );
     
@@ -1598,6 +1599,7 @@ std::cout << "[" << std::setw(4) << id << "](" << name() << "): restore" << std:
   }
 #endif
 
+  if(enforce_nfc1)
       //solver->save( Constraint(this, type|1) );
       solver->save( Constraint(this, type|RELAXED) );
 
@@ -1654,7 +1656,7 @@ std::cout << "[" << std::setw(4) << id << "](" << name() << "): restore" << std:
 	  std::cout << "[" << std::setw(4) << id << "](" << name() << "): RELAX FROM "  << std::endl;
   }
 #endif
-
+  if(enforce_nfc1)
       if(index[var]>=0) {
 	
 	//solver->save( Constraint(this, type|1) );

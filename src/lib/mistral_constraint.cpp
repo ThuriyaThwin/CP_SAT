@@ -273,7 +273,7 @@ void Mistral::ConstraintImplementation::initial_post(Solver *s) {
 
         c = self[i];
 	c.data |= POSTED;
-
+	 if(enforce_nfc1)
 	solver->save( c );
 
 #ifdef _DEBUG_BUILD
