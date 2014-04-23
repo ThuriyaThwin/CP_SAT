@@ -313,7 +313,7 @@ ParameterList::ParameterList(int length, char **commandline) {
     Type = "jsp";
     std::cout << " c Warning: no type specified, treating the data as Taillard's jsp" << std::endl;
   }
-  std::cout << " 1" << std::endl;
+
   UBinit      = -1;
   LBinit      = -1;
   Checked     = true;
