@@ -758,7 +758,7 @@ int Mistral::ConstraintClauseBase::check( const int* sol ) const {
   return falsified;
 }
 
-//#define _DEBUG_UNITPROP true
+#define _DEBUG_UNITPROP true
 
 
 
@@ -848,10 +848,8 @@ void Mistral::ConstraintClauseBase::start_over() {
 	index = tmpindex;
 */
 
-
-
 }
-//#define _CHECKED_CLAUSES
+#define _CHECKED_CLAUSES
 
 Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
   conflict=NULL;
@@ -904,7 +902,8 @@ Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
       }
     }
     if(violated || num_literals==1) {
-      std::cout << "unit propagation was not complete!!" << std::endl;
+    	--i;
+      std::cout << "unit propagation was not complete!! \n before printing, should we decrese i? i.e. --i? " << std::endl;
       print_clause(std::cout, clauses[i],start_from);
       std::cout << std::endl;
       exit(1);
@@ -933,6 +932,7 @@ Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
 	}
       }
       if(violated || num_literals==1) {
+    	  --i;
     		std::cout << "unit propagation was not complete!!" << std::endl;
     		std::cout << "level : " << get_solver()->level << std::endl;
 	print_clause(std::cout, learnt[i], start_from);
