@@ -27,10 +27,10 @@ using namespace Mistral;
 using namespace std;
 
 
-void Mistral::print_literal(ostream& o, Literal l, bool dir) 
+void Mistral::print_literal(ostream& o, Literal l, unsigned int start_from, bool dir)
 {
 
-  o << (SIGN(l) ? "b" : "~b") << UNSIGNED(l) ;
+  o << (SIGN(l) ? "b" : "~b") << UNSIGNED(l)+start_from ;
   // if(dir)
   //   o << " == " << (l%2) ; 
   // else
@@ -38,16 +38,16 @@ void Mistral::print_literal(ostream& o, Literal l, bool dir)
   // //o << (l%2 ? "+" : "-") << UNSIGNED(l)+1;
 }
 
-void Mistral::print_clause(ostream& o, Clause *cl) 
+void Mistral::print_clause(ostream& o, Clause *cl, unsigned int start_from)
 {
   Clause& clause = *cl;
   o //<< " " << cl 
     << "(";
   for(unsigned int i=0; i<clause.size-1; ++i) {
-    print_literal(o,clause[i]);
+    print_literal(o,clause[i], start_from);
     o << " v ";
   }
-  print_literal(o,clause[clause.size-1]);
+  print_literal(o,clause[clause.size-1],start_from);
   o << ")";
 }
 
@@ -758,7 +758,7 @@ int Mistral::ConstraintClauseBase::check( const int* sol ) const {
   return falsified;
 }
 
-#define _DEBUG_UNITPROP true
+//#define _DEBUG_UNITPROP true
 
 
 
@@ -800,7 +800,7 @@ void Mistral::ConstraintClauseBase::start_over() {
 
 	for(int i=0 ; i< initial_list__of_changes.size; ++i)
 	{
-		changes.add(initial_list__of_changes[i]);
+	//	changes.add(initial_list__of_changes[i]);
 	}
 
 	events.size = changes.size;
@@ -851,7 +851,7 @@ void Mistral::ConstraintClauseBase::start_over() {
 
 
 }
-#define _CHECKED_CLAUSES
+//#define _CHECKED_CLAUSES
 
 Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
   conflict=NULL;
@@ -868,7 +868,7 @@ Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
 #ifdef _DEBUG_UNITPROP
     for(unsigned int i=0; i<solver->level; ++i) std::cout << " " ;
     std::cout << "propagate " ;
-    print_literal(std::cout, NOT(p));
+    print_literal(std::cout, NOT(p), start_from);
     std::cout << " " << is_watched_by[p].size << std::endl;
 #endif
 
@@ -876,6 +876,14 @@ Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
     while(cw-- && !conflict) {
       conflict = update_watcher(cw, p, wiped);
     }
+
+/*
+    cw = is_watched_by[NOT(p)].size;
+    while(cw-- && !conflict) {
+      conflict = update_watcher(cw, NOT(p), wiped);
+    }
+*/
+
   }
 
 #ifdef _CHECKED_CLAUSES
@@ -897,7 +905,7 @@ Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
     }
     if(violated || num_literals==1) {
       std::cout << "unit propagation was not complete!!" << std::endl;
-      print_clause(std::cout, clauses[i]);
+      print_clause(std::cout, clauses[i],start_from);
       std::cout << std::endl;
       exit(1);
     } else {
@@ -925,8 +933,9 @@ Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
 	}
       }
       if(violated || num_literals==1) {
-	std::cout << "unit propagation was not complete!!" << std::endl;
-	print_clause(std::cout, learnt[i]);
+    		std::cout << "unit propagation was not complete!!" << std::endl;
+    		std::cout << "level : " << get_solver()->level << std::endl;
+	print_clause(std::cout, learnt[i], start_from);
 	Clause& clause = *(learnt[i]);
 	std::cout << "\n Literals " <<  std::endl;
 

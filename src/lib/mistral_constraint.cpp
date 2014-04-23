@@ -16315,7 +16315,7 @@ void Mistral::DomainFaithfulnessConstraint::start_over() {
 
 	for(int i=0 ; i< initial_list__of_changes.size; ++i)
 	{
-		changes.add(initial_list__of_changes[i]);
+//		changes.add(initial_list__of_changes[i]);
 	}
 
 	events.size = changes.size;

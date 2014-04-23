@@ -3268,7 +3268,7 @@ void SchedulingSolver::dichotomic_search()
 */
 	//  std::cout << " SLEEP FOR 10s " << std::endl;
 	//  std::this_thread::sleep_for (std::chrono::seconds(10));
-
+	  //exit(1);
 	  ++iteration;
   } 
   //   } else if( status == SAT ) {
