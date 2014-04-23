@@ -16312,6 +16312,7 @@ Mistral::Outcome Mistral::Solver::branch_right() {
 
 
   int status = UNKNOWN;
+ // ConstraintImplementation *oldtaboo_constraint = taboo_constraint;
 
 
   if( level == search_root ) status = exhausted(); //objective);
@@ -16399,12 +16400,14 @@ Mistral::Outcome Mistral::Solver::branch_right() {
     	{
 #endif
     		Literal p = learnt_clause[0];
- //   		if( get_id_boolean_variable(p) >= initial_variablesize){
-    			//std::cout << " initial_variablesize in learnt_clause[0] " << std::endl;
-    //			exit(1);
-    	//	}
+    		deduction = Decision(variables[get_id_boolean_variable(p)], Decision::REMOVAL, NOT(SIGN(p)));
 
-    	deduction = Decision(variables[get_id_boolean_variable(p)], Decision::REMOVAL, NOT(SIGN(p)));
+
+	//	backtrack_level = level-1;
+	//	deduction = decisions.back();
+	//	deduction.invert();
+		//taboo_constraint = oldtaboo_constraint;
+
 #ifdef latest_bounds_learning
     	}
 #endif

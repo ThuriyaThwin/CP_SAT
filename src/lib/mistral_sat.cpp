@@ -680,7 +680,7 @@ void Mistral::ConstraintClauseBase::add( Vector < Literal >& clause, double acti
  }
 }
 
-void Mistral::ConstraintClauseBase::learn( Vector < Literal >& clause, double activity_increment ) {
+void Mistral::ConstraintClauseBase::learn( Vector < Literal >& clause, double activity_increment) {
  if(clause.size > 1) {
    Clause *cl = (Clause*)(Clause::Array_new(clause));
    learnt.add( cl );
@@ -698,6 +698,7 @@ void Mistral::ConstraintClauseBase::learn( Vector < Literal >& clause, double ac
 
    is_watched_by[clause[0]].add(cl);
    is_watched_by[clause[1]].add(cl);
+
  } else {
    scope[UNSIGNED(clause[0])].set_domain(SIGN(clause[0]));
  }
@@ -1214,7 +1215,7 @@ Mistral::Clause* Mistral::ConstraintClauseBase::update_watcher(const int cw,
   return NULL;
 }
 
-void Mistral::ConstraintClauseBase::remove( const int cidx )
+void Mistral::ConstraintClauseBase::remove( const int cidx , bool static_forget)
 {
   Clause *clause = learnt[cidx];
 
@@ -1222,9 +1223,10 @@ void Mistral::ConstraintClauseBase::remove( const int cidx )
   // print_clause(std::cout, clause);
   // std::cout << std::endl;
 
-
-  is_watched_by[clause->data[0]].remove_elt( clause );
-  is_watched_by[clause->data[1]].remove_elt( clause );
+  if (!static_forget){
+	  is_watched_by[clause->data[0]].remove_elt( clause );
+	  is_watched_by[clause->data[1]].remove_elt( clause );
+  }
   learnt.remove( cidx );
 
   free(clause);
@@ -1238,7 +1240,7 @@ void Mistral::ConstraintClauseBase::hard_forget(){
 //	std::cout << " c learnt size" << learnt.size << std::endl;
 
 	for (int i = (will_be_forgotten.size -1); i >=0 ; --i){
-		remove(will_be_forgotten[i]);
+		remove(will_be_forgotten[i], true);
 	}
 	will_be_forgotten.clear();
 

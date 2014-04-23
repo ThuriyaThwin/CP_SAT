@@ -320,13 +320,18 @@ namespace Mistral {
     virtual bool explained() { return true; }
     void add( Variable x );
     void add( Vector < Literal >& clause, double init_activity=0.0 );
-    void learn( Vector < Literal >& clause, double init_activity=0.0 );
-    void remove( const int cidx );
+    void learn( Vector < Literal >& clause, double init_activity=0.0);
+    void remove( const int cidx ,bool static_forget= false);
 
     //New way of forgetting clauses (directly whithin learning)
     Vector<unsigned int> will_be_forgotten;
     void forget_last(){
     	will_be_forgotten.add(learnt.size -1);
+    	Clause& clause = *(learnt[learnt.size -1]);
+    	Atom a = clause[0];
+    	Atom b =clause[1];
+    	is_watched_by[a].pop();
+    	is_watched_by[b].pop();
     }
 
     void hard_forget();
