@@ -16544,7 +16544,8 @@ void Mistral::Solver::branch_left() {
   }
 
   if((decision.var.id() < start_from) || (decision.var.id() >= initial_variablesize)) {
-    std::cout << " (decision.var.id() < start_from) || (decision.var.id() >= initial_variablesize)) " << std::endl;
+	  std::cout << " (decision.var.id() < start_from) || (decision.var.id() >= initial_variablesize)) " << std::endl;
+	  std::cout << " (decision.var.id()) " << decision.var.id() <<std::endl;
     exit(1);
   }
 #endif

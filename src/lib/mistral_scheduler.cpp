@@ -1921,10 +1921,11 @@ void SchedulingSolver::setup() {
     	add(Precedence(tasks[ti], data->getDuration(ti), C_max));
 
   }
+  start_from = tasks.size +1;
+  initial_variablesize= variables.size;
 
   if (params->FD_learning)
   {
-	  start_from = tasks.size +1;
 	  set_fdlearning_on(
 			  params->FD_learning, params->reduce_clauses,params->orderedExploration,
 			  params->lazy_generation, params->semantic_learning, params->simple_learn,
