@@ -758,7 +758,7 @@ int Mistral::ConstraintClauseBase::check( const int* sol ) const {
   return falsified;
 }
 
-#define _DEBUG_UNITPROP true
+//#define _DEBUG_UNITPROP true
 
 
 
@@ -867,7 +867,9 @@ Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
     for(unsigned int i=0; i<solver->level; ++i) std::cout << " " ;
     std::cout << "propagate " ;
     print_literal(std::cout, NOT(p), start_from);
+  //  std::cout << " that is : index :  " << x << " value : " <<v << " literal " << p;
     std::cout << " " << is_watched_by[p].size << std::endl;
+    std::cout << " " << is_watched_by[NOT(p)].size << std::endl;
 #endif
 
     cw = is_watched_by[p].size;
@@ -908,6 +910,93 @@ Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
       std::cout << std::endl;
       exit(1);
     } else {
+
+    	for(i=0; !violated && num_literals <= 1 && i<learnt.size; ++i) {
+    		Clause& clause = *(learnt[i]);
+    		violated = false;
+    		num_literals = clause.size;
+    		// if(clause.size == 23) {
+    		//   std::cout << "check ";
+    		//   print_clause(std::cout, learnt[i]);
+    		//   std::cout << std::endl;
+    		//   for(j=0; j<clause.size; ++j) {
+    		//     Atom a = UNSIGNED(clause[j]);
+    		//     std::cout << scope[a].get_domain() << " ";
+    		//   }
+    		//   std::cout << std::endl;
+    		// }
+
+    		for(j=0; j<clause.size; ++j) {
+    			Atom a = UNSIGNED(clause[j]);
+    			if(scope[a].is_ground()) {
+    				--num_literals;
+    				//	violated &= !scope[a].equal(SIGN(clause[j]));
+    				if (scope[a].equal(SIGN(clause[j]))){
+    					violated = false;
+    					break;
+    				}
+    				else
+    					violated= true;
+    			} else violated = false;
+    		}
+    	}
+    	if(violated  && num_literals<=1) {
+    		--i;
+    		std::cout << "unit propagation was not complete!!" << std::endl;
+    		std::cout << "violated !" << violated <<std::endl;
+    		std::cout << "num_literals " << num_literals <<std::endl;
+    		//		std::cout << "level : " << get_solver()->level << std::endl;
+
+    		print_clause(std::cout, learnt[i], start_from);
+    		Clause& clause = *(learnt[i]);
+    		std::cout << "\n Literals " <<  std::endl;
+
+    		for (j = 0; j <clause.size ; ++j )
+    			std::cout << "  " << clause[j] ;
+
+    		std::cout << " \n  variables " <<  std::endl;
+
+    		for (j = 0; j <clause.size; ++j )
+    			//std::cout << get_solver()->get_id_boolean_variable(learnt[i][j])
+    			std::cout << " " << scope[UNSIGNED(clause[j])].get_domain();
+
+
+    		std::cout << std::endl;
+
+    		std::cout << std::endl;
+
+
+
+    		std::cout << " \n  printing watshers : " <<  std::endl;
+    		std::cout << " \n learnt.size : " << learnt.size <<  std::endl;
+
+    		//	for(i=0; i< is_watched_by.size ; ++i)
+    		for(i=0; i< scope.size*2 ; ++i)
+    		{
+    			//	  Literal l =
+
+    			if (is_watched_by[i].size)
+    			{
+    				std::cout << " literal : " << i << std::endl;;
+    				print_literal(std::cout, i,start_from);
+    				std::cout << " \n \n \n \n is watching :" << std::endl;;
+    			}
+    			//std::cout.flush();
+    			for(unsigned int j=0; j<is_watched_by[i].size; ++j) {
+    				// assert(is_watched_by[l][j]);
+    				print_clause(cout, is_watched_by[i][j], start_from);
+    				std::cout << "" << std::endl;;
+    			}
+
+    		}
+    		std::cout << " END" << std::endl;;
+    		exit(1);
+    	}
+
+
+
+
+    	/*
       for(i=0; !violated && num_literals != 1 && i<learnt.size; ++i) {
 	Clause& clause = *(learnt[i]);
 	violated = true;
@@ -931,10 +1020,13 @@ Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
 	  } else violated = false;
 	}
       }
-      if(violated || num_literals==1) {
+      if(violated || ((violated) && num_literals==1)) {
     	  --i;
-    		std::cout << "unit propagation was not complete!!" << std::endl;
-    		std::cout << "level : " << get_solver()->level << std::endl;
+  		std::cout << "unit propagation was not complete!!" << std::endl;
+		std::cout << "violated !" << violated <<std::endl;
+		std::cout << "num_literals " << num_literals <<std::endl;
+    	    //		std::cout << "level : " << get_solver()->level << std::endl;
+
 	print_clause(std::cout, learnt[i], start_from);
 	Clause& clause = *(learnt[i]);
 	std::cout << "\n Literals " <<  std::endl;
@@ -952,8 +1044,36 @@ Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
 	std::cout << std::endl;
 
 	std::cout << std::endl;
+
+
+
+	std::cout << " \n  printing watshers : " <<  std::endl;
+	std::cout << " \n learnt.size : " << learnt.size <<  std::endl;
+
+//	for(i=0; i< is_watched_by.size ; ++i)
+	for(i=0; i< scope.size*2 ; ++i)
+	{
+		//	  Literal l =
+
+		if (is_watched_by[i].size)
+		{
+			std::cout << " literal : " << i << std::endl;;
+			print_literal(std::cout, i,start_from);
+			std::cout << " \n \n \n \n is watching :" << std::endl;;
+		}
+		//std::cout.flush();
+		for(unsigned int j=0; j<is_watched_by[i].size; ++j) {
+			// assert(is_watched_by[l][j]);
+			print_clause(cout, is_watched_by[i][j], start_from);
+			std::cout << "" << std::endl;;
+		}
+
+	}
+	std::cout << " END" << std::endl;;
 	exit(1);
       }
+
+    	 */
     }
   }
 #endif
