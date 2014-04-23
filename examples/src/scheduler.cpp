@@ -97,8 +97,11 @@ int main( int argc, char** argv )
   //solver->parameters.fd_learning = 1;
   //solver->parameters.backjump = 1;
   stats.print(std::cout, "");  
-  std::cout << "s " << (stats.num_solutions ? "SATISFIABLE" : "UNSATISFIABLE") 
+//  std::cout << "s " << (stats.num_solutions ? "SATISFIABLE" : "UNSATISFIABLE")
+  //MOVE TO Optimality
+  std::cout << "s " << ((stats.lower_bound == stats.upper_bound) ? "SATISFIABLE" : "UNKNOWN")
    	    << " \nv 00" << std::endl;
+
 
 
 #ifdef _PROFILING
