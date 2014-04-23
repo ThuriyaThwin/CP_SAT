@@ -5889,7 +5889,7 @@ void Mistral::Solver::fdlearn_nogood(){
 		//   var_activity[scope[i].id()] += 10 * parameters.activity_increment;
 		// }
 
-		backtrack_level = 0;
+		backtrack_level = search_root;
 		int graph_size = 0;
 		// the resulting nogood is stored in the vector 'learnt_clause'
 		learnt_clause.clear();
@@ -6034,7 +6034,16 @@ void Mistral::Solver::fdlearn_nogood(){
 							std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
 							std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 #endif
+							//test lvl
+
+							bool is_lb = is_lower_bound(q);
+							int val = get_value_from_literal(q);
+							int var = get_variable_from_literal(q);
+							VariableRangeWithLearning* tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
+							int lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
+							if (lvl> search_root)
 							bound_literals_to_explore.add(q);
+
 						}
 						else{
 							x = variables[get_id_boolean_variable(q)];
@@ -6063,7 +6072,7 @@ void Mistral::Solver::fdlearn_nogood(){
 
 #endif
 							//todo should be search_root!
-							if(		lvl)
+							if(		lvl >search_root)
 								if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
 									//Sould be done later!
 									/*
@@ -6166,6 +6175,14 @@ void Mistral::Solver::fdlearn_nogood(){
 									std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 #endif
 
+									bool is_lb = is_lower_bound(q);
+									int val = get_value_from_literal(q);
+									int var = get_variable_from_literal(q);
+									VariableRangeWithLearning* tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
+									int lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
+									if (lvl> search_root)
+										bound_literals_to_explore.add(q);
+
 									bound_literals_to_explore.add(q);
 								}
 								else
@@ -6196,7 +6213,7 @@ void Mistral::Solver::fdlearn_nogood(){
 									}
 #endif
 									//todo we should start from search_route
-									if(		lvl)
+									if(		lvl > search_root)
 										if( !visited.fast_contain(get_id_boolean_variable(q)) ) {
 											//Sould be done later!
 											/*
@@ -16418,7 +16435,17 @@ Mistral::Outcome Mistral::Solver::branch_right() {
     	status = exhausted();
     	std::cout << " backtrack_level < search_root )" << std::endl;
     	std::cout << " backtrack_level" << backtrack_level <<std::endl;
-    	std::cout << "  < search_root )" << search_root <<std::endl;
+    	std::cout << "  search_root " << search_root <<std::endl;
+    	std::cout << "  level " << level <<std::endl;
+    	std::cout << "  learnt_clause " << learnt_clause <<std::endl;
+   /* 	clean_fdlearn();
+
+    	std::cout << " \n \n \n backtrack_level < search_root )" << std::endl;
+    	std::cout << " backtrack_level" << backtrack_level <<std::endl;
+    	std::cout << "  search_root " << search_root <<std::endl;
+    	std::cout << "  level " << level <<std::endl;
+    	std::cout << "  learnt_clause " << learnt_clause <<std::endl;
+*/
     	exit(1);
     }
 
