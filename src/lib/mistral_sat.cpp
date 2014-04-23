@@ -849,12 +849,13 @@ void Mistral::ConstraintClauseBase::start_over() {
 */
 
 }
-#define _CHECKED_CLAUSES
+//#define _CHECKED_CLAUSES
 
 Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
   conflict=NULL;
   PropagationOutcome wiped = CONSISTENT;
 
+//  return wiped;
   int x, v, cw;
   Literal p;
 
