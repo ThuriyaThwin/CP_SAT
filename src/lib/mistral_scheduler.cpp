@@ -99,7 +99,9 @@ void StatisticList::add_info(const int objective, int tp) {
       lower_bound = upper_bound = objective;
       best_solution_index = outcome.size()-1;
     } else if(outcome.back() == UNSAT) {
-      lower_bound = objective+1;
+      lower_bound = objective;
+      if (lower_bound<upper_bound)
+    	  lower_bound++;
     } else {
       //upper_bound = objective;
       if((outcome.back() == SAT) || upper_bound> objective ){
