@@ -10769,7 +10769,7 @@ void Mistral::Solver::treat_assignment_literal(Literal q){
 	//if (!already_explored)
 	//todo should be search_root!
 	//else
-//	if(lvl > 0 )
+	//	if(lvl > 0 )
 	if(lvl > search_root )
 		if( !visited.fast_contain(x) ) {
 			//Sould be done later!
@@ -10783,79 +10783,94 @@ if(lit_activity) {
 			 */
 			visited.fast_add(x);
 
-			if(lvl >= level) {
-				//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
-				// we'll need to replace 'a' by its parents since its level is too high
-				//	++pathC;
+			if (parameters.semantic_learning && ( x >= initial_variablesize)){
 
-				add_atom_tobe_explored(x);
-				++remainPathC;
-			} else {
-				//TODO RECOVER GENERATED VARIABLES
-				/*
-					if ((x >= initial_variablesize) && (lvl < level)){
+				int var = varsIds_lazy[x - initial_variablesize];
+				int val = value_lazy[x - initial_variablesize];
+				//bool already_explored = false ;
+				bool already_explored = false ;
+				bool var_visited = false ;
 
-						int var = varsIds_lazy[x - initial_variablesize];
-						int val = value_lazy[x - initial_variablesize];
+				bool isub = SIGN(NOT(q));
 
-						//	std::cout << " OK : id_range = " << id_range << std::endl;
-						//	std::cout << " OK : val_range = " << val_range << std::endl;
+				//var_visited & already_explored
+				if (isub) {
+					if (visitedUpperBounds.fast_contain(var)){
+						var_visited = true;
+						if (visitedUpperBoundvalues[var] <= val){
+							already_explored = true;
+						}
+					}
+				}
+				else {
+					if (visitedLowerBounds.fast_contain(var)){
+						var_visited = true;
+						if (visitedLowerBoundvalues[var] >= (val+1))
+							already_explored = true;
+					}
+				}
 
-						if (SIGN(NOT(q))){
-							//		set_max(val_range);
-							//		std::cout << " Bound literal associated to :  " << variables[id_range] << " <=  " << val_range <<  std::endl;
+				if (!already_explored){
+					if(lvl >= level) {
+						//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+						// we'll need to replace 'a' by its parents since its level is too high
+						//	++pathC;
 
-							if (visitedUpperBounds.fast_contain(var)){
-								if (visitedUpperBoundvalues[var] <= val){
-		//							already_explored = true;
-								}
-								else {
-									visitedUpperBoundvalues[var]= val;
-								}
+						add_atom_tobe_explored(x);
+						++remainPathC;
+					} else {
+
+						//			learnt_clause.add(q);
+#ifdef 	_DEBUG_FD_NOGOOD
+						if(_DEBUG_FD_NOGOOD){
+							//			std::cout << " \n learn :  " <<variables[x] << "  = " <<variables[x].get_domain() << " ; assignment_level : " << assignment_level[x]<< std::endl;
+						}
+#endif
+						//			if(lvl > backtrack_level)
+						//				backtrack_level = lvl;
+
+						//updating values !
+						if (var_visited){
+							if (isub){
+								visitedUpperBoundvalues[var]= val;
 							}
-							else{
+							else
+								visitedLowerBoundvalues[var]= (val+1);
+						}
+						else
+						{
+							if (isub){
 								visitedUpperBounds.fast_add(var);
 								visitedUpperBoundvalues[var]= val;
-
 							}
-
-
-
-						}
-						else{
-							//	set_min(val_range+1);
-							//		std::cout << " Bound literal associated to :  " << variables[id_range] << " >=  " << val_range+1 <<  std::endl;
-
-							++val;
-							if (visitedLowerBounds.fast_contain(var)){
-								if (visitedLowerBoundvalues[var] >= val){
-//						already_explored = true;
-								}
-								else {
-									visitedLowerBoundvalues[var]= val;
-								}
-							}
-							else {
+							else{
 								visitedLowerBounds.fast_add(var);
-								visitedLowerBoundvalues[var]= val;
+								visitedLowerBoundvalues[var]= (val+1);
 							}
-
 						}
 
-						return;
 					}
-
-				 */
-
-				// q's level is below the current level, we are not expending it further
-				learnt_clause.add(q);
-#ifdef 	_DEBUG_FD_NOGOOD
-				if(_DEBUG_FD_NOGOOD){
-					std::cout << " \n learn :  " <<variables[x] << "  = " <<variables[x].get_domain() << " ; assignment_level : " << assignment_level[x]<< std::endl;
 				}
+			}
+			else {
+				if(lvl >= level) {
+					//										std::cout << " \n boolean literal s.t. its variable is" << x << "  and its domain is " << x.get_domain() << " and its assignment_level : " << assignment_level[x.id()] << std::endl;
+					// we'll need to replace 'a' by its parents since its level is too high
+					//	++pathC;
+
+					add_atom_tobe_explored(x);
+					++remainPathC;
+				} else {
+					// q's level is below the current level, we are not expending it further
+					learnt_clause.add(q);
+#ifdef 	_DEBUG_FD_NOGOOD
+					if(_DEBUG_FD_NOGOOD){
+						std::cout << " \n learn :  " <<variables[x] << "  = " <<variables[x].get_domain() << " ; assignment_level : " << assignment_level[x]<< std::endl;
+					}
 #endif
-				if(lvl > backtrack_level)
-					backtrack_level = lvl;
+					if(lvl > backtrack_level)
+						backtrack_level = lvl;
+				}
 			}
 		}
 }
@@ -11126,11 +11141,17 @@ void Mistral::Solver::generate_variables(){
 	for (int i = visitedLowerBounds.size() ; i>0; --i ){
 		val = visitedLowerBoundvalues[var] ;
 		__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
-		lvl = __x->level_of(val,1);
+
+
 		tmp_id = __x->domainConstraint->value_exist( val-1 ) ;
+
 		if ( tmp_id< 0){
+			lvl = __x->level_of(val,1);
 			tmp_id= generate_new_variable(__x->domainConstraint, val, true, lvl, var);
 		}
+		else
+			lvl =assignment_level[tmp_id];
+
 		learnt_clause.add(encode_boolean_variable_as_literal(tmp_id, 1));
 		//?? should be __x->lowerbounds[0] -1
 		//visitedLowerBoundvalues[var] = __x->lowerbounds[0];
@@ -11139,18 +11160,21 @@ void Mistral::Solver::generate_variables(){
 		var= visitedLowerBounds.next(var);
 	}
 
-
 	var = visitedUpperBounds.min();
 	//std::cout << "visitedLowerBounds [i]? " << min <<std::endl;
 	for (int i = visitedUpperBounds.size() ; i>0; --i ){
 		val = visitedUpperBoundvalues[var] ;
 		__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
-		lvl = __x->level_of(val,0);
+
 		tmp_id = __x->domainConstraint->value_exist( val) ;
 		if ( tmp_id< 0)
 		{
+			lvl = __x->level_of(val,0);
 			tmp_id= generate_new_variable(__x->domainConstraint, val, false, lvl, var);
 		}
+		else
+			lvl =assignment_level[tmp_id];
+
 		learnt_clause.add(encode_boolean_variable_as_literal(tmp_id, 0));
 		if(lvl > backtrack_level)
 			backtrack_level = lvl;
@@ -11459,7 +11483,7 @@ void Mistral::Solver::clean_fdlearn() {
 					std::cout << " c END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
 					std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
 					std::cout << "learnt_clause : "  << learnt_clause.size  << std::endl;
-					exit(1);
+					//exit(1);
 				}
 #endif
 
