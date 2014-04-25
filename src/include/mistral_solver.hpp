@@ -809,6 +809,8 @@ namespace Mistral {
     void learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables();
     void learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables2();
     void clean_fdlearn();
+    void try_to_keep_or_forget();
+
     unsigned int remainPathC;
 
     struct _valued_atom

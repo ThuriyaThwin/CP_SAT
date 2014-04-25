@@ -5150,40 +5150,17 @@ void Mistral::Solver::simple_fdlearn_nogood(bool will_be_forgotten) {
 		if (will_be_forgotten)
 			base->forget_last();
 		else
-			if (parameters.forget_relatedto_nogood_size){
+			/*if (parameters.forget_relatedto_nogood_size){
 				if (learnt_clause.size > parameters.forget_relatedto_nogood_size) {
 					base->forget_last();
 				}
-			}
-		//add_clause( learnt, learnt_clause, stats.learnt_avg_size );
-		//reason[UNSIGNED(p)] = base->learnt.back();
-
-		// EXPL
-		//base->reason_for[UNSIGNED(p)] = base->learnt.back();
-
-		//base->reason_for[UNSIGNED(p)] = base->learnt.back();
-		//reason_for[UNSIGNED(p)] = base;
-		//taboo_constraint = base;
-
+			}*/
+			try_to_keep_or_forget();
 		taboo_constraint = (ConstraintImplementation*)(base->learnt.back());
 		//reason_for[UNSIGNED(p)].store_reason_for_change(VALUE_EVENT, base->learnt.back());
 	} else {
 		taboo_constraint = NULL;
 	}
-
-	//	      deduction = decisions.back();
-	//	      deduction.invert();
-
-	//	std::cout << "learnt_clause "  << learnt_clause.size << " and the values : \n        " << learnt_clause << std::endl;
-	//	if(learnt_clause.size <5)
-	//	std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
-	//	for (int i = 0; i< learnt_clause.size; ++i)
-	{
-		//	std::cout << "assignment level [i] = " << assignment_level[get_id_boolean_variable(learnt_clause[i])] << std::endl;
-	}
-	//	std::cout << "END! current level  "  << level << " \n and backtrack_level :     " << backtrack_level << std::endl;
-
-	//	std::cout << "endl no_recursive\n "  << std::endl;
 }
 
 void Mistral::Solver::fdlearn_nogood_nosequence(){
@@ -11654,48 +11631,7 @@ void Mistral::Solver::clean_fdlearn() {
 					// }
 
 					base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
-
-
-					if (parameters.hard_keep)  {
-						if (	(parameters.keep_when_bjm) && ((level - backtrack_level) >= parameters.keep_when_bjm) &&
-								(parameters.keep_when_size) && (learnt_clause.size <= parameters.keep_when_size) ) {
-							base->keep_last();
-					//		std::cout << "  \n Should keep \n "  << learnt_clause  << std::endl;
-					//		print_clause(std::cout , base->learnt.back());
-							//std::cout << " i.e. "  << learnt_clause  << std::endl;
-
-						}
-					}
-					else if ((parameters.keep_when_bjm) && ((level - backtrack_level) >= parameters.keep_when_bjm)) {
-						base->keep_last();
-				//		std::cout << "  \n Should keep \n "  << learnt_clause  << std::endl ;
-				//		print_clause(std::cout , base->learnt.back());
-					}
-					else if ((parameters.keep_when_size) && (learnt_clause.size <= parameters.keep_when_size)) {
-						base->keep_last();
-				//		std::cout << "  \n Should keep \n "  << learnt_clause   << std::endl;
-				//		print_clause(std::cout , base->learnt.back());
-					}
-
-					if ((parameters.forget_relatedto_nogood_size) && (learnt_clause.size > parameters.forget_relatedto_nogood_size)) {
-						//std::cout << " c static learnt_clause.size  forget "  << learnt_clause.size  << std::endl;
-						base->forget_last();
-					}
-					else if ((parameters.forget_retatedto_backjump) && ((level-backtrack_level) < parameters.forget_retatedto_backjump)) {
-				//		std::cout << "\n c static bjm forget : lvl"  << level << std::endl;
-				//		std::cout << " c                   : backtrack_level"  << backtrack_level << std::endl;
-						base->forget_last();
-					}
-					else if (parameters.Forgetfulness_retated_to_backjump>0.0) {
-						double tmp = ((double) (level- backtrack_level) / (double)level);
-
-						//a lower value of tmp means a close bts!
-						if (tmp <parameters.Forgetfulness_retated_to_backjump ){
-							//std::cout << " c % of backjump "  << tmp << std::endl;
-							base->forget_last();
-						}
-					}
-
+					try_to_keep_or_forget();
 
 					//add_clause( learnt, learnt_clause, stats.learnt_avg_size );
 					//reason[UNSIGNED(p)] = base->learnt.back();
@@ -11759,6 +11695,49 @@ void Mistral::Solver::clean_fdlearn() {
 				//	std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
 
 			}	//exit(1);
+		}
+	}
+}
+
+
+void Mistral::Solver::try_to_keep_or_forget() {
+	if (parameters.hard_keep)  {
+		if (	(parameters.keep_when_bjm) && ((level - backtrack_level) >= parameters.keep_when_bjm) &&
+				(parameters.keep_when_size) && (learnt_clause.size <= parameters.keep_when_size) ) {
+			base->keep_last();
+			//		std::cout << "  \n Should keep \n "  << learnt_clause  << std::endl;
+			//		print_clause(std::cout , base->learnt.back());
+			//std::cout << " i.e. "  << learnt_clause  << std::endl;
+
+		}
+	}
+	else if ((parameters.keep_when_bjm) && ((level - backtrack_level) >= parameters.keep_when_bjm)) {
+		base->keep_last();
+		//		std::cout << "  \n Should keep \n "  << learnt_clause  << std::endl ;
+		//		print_clause(std::cout , base->learnt.back());
+	}
+	else if ((parameters.keep_when_size) && (learnt_clause.size <= parameters.keep_when_size)) {
+		base->keep_last();
+		//		std::cout << "  \n Should keep \n "  << learnt_clause   << std::endl;
+		//		print_clause(std::cout , base->learnt.back());
+	}
+
+	if ((parameters.forget_relatedto_nogood_size) && (learnt_clause.size > parameters.forget_relatedto_nogood_size)) {
+		//std::cout << " c static learnt_clause.size  forget "  << learnt_clause.size  << std::endl;
+		base->forget_last();
+	}
+	else if ((parameters.forget_retatedto_backjump) && ((level-backtrack_level) < parameters.forget_retatedto_backjump)) {
+		//		std::cout << "\n c static bjm forget : lvl"  << level << std::endl;
+		//		std::cout << " c                   : backtrack_level"  << backtrack_level << std::endl;
+		base->forget_last();
+	}
+	else if (parameters.Forgetfulness_retated_to_backjump>0.0) {
+		double tmp = ((double) (level- backtrack_level) / (double)level);
+
+		//a lower value of tmp means a close bts!
+		if (tmp <parameters.Forgetfulness_retated_to_backjump ){
+			//std::cout << " c % of backjump "  << tmp << std::endl;
+			base->forget_last();
 		}
 	}
 }
