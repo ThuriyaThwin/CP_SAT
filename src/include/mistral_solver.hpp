@@ -113,6 +113,11 @@ namespace Mistral {
     int forget_retatedto_backjump ;
 	double Forgetfulness_retated_to_backjump;
 
+	int hard_keep ;
+	int hard_forget ;
+	int keep_when_size ;
+	int keep_when_bjm ;
+
 
     /// whether solutions are checked
     // 0 -> not checked
@@ -929,7 +934,10 @@ namespace Mistral {
     void set_fdlearning_on(int learning_method, int reduce, int orderedExploration,
     		int lazy_generation, int semantic_learning, int simple_learn,
     		int max_nogood_size, int bounded_by_decision, double forgetfulness ,
-    		int forget_relatedto_nogood_size , int static_forget_retatedto_backjump ,double Forgetfulness_retated_to_backjump);
+    		int forget_relatedto_nogood_size , int static_forget_retatedto_backjump ,double Forgetfulness_retated_to_backjump,
+    		int hard_keep, int hard_forget, int keep_when_size,
+    		int keep_when_bjm
+    );
 
     void close_propagation();
 

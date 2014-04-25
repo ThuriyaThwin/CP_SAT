@@ -270,7 +270,7 @@ const char* ParameterList::int_ident[ParameterList::nia] =
    "-neighbor", "-initstep", "-fixtasks", "-order", "-ngdt" ,
    "-fdlearning" , "-forgetall" , "-reduce" ,  "-orderedexploration" , "-lazygeneration" ,
    "-semantic" , "-simplelearn" , "-maxnogoodsize" , "-boundedbydecision" , "-forgetsize" ,
-   "-forgetbackjump"
+   "-forgetbackjump" , "-hardkeep", "-hardforget" ,"-keepwhensize" , "-keepwhenbjm"
   };
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
@@ -370,6 +370,13 @@ ParameterList::ParameterList(int length, char **commandline) {
   forget_relatedto_nogood_size = 0;
   forget_retatedto_backjump = 0;
 
+  hard_keep =0;
+  hard_forget =0;
+  keep_when_size =0;
+  keep_when_bjm =0;
+
+
+
   FD_learning=0;
   reduce_clauses =0;
   forgetall=1;
@@ -445,6 +452,11 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[28] != NOVAL) bounded_by_decision  = int_param[28];
   if(int_param[29] != NOVAL) forget_relatedto_nogood_size  = int_param[29];
   if(int_param[30] != NOVAL) forget_retatedto_backjump  = int_param[30];
+  if(int_param[31] != NOVAL) hard_keep  = int_param[31];
+  if(int_param[32] != NOVAL) hard_forget  = int_param[32];
+  if(int_param[33] != NOVAL) keep_when_size  = int_param[33];
+  if(int_param[34] != NOVAL) keep_when_bjm  = int_param[34];
+
 
 
   if(strcmp(str_param[0 ],"nil")) Heuristic  = str_param[0];
@@ -502,6 +514,10 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | max_nogood_size " << ":" << std::right << std::setw(15) << max_nogood_size << " |" << std::endl;
   os << std::left << std::setw(30) << " c | bounded_by_decision " << ":" << std::right << std::setw(15) << bounded_by_decision << " |" << std::endl;
   os << std::left << std::setw(30) << " c | forget all clauses " << ":" << std::right << std::setw(15) << (forgetall? "yes" : "no") << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | hard_keep " << ":" << std::right << std::setw(15) << (hard_keep? "yes" : "no") << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | hard_forget " << ":" << std::right << std::setw(15) << (hard_forget? "yes" : "no") << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | keep_when_size " << ":" << std::right << std::setw(15) << keep_when_size << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | keep_when_bjm" << ":" << std::right << std::setw(15) << keep_when_bjm << " |" << std::endl;
   os << std::left << std::setw(30) << " c | reduce learnt clause " << ":" << std::right << std::setw(15) << (reduce_clauses? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | clause forgetfulness %" << ":" << std::right << std::setw(15) << Forgetfulness << " |" << std::endl;
   os << std::left << std::setw(30) << " c | backjump forgetfulness %" << ":" << std::right << std::setw(15) << Forgetfulness_retated_to_backjump << " |" << std::endl;
@@ -1933,7 +1949,10 @@ void SchedulingSolver::setup() {
 			  params->FD_learning, params->reduce_clauses,params->orderedExploration,
 			  params->lazy_generation, params->semantic_learning, params->simple_learn,
 			  params->max_nogood_size, params->bounded_by_decision, params->Forgetfulness,
-			  params->forget_relatedto_nogood_size , params->forget_retatedto_backjump ,params->Forgetfulness_retated_to_backjump);
+			  params->forget_relatedto_nogood_size , params->forget_retatedto_backjump ,params->Forgetfulness_retated_to_backjump,
+			  params->hard_keep, params->hard_forget,params->keep_when_size,
+			  params->keep_when_bjm
+	  );
   }
 
 #ifdef _MONITOR

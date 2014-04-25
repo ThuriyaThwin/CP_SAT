@@ -1233,7 +1233,7 @@ void Mistral::ConstraintClauseBase::remove( const int cidx , bool static_forget)
 }
 
 
-void Mistral::ConstraintClauseBase::hard_forget(){
+void Mistral::ConstraintClauseBase::static_forget(){
 
 //	std::cout << "\n c hard_forget " << std::endl;
 //	std::cout << " c will_be_forgotten size" << will_be_forgotten.size << std::endl;

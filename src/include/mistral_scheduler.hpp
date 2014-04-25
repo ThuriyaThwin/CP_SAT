@@ -80,7 +80,7 @@ namespace Mistral {
     static const int RGUIDED =  3;
     static const int RAND    =  4;
 
-    static const int nia = 31;
+    static const int nia = 35;
     static const char* int_ident[nia];
     
     static const int nsa = 14;
@@ -126,6 +126,15 @@ namespace Mistral {
     int bounded_by_decision;
     int forget_relatedto_nogood_size;
     int forget_retatedto_backjump;
+
+    int hard_keep;
+    int hard_forget;
+    int keep_when_size ;
+    int keep_when_bjm ;
+
+
+
+
 
     double Factor;
     double Decay;

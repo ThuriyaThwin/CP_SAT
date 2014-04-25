@@ -163,6 +163,12 @@ void Mistral::SolverParameters::initialise() {
   forget_retatedto_backjump  = 0;
   Forgetfulness_retated_to_backjump = 0.0 ;
 
+  hard_keep =0;
+  hard_forget =0 ;
+  keep_when_size =0 ;
+  keep_when_bjm =0;
+
+
   prefix_comment = "c";
   prefix_statistics = "d";
   prefix_objective = "o";
@@ -16270,7 +16276,7 @@ void Mistral::Solver::forget() {
   //std::cout << lit_activity << " "  << lit_activity[0] << " "  << lit_activity[1] << std::endl;
 
 	if(base)
-		base->hard_forget();
+		base->static_forget();
 
   if(base) statistics.size_learned -= base->forget(parameters.forgetfulness, var_activity, lit_activity);
 
@@ -18642,7 +18648,11 @@ void Mistral::Solver::set_fdlearning_on(
 	    double forgetfulness,
 	    int forget_relatedto_nogood_size,
 	    int forget_retatedto_backjump ,
-	    double Forgetfulness_retated_to_backjump
+	    double Forgetfulness_retated_to_backjump,
+	    int hard_keep,
+	    int hard_forget,
+	    int keep_when_size,
+	    int keep_when_bjm
 	    ) {
 
 	//	parameters.jsp_backjump = true;
@@ -18662,6 +18672,11 @@ void Mistral::Solver::set_fdlearning_on(
 	parameters.forget_relatedto_nogood_size =forget_relatedto_nogood_size;
 	parameters.forget_retatedto_backjump = forget_retatedto_backjump ;
 	parameters.Forgetfulness_retated_to_backjump = Forgetfulness_retated_to_backjump ;
+
+	parameters.hard_keep = hard_keep ;
+	parameters.hard_forget = hard_forget;
+	parameters.keep_when_size =  keep_when_size;
+	parameters.keep_when_bjm = keep_when_bjm;
 
 
 	std::cout << " c start_from : " << start_from << std::endl;

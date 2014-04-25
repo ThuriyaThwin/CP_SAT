@@ -334,7 +334,7 @@ namespace Mistral {
     	is_watched_by[b].pop();
     }
 
-    void hard_forget();
+    void static_forget();
     //void forget( const double forgetfulness, const Vector< double >& activity );
     // (returns the toal removed size)
     int forget( const double forgetfulness, const double * vactivity, const double * lactivity );
