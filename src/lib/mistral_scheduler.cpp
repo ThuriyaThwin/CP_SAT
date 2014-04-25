@@ -3283,7 +3283,7 @@ void SchedulingSolver::dichotomic_search()
   
   //   }
     
-  std::cout << std::endl;
+  //std::cout << std::endl;
 }
  
 
@@ -3731,7 +3731,7 @@ void SchedulingSolver::branch_and_bound()
     //   //function = new StoreStats( this, stats );
     // }
     
-    std::cout << " c +=========[ start branch & bound ]==========+" << std::endl;
+    std::cout << " c\n c +=========[ start branch & bound ]==========+" << std::endl;
     std::cout << std::left << std::setw(26) << " c | current range" << ":" 
 	      << std::right << std::setw(5) << " " << std::setw(5) << stats->lower_bound 
 	      << " to " << std::setw(5) << objective->upper_bound << " |" << std::endl;

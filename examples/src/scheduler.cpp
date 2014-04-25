@@ -100,8 +100,8 @@ int main( int argc, char** argv )
 //  std::cout << "s " << (stats.num_solutions ? "SATISFIABLE" : "UNSATISFIABLE")
   //MOVE TO Optimality
   //Here SATISFIABLE means optimal and UNKNOWN means not optimal --> I added this only for parsing
-  std::cout << "s " << ((stats.lower_bound == stats.upper_bound) ? "SATISFIABLE" : "UNKNOWN")
-   	    << " \nv 00" << std::endl;
+  std::cout << " s " << ((stats.lower_bound == stats.upper_bound) ? "SATISFIABLE" : "UNKNOWN")
+   	    << "\n v 00" << std::endl;
 
 
 
