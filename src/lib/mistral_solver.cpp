@@ -11471,15 +11471,12 @@ void Mistral::Solver::clean_fdlearn() {
 					simple_fdlearn_nogood(true);
 				}
 				else if (parameters.semantic_learning &&
-					(parameters.Forgetfulness_retated_to_backjump>0.0)) {
-					double tmp = ((double) (level- backtrack_level) / (double)level);
-
-					//a lower value of tmp means a close bts!
-					if (tmp <parameters.Forgetfulness_retated_to_backjump ){
+					(parameters.Forgetfulness_retated_to_backjump>0.0) &&
+					 (   (((double) (level- backtrack_level) / (double)level)) <parameters.Forgetfulness_retated_to_backjump )) {
 						//std::cout << " c % of backjump "  << tmp << std::endl;
 						simple_fdlearn_nogood(true);
 					}
-				}
+				//}
 		else {
 				//bool no_semantic = true;
 				//bool lazy_generation = false;
