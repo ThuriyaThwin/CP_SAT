@@ -427,10 +427,10 @@ void Mistral::ConstraintClauseBase::initialise() {
   for(unsigned int i=0; i<scope.size; ++i) {
     if(scope[i].is_bool())
       trigger_on(_VALUE_, scope[i]);
-    else { 
-      trigger_on(_NEVER_, scope[i]);
-      // std::cout << scope[i] << " " << scope[i].get_domain() << std::endl;
-      // exit(1);
+    else {
+     // trigger_on(_NEVER_, scope[i]);
+       std::cout << scope[i] << " " << scope[i].get_domain() << std::endl;
+       exit(1);
     }
   }
   //set_idempotent(true);
@@ -451,6 +451,8 @@ void Mistral::ConstraintClauseBase::initialise() {
 	  std::cout << " c will enforce_nfc1 to false" << std::endl;
 	  enforce_nfc1 = false;
   }
+
+  will_be_kept.initialise(0,2000000,BitSet::empt);
 
   // for(unsigned int i=0; i<scope.size; ++i) {
   //   reason.add(NULL);
@@ -1219,7 +1221,6 @@ void Mistral::ConstraintClauseBase::remove( const int cidx , bool static_forget)
 {
   Clause *clause = learnt[cidx];
 
-  // std::cout << "forget " ;
   // print_clause(std::cout, clause);
   // std::cout << std::endl;
 
@@ -1227,6 +1228,19 @@ void Mistral::ConstraintClauseBase::remove( const int cidx , bool static_forget)
 	  is_watched_by[clause->data[0]].remove_elt( clause );
 	  is_watched_by[clause->data[1]].remove_elt( clause );
   }
+
+  //We suppose that we never remove a clause that will_be_kept!
+
+  if (will_be_kept.fast_contain(learnt.size -1)){
+	 // std::cout << "will_be_kept" << will_be_kept << std::endl;
+	  //std::cout << "will_be_kept fast_contain " << learnt.size -1 << std::endl;
+
+
+	  // here we update the index of learnt.size -1 since it will be kept!
+	  will_be_kept.fast_remove(learnt.size -1);
+	  will_be_kept.fast_add(cidx);
+  }
+
   learnt.remove( cidx );
 
   free(clause);
@@ -1235,18 +1249,28 @@ void Mistral::ConstraintClauseBase::remove( const int cidx , bool static_forget)
 
 void Mistral::ConstraintClauseBase::static_forget(){
 
-//	std::cout << "\n c hard_forget " << std::endl;
-//	std::cout << " c will_be_forgotten size" << will_be_forgotten.size << std::endl;
-//	std::cout << " c learnt size" << learnt.size << std::endl;
+	/*std::cout << "\n \n \n \n  c static_forget " << std::endl;
+	std::cout << " c will_be_forgotten size" << will_be_forgotten.size << std::endl;
+	std::cout << " c learnt size" << learnt.size << std::endl;
 
+	std::cout << " c will_be_forgotten " << will_be_forgotten << std::endl;
+	std::cout << " c learnt " << learnt << std::endl;
+
+
+	std::cout << " static forget " ;*/
 	for (int i = (will_be_forgotten.size -1); i >=0 ; --i){
 		remove(will_be_forgotten[i], true);
 	}
 	will_be_forgotten.clear();
 
-//	std::cout << " c END hard_forget" << std::endl;
-//	std::cout << " c will_be_forgotten size" << will_be_forgotten.size << std::endl;
-//	std::cout << " c learnt size" << learnt.size << std::endl;
+	/*std::cout << " c will_be_forgotten " << will_be_forgotten << std::endl;
+	std::cout << " c learnt " << learnt << std::endl;
+	exit(1);
+	 */
+
+	//	std::cout << " c END hard_forget" << std::endl;
+	//	std::cout << " c will_be_forgotten size" << will_be_forgotten.size << std::endl;
+	//	std::cout << " c learnt size" << learnt.size << std::endl;
 
 }
 

@@ -11578,11 +11578,6 @@ void Mistral::Solver::clean_fdlearn() {
 #endif
 
 
-				statistics.size_learned += learnt_clause.size;
-				statistics.avg_learned_size =
-						((statistics.avg_learned_size * (double)(statistics.num_failures)) + (double)(learnt_clause.size))
-						/ ((double)(++statistics.num_failures));
-
 		/*		std::cout << "  \n \n statistics" <<std::endl;
 				std::cout << "  statistics.size_learned   "   << statistics.size_learned <<std::endl;
 				std::cout << "  statistics.avg_learned_size "   << statistics.avg_learned_size <<std::endl;
@@ -11647,6 +11642,11 @@ void Mistral::Solver::clean_fdlearn() {
 					}
 				}
 
+				statistics.size_learned += learnt_clause.size;
+				statistics.avg_learned_size =
+						((statistics.avg_learned_size * (double)(statistics.num_failures)) + (double)(learnt_clause.size))
+						/ ((double)(++statistics.num_failures));
+
 				if( learnt_clause.size != 1 ) {
 
 					// if(lit_activity) {
@@ -11657,6 +11657,29 @@ void Mistral::Solver::clean_fdlearn() {
 					// }
 
 					base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
+
+
+					if (parameters.hard_keep)  {
+						if (	(parameters.keep_when_bjm) && ((level - backtrack_level) >= parameters.keep_when_bjm) &&
+								(parameters.keep_when_size) && (learnt_clause.size <= parameters.keep_when_size) ) {
+							base->keep_last();
+					//		std::cout << "  \n Should keep \n "  << learnt_clause  << std::endl;
+					//		print_clause(std::cout , base->learnt.back());
+							//std::cout << " i.e. "  << learnt_clause  << std::endl;
+
+						}
+					}
+					else if ((parameters.keep_when_bjm) && ((level - backtrack_level) >= parameters.keep_when_bjm)) {
+						base->keep_last();
+				//		std::cout << "  \n Should keep \n "  << learnt_clause  << std::endl ;
+				//		print_clause(std::cout , base->learnt.back());
+					}
+					else if ((parameters.keep_when_size) && (learnt_clause.size <= parameters.keep_when_size)) {
+						base->keep_last();
+				//		std::cout << "  \n Should keep \n "  << learnt_clause   << std::endl;
+				//		print_clause(std::cout , base->learnt.back());
+					}
+
 					if ((parameters.forget_relatedto_nogood_size) && (learnt_clause.size > parameters.forget_relatedto_nogood_size)) {
 						//std::cout << " c static learnt_clause.size  forget "  << learnt_clause.size  << std::endl;
 						base->forget_last();
@@ -11718,7 +11741,6 @@ void Mistral::Solver::clean_fdlearn() {
 				//   std::cout << "discrepancy after learning!!\n" ;
 				//   exit(1);
 				// }
-
 
 				//backjump_decision = decision(variables[UNSIGNED(p)], Decision::REMOVAL, SIGN(p));
 

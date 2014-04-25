@@ -458,6 +458,8 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[34] != NOVAL) keep_when_bjm  = int_param[34];
 
 
+  if (keep_when_bjm || keep_when_size)
+	  forgetall=0;
 
   if(strcmp(str_param[0 ],"nil")) Heuristic  = str_param[0];
   if(strcmp(str_param[1 ],"nil")) Policy     = str_param[1];
@@ -3243,7 +3245,6 @@ void SchedulingSolver::dichotomic_search()
 
 			  //TODO
 			  //variables[i].free_object();?
-
 		  }
 		  else{
 			  __size = base->learnt.size -current_learnClauses_size;
@@ -3251,12 +3252,45 @@ void SchedulingSolver::dichotomic_search()
 			  //   	std::cout << " current_learnClauses_size" << current_learnClauses_size << std::endl;
 			  //  	std::cout << " __size " << __size << std::endl;
 
-			  while (__size--)
-				  base->remove(__size+current_learnClauses_size);
-			  // 	std::cout << "  \n \n \n " << std::endl;
-			  current_learnClauses_size=base->learnt.size;
+			  int idx;
+
+			//  std::cout << "\n \n \n Ok we will forget all but : " << base->will_be_kept << std::endl;
+			  //std::cout << "will_be_kept fast_contain " << learnt.size -1 << std::endl;
+			  // here we update the index of learnt.size -1 since it will be kept!
+			  //will_be_kept.fast_remove(learnt.size -1);
+			  //will_be_kept.fast_add(cidx);
+
+			  while (__size--){
+				  idx = __size+current_learnClauses_size;
+				  if (base->will_be_kept.fast_contain(idx))
+					  base->will_be_kept.fast_remove(idx);
+
+				  base->remove(idx);
+				  // 	std::cout << "  \n \n \n " << std::endl;
+			  }
+
+			  if (base->will_be_kept.size()){
+				  __size = base->learnt.size;
+				  //TODO : whith lazy ???
+				  /*
+#ifdef _RECOVER_GENERATED
+				  varsIds_lazy.clear();
+				  value_lazy.clear();
+				  std::cout << " c clear   varsIds_lazy and  value_lazy" << std::endl;
+#endif
+				   */
+
+				  while (__size--){
+					  if (! base->will_be_kept.fast_contain(__size))
+						  base->remove(__size);
+					  // 	std::cout << "  \n \n \n " << std::endl;
+				  }
+				  current_learnClauses_size=base->learnt.size;
+			  }
 		  }
-		  //	std::cout << " NEW  base->learnt.size" << base->learnt.size << std::endl;
+		  std::cout << " c keeping clauses between dicho steps ?:  base->learnt.size=" << base->learnt.size << std::endl;
+		//  std::cout << " NEW  base->learnt " << base->learnt  << std::endl;
+		//  exit(1);
 	  }
 
 	/*  std::cout << " \n \n \n  expression_store.size" << expression_store.size << std::endl;

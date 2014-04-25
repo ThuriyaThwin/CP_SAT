@@ -325,6 +325,9 @@ namespace Mistral {
 
     //New way of forgetting clauses (directly whithin learning)
     Vector<unsigned int> will_be_forgotten;
+    //Clauses that will be kept between dichotomy
+	BitSet will_be_kept;
+
     void forget_last(){
     	will_be_forgotten.add(learnt.size -1);
     	Clause& clause = *(learnt[learnt.size -1]);
@@ -332,6 +335,10 @@ namespace Mistral {
     	Atom b =clause[1];
     	is_watched_by[a].pop();
     	is_watched_by[b].pop();
+    }
+
+    void keep_last(){
+    	will_be_kept.fast_add(learnt.size -1);
     }
 
     void static_forget();
