@@ -784,12 +784,12 @@ namespace Mistral {
     // //@}
 
     //FD learning
-    void simple_fdlearn_nogood();
+    void simple_fdlearn_nogood(bool will_be_forgotten = false);
     void fdlearn_nogood();
     //fdlearn_nogood without using sequence to select the nextliteral to explore
     void fdlearn_nogood_nosequence();
-    void fdimprovedlearn_nogood();
-    void learn_withoutClosingPropagation();
+  //  void fdimprovedlearn_nogood();
+  //  void learn_withoutClosingPropagation();
     void learn_with_lazygeneration();
 	Vector<Literal> bound_literals_to_explore;
 	//Instead of using sequence we will use this vector to select the next literal to explore

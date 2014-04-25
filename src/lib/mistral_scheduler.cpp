@@ -264,12 +264,13 @@ std::ostream& StatisticList::print(std::ostream& os,
 
 
 const char* ParameterList::int_ident[ParameterList::nia] = 
-  {"-ub", "-lb", "-check", "-seed", "-cutoff", "-dichotomy", 
-   "-base", "-randomized", "-verbose", "-optimise", "-nogood", 
-   "-dyncutoff", "-nodes", "-hlimit", "-init", "-neighbor", 
-   "-initstep", "-fixtasks", "-order", "-ngdt" , "-fdlearning" ,
-   "-forgetall" , "-reduce" ,  "-orderedexploration" , "-lazygeneration" , "-semantic" ,
-   "-simplelearn" , "-maxnogoodsize" , "-boundedbydecision" , "-forgetsize" , "-forgetbackjump"
+  {"-ub", "-lb", "-check", "-seed", "-cutoff",
+   "-dichotomy", "-base", "-randomized", "-verbose", "-optimise",
+   "-nogood", "-dyncutoff", "-nodes", "-hlimit", "-init",
+   "-neighbor", "-initstep", "-fixtasks", "-order", "-ngdt" ,
+   "-fdlearning" , "-forgetall" , "-reduce" ,  "-orderedexploration" , "-lazygeneration" ,
+   "-semantic" , "-simplelearn" , "-maxnogoodsize" , "-boundedbydecision" , "-forgetsize" ,
+   "-forgetbackjump"
   };
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 

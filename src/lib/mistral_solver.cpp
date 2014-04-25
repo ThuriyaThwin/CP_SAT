@@ -5086,7 +5086,7 @@ void Mistral::Solver::learn_nogood() {
 }
 
 
-void Mistral::Solver::simple_fdlearn_nogood() {
+void Mistral::Solver::simple_fdlearn_nogood(bool will_be_forgotten) {
 #ifdef latest_bounds_learning
 	propagate_literal_in_learnt_clause= true;
 #endif
@@ -5141,11 +5141,14 @@ void Mistral::Solver::simple_fdlearn_nogood() {
 
 
 		base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
-		if (parameters.forget_relatedto_nogood_size)
-			if (learnt_clause.size > parameters.forget_relatedto_nogood_size) {
-				base->forget_last();
+		if (will_be_forgotten)
+			base->forget_last();
+		else
+			if (parameters.forget_relatedto_nogood_size){
+				if (learnt_clause.size > parameters.forget_relatedto_nogood_size) {
+					base->forget_last();
+				}
 			}
-
 		//add_clause( learnt, learnt_clause, stats.learnt_avg_size );
 		//reason[UNSIGNED(p)] = base->learnt.back();
 
@@ -10826,8 +10829,8 @@ if(lit_activity) {
 							//			std::cout << " \n learn :  " <<variables[x] << "  = " <<variables[x].get_domain() << " ; assignment_level : " << assignment_level[x]<< std::endl;
 						}
 #endif
-						//			if(lvl > backtrack_level)
-						//				backtrack_level = lvl;
+									if(lvl > backtrack_level)
+										backtrack_level = lvl;
 
 						//updating values !
 						if (var_visited){
@@ -10986,7 +10989,6 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 					tmp__id = dom_constraint->value_exist( val-1 ) ;
 
 
-
 				if (!parameters.semantic_learning)
 					if ( tmp__id< 0){
 						tmp__id= generate_new_variable(dom_constraint, val, is_lb, lvl, var);
@@ -11070,9 +11072,6 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 							learnt_clause.add(encode_boolean_variable_as_literal(tmp__id, is_lb));
 							//?? should be __x->lowerbounds[0] -1
 							//visitedLowerBoundvalues[var] = __x->lowerbounds[0];
-							if(lvl > backtrack_level)
-								backtrack_level = lvl;
-
 						}
 						else
 							if (is_lb){
@@ -11101,7 +11100,8 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 								visitedUpperBounds.fast_add(var);
 							visitedUpperBoundvalues[var]= val;
 						}
-
+				if(lvl > backtrack_level)
+					backtrack_level = lvl;
 
 			}
 			else
@@ -11153,10 +11153,13 @@ void Mistral::Solver::generate_variables(){
 			lvl =assignment_level[tmp_id];
 
 		learnt_clause.add(encode_boolean_variable_as_literal(tmp_id, 1));
-		//?? should be __x->lowerbounds[0] -1
-		//visitedLowerBoundvalues[var] = __x->lowerbounds[0];
-		if(lvl > backtrack_level)
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+		if(lvl > backtrack_level){
+			std::cout << " lvl > backtrack_level " << std::endl;
+			exit(1);
 			backtrack_level = lvl;
+		}
+#endif
 		var= visitedLowerBounds.next(var);
 	}
 
@@ -11176,8 +11179,15 @@ void Mistral::Solver::generate_variables(){
 			lvl =assignment_level[tmp_id];
 
 		learnt_clause.add(encode_boolean_variable_as_literal(tmp_id, 0));
-		if(lvl > backtrack_level)
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+		if(lvl > backtrack_level){
+			std::cout << " lvl > backtrack_level " << std::endl;
+			exit(1);
 			backtrack_level = lvl;
+		}
+#endif
+
 		var= visitedUpperBounds.next(var);
 	}
 }
@@ -11426,7 +11436,6 @@ void Mistral::Solver::clean_fdlearn() {
 
 			current_explanation = get_next_to_explore(a);
 
-
 			//		std::cout << "latest before while =" << pathC << std::endl;
 			//		} while( boolean_vairables_to_explore.size );
 		} while( --remainPathC );
@@ -11440,7 +11449,32 @@ void Mistral::Solver::clean_fdlearn() {
 		//		std::cout << "learnt_clause.size  " <<learnt_clause.size   << std::endl;
 				simple_fdlearn_nogood();
 			}
-			else {
+			else
+				//check if we should forget in the case of semantic lerning
+			//	if (parameters.lazy_generation && (parameters.semantic_learning))
+
+				if (parameters.semantic_learning &&
+						(parameters.forget_relatedto_nogood_size) && (learnt_clause.size > parameters.forget_relatedto_nogood_size)) {
+					//std::cout << " c static learnt_clause.size  forget "  << learnt_clause.size  << std::endl;
+					simple_fdlearn_nogood(true);
+				}
+				else if (parameters.semantic_learning &&
+					(parameters.forget_retatedto_backjump) && ((level-backtrack_level) < parameters.forget_retatedto_backjump)) {
+					//		std::cout << "\n c static bjm forget : lvl"  << level << std::endl;
+					//		std::cout << " c                   : backtrack_level"  << backtrack_level << std::endl;
+					simple_fdlearn_nogood(true);
+				}
+				else if (parameters.semantic_learning &&
+					(parameters.Forgetfulness_retated_to_backjump>0.0)) {
+					double tmp = ((double) (level- backtrack_level) / (double)level);
+
+					//a lower value of tmp means a close bts!
+					if (tmp <parameters.Forgetfulness_retated_to_backjump ){
+						//std::cout << " c % of backjump "  << tmp << std::endl;
+						simple_fdlearn_nogood(true);
+					}
+				}
+		else {
 				//bool no_semantic = true;
 				//bool lazy_generation = false;
 
@@ -11619,12 +11653,11 @@ void Mistral::Solver::clean_fdlearn() {
 					base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
 					if ((parameters.forget_relatedto_nogood_size) && (learnt_clause.size > parameters.forget_relatedto_nogood_size)) {
 						//std::cout << " c static learnt_clause.size  forget "  << learnt_clause.size  << std::endl;
-
 						base->forget_last();
 					}
-					else if ((parameters.forget_retatedto_backjump) && (backtrack_level > parameters.forget_retatedto_backjump)) {
-						//std::cout << " c static bjm forget "  << backtrack_level << std::endl;
-
+					else if ((parameters.forget_retatedto_backjump) && ((level-backtrack_level) < parameters.forget_retatedto_backjump)) {
+				//		std::cout << "\n c static bjm forget : lvl"  << level << std::endl;
+				//		std::cout << " c                   : backtrack_level"  << backtrack_level << std::endl;
 						base->forget_last();
 					}
 					else if (parameters.Forgetfulness_retated_to_backjump>0.0) {
