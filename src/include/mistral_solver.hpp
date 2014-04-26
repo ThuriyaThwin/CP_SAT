@@ -813,6 +813,7 @@ namespace Mistral {
 
     unsigned int remainPathC;
 
+    //Used when orderedexploration is true
     struct _valued_atom
     {
     	int assignment_order;
@@ -829,6 +830,24 @@ namespace Mistral {
     	}
     };
 
+    //Used to order the learnt clause at the end in a decreasing order
+    struct _valued_literal
+    {
+    	int lvl;
+    	Literal l;
+    	_valued_literal(int _lvl, Literal _l) : lvl(_lvl), l(_l) {}
+    	_valued_literal() {}
+    	bool operator < (const _valued_literal& literal) const
+    	{
+    		return (lvl < literal.lvl);
+    	}
+    	bool operator > (const _valued_literal& literal) const
+    	{
+    		return (lvl > literal.lvl);
+    	}
+    };
+
+    Vector <_valued_literal > orderedliterals;
 
    // std::ostream& operator<< (std::ostream& os, const __boundLiteral & x) ;
 

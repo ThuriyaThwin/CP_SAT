@@ -5097,6 +5097,9 @@ void Mistral::Solver::simple_fdlearn_nogood(bool will_be_forgotten) {
 	propagate_literal_in_learnt_clause= true;
 #endif
 
+	std::cout << "simple_fdlearn_nogood  "  << std::endl;
+	exit(1);
+
 	backtrack_level = level-1;
 	visited.clear();
 	//	backtrack_level = level-2;
@@ -11630,6 +11633,47 @@ void Mistral::Solver::clean_fdlearn() {
 					//   }
 					// }
 
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+					std::cout << " \n \n \n learn  "  << std::endl;
+					std::cout << "before ordering! " << learnt_clause <<  std::endl;
+
+					std::cout << "levels! "  <<  std::endl;
+
+					for (int i = 0 ; i< learnt_clause.size ; ++i){
+
+						std::cout << " "  <<  assignment_level[get_id_boolean_variable(learnt_clause[i])];
+					}
+
+					std::cout << " END ?????? "  <<  std::endl;
+#endif
+					orderedliterals.clear();
+					for (int i = (learnt_clause.size-1) ; i> 0; --i){
+						q = learnt_clause[i];
+						orderedliterals.fast_sorted_add((_valued_literal( assignment_level[get_id_boolean_variable(q)] , q)));
+					}
+
+//					q = learnt_clause[0];
+//					orderedliterals.fast_add(_valued_literal( assignment_level[get_id_boolean_variable(q)] , q));
+
+					learnt_clause.size = 1;
+					for (int i = (orderedliterals.size-1) ; i>= 0; --i){
+						//q = orderedliterals[i].l;
+						learnt_clause.fast_add(orderedliterals[i].l);
+					}
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+					std::cout << "after  ordering! " << learnt_clause <<  std::endl;
+					std::cout << "levels! "  <<  std::endl;
+
+
+					for (int i = 0 ; i< learnt_clause.size ; ++i){
+
+						std::cout << " "  <<  assignment_level[get_id_boolean_variable(learnt_clause[i])];
+					}
+
+					std::cout << " "  <<  std::endl;
+#endif
+
 					base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
 					try_to_keep_or_forget();
 
@@ -11705,10 +11749,22 @@ void Mistral::Solver::try_to_keep_or_forget() {
 		if (	(parameters.keep_when_bjm) && ((level - backtrack_level) >= parameters.keep_when_bjm) &&
 				(parameters.keep_when_size) && (learnt_clause.size <= parameters.keep_when_size) ) {
 			base->keep_last();
-			//		std::cout << "  \n Should keep \n "  << learnt_clause  << std::endl;
-			//		print_clause(std::cout , base->learnt.back());
-			//std::cout << " i.e. "  << learnt_clause  << std::endl;
+		//	std::cout << "  \n Should keep \n "  << learnt_clause  << std::endl ;
+		/*			std::cout << "  \n hard_keep Should keep \n "  << learnt_clause  << std::endl;
+					print_clause(std::cout , base->learnt.back());
+					std::cout << " i.e. "  << learnt_clause  << std::endl;
+					std::cout << " level  "  << level   << std::endl;
+					std::cout << " decisions  "  << decisions   << std::endl;
 
+					std::cout << " index   "  << base->learnt.size-1   << std::endl;
+
+					std::cout << "  \n assignments \n "  << std::endl;
+
+					for (int i = 0 ; i <  learnt_clause.size ; ++i){
+						std::cout << " "  << learnt_clause[i]/2 << " : " <<std::endl;
+						std::cout << " "  << assignment_level[get_id_boolean_variable(learnt_clause[i]) ]<< std::endl;
+					}
+					*/
 		}
 	}
 	else if ((parameters.keep_when_bjm) && ((level - backtrack_level) >= parameters.keep_when_bjm)) {
@@ -11723,12 +11779,14 @@ void Mistral::Solver::try_to_keep_or_forget() {
 	}
 
 	if ((parameters.forget_relatedto_nogood_size) && (learnt_clause.size > parameters.forget_relatedto_nogood_size)) {
-		//std::cout << " c static learnt_clause.size  forget "  << learnt_clause.size  << std::endl;
+	//	std::cout << " c static learnt_clause.size  forget "  << learnt_clause.size  << std::endl;
+	//	exit(1);
 		base->forget_last();
 	}
 	else if ((parameters.forget_retatedto_backjump) && ((level-backtrack_level) < parameters.forget_retatedto_backjump)) {
-		//		std::cout << "\n c static bjm forget : lvl"  << level << std::endl;
-		//		std::cout << " c                   : backtrack_level"  << backtrack_level << std::endl;
+	//	std::cout << "\n c static bjm forget : lvl"  << level << std::endl;
+	//	std::cout << " c                   : backtrack_level"  << backtrack_level << std::endl;
+	//	exit(1);
 		base->forget_last();
 	}
 	else if (parameters.Forgetfulness_retated_to_backjump>0.0) {
@@ -11736,8 +11794,10 @@ void Mistral::Solver::try_to_keep_or_forget() {
 
 		//a lower value of tmp means a close bts!
 		if (tmp <parameters.Forgetfulness_retated_to_backjump ){
-			//std::cout << " c % of backjump "  << tmp << std::endl;
+		//	std::cout << " c % of backjump "  << tmp << std::endl;
+		//	exit(1);
 			base->forget_last();
+
 		}
 	}
 }
@@ -18685,6 +18745,7 @@ void Mistral::Solver::set_fdlearning_on(
 
 	visited.extend(SIZEOF_VARIABLES);
 	boolean_vairables_to_explore.initialise(SIZEOF_VARIABLES);
+	orderedliterals.initialise(SIZEOF_VARIABLES);
 	ordered_boolean_vairables_to_explore.initialise(SIZEOF_VARIABLES);
 	bound_literals_to_explore.initialise(100000);
 	//visited.extend(54000);

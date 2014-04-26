@@ -852,7 +852,7 @@ void Mistral::ConstraintClauseBase::start_over() {
 */
 
 }
-//#define _CHECKED_CLAUSES
+#define _CHECKED_CLAUSES
 
 Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
   conflict=NULL;
@@ -1240,6 +1240,9 @@ void Mistral::ConstraintClauseBase::remove( const int cidx , bool static_forget)
 	  will_be_kept.fast_remove(learnt.size -1);
 	  will_be_kept.fast_add(cidx);
   }
+
+  //std::cout << "  \n WILL REMOVE  \n "  << std::endl;
+  //std::cout << " "  << learnt[cidx] << std::endl;
 
   learnt.remove( cidx );
 
