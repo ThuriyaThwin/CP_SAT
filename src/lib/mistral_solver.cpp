@@ -5097,8 +5097,8 @@ void Mistral::Solver::simple_fdlearn_nogood(bool will_be_forgotten) {
 	propagate_literal_in_learnt_clause= true;
 #endif
 
-	std::cout << "simple_fdlearn_nogood  "  << std::endl;
-	exit(1);
+//	std::cout << "simple_fdlearn_nogood  "  << std::endl;
+//	exit(1);
 
 	backtrack_level = level-1;
 	visited.clear();

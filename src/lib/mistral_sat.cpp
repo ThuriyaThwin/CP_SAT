@@ -852,7 +852,8 @@ void Mistral::ConstraintClauseBase::start_over() {
 */
 
 }
-#define _CHECKED_CLAUSES
+
+//#define _CHECKED_CLAUSES
 
 Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
   conflict=NULL;
