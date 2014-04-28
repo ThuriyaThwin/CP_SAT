@@ -8290,13 +8290,21 @@ bool Mistral::Goal::enforce() {
   if(sub_type == MINIMIZATION) {
 
     //std::cout << objective << " in " << objective.get_domain() << " <= " << (upper_bound-1) << std::endl;
+	  VariableRangeWithLearning* tmp = dynamic_cast <VariableRangeWithLearning*> (objective.range_domain);
+	  if (tmp)
+		  return FAILED(tmp->set_max(upper_bound-1,NULL));
+	  else
+		  return FAILED(objective.set_max(upper_bound-1));
 
-    return FAILED(objective.set_max(upper_bound-1));
   } else if(sub_type == MAXIMIZATION) {
 
     //std::cout << objective << " in " << objective.get_domain() << " >= " << (lower_bound+1) << std::endl;
+	  VariableRangeWithLearning* tmp = dynamic_cast <VariableRangeWithLearning*> (objective.range_domain);
+	  if (tmp)
+		  return FAILED(tmp->set_min(lower_bound+1, NULL));
+	  else
+		  return FAILED(objective.set_min(lower_bound+1));
 
-    return FAILED(objective.set_min(lower_bound+1));
   }
 
   return false;

@@ -11634,7 +11634,7 @@ void Mistral::Solver::clean_fdlearn() {
 					// }
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-					std::cout << " \n \n \n learn  "  << std::endl;
+	/*				std::cout << " \n \n \n learn  "  << std::endl;
 					std::cout << "before ordering! " << learnt_clause <<  std::endl;
 
 					std::cout << "levels! "  <<  std::endl;
@@ -11645,6 +11645,7 @@ void Mistral::Solver::clean_fdlearn() {
 					}
 
 					std::cout << " END ?????? "  <<  std::endl;
+					*/
 #endif
 					orderedliterals.clear();
 					for (int i = (learnt_clause.size-1) ; i> 0; --i){
@@ -11662,7 +11663,7 @@ void Mistral::Solver::clean_fdlearn() {
 					}
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-					std::cout << "after  ordering! " << learnt_clause <<  std::endl;
+/*					std::cout << "after  ordering! " << learnt_clause <<  std::endl;
 					std::cout << "levels! "  <<  std::endl;
 
 
@@ -11672,6 +11673,7 @@ void Mistral::Solver::clean_fdlearn() {
 					}
 
 					std::cout << " "  <<  std::endl;
+					*/
 #endif
 
 					base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));

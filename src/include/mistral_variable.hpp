@@ -2506,9 +2506,21 @@ namespace Mistral {
       switch(type()) {
       case REMOVAL:    return !FAILED(var.remove(value()));
       case ASSIGNMENT: return !FAILED(var.set_domain(value()));
-      case LOWERBOUND: return !FAILED(var.set_min(value()+1));
-      case UPPERBOUND: return !FAILED(var.set_max(value()));
+      case LOWERBOUND: {
+    	  VariableRangeWithLearning* tmp = dynamic_cast <VariableRangeWithLearning*> (var.range_domain);
+    	  if (tmp)
+    		  return !FAILED(tmp->set_min(value()+1, NULL));
+    	  else
+    		  return !FAILED(var.set_min(value()+1));
 
+      }
+      case UPPERBOUND: {
+    	  VariableRangeWithLearning* tmp = dynamic_cast <VariableRangeWithLearning*> (var.range_domain);
+    	  if (tmp)
+    		  return !FAILED(tmp->set_max(value(),NULL));
+    	  else
+    		  return !FAILED(var.set_max(value()));
+      }
       }
       return true;
     }
