@@ -167,7 +167,7 @@ void Mistral::SolverParameters::initialise() {
   hard_forget =0 ;
   keep_when_size =0 ;
   keep_when_bjm =0;
-
+  keeplearning_in_bb=0;
 
   prefix_comment = "c";
   prefix_statistics = "d";
@@ -18712,7 +18712,8 @@ void Mistral::Solver::set_fdlearning_on(
 	    int hard_keep,
 	    int hard_forget,
 	    int keep_when_size,
-	    int keep_when_bjm
+	    int keep_when_bjm ,
+	    int keeplearning_in_bb
 	    ) {
 
 	//	parameters.jsp_backjump = true;
@@ -18737,7 +18738,7 @@ void Mistral::Solver::set_fdlearning_on(
 	parameters.hard_forget = hard_forget;
 	parameters.keep_when_size =  keep_when_size;
 	parameters.keep_when_bjm = keep_when_bjm;
-
+	parameters.keeplearning_in_bb = keeplearning_in_bb;
 
 	std::cout << " c start_from : " << start_from << std::endl;
 	visitedUpperBounds.initialise(0, start_from  , BitSet::empt);

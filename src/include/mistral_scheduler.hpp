@@ -80,7 +80,7 @@ namespace Mistral {
     static const int RGUIDED =  3;
     static const int RAND    =  4;
 
-    static const int nia = 35;
+    static const int nia = 36;
     static const char* int_ident[nia];
     
     static const int nsa = 14;
@@ -131,8 +131,8 @@ namespace Mistral {
     int hard_forget;
     int keep_when_size ;
     int keep_when_bjm ;
-
-
+    //Whether we keep use learning in B&B after dichotomy or not
+    int keeplearning_in_bb;
 
 
 

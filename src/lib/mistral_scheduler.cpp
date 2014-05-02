@@ -270,7 +270,8 @@ const char* ParameterList::int_ident[ParameterList::nia] =
    "-neighbor", "-initstep", "-fixtasks", "-order", "-ngdt" ,
    "-fdlearning" , "-forgetall" , "-reduce" ,  "-orderedexploration" , "-lazygeneration" ,
    "-semantic" , "-simplelearn" , "-maxnogoodsize" , "-boundedbydecision" , "-forgetsize" ,
-   "-forgetbackjump" , "-hardkeep", "-hardforget" ,"-keepwhensize" , "-keepwhenbjm"
+   "-forgetbackjump" , "-hardkeep", "-hardforget" ,"-keepwhensize" , "-keepwhenbjm" ,
+   "-keeplearning"
   };
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
@@ -374,7 +375,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   hard_forget =0;
   keep_when_size =0;
   keep_when_bjm =0;
-
+  keeplearning_in_bb = 0;
 
 
   FD_learning=0;
@@ -456,6 +457,8 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[32] != NOVAL) hard_forget  = int_param[32];
   if(int_param[33] != NOVAL) keep_when_size  = int_param[33];
   if(int_param[34] != NOVAL) keep_when_bjm  = int_param[34];
+  if(int_param[35] != NOVAL) keeplearning_in_bb  = int_param[35];
+
 
 
   if (keep_when_bjm || keep_when_size)
@@ -520,6 +523,7 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | hard_forget " << ":" << std::right << std::setw(15) << (hard_forget? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | keep_when_size " << ":" << std::right << std::setw(15) << keep_when_size << " |" << std::endl;
   os << std::left << std::setw(30) << " c | keep_when_bjm" << ":" << std::right << std::setw(15) << keep_when_bjm << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | keeplearning_in_bb" << ":" << std::right << std::setw(15) <<   keeplearning_in_bb << " |" << std::endl;
   os << std::left << std::setw(30) << " c | reduce learnt clause " << ":" << std::right << std::setw(15) << (reduce_clauses? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | clause forgetfulness %" << ":" << std::right << std::setw(15) << Forgetfulness << " |" << std::endl;
   os << std::left << std::setw(30) << " c | backjump forgetfulness %" << ":" << std::right << std::setw(15) << Forgetfulness_retated_to_backjump << " |" << std::endl;
@@ -1953,7 +1957,7 @@ void SchedulingSolver::setup() {
 			  params->max_nogood_size, params->bounded_by_decision, params->Forgetfulness,
 			  params->forget_relatedto_nogood_size , params->forget_retatedto_backjump ,params->Forgetfulness_retated_to_backjump,
 			  params->hard_keep, params->hard_forget,params->keep_when_size,
-			  params->keep_when_bjm
+			  params->keep_when_bjm ,  params->keeplearning_in_bb
 	  );
   }
 
@@ -3679,6 +3683,7 @@ void SchedulingSolver::branch_and_bound()
   //Cancel learning : check this when alowing lazy generation
   if(base)
   {
+	  if (!parameters.keeplearning_in_bb){
 	  parameters.fd_learning = 0;
 	  parameters.backjump = 0;
 	  int __size = base->learnt.size;
@@ -3737,8 +3742,9 @@ void SchedulingSolver::branch_and_bound()
 	 				  for (int i = 0; i < start_from; ++i)
 	 					  (static_cast<VariableRangeWithLearning*> (variables[i].range_domain))->domainConstraint->start_over();
 	 			  }
-  }
 
+  }
+  }
 
 //  if (params->PolicyRestart==GEOMETRIC)
 //	 policy = new Geometric();

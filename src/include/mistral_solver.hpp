@@ -117,7 +117,7 @@ namespace Mistral {
 	int hard_forget ;
 	int keep_when_size ;
 	int keep_when_bjm ;
-
+	int keeplearning_in_bb;
 
     /// whether solutions are checked
     // 0 -> not checked
@@ -957,7 +957,7 @@ namespace Mistral {
     		int max_nogood_size, int bounded_by_decision, double forgetfulness ,
     		int forget_relatedto_nogood_size , int static_forget_retatedto_backjump ,double Forgetfulness_retated_to_backjump,
     		int hard_keep, int hard_forget, int keep_when_size,
-    		int keep_when_bjm
+    		int keep_when_bjm , int keeplearning_in_bb
     );
 
     void close_propagation();
