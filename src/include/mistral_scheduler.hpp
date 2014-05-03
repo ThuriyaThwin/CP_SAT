@@ -83,7 +83,7 @@ namespace Mistral {
     static const int nia = 36;
     static const char* int_ident[nia];
     
-    static const int nsa = 14;
+    static const int nsa = 15;
     static const char* str_ident[nsa];
     
     
@@ -141,6 +141,9 @@ namespace Mistral {
     double Forgetfulness;
     // % of backtrach level needed to keep the clause
     double Forgetfulness_retated_to_backjump;
+    // %forgetfulness when switching to B&B
+    double BBforgetfulness;
+
 
     std::string Policy;
     std::string BandBPolicy;

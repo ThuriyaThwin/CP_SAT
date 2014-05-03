@@ -277,7 +277,7 @@ const char* ParameterList::int_ident[ParameterList::nia] =
 const char* ParameterList::str_ident[ParameterList::nsa] = 
   {"-heuristic", "-restart", "-factor", "-decay", "-type", 
    "-value", "-dvalue", "-ivalue", "-objective", "-algo",
-   "-presolve", "-bandbrestart" , "-forgetfulness", "-bjmforgetfulness"
+   "-presolve", "-bandbrestart" , "-forgetfulness", "-bjmforgetfulness" , "-bbforgetfulness"
   };
 
 
@@ -345,6 +345,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   Decay     = 0.0;
   Forgetfulness = 0.0;
   Forgetfulness_retated_to_backjump = 0.0;
+  BBforgetfulness=0.0;
   Value     = "guided";
   DValue    = "guided";
   IValue    = "promise";
@@ -478,6 +479,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(strcmp(str_param[11 ],"nil")) BandBPolicy     = str_param[11];
   if(strcmp(str_param[12],"nil")) Forgetfulness    = atof(str_param[12]);
   if(strcmp(str_param[13],"nil")) Forgetfulness_retated_to_backjump    = atof(str_param[13]);
+  if(strcmp(str_param[14],"nil")) BBforgetfulness    = atof(str_param[14]);
 
 }
 
@@ -527,6 +529,7 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | reduce learnt clause " << ":" << std::right << std::setw(15) << (reduce_clauses? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | clause forgetfulness %" << ":" << std::right << std::setw(15) << Forgetfulness << " |" << std::endl;
   os << std::left << std::setw(30) << " c | backjump forgetfulness %" << ":" << std::right << std::setw(15) << Forgetfulness_retated_to_backjump << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | B&B forgetfulness %" << ":" << std::right << std::setw(15) << BBforgetfulness << " |" << std::endl;
   os << std::left << std::setw(30) << " c | static backjump forgetfulness%" << ":" << std::right << std::setw(15) << forget_retatedto_backjump << " |" << std::endl;
   os << std::left << std::setw(30) << " c | forget bounded by nogood size" << ":" << std::right << std::setw(15) << forget_relatedto_nogood_size  << " |" << std::endl;
   os << std::left << std::setw(30) << " c | seed " << ":" << std::right << std::setw(15) << Seed << " |" << std::endl;
@@ -3923,7 +3926,10 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 	//	__jsp.printStats(std::cout);
 
 	int old_fd_learning = params->FD_learning;
+	int old_keeplearning_in_bb = params->keeplearning_in_bb;
 	params->FD_learning = 0;
+	params->keeplearning_in_bb = 0;
+
 	//solver->parameters.backjump = false;
 	//	std::cout << " \n\n c Lower Bound  " << stats->lower_bound ;
 	//	std::cout << " c Upper Bound  " << stats->upper_bound ;
@@ -4103,6 +4109,7 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 	delete __solver;
 
 	params->FD_learning = old_fd_learning;
+	params->keeplearning_in_bb = old_keeplearning_in_bb;
 	if (! parameters.backjump){
 		std::cout << " !backjump " << std::endl;
 		exit(1);
