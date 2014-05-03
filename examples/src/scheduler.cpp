@@ -90,10 +90,10 @@ int main( int argc, char** argv )
 	  if (solver->parameters.keeplearning_in_bb){
 		  solver->parameters.forgetfulness = params.BBforgetfulness;
 	  }
-	  else{
-	  solver->parameters.backjump = false;
-	  solver->parameters.fd_learning = 0;
-	  }
+//	  else{
+//	  solver->parameters.backjump = false;
+//	  solver->parameters.fd_learning = 0;
+//	  }
     if(params.Algorithm == "bnb")
       solver->branch_and_bound();
     //else if(params.Algorithm == "lns")
