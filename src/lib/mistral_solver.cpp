@@ -9719,6 +9719,10 @@ void Mistral::Solver::clean_fdlearn2() {
 
 
 
+		//std::cout << "\n BEFORE we will explain.size "<< bound_literals_to_explore.size << std::endl;
+		//exit(1);
+		bool old_semantic= parameters.semantic_learning ;
+
 		if (parameters.semantic_learning) {
 			/*			if (is_lb){
 				if (!visitedLowerBounds.fast_contain(var))
@@ -9779,7 +9783,6 @@ void Mistral::Solver::clean_fdlearn2() {
 			//std::cout << "visitedLowerBounds [i]? " << min <<std::endl;
 			for (int i = visitedUpperBounds.size() ; i>0; --i ){
 				val = visitedUpperBoundvalues[var] ;
-
 				tmp_literal=encode_bound_literal(var, val,1);
 				bound_literals_to_explore.add(tmp_literal);
 
@@ -9807,10 +9810,11 @@ void Mistral::Solver::clean_fdlearn2() {
 				var= visitedUpperBounds.next(var);
 			}
 
-
-
-			parameters.semantic_learning =0;
+			parameters.semantic_learning =false;
 		}
+
+	//	std::cout << "\n we will explain.size "<< bound_literals_to_explore.size << std::endl;
+	//	exit(1);
 
 		while (bound_literals_to_explore.size)
 		{
@@ -9843,7 +9847,7 @@ void Mistral::Solver::clean_fdlearn2() {
 				treat_explanation2(current_explanation, start, end);
 			}
 		}
-
+		parameters.semantic_learning= old_semantic;
 		if (parameters.bounded_by_decision && (learnt_clause.size > decisions.size))
 			simple_fdlearn_nogood();
 		else {
