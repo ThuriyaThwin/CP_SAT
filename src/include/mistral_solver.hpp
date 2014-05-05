@@ -866,12 +866,14 @@ namespace Mistral {
 
     //New clean learning
 
-    void add_atom_tobe_explored2(Atom a);
+    void add_atom_tobe_explored2(Literal l);
     void treat_assignment_literal2(Literal q);
     void treat_bound_literal2(Literal q);
     Explanation * get_next_to_explore2(Atom & a) ;
     void treat_explanation2 (Explanation* explanation,  Explanation::iterator start,Explanation::iterator end );
     void clean_fdlearn2() ;
+
+    Vector <Literal > literals_to_explore;
 
     				//TODO declare them only when needen!
 #ifdef _RECOVER_GENERATED
