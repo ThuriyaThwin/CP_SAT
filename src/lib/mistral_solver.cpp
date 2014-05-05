@@ -9160,6 +9160,7 @@ void Mistral::Solver::treat_bound_literal2(Literal q){
 				}
 		}
 		if (!already_explored) {
+
 			if (parameters.lazy_generation && (lvl < level) ){
 				DomainFaithfulnessConstraint * dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
 				int tmp__id = -1;
@@ -9273,8 +9274,27 @@ void Mistral::Solver::treat_bound_literal2(Literal q){
 
 			}
 			else
-				if ( lvl < level)
-				bound_literals_to_explore.add(q);
+				if ( lvl < level) {
+					if (parameters.semantic_learning) {
+						if (is_lb){
+							if (!visitedLowerBounds.fast_contain(var))
+								visitedLowerBounds.fast_add(var);
+							visitedLowerBoundvalues[var]= val;
+						}
+						else
+						{
+							if (!visitedUpperBounds.fast_contain(var))
+								visitedUpperBounds.fast_add(var);
+							visitedUpperBoundvalues[var]= val;
+						}
+						//Check that
+//						if(lvl > backtrack_level)
+//							backtrack_level = lvl;
+
+					}
+					else
+						bound_literals_to_explore.add(q);
+				}
 				else{
 					add_literal_tobe_explored2(q);
 					++remainPathC;
@@ -9696,6 +9716,101 @@ void Mistral::Solver::clean_fdlearn2() {
 			//		std::cout << "latest before while =" << pathC << std::endl;
 			//		} while( boolean_vairables_to_explore.size );
 		} while( --remainPathC );
+
+
+
+		if (parameters.semantic_learning) {
+			/*			if (is_lb){
+				if (!visitedLowerBounds.fast_contain(var))
+					visitedLowerBounds.fast_add(var);
+				visitedLowerBoundvalues[var]= val;
+			}
+			else
+			{
+				if (!visitedUpperBounds.fast_contain(var))
+					visitedUpperBounds.fast_add(var);
+				visitedUpperBoundvalues[var]= val;
+			}
+			//Check that
+			//						if(lvl > backtrack_level)
+			//							backtrack_level = lvl;
+
+
+			bound_literals_to_explore.add(q);
+			 */
+			//std::cout << " \n \n \n  iterate " << std::endl;
+			int var = visitedLowerBounds.min();
+			int val, lvl , tmp_id;
+			Literal tmp_literal;
+			VariableRangeWithLearning* __x;
+			//std::cout << "visitedLowerBounds [i]? " << min <<std::endl;
+			for (int i = visitedLowerBounds.size() ; i>0; --i ){
+				val = visitedLowerBoundvalues[var] ;
+
+				tmp_literal=encode_bound_literal(var, val,0);
+				bound_literals_to_explore.add(tmp_literal);
+
+				/*
+				__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
+
+
+				tmp_id = __x->domainConstraint->value_exist( val-1 ) ;
+
+				if ( tmp_id< 0){
+					lvl = __x->level_of(val,1);
+					tmp_id= generate_new_variable(__x->domainConstraint, val, true, lvl, var);
+				}
+				else
+					lvl =assignment_level[tmp_id];
+
+				learnt_clause.add(encode_boolean_variable_as_literal(tmp_id, 1));
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+				if(lvl > backtrack_level){
+					std::cout << " lvl > backtrack_level " << std::endl;
+					exit(1);
+					backtrack_level = lvl;
+				}
+#endif
+				 */
+				var= visitedLowerBounds.next(var);
+			}
+
+			var = visitedUpperBounds.min();
+			//std::cout << "visitedLowerBounds [i]? " << min <<std::endl;
+			for (int i = visitedUpperBounds.size() ; i>0; --i ){
+				val = visitedUpperBoundvalues[var] ;
+
+				tmp_literal=encode_bound_literal(var, val,1);
+				bound_literals_to_explore.add(tmp_literal);
+
+				/*		__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
+
+				tmp_id = __x->domainConstraint->value_exist( val) ;
+				if ( tmp_id< 0)
+				{
+					lvl = __x->level_of(val,0);
+					tmp_id= generate_new_variable(__x->domainConstraint, val, false, lvl, var);
+				}
+				else
+					lvl =assignment_level[tmp_id];
+
+				learnt_clause.add(encode_boolean_variable_as_literal(tmp_id, 0));
+				 */
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+				if(lvl > backtrack_level){
+					std::cout << " lvl > backtrack_level " << std::endl;
+					exit(1);
+					backtrack_level = lvl;
+				}
+#endif
+
+				var= visitedUpperBounds.next(var);
+			}
+
+
+
+			parameters.semantic_learning =0;
+		}
 
 		while (bound_literals_to_explore.size)
 		{
