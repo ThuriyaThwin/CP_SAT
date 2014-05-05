@@ -11307,9 +11307,13 @@ void Mistral::Solver::clean_fdlearn() {
 			//	std::cout << "PathC =  "<< pathC << std::endl;
 			//	std::cout << "CURRENT learnt_clause size "  << learnt_clause.size << " and the values : \n        " << learnt_clause << std::endl;
 
-			if(a == NULL_ATOM || assignment_level[a]) {
-
-				/*			std::cout << "?? current_explanation == NULL "  << std::endl;
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+			if(a != NULL_ATOM && (!assignment_level[a])) {
+				std::cout << "a != NULL_ATOM && (!assignment_level[a]   " << std::endl;
+				exit(1);
+			}
+#endif
+			/*			std::cout << "?? current_explanation == NULL "  << std::endl;
 			std::cout << "a =  "<< a << std::endl;
 			std::cout << "NULL_ATOM =  "<< NULL_ATOM << std::endl;
 
@@ -11418,7 +11422,7 @@ void Mistral::Solver::clean_fdlearn() {
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 				}
 #endif
-			}
+			//}
 
 			current_explanation = get_next_to_explore(a);
 
