@@ -4621,9 +4621,14 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
 
 		if(LB_CHANGED(evt)) {
 			//      if( (static_cast<VariableRangeWithLearning*> (scope[0].range_domain))->set_max( *max_t1_ptr-processing_time[0], this ) == FAIL_EVENT) wiped = FAILURE(0);
+	//		std ::cout << " \n Before : assignment order " << (get_solver()->assignment_rank) << std::endl;
+
 			if( scope0->set_max( *max_t1_ptr-processing_time[0], this ) == FAIL_EVENT) wiped = FAILURE(0);
 			//      else if( (static_cast<VariableRangeWithLearning*> (scope[1].range_domain))->set_min( *min_t0_ptr+processing_time[0], this ) == FAIL_EVENT) wiped = FAILURE(1);
 			else if( scope1->set_min( *min_t0_ptr+processing_time[0], this ) == FAIL_EVENT) wiped = FAILURE(1);
+
+	//		std ::cout << " \n After 2 : assignment order " << (get_solver()->assignment_rank) << std::endl;
+
 		} else {
 			// if( (static_cast<VariableRangeWithLearning*> (scope[0].range_domain))->set_min( *min_t1_ptr+processing_time[1], this ) == FAIL_EVENT) wiped = FAILURE(0);
 			if( scope0->set_min( *min_t1_ptr+processing_time[1], this ) == FAIL_EVENT) wiped = FAILURE(0);
