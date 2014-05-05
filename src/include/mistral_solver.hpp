@@ -863,7 +863,17 @@ namespace Mistral {
     void treat_bound_literal (Literal q);
     void treat_assignment_literal (Literal q);
     void treat_explanation (Explanation* explanation,  Explanation::iterator start,Explanation::iterator end );
-//TODO declare them only when needen!
+
+    //New clean learning
+
+    void add_atom_tobe_explored2(Atom a);
+    void treat_assignment_literal2(Literal q);
+    void treat_bound_literal2(Literal q);
+    Explanation * get_next_to_explore2(Atom & a) ;
+    void treat_explanation2 (Explanation* explanation,  Explanation::iterator start,Explanation::iterator end );
+    void clean_fdlearn2() ;
+
+    				//TODO declare them only when needen!
 #ifdef _RECOVER_GENERATED
     //used to get the variable id of a lazily generated variable
 	Vector<unsigned int> varsIds_lazy ;
