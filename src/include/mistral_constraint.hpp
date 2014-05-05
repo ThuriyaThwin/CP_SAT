@@ -237,7 +237,7 @@ namespace Mistral {
     virtual iterator get_reason_for(const Atom a, const int lvl, iterator& end) {
       return (end = NULL);
     }
-    virtual iterator get_reason_for_bound(const Literal a, iterator& end) {
+    virtual iterator get_reason_for_literal(const Literal a, iterator& end) {
     	std::cout << "Can't explain bound by default! " << std::endl;
     	exit(1);
     }
@@ -2329,7 +2329,7 @@ if (enforce_nfc1)
 	  ); }
 	  virtual bool explained() { return true; }
 	  virtual iterator get_reason_for(const Atom a, const int lvl, iterator& end);
-	  virtual iterator get_reason_for_bound(const Literal a, iterator& end);
+	  virtual iterator get_reason_for_literal(const Literal a, iterator& end);
 	  //virtual iterator get_bound_reason_for(const Literal l, iterator& end);
 
 	  virtual PropagationOutcome propagate();
@@ -3492,7 +3492,7 @@ if (enforce_nfc1)
 	  //@}
 	  virtual bool explained() { return true; }
 	  virtual iterator get_reason_for(const Atom a, const int lvl, iterator& end);
-	  virtual iterator get_reason_for_bound(const Literal a, iterator& end);
+	  virtual iterator get_reason_for_literal(const Literal a, iterator& end);
 	  //virtual iterator get_bound_reason_for(const Literal l, iterator& end);
 
   private:
@@ -5251,7 +5251,7 @@ if (enforce_nfc1)
 
 
 	  virtual iterator get_reason_for(const Atom a, const int lvl, iterator& end);
-	  virtual iterator get_reason_for_bound(const Literal a, iterator& end);
+	  virtual iterator get_reason_for_literal(const Literal a, iterator& end);
 	  //virtual iterator get_bound_reason_for(const Literal l, iterator& end);
 
 	  Literal explanation[2];

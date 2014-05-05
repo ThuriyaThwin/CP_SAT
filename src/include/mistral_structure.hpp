@@ -1432,7 +1432,7 @@ template < int N, class T >
     //typedef Decision* iterator;
 
     virtual iterator get_reason_for(const Atom a, const int lvl, iterator& end) = 0;
-    virtual iterator get_reason_for_bound(const Literal a, iterator& end) = 0;
+    virtual iterator get_reason_for_literal(const Literal a, iterator& end) = 0;
     virtual std::ostream& display(std::ostream& os) const = 0;
 
     virtual bool is_clause() {return true;}
@@ -1464,10 +1464,17 @@ template < int N, class T >
     // virtual Explanation::iterator begin(Atom a) { return &(data[0]); }
     // virtual Explanation::iterator end  (Atom a) { return &(data[size]); }
 
+
+    //Note : get_reason_for is correct with fd_leanring as long as we keep Atom a irrelevant. Otherwise, one can have the case where a correspond to the id of the variable which is not necessarely equal to the correspondant Atom
     virtual iterator get_reason_for(const Atom a, const int lvl, iterator& end) { end = &(data[size]); return &(data[0]); }
-    virtual iterator get_reason_for_bound(const Literal a, iterator& end) {
-    	std::cout << "Can't explain bound in Array " << std::endl;
-    	exit(1);
+    virtual iterator get_reason_for_literal(const Literal a, iterator& end) {
+    	//std::cout << "Can't explain bound in Array " << std::endl;
+    	//if (is_a_bound_literal(a) || a== NULL_ATOM)
+    	//	get_reason_for (a, solver->level ,end);
+    	//else
+  //  	get_reason_for (((Solver*) solver)->get_id_boolean_variable(a) , solver->level ,end);
+      	get_reason_for (a , 1 ,end);
+    	//exit(1);
     }
 
     static Array<DATA_TYPE>* Array_new(const Vector<DATA_TYPE>& ps)

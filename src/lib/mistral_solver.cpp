@@ -9291,24 +9291,24 @@ void Mistral::Solver::treat_bound_literal2(Literal q){
 }
 
 
-Explanation * Mistral::Solver::get_next_to_explore2(Atom & a) {
+Explanation * Mistral::Solver::get_next_to_explore2(Literal & lit) {
 
-Literal l;
+//Literal l;
 //	bool orderedExploration = true;
 	if (!parameters.orderedExploration) {
 
 		//Find the next variable to explore
 		if (literals_to_explore.size>0)
 		{
-			literals_to_explore.pop(l);
-			a = get_id_boolean_variable(l);
-			if (reason_for[a] == NULL)
+			literals_to_explore.pop(lit);
+			//a = get_id_boolean_variable(lit);
+			if (reason_for[get_id_boolean_variable(lit)] == NULL)
 			{
 				if (literals_to_explore.size){
 					literals_to_explore.add(literals_to_explore[0]);
-					literals_to_explore[0]=l;
-					literals_to_explore.pop(l);
-					a = get_id_boolean_variable(l);
+					literals_to_explore[0]=lit;
+					literals_to_explore.pop(lit);
+					//a = get_id_boolean_variable(l);
 				}
 			}
 
@@ -9327,7 +9327,7 @@ Literal l;
 			std::cout << " pathC " << pathC << std::endl;
 			 */
 
-			return reason_for[a];
+			return reason_for[get_id_boolean_variable(lit)];
 			//visited.fast_add(a);
 			//		}
 		}
@@ -9347,7 +9347,7 @@ Literal l;
 		//Find the next variable to explore
 		if (ordered_boolean_vairables_to_explore.size>0)
 		{
-			a= ordered_boolean_vairables_to_explore.pop().a;
+			Atom a= ordered_boolean_vairables_to_explore.pop().a;
 			/*
 			if (reason_for[a] == NULL)
 
@@ -9440,8 +9440,10 @@ void Mistral::Solver::clean_fdlearn2() {
 	else
 	{
 		//	int pathC = 0, index = sequence.size-1;
-		Literal q;
-		Atom a = NULL_ATOM;
+		Literal q , a_literal;
+		//Atom a = NULL_ATOM;
+		a_literal = NULL_ATOM;
+
 		Explanation::iterator start,end ;
 		//Variable x;
 		//int lvl;
@@ -9553,7 +9555,8 @@ void Mistral::Solver::clean_fdlearn2() {
 				store_reason(current_explanation, a);
 #endif
 
-				start = current_explanation->get_reason_for(a, (a != NULL_ATOM ? assignment_level[a] : level), end);
+			//	start = current_explanation->get_reason_for(a, (a != NULL_ATOM ? assignment_level[a] : level), end);
+				start = current_explanation->get_reason_for_literal(a_literal, end);
 				graph_size++;
 
 				bound_literals_to_explore.clear();
@@ -9631,7 +9634,8 @@ void Mistral::Solver::clean_fdlearn2() {
 						}
 #endif
 						//Note that we do not need the level here ! I should remove that later
-						start = current_explanation->get_reason_for(q, level, end);
+						//start = current_explanation->get_reason_for(q, level, end);
+						start = current_explanation->get_reason_for_literal(q, end);
 						treat_explanation2(current_explanation, start, end);
 					}
 				}
@@ -9641,7 +9645,8 @@ void Mistral::Solver::clean_fdlearn2() {
 #endif
 			//}
 
-			current_explanation = get_next_to_explore2(a);
+			//current_explanation = get_next_to_explore2(a);
+			current_explanation = get_next_to_explore2(a_literal);
 
 			//		std::cout << "latest before while =" << pathC << std::endl;
 			//		} while( boolean_vairables_to_explore.size );
@@ -9695,8 +9700,11 @@ void Mistral::Solver::clean_fdlearn2() {
 					// p is the last decision, since all atoms above it in the
 					// assumption stack have been skipped or expended.
 
-					q= encode_boolean_variable_as_literal(variables[a].id(),variables[a].get_min() );
-					learnt_clause[0] = NOT(q);
+					//TODO check
+					//reprale with a_literal
+					//q= encode_boolean_variable_as_literal(variables[a].id(),variables[a].get_min() );
+					//learnt_clause[0] = NOT(q);
+					learnt_clause[0] = a_literal;
 #ifdef 	_DEBUG_FD_NOGOOD
 					if(_DEBUG_FD_NOGOOD){
 						std::cout << " \n learn :  " << variables[a] << "  = " <<  variables[a].get_domain() << " ; assignment_level : " << assignment_level[a]<< std::endl;

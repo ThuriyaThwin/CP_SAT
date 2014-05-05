@@ -869,7 +869,7 @@ namespace Mistral {
     void add_atom_tobe_explored2(Literal l);
     void treat_assignment_literal2(Literal q);
     void treat_bound_literal2(Literal q);
-    Explanation * get_next_to_explore2(Atom & a) ;
+    Explanation * get_next_to_explore2(Literal & a) ;
     void treat_explanation2 (Explanation* explanation,  Explanation::iterator start,Explanation::iterator end );
     void clean_fdlearn2() ;
 

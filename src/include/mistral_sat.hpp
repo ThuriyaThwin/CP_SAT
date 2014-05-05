@@ -370,6 +370,17 @@ namespace Mistral {
     		return(a == NULL_ATOM ? conflict->get_reason_for(a, lvl, end) : reason_for[a-start_from]->get_reason_for(a-start_from, lvl, end));
     }
 
+
+    virtual iterator get_reason_for_literal(const Literal a, iterator& end) {
+  		return(a == NULL_ATOM ? conflict->get_reason_for(NULL_ATOM, solver->level, end) : reason_for[a/2]->get_reason_for(a/2, solver->level, end));
+
+/*    	if (is_a_bound_literal(a) || a== NULL_ATOM)
+    		get_reason_for (a, solver->level ,end);
+    	else
+    		get_reason_for (((Solver*) solver)->get_id_boolean_variable(a) , solver->level ,end);
+*/
+    }
+
     void extend_scope(Variable x);
     unsigned int init_var_size;
     void start_over();
