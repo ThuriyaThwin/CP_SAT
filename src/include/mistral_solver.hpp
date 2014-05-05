@@ -866,7 +866,7 @@ namespace Mistral {
 
     //New clean learning
 
-    void add_atom_tobe_explored2(Literal l);
+    void add_literal_tobe_explored2(Literal l);
     void treat_assignment_literal2(Literal q);
     void treat_bound_literal2(Literal q);
     Explanation * get_next_to_explore2(Literal & a) ;
