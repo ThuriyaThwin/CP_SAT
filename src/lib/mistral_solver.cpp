@@ -9723,7 +9723,7 @@ void Mistral::Solver::clean_fdlearn2() {
 		//exit(1);
 		bool old_semantic= parameters.semantic_learning ;
 
-		if (parameters.semantic_learning) {
+		if (parameters.semantic_learning && !parameters.lazy_generation  ) {
 			/*			if (is_lb){
 				if (!visitedLowerBounds.fast_contain(var))
 					visitedLowerBounds.fast_add(var);
