@@ -463,7 +463,8 @@ void Mistral::Variable::lazy_initialise(Solver *s, const int level) {
       std::cout << std::endl;
 #endif
 
-      s->expression_store.add(expression);
+      //Todo check if we have to add this expression?
+  //    s->expression_store.add(expression);
     }
   } else {
     if(domain_type != CONST_VAR && variable->solver != s) {

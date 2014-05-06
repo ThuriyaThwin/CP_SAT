@@ -706,6 +706,12 @@ namespace Mistral {
     virtual int  set_objective(const int obj) = 0;
 
     std::ostream& printStats(std::ostream& os);
+
+  private :
+    int init_expression_store_size;
+    int init_booleans_last_size_size;
+    int init_booleans_slot_size;
+
   };
 
 

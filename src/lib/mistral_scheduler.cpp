@@ -2958,11 +2958,11 @@ void SchedulingSolver::dichotomic_search()
 
   //std::cout << " b1491 after propag:  " << variables[1491].get_domain() << std::endl;
   //exit(1);
-  int init_expression_store_size = expression_store.size;
+  init_expression_store_size = expression_store.size;
   int init_constraint_graph_size = constraint_graph.size;
 
-  int init_booleans_last_size_size = booleans.size.back();
-  int init_booleans_slot_size = booleans.slots.size;
+  init_booleans_last_size_size = booleans.size.back();
+  init_booleans_slot_size = booleans.slots.size;
 
  /* std::cout << " \n \n \n BEGIN expression_store.size" << expression_store.size << std::endl;
   std::cout << " init variables.size" << initial_variablesize << std::endl;
@@ -3687,7 +3687,7 @@ void SchedulingSolver::branch_and_bound()
   statistics.start_time = get_run_time();
 
   //std::cout << (get_run_time() - statistics.start_time) << std::endl;
-
+  int old_learning = parameters.fd_learning;
   //Cancel learning : check this when alowing lazy generation
   if(base)
   {
@@ -3697,12 +3697,13 @@ void SchedulingSolver::branch_and_bound()
 
 	  if (params->lazy_generation){
 
-		  //TODO delete expression_store
-		  //			  for( int i=init_expression_store_size; i<expression_store.size;++i) {
-		  //				  delete expression_store[i];
-		  //			  }
+		  // delete expression_store
+		  for( int i=init_expression_store_size; i<expression_store.size;++i) {
+			  delete expression_store[i];
+		  }
 
-		  //			  expression_store.size =  init_expression_store_size;
+		  expression_store.size =  init_expression_store_size;
+
 		  variables.size =initial_variablesize;
 		  assignment_level.size = initial_variablesize;
 		  assignment_order.size = initial_variablesize;
@@ -3730,18 +3731,18 @@ void SchedulingSolver::branch_and_bound()
 		  //booleans.size.size = init_booleans_slot_size;
 
 
-		  //TODO delete booleans.slots
-		  //			  for (int i = init_booleans_last_size_size; i <1024; ++i )
-		  //				  booleans.slots[init_booleans_slot_size-1][i]=3;
+		  // delete booleans.slots
 
-		  //			  for (int j = init_booleans_slot_size; j <booleans.slots.size; ++j )
-		  //				  delete [] booleans.slots[j];
+		  for (int i = init_booleans_last_size_size; i <1024; ++i )
+			  booleans.slots[init_booleans_slot_size-1][i]=3;
 
+		  for (int j = init_booleans_slot_size; j <booleans.slots.size; ++j )
+			  delete [] booleans.slots[j];
 
+		  booleans.size.size = init_booleans_slot_size;
+		  booleans.size[init_booleans_slot_size-1] = init_booleans_last_size_size;
+		  booleans.slots.size = init_booleans_slot_size;
 
-		  //			  booleans.size.size = init_booleans_slot_size;
-		  //			  booleans.size[init_booleans_slot_size-1] = init_booleans_last_size_size;
-		  //			  booleans.slots.size = init_booleans_slot_size;
 
 		  base->start_over();
 		  for (int i = 0; i < start_from; ++i)
@@ -3847,6 +3848,7 @@ void SchedulingSolver::branch_and_bound()
     std::cout << " c +==========[ end branch & bound ]===========+" << std::endl;
     
   }
+  parameters.fd_learning = old_learning;
 }
 
 // void StoreStats::execute()

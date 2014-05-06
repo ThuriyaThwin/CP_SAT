@@ -795,7 +795,7 @@ namespace Mistral {
     void fdlearn_nogood_nosequence();
   //  void fdimprovedlearn_nogood();
   //  void learn_withoutClosingPropagation();
-    void learn_with_lazygeneration();
+  //  void learn_with_lazygeneration();
 	Vector<Literal> bound_literals_to_explore;
 	//Instead of using sequence we will use this vector to select the next literal to explore
 
@@ -803,11 +803,11 @@ namespace Mistral {
 	//reduce clause after learning
 	void reduce_clause(unsigned int old_generation_size= 0);
 
-    void learn_with_lazygeneration_no_bound_at_the_end();
-    void learn_with_lazygeneration_and_semantic_learning();
-    void learn_with_lazygeneration_and_semantic_learning2();
-    void learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables();
-    void learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables2();
+//    void learn_with_lazygeneration_no_bound_at_the_end();
+//    void learn_with_lazygeneration_and_semantic_learning();
+//    void learn_with_lazygeneration_and_semantic_learning2();
+//    void learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables();
+//    void learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables2();
     void clean_fdlearn();
     void try_to_keep_or_forget();
 

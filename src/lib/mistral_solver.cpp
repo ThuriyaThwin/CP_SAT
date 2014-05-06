@@ -1533,7 +1533,7 @@ int Mistral::Solver::lazy_declare(Variable x) {
     }
   }
   //constraint_graph.back().initialise(4);
-  constraint_graph.back().initialise_list(_VALUE_,2);
+// constraint_graph.back().initialise_list(_VALUE_,2);
 
 
   // while(lit_activity.capacity < 2*variables.size)
@@ -2128,6 +2128,8 @@ void Mistral::Solver::initialise_search(Vector< Variable >& seq,
     policy    = pol; }
   else if(!policy)    policy    = new NoRestart();
   if(goal){ // delete objective;
+//	  if (objective)
+//		  delete objective;
     objective = goal;}
   else if(!objective) objective = new Goal(Goal::SATISFACTION);
 
@@ -7625,16 +7627,6 @@ void Mistral::Solver::fdlearn_nogood_using_only_latest_bounds(){
 #endif
 
 
-//based on fdlearn_nogood_nosequence
-void Mistral::Solver::learn_with_lazygeneration() {}
-
-
-
-
-void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning() {}
-
-
-
 unsigned int Mistral::Solver::generate_new_variable(DomainFaithfulnessConstraint*dom_constraint, int val, bool is_lb, int lvl, int range_id ){
 
 	Variable tmp__(0,1);
@@ -10172,11 +10164,6 @@ void Mistral::Solver::clean_fdlearn2() {
 
 
 
-void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables2() {}
-void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables() {}
-
-void Mistral::Solver::learn_with_lazygeneration_and_semantic_learning2() {}
-
 
 void Mistral::Solver::reduce_clause(unsigned int old_generation_size){
 
@@ -10676,8 +10663,8 @@ Mistral::Outcome Mistral::Solver::branch_right() {
     		fdlearn_nogood();
     	else if(parameters.fd_learning==3)
     		fdlearn_nogood_nosequence();
-    	else if(parameters.fd_learning==4)
-    		learn_with_lazygeneration();
+    	//else if(parameters.fd_learning==4)
+    	//	learn_with_lazygeneration();
     	/*    	else if(parameters.fd_learning==3)
     		learn_with_lazygeneration_and_semantic_learning();
     	else if(parameters.fd_learning==4)
