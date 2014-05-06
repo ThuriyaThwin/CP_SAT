@@ -3697,12 +3697,13 @@ void SchedulingSolver::branch_and_bound()
 
 	  if (params->lazy_generation){
 
-		  // delete expression_store
-		  for( int i=init_expression_store_size; i<expression_store.size;++i) {
+		  //TODO delete expression_store
+/*		  for( int i=init_expression_store_size; i<expression_store.size;++i) {
 			  delete expression_store[i];
 		  }
 
 		  expression_store.size =  init_expression_store_size;
+*/
 
 		  variables.size =initial_variablesize;
 		  assignment_level.size = initial_variablesize;
@@ -3714,26 +3715,11 @@ void SchedulingSolver::branch_and_bound()
 		  constraint_graph.size=initial_variablesize;
 		  //variable_triggers.size = 1;
 
-
-		  /*
-		     		if(size.back() < 1024) {
-		     		    x->bool_domain = slots.back()+size.back();
-		     		    ++size.back();
-		     		  } else {
-		     		    int *nslot = new int[1024];
-		     		    std::fill(nslot, nslot+1024, 3);
-		     		    size.add(1);
-		     		    slots.add(nslot);
-		     		    x->bool_domain = nslot;
-		     		  }
-		   */
-
 		  //booleans.size.size = init_booleans_slot_size;
 
+		  //TODO delete booleans.slots
 
-		  // delete booleans.slots
-
-		  for (int i = init_booleans_last_size_size; i <1024; ++i )
+	/*	  for (int i = init_booleans_last_size_size; i <1024; ++i )
 			  booleans.slots[init_booleans_slot_size-1][i]=3;
 
 		  for (int j = init_booleans_slot_size; j <booleans.slots.size; ++j )
@@ -3742,7 +3728,7 @@ void SchedulingSolver::branch_and_bound()
 		  booleans.size.size = init_booleans_slot_size;
 		  booleans.size[init_booleans_slot_size-1] = init_booleans_last_size_size;
 		  booleans.slots.size = init_booleans_slot_size;
-
+*/
 
 		  base->start_over();
 		  for (int i = 0; i < start_from; ++i)

@@ -1347,11 +1347,14 @@ public:
 
   inline Literal encode_bound_literal (unsigned int id_variable, unsigned int value, unsigned int sign) {
 	  //TODO Add compilation flag
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 	  if ((value < 0) || (!value && (!sign)))
 	  {
 		  std::cout <<" \n \n \encode_bound_literal  ERROR "  << std::endl;
 		  exit(1);
 	  }
+#endif
+
 	  //TODO add more tests !
 	  return ( (((Literal) 1) << 63) | (((Literal) sign) << 62) | (((Literal) value) << 30) | id_variable);}
 	  //return ( ((((Literal) 1) << 61) | (((Literal) sign) << 60)) | (((Literal) value) << 30));}
@@ -1367,9 +1370,8 @@ public:
 	  }
 //	  inline int get_sign_from_literal (unsigned int literal) {return (literal >> 31);}
 	  inline bool is_upper_bound (Literal literal) {
-		  Literal tmp;
-
-/*		  tmp = literal >>  ;
+/*		  Literal tmp;
+		  tmp = literal >>  ;
 
 		  std::cout <<" \n \n  tmp   "  << tmp << std::endl;
 
