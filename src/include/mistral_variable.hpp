@@ -1544,10 +1544,10 @@ namespace Mistral {
 		  upper_bound_reasons.clear();
 		  lower_bound_levels.clear();
 		  upper_bound_levels.clear();
-
+#ifdef _ASSIGNMENT_ORDER
 		  lower_bound_orders.clear();
 		  upper_bound_orders.clear();
-
+#endif
 		  lowerbounds.add(lb);
 		  upperbounds.add(ub);
 		  lower_bound_reasons.add(NULL);
@@ -1555,9 +1555,10 @@ namespace Mistral {
 		  lower_bound_levels.add(-1);
 		  upper_bound_levels.add(-1);
 
+#ifdef _ASSIGNMENT_ORDER
 		  lower_bound_orders.add(0);
 		  upper_bound_orders.add(0);
-
+#endif
 		  //  std::cout << "111NDDDDD \n \n " << std::endl;
 		  //	  std::cout << "level  \n \n " << solver->level <<std::endl;
 
@@ -1570,13 +1571,16 @@ namespace Mistral {
 		  explanation_trail.add(UB_Explanation);
 #endif
 		  domainConstraint = NULL;
+#ifdef _ASSIGNMENT_ORDER
 		  order=NULL;
-
+#endif
 
 		  //		  std::cout << "ENDDDDD \n \n " << std::endl;
 	  };
 	  Explanation* reason_for(Literal l);
+#ifdef _ASSIGNMENT_ORDER
 	  ReversibleNum<int> *order;
+#endif
 
 #ifdef latest_bounds_learning
 	  void set_latest_visited_lower_bound(int l){latest_visited_lower_bound=l;} ;
@@ -1621,8 +1625,10 @@ namespace Mistral {
 			  lowerbounds.add(lo);
 			  lower_bound_reasons.add(C);
 			  lower_bound_levels.add(solver->level);
+#ifdef _ASSIGNMENT_ORDER
 			  lower_bound_orders.add(*order);
 			  ++ (*order);
+#endif
 
 			  //  std::cout << "NEW LOWER BOUND \n \n " << std::endl;
 			  //  std::cout << "lowerbounds"<< lowerbounds << std::endl;
@@ -1669,8 +1675,10 @@ namespace Mistral {
 			  upperbounds.add(up);
 			  upper_bound_reasons.add(C);
 			  upper_bound_levels.add(solver->level);
+#ifdef _ASSIGNMENT_ORDER
 			  upper_bound_orders.add(*order);
 			  ++ (*order);
+#endif
 
 			  //	  std::cout << "NEW LOWER BOUND \n \n " << std::endl;
 			  //	  std::cout << "lowerbounds"<< lowerbounds << std::endl;
@@ -1806,8 +1814,9 @@ namespace Mistral {
 					  lowerbounds.pop();
 					  lower_bound_reasons.pop();
 					  lower_bound_levels.pop();
+#ifdef _ASSIGNMENT_ORDER
 					  lower_bound_orders.pop();
-
+#endif
 				  }
 				  else
 				  {
@@ -1825,7 +1834,9 @@ namespace Mistral {
 					  upperbounds.pop();
 					  upper_bound_reasons.pop();
 					  upper_bound_levels.pop();
+#ifdef _ASSIGNMENT_ORDER
 					  upper_bound_orders.pop();
+#endif
 				  }
 				  else
 				  {
@@ -1865,9 +1876,11 @@ namespace Mistral {
 	  Vector<Explanation*> upper_bound_reasons;
 	  Vector<int> lower_bound_levels;
 	  Vector<int> upper_bound_levels;
+
+#ifdef _ASSIGNMENT_ORDER
 	  Vector<int> lower_bound_orders;
 	  Vector<int> upper_bound_orders;
-
+#endif
 	//  int latest_visited_lower_bound ;
 	//  int latest_visited_upper_bound ;
 

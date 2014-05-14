@@ -2142,10 +2142,11 @@ void SchedulingSolver::setup() {
 */
 
 			// std::cout << " end setup with :  " << this << std::endl;
-
+#ifdef _ASSIGNMENT_ORDER
 		  if (params->FD_learning)
 			  for (int i = 0; i< start_from; ++i)
 				  (static_cast<VariableRangeWithLearning *> (variables[i].range_domain)) ->order = &assignment_rank;
+#endif
 
 }
 
