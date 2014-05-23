@@ -4728,63 +4728,6 @@ Mistral::Variable Mistral::ReifiedDisjunctive(Variable X, Variable Y,
 }
 
 
-
-
-
-
-
-
-
-
-Mistral::ReifiedDisjunctiveExpressionGlobal::ReifiedDisjunctiveExpressionGlobal(Variable X, Variable Y,
-								    const int px, const int py)
-  : Expression(X,Y) { processing_time[0] = px; processing_time[1] = py; }
-
-Mistral::ReifiedDisjunctiveExpressionGlobal::~ReifiedDisjunctiveExpressionGlobal() {
-#ifdef _DEBUG_MEMORY
-  std::cout << "c delete reified disjunctive expression" << std::endl;
-#endif
-}
-
-void Mistral::ReifiedDisjunctiveExpressionGlobal::extract_constraint(Solver *s) {
-  std::cerr << "Error: ReifiedDisjunctive constraint can't yet be used as a constraint" << std::endl;
-  exit(0);
-}
-
-void Mistral::ReifiedDisjunctiveExpressionGlobal::extract_variable(Solver *s) {
-  Variable aux(0, 1, BOOL_VAR);
-  _self = aux;
-
-  _self.initialise(s, 1);
-  _self = _self.get_var();
-  children.add(_self);
-}
-
-void Mistral::ReifiedDisjunctiveExpressionGlobal::extract_predicate(Solver *s) {
-  //s->add(new ConstraintTernaryDisjunctive(children, processing_time[0], processing_time[1]));
-//  s->add(Constraint(new ConstraintReifiedDisjunctive(children, processing_time[0], processing_time[1])));
-	  s->add(Constraint(new ConstraintReifiedDisjunctiveGlobal(children, processing_time[0], processing_time[1])));
-}
-
-const char* Mistral::ReifiedDisjunctiveExpressionGlobal::get_name() const {
-  return "r-disjunct";
-}
-
-Mistral::Variable Mistral::ReifiedDisjunctiveGlobal(Variable X, Variable Y,
-					      const int px, const int py)
-{
-  Variable exp(new ReifiedDisjunctiveExpressionGlobal(X,Y,px,py));
-  return exp;
-}
-
-
-
-
-
-
-
-
-
 void Mistral::ExplainedReifiedDisjunctiveExpression::extract_predicate(Solver *s) {
   //s->add(new ConstraintTernaryDisjunctive(children, processing_time[0], processing_time[1]));
   s->add(Constraint(new ExplainedConstraintReifiedDisjunctive(children, processing_time[0], processing_time[1])));

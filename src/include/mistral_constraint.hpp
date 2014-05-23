@@ -2289,7 +2289,7 @@ if (enforce_nfc1)
       : BinaryConstraint(scp) {
     	offset = ofs;
     	//Modify here priority of ConstraintLess
-    	priority = 4;
+    	priority = 2;
       }
 
     ConstraintLess(std::vector< Variable >& scp, const int ofs=0) 
@@ -3528,83 +3528,6 @@ if (enforce_nfc1)
 
 
 
-  class ConstraintReifiedDisjunctiveGlobal : public GlobalConstraint  {
-
-  public:
-    /**@name Parameters*/
-    //@{
-    int processing_time[2];
-    int *min_t0_ptr;
-    int *max_t0_ptr;
-    int *min_t1_ptr;
-    int *max_t1_ptr;
-    int *state;
-    //@}
-
-    /**@name Constructors*/
-    //@{
-    ConstraintReifiedDisjunctiveGlobal() : GlobalConstraint() {}
- //   ConstraintReifiedDisjunctive(Variable x, Variable y, Variable z, const int p0, const int p1);
-    ConstraintReifiedDisjunctiveGlobal(Vector< Variable >& scp, const int p0, const int p1);
- //   ConstraintReifiedDisjunctive(std::vector< Variable >& scp, const int p0, const int p1);
-
-    virtual Constraint clone() {
-    	Vector< Variable > tmp;
-    	tmp.clear();
-    	tmp.add(scope[0]);
-    	tmp.add(scope[1]);
-    	tmp.add(scope[2]);
-
- //   	return Constraint(new ConstraintReifiedDisjunctiveGlobal(scope[0], scope[1], scope[2], processing_time[0], processing_time[1])); }
-      	return Constraint(new ConstraintReifiedDisjunctiveGlobal(tmp, processing_time[0], processing_time[1])); }
-
-    virtual Constraint get_negation(const int var, Variable x) {
-    	Vector< Variable > tmp;
-    	    	tmp.clear();
-    	    	tmp.add(scope[0]);
-    	    	tmp.add(scope[1]);
-    	    	tmp.add(x);
-
-      return Constraint( new ConstraintReifiedDisjunctiveGlobal( tmp, processing_time[0], processing_time[1] ) );
-    }
-    virtual void initialise();
-    virtual void mark_domain();
-    virtual ~ConstraintReifiedDisjunctiveGlobal() {}
-    virtual int idempotent() { return 1;}
-      virtual int postponed() { return 1;}
-      virtual int pushed() { return 1;}
-
-
-    virtual bool absorb_negation(const int var) { return var==2; }
-    //@}
-
-    /**@name Solving*/
-    //@{
-    virtual int check( const int* sol ) const {
-      int ret_value = 0;
-      if(sol[2]) {
-	ret_value = (sol[0] + processing_time[0] > sol[1]);
-      } else {
-	ret_value = (sol[1] + processing_time[1] > sol[0]);
-      }
-      return ret_value;
-
-      // return ( (!sol[2] && (sol[1] + processing_time[1] > sol[0]))
-      // 	       ||
-      // 	       (sol[2] && (sol[0] + processing_time[0] > sol[1])) );
-    }
-    virtual PropagationOutcome propagate(const int changed_idx, const Event evt);
-    virtual PropagationOutcome propagate();
-    //virtual RewritingOutcome rewrite();
-    //virtual void consolidate();
-    //@}
-
-    /**@name Miscellaneous*/
-    //@{
-    virtual std::ostream& display(std::ostream&) const ;
-    virtual std::string name() const { return "<>="; }
-    //@}
-  };
 
 
 
