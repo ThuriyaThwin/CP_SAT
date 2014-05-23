@@ -2025,7 +2025,7 @@ void Mistral::ConstraintLess::mark_domain() {
 }
 
 Mistral::PropagationOutcome Mistral::ConstraintLess::propagate() {
-	std::cout << "  ->ConstraintLess  propagate()!: "  << std::endl;
+	//std::cout << "  ->ConstraintLess  propagate()!: "  << std::endl;
   Mistral::PropagationOutcome wiped = CONSISTENT;
 
 // //   std::cout << "changes: " << changes << std::endl;
@@ -3846,7 +3846,7 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
 
 
 Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::propagate() {
-	std::cout << "  ExplainedConstraintReifiedDisjunctive::propagate() " << std::endl;
+	//std::cout << "  ExplainedConstraintReifiedDisjunctive::propagate() " << std::endl;
 
 	PropagationOutcome wiped = CONSISTENT;
 	//std::cout<< " ExplainedConstraintReifiedDisjunctive::propagate ! \n" << std::endl;
@@ -4118,7 +4118,7 @@ void Mistral::ConstraintReifiedDisjunctive::mark_domain() {
 }
 
 Mistral::PropagationOutcome Mistral::ConstraintReifiedDisjunctive::propagate() {
-	std::cout << "  ->ConstraintReifiedDisjunctive  propagate()!: "  << std::endl;
+	//std::cout << "  ->ConstraintReifiedDisjunctive  propagate()!: "  << std::endl;
 
   PropagationOutcome wiped = CONSISTENT;
   if( *min_t0_ptr + processing_time[0] > *max_t1_ptr ) {
