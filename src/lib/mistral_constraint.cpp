@@ -144,6 +144,7 @@ std::ostream& Mistral::ConstraintTriggerArray::display(std::ostream& os) const {
 
 Mistral::ConstraintImplementation::ConstraintImplementation() {
   id = -1;
+  //TODO Check if it's Ok to init it to 2 for all constraints!
   priority = 2;
   //arity = 0;
   //trigger = NULL;
