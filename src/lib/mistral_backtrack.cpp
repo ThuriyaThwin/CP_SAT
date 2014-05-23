@@ -121,7 +121,12 @@ void Mistral::Constraint::initialise(Solver *s) {
 }
 
 int Mistral::Constraint::priority() const {
-  return (global() ? ((GlobalConstraint*)propagator)->priority : 2);
+  //return (global() ? ((GlobalConstraint*)propagator)->priority : 2);
+	//std::cout << "priority in " << propagator << " : " << propagator-> priority << std::endl;
+
+  return propagator->priority;
+//  ((ConstraintImplementation*) propagator)-> priority
+
 }
 
 void Mistral::Constraint::post(Solver* solver) { 

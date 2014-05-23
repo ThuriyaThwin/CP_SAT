@@ -760,6 +760,8 @@ void Mistral::ConstraintQueue::trigger(GlobalConstraint *cons)//;
 void Mistral::ConstraintQueue::trigger(BinaryConstraint *cons)//;
 {
   add(cons);
+
+
   // int cons_id = cons->id;
   // if(!_set_.fast_contain(cons_id)) {
   //   _set_.fast_add(cons_id);
@@ -771,6 +773,8 @@ void Mistral::ConstraintQueue::trigger(BinaryConstraint *cons)//;
 void Mistral::ConstraintQueue::trigger(TernaryConstraint *cons)//;
 {
   add(cons);
+
+
   // int cons_id = cons->id;
   // if(!_set_.fast_contain(cons_id)) {
   //   _set_.fast_add(cons_id);
@@ -781,11 +785,14 @@ void Mistral::ConstraintQueue::trigger(TernaryConstraint *cons)//;
 
 void Mistral::ConstraintQueue::add(ConstraintImplementation *cons)//;
 {
-  int cons_id = cons->id;
+  int priority = cons->priority, cons_id = cons->id;
   if(!_set_.fast_contain(cons_id)) {
     _set_.fast_add(cons_id);
-    triggers[2].add(cons_id);
-    if(2 > higher_priority) higher_priority = 2;
+    if(priority > higher_priority) higher_priority = priority;
+    triggers[priority].add(cons_id);
+
+//    triggers[2].add(cons_id);
+ //   if(2 > higher_priority) higher_priority = 2;
   }
 }
 

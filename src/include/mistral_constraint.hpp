@@ -199,7 +199,10 @@ namespace Mistral {
     Environment *solver;
     /// An unique id
     int id;
-  
+
+    //Moved up from GlobalConstraint
+    int priority;
+
     // used to post/relax the constraints on the right triggers
     // the list on wich it should be added [among the 3 triggers of the variable]
     Vector< Trigger* > on;
@@ -1348,7 +1351,7 @@ std::cout << "[" << std::setw(4) << id << "](" << name() << "): restore" << std:
     /// Set of non-ground variables
     ReversibleSet active;
 
-    int priority;
+//    int priority;
 
     ////
     int   *solution;
@@ -2283,7 +2286,12 @@ if (enforce_nfc1)
     ConstraintLess(Variable x, Variable y, const int ofs=0) 
       : BinaryConstraint(x, y) { offset = ofs; }
     ConstraintLess(Vector< Variable >& scp, const int ofs=0) 
-      : BinaryConstraint(scp) { offset = ofs; }
+      : BinaryConstraint(scp) {
+    	offset = ofs;
+    	//Modify here priority of ConstraintLess
+    	priority = 4;
+      }
+
     ConstraintLess(std::vector< Variable >& scp, const int ofs=0) 
       : BinaryConstraint(scp) { offset = ofs; }
     virtual Constraint clone() { return Constraint(new ConstraintLess(scope[0], scope[1], offset)// , type
@@ -2291,6 +2299,11 @@ if (enforce_nfc1)
     virtual void initialise();
     virtual void mark_domain();
     virtual int idempotent() { return 1;}
+
+    //TODO Propagate() not working!! why ?
+    //virtual int postponed() { return 1;}
+    //virtual int pushed() { return 1;}
+
     // virtual bool absorb_negation(const int var) { 
     //   return (offset = 0 &&
     // 	      scope[0].get_min()==0 &&
@@ -2323,7 +2336,13 @@ if (enforce_nfc1)
   : ConstraintLess(x,y,ofs),scope0(static_cast<VariableRangeWithLearning*> (x.range_domain)), scope1(static_cast<VariableRangeWithLearning*> (y.range_domain)) {}
 
 	  ExplainedConstraintLess(Vector< Variable >& scp, const int ofs=0)
-	  : ConstraintLess(scp,ofs), scope0(static_cast<VariableRangeWithLearning*>(scp[0].range_domain)), scope1(static_cast<VariableRangeWithLearning*> (scp[1].range_domain)) {if (scp.size > 2) {std::cout << " c ExplainedConstraintLess works only with 2 variables" << std::endl; exit (1);}}
+	  : ConstraintLess(scp,ofs), scope0(static_cast<VariableRangeWithLearning*>(scp[0].range_domain)), scope1(static_cast<VariableRangeWithLearning*> (scp[1].range_domain)) {
+		  //priority = 2;
+		  if (scp.size > 2) {
+			  std::cout << " c ExplainedConstraintLess works only with 2 variables" << std::endl;
+			  exit (1);
+		  }
+	  }
 
 	  virtual Constraint clone() { return Constraint(new ExplainedConstraintLess(scope[0], scope[1], offset)// , type
 	  ); }
@@ -3428,6 +3447,10 @@ if (enforce_nfc1)
     virtual void mark_domain();
     virtual ~ConstraintReifiedDisjunctive() {}
     virtual int idempotent() { return 1; }
+
+  //  virtual int postponed() { return 1;}
+  //  virtual int pushed() { return 1;}
+
     virtual bool absorb_negation(const int var) { return var==2; }
     //@}
 

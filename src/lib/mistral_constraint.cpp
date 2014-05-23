@@ -144,6 +144,7 @@ std::ostream& Mistral::ConstraintTriggerArray::display(std::ostream& os) const {
 
 Mistral::ConstraintImplementation::ConstraintImplementation() {
   id = -1;
+  priority = 2;
   //arity = 0;
   //trigger = NULL;
   self = NULL;
@@ -2023,6 +2024,7 @@ void Mistral::ConstraintLess::mark_domain() {
 }
 
 Mistral::PropagationOutcome Mistral::ConstraintLess::propagate() {
+	std::cout << "  ->ConstraintLess  propagate()!: "  << std::endl;
   Mistral::PropagationOutcome wiped = CONSISTENT;
 
 // //   std::cout << "changes: " << changes << std::endl;
@@ -2064,6 +2066,7 @@ Mistral::PropagationOutcome Mistral::ConstraintLess::propagate() {
 }
 
 Mistral::PropagationOutcome Mistral::ConstraintLess::propagate(const int changed_idx, const Event evt) {
+	//std::cout << "  ->ConstraintLess  propagate(var..)!: "  << std::endl;
 
 #ifdef _DEBUG_LESS
   if(_DEBUG_LESS) {
@@ -3842,13 +3845,8 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
 
 
 Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::propagate() {
+	std::cout << "  ExplainedConstraintReifiedDisjunctive::propagate() " << std::endl;
 
-	if (solver->level>0)
-	{
-		std::cout << "  (solver->level>0) " << std::endl;
-		exit(1);
-
-	}
 	PropagationOutcome wiped = CONSISTENT;
 	//std::cout<< " ExplainedConstraintReifiedDisjunctive::propagate ! \n" << std::endl;
 	//		exit(1);
@@ -4061,6 +4059,7 @@ Mistral::ConstraintReifiedDisjunctive::ConstraintReifiedDisjunctive(Variable x, 
 
 Mistral::ConstraintReifiedDisjunctive::ConstraintReifiedDisjunctive(Vector< Variable >& scp, const int p0, const int p1) 
   : TernaryConstraint(scp) { 
+	priority = 2;
   processing_time[0] = p0; 
   processing_time[1] = p1;
 }
@@ -4118,6 +4117,8 @@ void Mistral::ConstraintReifiedDisjunctive::mark_domain() {
 }
 
 Mistral::PropagationOutcome Mistral::ConstraintReifiedDisjunctive::propagate() {
+	std::cout << "  ->ConstraintReifiedDisjunctive  propagate()!: "  << std::endl;
+
   PropagationOutcome wiped = CONSISTENT;
   if( *min_t0_ptr + processing_time[0] > *max_t1_ptr ) {
     
@@ -4164,6 +4165,7 @@ Mistral::PropagationOutcome Mistral::ConstraintReifiedDisjunctive::propagate() {
 
 Mistral::PropagationOutcome Mistral::ConstraintReifiedDisjunctive::propagate(const int changed_idx, const Event evt) {
   PropagationOutcome wiped = CONSISTENT;
+//	std::cout << "  ->ConstraintReifiedDisjunctive  propagate(var...)!: "  << std::endl;
 
 
 #ifdef _DEBUG_RDISJUNCTIVE
@@ -4311,7 +4313,7 @@ Mistral::ConstraintReifiedDisjunctive::ConstraintReifiedDisjunctive(Variable x, 
 Mistral::ConstraintReifiedDisjunctiveGlobal::ConstraintReifiedDisjunctiveGlobal(Vector< Variable >& scp, const int p0, const int p1)
 : GlobalConstraint(scp) {
 
-	//std::cout << "ConstraintReifiedDisjunctiveGlobal " << std::endl;
+	std::cout << "ConstraintReifiedDisjunctiveGlobal " << std::endl;
 	priority=1;
 	processing_time[0] = p0;
 	processing_time[1] = p1;
