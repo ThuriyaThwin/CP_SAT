@@ -624,7 +624,8 @@ namespace Mistral {
     double decay;
 
     //LearningActivityManager(Solver *s, void *a=NULL) : solver(s) {
-    LearningActivityManager(Solver *s);//  : solver(s) {
+
+    LearningActivityManager(Solver *s, unsigned int start_from=0);//  : solver(s) {
     //   weight_unit = solver->parameters.activity_increment;
     //   decay = solver->parameters.activity_decay;
 
@@ -664,6 +665,27 @@ namespace Mistral {
     //   }
 
     // }
+
+/*    void extend_vectors(){
+
+    	if (var_activity.capacity < solver->variables.size){
+    		var_activity.extendStack();
+    		solver->var_activity = var_activity.stack_;
+    	}
+
+    	if (lit_activity.capacity < (2*solver->variables.size)){
+    		lit_activity.extendStack();
+    		solver->lit_activity = lit_activity.stack_;
+    	}
+    	var_activity.fast_add(0);
+    	lit_activity.fast_add(0);
+    	lit_activity.fast_add(0);
+    }
+*/
+    void start_over(){
+    	var_activity.size= solver->variables.size - solver->start_from;
+    	lit_activity.size= 2 * (solver->variables.size - solver->start_from);
+    }
 
     virtual std::ostream& display(std::ostream& os, const bool all) const ;
   };

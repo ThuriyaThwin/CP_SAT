@@ -997,6 +997,9 @@ Mistral::Solver::Solver()
   heuristic = NULL; //new GenericHeuristic< GenericDVO< MinDomain >, MinValue >(this);
   policy = NULL; //new Geometric();
 
+  activity_var_activity= NULL;
+  activity_lit_activity= NULL;
+
   if(!random_generator_is_ready())
     usrand(parameters.seed);
 
@@ -7641,6 +7644,24 @@ unsigned int Mistral::Solver::generate_new_variable(DomainFaithfulnessConstraint
 	//dom_constraint->extend_scope(tmp__ , val,!is_lb, lvl);
 	dom_constraint->extend_scope(tmp__ , val - is_lb,!is_lb, lvl);
 	base->extend_scope(tmp__);
+
+	//Here we update activity vectors
+	if (activity_var_activity)
+		if(activity_var_activity->capacity < variables.size){
+			activity_var_activity->extendStack();
+			var_activity = activity_var_activity->stack_;
+		}
+	if (activity_lit_activity)
+		if(activity_lit_activity->capacity < (2* variables.size)){
+			activity_lit_activity->extendStack();
+			lit_activity = activity_lit_activity->stack_;
+		}
+
+	activity_var_activity->fast_add(0.0);
+	activity_lit_activity->fast_add(0.0);
+	activity_lit_activity->fast_add(0.0);
+
+	//Here we update all the properties related to a boolean varaible
 	int tmp__id = tmp__.id();
 	assignment_level[tmp__id] = lvl;
 	reason_for[tmp__id] = dom_constraint;
@@ -8016,15 +8037,13 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 				if (tmp__id>0) {
 					if( !visited.fast_contain(tmp__id) ) {
 						//Sould be done later!
-						/*
-														if(lit_activity) {
-															//lit_activity[q] += 0.5 * parameters.activity_increment;
-															lit_activity[NOT(q)] += // 0.5 *
-																	parameters.activity_increment;
-															var_activity[get_id_boolean_variable(q)] += parameters.activity_increment;
-														}
-						 */
 
+						if(lit_activity) {
+							//lit_activity[q] += 0.5 * parameters.activity_increment;
+							lit_activity[NOT(q)] += // 0.5 *
+									parameters.activity_increment;
+							var_activity[UNSIGNED(q)] += parameters.activity_increment;
+						}
 
 						visited.fast_add(tmp__id);
 
@@ -8951,14 +8970,14 @@ void Mistral::Solver::treat_assignment_literal2(Literal q){
 	if(lvl > search_root )
 		if( !visited.fast_contain(x) ) {
 			//Sould be done later!
-			/*
-if(lit_activity) {
-	//lit_activity[q] += 0.5 * parameters.activity_increment;
-	lit_activity[NOT(q)] += // 0.5 *
-			parameters.activity_increment;
-	var_activity[get_id_boolean_variable(q)] += parameters.activity_increment;
-}
-			 */
+
+			if(lit_activity) {
+				//lit_activity[q] += 0.5 * parameters.activity_increment;
+				lit_activity[NOT(q)] += // 0.5 *
+						parameters.activity_increment;
+				var_activity[UNSIGNED(q)] += parameters.activity_increment;
+			}
+
 			visited.fast_add(x);
 
 			if (parameters.semantic_learning && ( x >= initial_variablesize)){
@@ -9199,6 +9218,13 @@ void Mistral::Solver::treat_bound_literal2(Literal q){
 						//std::cout << " lvl " <<  lvl << std::endl;
 						exit (1);
 					}
+				if (tmp__id > 0)
+					if (variables[tmp__id].get_min()==is_lb)
+					{
+						std::cout << " ERROR : SIGN ERROR variables[tmp__id].get_min()==is_lb " << std::endl;
+						//std::cout << " lvl " <<  lvl << std::endl;
+						exit (1);
+					}
 #endif
 
 				//assignment_level[var]=lvl;
@@ -9207,15 +9233,15 @@ void Mistral::Solver::treat_bound_literal2(Literal q){
 				if (tmp__id>0) {
 					if( !visited.fast_contain(tmp__id) ) {
 						//Sould be done later!
-						/*
-														if(lit_activity) {
-															//lit_activity[q] += 0.5 * parameters.activity_increment;
-															lit_activity[NOT(q)] += // 0.5 *
-																	parameters.activity_increment;
-															var_activity[get_id_boolean_variable(q)] += parameters.activity_increment;
-														}
-						 */
 
+						Literal activity_tmp_literal = encode_boolean_variable_as_literal(tmp__id,is_lb);
+
+						if(lit_activity) {
+							//lit_activity[q] += 0.5 * parameters.activity_increment;
+							lit_activity[NOT(activity_tmp_literal)] += // 0.5 *
+									parameters.activity_increment;
+							var_activity[UNSIGNED(activity_tmp_literal)] += parameters.activity_increment;
+						}
 
 						visited.fast_add(tmp__id);
 
@@ -9651,7 +9677,7 @@ void Mistral::Solver::clean_fdlearn2() {
 
 			//	start = current_explanation->get_reason_for(a, (a != NULL_ATOM ? assignment_level[a] : level), end);
 				start = current_explanation->get_reason_for_literal(a_literal, end);
-				graph_size++;
+				++graph_size;
 
 
 #ifdef 	_DEBUG_FD_NOGOOD

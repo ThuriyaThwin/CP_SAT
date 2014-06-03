@@ -799,6 +799,15 @@ namespace Mistral {
 	Vector<Literal> bound_literals_to_explore;
 	//Instead of using sequence we will use this vector to select the next literal to explore
 
+	//
+//	LearningActivityManager * activity_mngr;
+
+	//We need these vectors only to update the size of var_activity and lit_activity
+
+    Vector<double> *activity_var_activity;
+    Vector<double> *activity_lit_activity;
+
+
 	int graph_size;
 	//reduce clause after learning
 	void reduce_clause(unsigned int old_generation_size= 0);

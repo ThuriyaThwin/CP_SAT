@@ -2937,6 +2937,9 @@ void SchedulingSolver::dichotomic_search()
 
   BranchingHeuristic *heu = new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
 
+  //TODO Check if to destroy activity vectors
+  LearningActivityManager * activity_mngr =  new LearningActivityManager(this);
+
   //BranchingHeuristic *heu = new GenericHeuristic < NoOrder, MinValue > (this);
   RestartPolicy *pol ;
   if (params->PolicyRestart==GEOMETRIC)
@@ -3252,9 +3255,11 @@ void SchedulingSolver::dichotomic_search()
 				  booleans.size[init_booleans_slot_size-1] = init_booleans_last_size_size;
 				  booleans.slots.size = init_booleans_slot_size;
 
+				  if (activity_mngr)
+					  activity_mngr->start_over();
+
 				  base->start_over();
 				  //    		VariableRangeWithLearning *__x;
-
 				  for (int i = 0; i < start_from; ++i)
 					  (static_cast<VariableRangeWithLearning*> (variables[i].range_domain))->domainConstraint->start_over();
 			  }

@@ -603,13 +603,14 @@ std::ostream& Mistral::PruningCountManager::display(std::ostream& os, const bool
       return os;
     }    
 
+//With FD learning we have to set start_from to be the index  of the first boolean variable.
 
-Mistral::LearningActivityManager::LearningActivityManager(Solver *s) : solver(s) {
+Mistral::LearningActivityManager::LearningActivityManager(Solver *s, unsigned int start_from) : solver(s) {
   weight_unit = solver->parameters.activity_increment;
   decay = solver->parameters.activity_decay;
   
-  var_activity.initialise(solver->variables.size, solver->variables.size, 0);
-  lit_activity.initialise(2*solver->variables.size, 2*solver->variables.size, 0);
+  var_activity.initialise(solver->variables.size -start_from, solver->variables.size-start_from, 0);
+  lit_activity.initialise(2*(solver->variables.size-start_from), 2*(solver->variables.size-start_from), 0);
   
   int i = solver->constraints.size;
   Constraint *cons = solver->constraints.stack_;
@@ -619,7 +620,10 @@ Mistral::LearningActivityManager::LearningActivityManager(Solver *s) : solver(s)
   
   solver->lit_activity = lit_activity.stack_;
   solver->var_activity = var_activity.stack_;
-  
+
+  solver->activity_lit_activity = & lit_activity;
+  solver->activity_var_activity = & var_activity;
+
   solver->add((DecisionListener*)this);
 }
 
@@ -632,6 +636,7 @@ void Mistral::LearningActivityManager::notify_decision() {
 
       // //std::cout << "d " << lit_activity.stack_ << " " << lit_activity[0] << " " << lit_activity[1] << std::endl;
 
+	//0.0 and 1.0 ?
       if(decay > 0 && decay < 1) {
       	int i=var_activity.size;
       	while(i--) var_activity[i] *= decay;
