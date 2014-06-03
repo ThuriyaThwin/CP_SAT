@@ -625,7 +625,7 @@ namespace Mistral {
 
     //LearningActivityManager(Solver *s, void *a=NULL) : solver(s) {
 
-    LearningActivityManager(Solver *s, unsigned int start_from=0);//  : solver(s) {
+    LearningActivityManager(Solver *s);//  : solver(s) {
     //   weight_unit = solver->parameters.activity_increment;
     //   decay = solver->parameters.activity_decay;
 

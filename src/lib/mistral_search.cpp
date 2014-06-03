@@ -605,12 +605,12 @@ std::ostream& Mistral::PruningCountManager::display(std::ostream& os, const bool
 
 //With FD learning we have to set start_from to be the index  of the first boolean variable.
 
-Mistral::LearningActivityManager::LearningActivityManager(Solver *s, unsigned int start_from) : solver(s) {
+Mistral::LearningActivityManager::LearningActivityManager(Solver *s) : solver(s) {
   weight_unit = solver->parameters.activity_increment;
   decay = solver->parameters.activity_decay;
   
-  var_activity.initialise(solver->variables.size -start_from, solver->variables.size-start_from, 0);
-  lit_activity.initialise(2*(solver->variables.size-start_from), 2*(solver->variables.size-start_from), 0);
+  var_activity.initialise(solver->variables.size , solver->variables.size, 0);
+  lit_activity.initialise(2*solver->variables.size, 2*solver->variables.size, 0);
   
   int i = solver->constraints.size;
   Constraint *cons = solver->constraints.stack_;

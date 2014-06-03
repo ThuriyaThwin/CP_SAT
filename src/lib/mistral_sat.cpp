@@ -1314,14 +1314,14 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
 	  real_size = j = clause.size;
 	  while(j--) // THE ACTIVITY OF A LITERAL IS A MEASURE OF HOW MUCH IT IS "WANTED" BY THE FORMULA - SHORT CLAUSE WITH UNWANTED LITERALS ARE THEREFORE GOOD
 	    {
-	      a = UNSIGNED(clause[j]);
+	      a = UNSIGNED(clause[j]) + start_from;
 	      // real_size is the number of free literal in hte clause.
 	      // For correcteness, we need to not forget any clause that currently explains a literal.
 	      // It seems like a good idea to keep clauses with small real size anyway (they matter the most right now)
 	      //if(scope[UNSIGNED(clause[j])].is_ground()) --real_size;
 	      if(solution[a] != -INFTY && solution[a] != (int)(SIGN(clause[j]))) --real_size;
 	      //else 
-	      sa[i] += (var_activity[a] + lit_activity[NOT(clause[j])]);
+	      sa[i] += (var_activity[a] + lit_activity[NOT(clause[j]) + (2*start_from)]);
 	    }
 	  // if(real_size) {
 	  //   sa[i] /= (double)(real_size);
@@ -1361,16 +1361,20 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
 
 #ifdef _DEBUG_FORGET
     //bool weird = true;
+    std::cout << " BEFORE _DEBUG_FORGET, check if weight should include  var_activity \n" << std::endl;
+    exit(1);
+
+
     for(i=nlearnt; --i>=0;) {
       double weight = 0;
       Clause& clause = *(learnt[i]);
       real_size = j = clause.size;
       while(j--)
 	{
-	  a = UNSIGNED(clause[j]);
+	  a = UNSIGNED(clause[j])+start_from;
 	  if(solution[a] != -INFTY && solution[a] != (int)(SIGN(clause[j]))) --real_size;
 	  // else 
-	  weight += lit_activity[NOT(clause[j])];
+	  weight += lit_activity[NOT(clause[j]) + (2*start_from)];
 	}
 
       std::cout << setw(3) << i << ": " << learnt[i]->size << " " << real_size << " " << sa[order[i]] << "/" << weight/(double)((real_size+1) * clause.size * clause.size) << std::endl;

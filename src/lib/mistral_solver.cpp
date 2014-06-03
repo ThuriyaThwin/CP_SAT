@@ -7773,7 +7773,14 @@ void Mistral::Solver::treat_assignment_literal(Literal q){
 	//	if(lvl > 0 )
 	if(lvl > search_root )
 		if( !visited.fast_contain(x) ) {
-			//Sould be done later!
+
+			if(lit_activity) {
+				//lit_activity[q] += 0.5 * parameters.activity_increment;
+				lit_activity[(2*x) + SIGN(q)] += // 0.5 *
+						parameters.activity_increment;
+				var_activity[x] += parameters.activity_increment;
+			}
+
 			/*
 if(lit_activity) {
 	//lit_activity[q] += 0.5 * parameters.activity_increment;
@@ -8040,9 +8047,9 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 
 						if(lit_activity) {
 							//lit_activity[q] += 0.5 * parameters.activity_increment;
-							lit_activity[NOT(q)] += // 0.5 *
+							lit_activity[(2*tmp__id) + 1 - is_lb] += // 0.5 *
 									parameters.activity_increment;
-							var_activity[UNSIGNED(q)] += parameters.activity_increment;
+							var_activity[tmp__id] += parameters.activity_increment;
 						}
 
 						visited.fast_add(tmp__id);
@@ -8971,11 +8978,19 @@ void Mistral::Solver::treat_assignment_literal2(Literal q){
 		if( !visited.fast_contain(x) ) {
 			//Sould be done later!
 
-			if(lit_activity) {
+/*			if(lit_activity) {
 				//lit_activity[q] += 0.5 * parameters.activity_increment;
 				lit_activity[NOT(q)] += // 0.5 *
 						parameters.activity_increment;
 				var_activity[UNSIGNED(q)] += parameters.activity_increment;
+			}
+*/
+
+			if(lit_activity) {
+				//lit_activity[q] += 0.5 * parameters.activity_increment;
+				lit_activity[(2*x) + SIGN(q)] += // 0.5 *
+						parameters.activity_increment;
+				var_activity[x] += parameters.activity_increment;
 			}
 
 			visited.fast_add(x);
@@ -9232,17 +9247,22 @@ void Mistral::Solver::treat_bound_literal2(Literal q){
 				//if(	lvl)
 				if (tmp__id>0) {
 					if( !visited.fast_contain(tmp__id) ) {
-						//Sould be done later!
 
-						Literal activity_tmp_literal = encode_boolean_variable_as_literal(tmp__id,is_lb);
+						if(lit_activity) {
+							//lit_activity[q] += 0.5 * parameters.activity_increment;
+							lit_activity[(2*tmp__id) + 1 - is_lb] += // 0.5 *
+									parameters.activity_increment;
+							var_activity[tmp__id] += parameters.activity_increment;
+						}
 
+/*						Literal activity_tmp_literal = encode_boolean_variable_as_literal(tmp__id,is_lb);
 						if(lit_activity) {
 							//lit_activity[q] += 0.5 * parameters.activity_increment;
 							lit_activity[NOT(activity_tmp_literal)] += // 0.5 *
 									parameters.activity_increment;
 							var_activity[UNSIGNED(activity_tmp_literal)] += parameters.activity_increment;
 						}
-
+*/
 						visited.fast_add(tmp__id);
 
 						//learnt_clause.add(encode_bool2*tmp__.id() + is_lb);
