@@ -16,7 +16,7 @@ using namespace Mistral;
 
 //#define INFTY 0xffffff
 #define BIG 0xffff
-//#define _DEBUG_SCHEDULER true
+#define _DEBUG_SCHEDULER true
 #define DICHO 0
 #define BNB   1
 #define LNS   2
@@ -1756,17 +1756,6 @@ void SchedulingSolver::setup() {
   lb_C_max = (params->LBinit<0 ? data->getMakespanLowerBound() : params->LBinit);
   ub_C_max = (params->UBinit<0 ? data->getMakespanUpperBound(params->InitBound) : params->UBinit);
 
-//We need this flag only when debugging specific bounds with dichotomy! just change them here
-#ifdef _DEBUG_SCHEDULER
-  // THIS DOESN'T WORK without learning
-  if (params->FD_learning)
-  {
-	  //  1117 to  1321
-	//  lb_C_max = 1117;
-	 // ub_C_max = 1321;
-  }
-#endif
-
   if(params->Objective == "tardiness") {
     int max_due_date = data->getJobDueDate(0);
     for(int i=1; i<data->nJobs(); ++i) {
@@ -3035,14 +3024,13 @@ void SchedulingSolver::dichotomic_search()
   int id;
 #endif
 #ifdef _DEBUG_SCHEDULER
-  // THIS DOESN'T WORK without learning
-  //if (params->FD_learning)
+  //We need this flag only when debugging specific bounds with dichotomy! just change them here
   {
-	  //1120 to  1262 or 1228 to  1262
-//	  minfsble = 1228;
-//	  maxfsble = 1262;
+	  // 1228 to  1262
+	  minfsble = 1228;
+	  maxfsble = 1262;
   }
-//  objective = 1245
+  //  objective = 1245;
 #endif
   ////////// dichotomic search ///////////////
   while( //result == UNKNOWN && 
@@ -3348,6 +3336,12 @@ void SchedulingSolver::dichotomic_search()
 	//  std::this_thread::sleep_for (std::chrono::seconds(10));
 	  //exit(1);
 	  ++iteration;
+
+
+#ifdef _DEBUG_SCHEDULER
+	  //exit(1);
+	  return;
+#endif
   } 
   //   } else if( status == SAT ) {
   //     std::cout << " c Solved during preprocessing!" << std::endl;

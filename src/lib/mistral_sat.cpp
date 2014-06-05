@@ -1203,6 +1203,7 @@ Mistral::Clause* Mistral::ConstraintClauseBase::update_watcher(const int cw,
 	} else 
 	  // it is set to false already, we fail
 	  //if( v.get_min() != (int)SIGN(q) ) {
+		//To do : we do not need this test!
 	  if( vb>>1 != (int)SIGN(q) ) {
 
 #ifdef _DEBUG_WATCH
