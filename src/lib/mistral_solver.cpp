@@ -7646,21 +7646,21 @@ unsigned int Mistral::Solver::generate_new_variable(DomainFaithfulnessConstraint
 	base->extend_scope(tmp__);
 
 	//Here we update activity vectors
-	if (activity_var_activity)
+	if (activity_var_activity){
 		if(activity_var_activity->capacity < variables.size){
 			activity_var_activity->extendStack();
 			var_activity = activity_var_activity->stack_;
 		}
-	if (activity_lit_activity)
+		//	if (activity_lit_activity)
 		if(activity_lit_activity->capacity < (2* variables.size)){
 			activity_lit_activity->extendStack();
 			lit_activity = activity_lit_activity->stack_;
 		}
 
-	activity_var_activity->fast_add(0.0);
-	activity_lit_activity->fast_add(0.0);
-	activity_lit_activity->fast_add(0.0);
-
+		activity_var_activity->fast_add(0.0);
+		activity_lit_activity->fast_add(0.0);
+		activity_lit_activity->fast_add(0.0);
+	}
 	//Here we update all the properties related to a boolean varaible
 	int tmp__id = tmp__.id();
 	assignment_level[tmp__id] = lvl;

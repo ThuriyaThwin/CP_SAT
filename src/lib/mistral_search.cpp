@@ -609,8 +609,8 @@ Mistral::LearningActivityManager::LearningActivityManager(Solver *s) : solver(s)
   weight_unit = solver->parameters.activity_increment;
   decay = solver->parameters.activity_decay;
   
-  var_activity.initialise(solver->variables.size , solver->variables.size, 0);
-  lit_activity.initialise(2*solver->variables.size, 2*solver->variables.size, 0);
+  var_activity.initialise(solver->variables.size , solver->variables.size, 0.0);
+  lit_activity.initialise(2*solver->variables.size, 2*solver->variables.size, 0.0);
   
   int i = solver->constraints.size;
   Constraint *cons = solver->constraints.stack_;
@@ -637,7 +637,7 @@ void Mistral::LearningActivityManager::notify_decision() {
       // //std::cout << "d " << lit_activity.stack_ << " " << lit_activity[0] << " " << lit_activity[1] << std::endl;
 
 	//0.0 and 1.0 ?
-      if(decay > 0 && decay < 1) {
+      if(decay > 0.0 && decay < 1.0) {
       	int i=var_activity.size;
       	while(i--) var_activity[i] *= decay;
       	// i=lit_activity.size;

@@ -1290,6 +1290,7 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
 					  )
 {
 
+//	std::cout << "\n c start forget with " << learnt.size << std::endl;
   int removed = 0;
   int * solution = get_solver()->last_solution_lb.stack_;
 
@@ -1425,6 +1426,8 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
     // }
 
   }
+  //std::cout << " c end forget with " << learnt.size << std::endl;
+  //std::cout << " c learnt" << learnt << std::endl;
 
   return removed;
 }

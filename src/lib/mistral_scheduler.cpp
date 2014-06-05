@@ -16,7 +16,7 @@ using namespace Mistral;
 
 //#define INFTY 0xffffff
 #define BIG 0xffff
-#define _DEBUG_SCHEDULER true
+//#define _DEBUG_SCHEDULER true
 #define DICHO 0
 #define BNB   1
 #define LNS   2
@@ -2927,7 +2927,9 @@ void SchedulingSolver::dichotomic_search()
   BranchingHeuristic *heu = new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
 
   //TODO Check if to destroy activity vectors
-  LearningActivityManager * activity_mngr =  new LearningActivityManager(this);
+  LearningActivityManager * activity_mngr = NULL;
+  if (parameters.forgetfulness)
+	  activity_mngr =  new LearningActivityManager(this);
 
   //BranchingHeuristic *heu = new GenericHeuristic < NoOrder, MinValue > (this);
   RestartPolicy *pol ;
