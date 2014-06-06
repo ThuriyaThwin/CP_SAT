@@ -887,8 +887,8 @@ namespace Mistral {
     				//TODO declare them only when needen!
 #ifdef _RECOVER_GENERATED
     //used to get the variable id of a lazily generated variable
-	Vector<unsigned int> varsIds_lazy ;
-	Vector<unsigned int> value_lazy ;
+	Vector<int> varsIds_lazy ;
+	Vector<int> value_lazy ;
 #endif
 
 	//Vector<Literal> graph_premise ;

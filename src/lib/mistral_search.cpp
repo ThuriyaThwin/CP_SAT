@@ -603,7 +603,11 @@ std::ostream& Mistral::PruningCountManager::display(std::ostream& os, const bool
       return os;
     }    
 
-//With FD learning we have to set start_from to be the index  of the first boolean variable.
+
+/*With FD learning we have to set start_from to be the index  of the first boolean variable.
+ *In this case also var_activity and lit_activity are initialized for all variables but later,
+ *during learning will be used only on boolean varaibles.
+ */
 
 Mistral::LearningActivityManager::LearningActivityManager(Solver *s) : solver(s) {
   weight_unit = solver->parameters.activity_increment;

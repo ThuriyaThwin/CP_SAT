@@ -8939,7 +8939,7 @@ void Mistral::Solver::add_literal_tobe_explored2(Literal l){
 
 void Mistral::Solver::treat_assignment_literal2(Literal q){
 
-	Atom x = get_id_boolean_variable(q);
+	unsigned int x = get_id_boolean_variable(q);
 	int lvl = assignment_level[x];
 
 #ifdef 	_DEBUG_FD_NOGOOD
@@ -8967,24 +8967,17 @@ void Mistral::Solver::treat_assignment_literal2(Literal q){
 	}
 #endif
 
-
-	//	already_explored = false;
-	//todo should be search_root!
-	//if (!already_explored)
-	//todo should be search_root!
-	//else
-	//	if(lvl > 0 )
 	if(lvl > search_root )
 		if( !visited.fast_contain(x) ) {
 			//Sould be done later!
 
-/*			if(lit_activity) {
+			/*			if(lit_activity) {
 				//lit_activity[q] += 0.5 * parameters.activity_increment;
 				lit_activity[NOT(q)] += // 0.5 *
 						parameters.activity_increment;
 				var_activity[UNSIGNED(q)] += parameters.activity_increment;
 			}
-*/
+			 */
 
 			if(lit_activity) {
 				//lit_activity[q] += 0.5 * parameters.activity_increment;
@@ -8995,7 +8988,8 @@ void Mistral::Solver::treat_assignment_literal2(Literal q){
 
 			visited.fast_add(x);
 
-			if (parameters.semantic_learning && ( x >= initial_variablesize)){
+			//This tests passses only for some bound literals with semantic learning
+			if ( (x >= initial_variablesize) && parameters.semantic_learning){
 
 				int var = varsIds_lazy[x - initial_variablesize];
 				int val = value_lazy[x - initial_variablesize];
@@ -9028,7 +9022,7 @@ void Mistral::Solver::treat_assignment_literal2(Literal q){
 						// we'll need to replace 'a' by its parents since its level is too high
 						//	++pathC;
 
-					//	add_atom_tobe_explored2(x);
+						//	add_atom_tobe_explored2(x);
 						add_literal_tobe_explored2(q);
 
 						++remainPathC;
@@ -9040,8 +9034,8 @@ void Mistral::Solver::treat_assignment_literal2(Literal q){
 							//			std::cout << " \n learn :  " <<variables[x] << "  = " <<variables[x].get_domain() << " ; assignment_level : " << assignment_level[x]<< std::endl;
 						}
 #endif
-									if(lvl > backtrack_level)
-										backtrack_level = lvl;
+						if(lvl > backtrack_level)
+							backtrack_level = lvl;
 
 						//updating values !
 						if (var_visited){
@@ -9090,7 +9084,6 @@ void Mistral::Solver::treat_assignment_literal2(Literal q){
 			}
 		}
 }
-
 
 
 
@@ -9149,13 +9142,8 @@ void Mistral::Solver::treat_bound_literal2(Literal q){
 	}
 #endif
 
-	//bool no_semantic = true;
-	//bool lazy_generation = false;
 	bool already_explored = false;
 
-
-	//if (lvl>0 Search root?
-//	if (lvl>0){
 	if (lvl>search_root){
 
 		if (parameters.semantic_learning)
@@ -9255,14 +9243,14 @@ void Mistral::Solver::treat_bound_literal2(Literal q){
 							var_activity[tmp__id] += parameters.activity_increment;
 						}
 
-/*						Literal activity_tmp_literal = encode_boolean_variable_as_literal(tmp__id,is_lb);
+						/*						Literal activity_tmp_literal = encode_boolean_variable_as_literal(tmp__id,is_lb);
 						if(lit_activity) {
 							//lit_activity[q] += 0.5 * parameters.activity_increment;
 							lit_activity[NOT(activity_tmp_literal)] += // 0.5 *
 									parameters.activity_increment;
 							var_activity[UNSIGNED(activity_tmp_literal)] += parameters.activity_increment;
 						}
-*/
+						 */
 						visited.fast_add(tmp__id);
 
 						//learnt_clause.add(encode_bool2*tmp__.id() + is_lb);
@@ -9302,7 +9290,7 @@ void Mistral::Solver::treat_bound_literal2(Literal q){
 					}
 				}
 				else
-					if (parameters.semantic_learning)
+					if (parameters.semantic_learning){
 						if (is_lb){
 							if (!visitedLowerBounds.fast_contain(var))
 								visitedLowerBounds.fast_add(var);
@@ -9314,6 +9302,7 @@ void Mistral::Solver::treat_bound_literal2(Literal q){
 								visitedUpperBounds.fast_add(var);
 							visitedUpperBoundvalues[var]= val;
 						}
+					}
 				if(lvl > backtrack_level)
 					backtrack_level = lvl;
 
@@ -9333,8 +9322,8 @@ void Mistral::Solver::treat_bound_literal2(Literal q){
 							visitedUpperBoundvalues[var]= val;
 						}
 						//Check that
-//						if(lvl > backtrack_level)
-//							backtrack_level = lvl;
+						//						if(lvl > backtrack_level)
+						//							backtrack_level = lvl;
 
 					}
 					else
@@ -9351,8 +9340,8 @@ void Mistral::Solver::treat_bound_literal2(Literal q){
 
 Explanation * Mistral::Solver::get_next_to_explore2(Literal & lit) {
 
-//Literal l;
-//	bool orderedExploration = true;
+	//Literal l;
+	//	bool orderedExploration = true;
 	if (!parameters.orderedExploration) {
 
 		//Find the next variable to explore
@@ -9404,33 +9393,13 @@ Explanation * Mistral::Solver::get_next_to_explore2(Literal & lit) {
 
 							return _explanation;
 						}
-
-
-
-
 					}
 				}
 
-				//x = variables[a];
-				//a = x.id();
-
-				//q= encode_boolean_variable_as_literal(variables[a].id(),variables[a].get_min() );
-				//lvl = assignment_level[a];
-				/*
-	std::cout << " we will explore the variable  " << x << std::endl;
-	std::cout << " its min is " << x.get_min() << std::endl;
-	std::cout << " its max is " << x.get_max() << std::endl;
-	std::cout << " assignment level of x " << lvl << std::endl;
-	std::cout << " level is " << level << std::endl;
-	//std::cout << " explore the variable x " << x << std::endl;
-			std::cout << " pathC " << pathC << std::endl;
-				 */
-
-		//		std::cout << " will return  :  " << reason_for[get_id_boolean_variable(lit)] << std::endl;
+				//		std::cout << " will return  :  " << reason_for[get_id_boolean_variable(lit)] << std::endl;
 				return reason_for[get_id_boolean_variable(lit)];
 			}
 			else {
-
 
 				//should be checked
 				//	q= bound_literals_to_explore.pop();
@@ -9465,7 +9434,7 @@ Explanation * Mistral::Solver::get_next_to_explore2(Literal & lit) {
 				}
 #endif
 
-		//		std::cout << " HERE will return  :  " << _explanation << std::endl;
+				//		std::cout << " HERE will return  :  " << _explanation << std::endl;
 				return _explanation;
 			}
 		}
@@ -9540,7 +9509,7 @@ void Mistral::Solver::treat_explanation2 (Explanation* explanation,  Explanation
 			std::cout << " q : "<< *start << std::endl;
 		}
 #endif
-	//		std::cout << " *start: "<< *start << std::endl;
+		//		std::cout << " *start: "<< *start << std::endl;
 		if (is_a_bound_literal(*start))
 		{
 			treat_bound_literal2(*start);
@@ -9746,9 +9715,7 @@ void Mistral::Solver::clean_fdlearn2() {
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 			}
 #endif
-			//}
 
-			//current_explanation = get_next_to_explore2(a);
 			current_explanation = get_next_to_explore2(a_literal);
 
 			//		std::cout << "latest before while =" << pathC << std::endl;
