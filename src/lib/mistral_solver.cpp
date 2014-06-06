@@ -9338,6 +9338,258 @@ void Mistral::Solver::treat_bound_literal2(Literal q){
 }
 
 
+void Mistral::Solver::treat_bound_literal3(Literal q){
+
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+	if ((is_lower_bound(q)))
+	{
+		if (variables[get_variable_from_literal(q)].get_min() <  get_value_from_literal(q) )
+		{
+			std::cout << "\n \n \n \n \n                        FUTURE PROBLEM  "<< std::endl;
+			std::cout << "\n is_lower_bound  "<< std::endl;
+			//	std::cout << " Problem comes from : "<< current_explanation << std::endl;
+			std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+			std::cout << " value: "<<  get_value_from_literal(q) << std::endl;
+
+			std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+			std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+			exit(1);
+		}
+
+	}
+	else
+		if (variables[get_variable_from_literal(q)].get_max() >  get_value_from_literal(q) )
+		{
+			std::cout << "\n \n \n \n \n                        FUTURE PROBLEM  "<< std::endl;
+			std::cout << "\n is_upper_bound  "<< std::endl;
+			//	std::cout << " Problem comes from : "<< current_explanation << std::endl;
+			std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+			std::cout << " value: "<<  get_value_from_literal(q) << std::endl;
+
+			std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+			std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+			exit(1);
+		}
+#endif
+#ifdef 	_DEBUG_FD_NOGOOD
+	if(_DEBUG_FD_NOGOOD){
+		std::cout << "\n is_a_bound_literal  "<< std::endl;
+		std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+		std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+		std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+
+	}
+#endif
+
+	bool is_lb = is_lower_bound(q);
+	int val = get_value_from_literal(q);
+	int var = get_variable_from_literal(q);
+	VariableRangeWithLearning* tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
+	int lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
+
+#ifdef 	_DEBUG_FD_NOGOOD
+	if(_DEBUG_FD_NOGOOD){
+		std::cout << " its level :  " << lvl << std::endl;
+	}
+#endif
+
+	bool already_explored = false;
+
+	if (lvl>search_root){
+
+		if (parameters.semantic_learning)
+		{
+			if (is_lb && visitedLowerBounds.fast_contain(var)){
+				if (visitedLowerBoundvalues[var] >= val){
+					/*				std::cout << " \n \n is_lb : " << is_lb << std::endl;
+										 										std::cout << " var	 : " << var << std::endl;
+										 										std::cout << " val	 : " << val << std::endl;
+
+										 										std::cout << " visitedLowerBounds.fast_contain(var) : " << visitedLowerBounds.fast_contain(var) << std::endl;
+										 										std::cout << " visitedLowerBounds.  : " << visitedLowerBounds << std::endl;
+
+										 										std::cout << " visitedLowerBoundvalues[var] : " << visitedLowerBoundvalues[var] << std::endl;
+					 */
+					already_explored = true;
+				}
+				//			else
+			}
+			else
+				if ((!is_lb) && visitedUpperBounds.fast_contain(var)){
+					if (visitedUpperBoundvalues[var] <= val){
+						/*								std::cout << " \n \n is_lb : " << is_lb << std::endl;
+										 											std::cout << " var	 : " << var << std::endl;
+										 											std::cout << " val	 : " << val << std::endl;
+
+										 											std::cout << " visitedUpperBounds.fast_contain(var) : " << visitedUpperBounds.fast_contain(var) << std::endl;
+										 											std::cout << " visitedLowerBounds.  : " << visitedUpperBounds << std::endl;
+
+										 											std::cout << " visitedUpperBoundvalues[var] : " << visitedUpperBoundvalues[var] << std::endl;
+						 */
+						already_explored = true;
+					}
+					//			else
+				}
+		}
+		if (!already_explored) {
+
+			if (parameters.lazy_generation && (lvl < level) ){
+				DomainFaithfulnessConstraint * dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
+				int tmp__id = -1;
+				if (!is_lb)
+					tmp__id = dom_constraint->value_exist( val ) ;
+				else
+					tmp__id = dom_constraint->value_exist( val-1 ) ;
+
+
+				if (!parameters.semantic_learning)
+					if ( tmp__id< 0){
+						tmp__id= generate_new_variable(dom_constraint, val, is_lb, lvl, var);
+					}
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+				if (tmp__id>0)
+					if ( assignment_level[ tmp__id ] != lvl)
+					{
+						std::cout << " ERROR : \n assignment_level[var] " <<  assignment_level[ tmp__id ] << std::endl;
+						std::cout << " lvl " <<  lvl << std::endl;
+						std::cout << " \n \n VVV tmp__ Domain " << variables[tmp__id].get_domain() << std::endl;
+						std::cout << " tmp__.id() " << tmp__id << std::endl;
+						std::cout << " var  " << var<< std::endl;
+						std::cout << " reason_for[var] " << reason_for[ tmp__id ] << std::endl;
+						std::cout << " assignment_level[var] " <<  assignment_level[ tmp__id] << std::endl;
+						std::cout << " lvl " <<  lvl << std::endl;
+
+						std::cout << " current level  " <<  level << std::endl;
+
+						exit (1);
+
+					}
+				if (tmp__id > 0)
+					if (! variables[tmp__id].is_ground())
+					{
+						std::cout << " ERROR : \n not ground !! " << std::endl;
+						//std::cout << " lvl " <<  lvl << std::endl;
+						exit (1);
+					}
+				if (tmp__id > 0)
+					if (variables[tmp__id].get_min()==is_lb)
+					{
+						std::cout << " ERROR : SIGN ERROR variables[tmp__id].get_min()==is_lb " << std::endl;
+						//std::cout << " lvl " <<  lvl << std::endl;
+						exit (1);
+					}
+#endif
+
+				//assignment_level[var]=lvl;
+				//todo should be search_root!
+				//if(	lvl)
+				if (tmp__id>0) {
+					if( !visited.fast_contain(tmp__id) ) {
+
+						if(lit_activity) {
+							//lit_activity[q] += 0.5 * parameters.activity_increment;
+							lit_activity[(2*tmp__id) + 1 - is_lb] += // 0.5 *
+									parameters.activity_increment;
+							var_activity[tmp__id] += parameters.activity_increment;
+						}
+
+						/*						Literal activity_tmp_literal = encode_boolean_variable_as_literal(tmp__id,is_lb);
+						if(lit_activity) {
+							//lit_activity[q] += 0.5 * parameters.activity_increment;
+							lit_activity[NOT(activity_tmp_literal)] += // 0.5 *
+									parameters.activity_increment;
+							var_activity[UNSIGNED(activity_tmp_literal)] += parameters.activity_increment;
+						}
+						 */
+						visited.fast_add(tmp__id);
+
+						//learnt_clause.add(encode_bool2*tmp__.id() + is_lb);
+						//learnt_clause.add(encode_boolean_variable_as_literal(tmp__id, is_lb));
+#ifdef 	_DEBUG_FD_NOGOOD
+						if(_DEBUG_FD_NOGOOD){
+							std::cout << " \n learn :  " << encode_boolean_variable_as_literal(tmp__id, is_lb) << " : var  : " << tmp__id << " = " << variables[tmp__id].get_domain() ; //<< std::endl;
+							std::cout << " ---> corresponds to (nogood)  : " ;
+							std::cout << "\n is_a_bound_literal  "<< std::endl;
+							std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+							std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+							std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+						}
+#endif
+
+						//			if(lvl > backtrack_level)
+						//				backtrack_level = lvl;
+
+
+						if (!parameters.semantic_learning) {
+							learnt_clause.add(encode_boolean_variable_as_literal(tmp__id, is_lb));
+							//?? should be __x->lowerbounds[0] -1
+							//visitedLowerBoundvalues[var] = __x->lowerbounds[0];
+						}
+						else
+							if (is_lb){
+								if (!visitedLowerBounds.fast_contain(var))
+									visitedLowerBounds.fast_add(var);
+								visitedLowerBoundvalues[var]= val;
+							}
+							else
+							{
+								if (!visitedUpperBounds.fast_contain(var))
+									visitedUpperBounds.fast_add(var);
+								visitedUpperBoundvalues[var]= val;
+							}
+					}
+				}
+				else
+					if (parameters.semantic_learning){
+						if (is_lb){
+							if (!visitedLowerBounds.fast_contain(var))
+								visitedLowerBounds.fast_add(var);
+							visitedLowerBoundvalues[var]= val;
+						}
+						else
+						{
+							if (!visitedUpperBounds.fast_contain(var))
+								visitedUpperBounds.fast_add(var);
+							visitedUpperBoundvalues[var]= val;
+						}
+					}
+				if(lvl > backtrack_level)
+					backtrack_level = lvl;
+
+			}
+			else
+				if ( lvl < level) {
+					if (parameters.semantic_learning) {
+						if (is_lb){
+							if (!visitedLowerBounds.fast_contain(var))
+								visitedLowerBounds.fast_add(var);
+							visitedLowerBoundvalues[var]= val;
+						}
+						else
+						{
+							if (!visitedUpperBounds.fast_contain(var))
+								visitedUpperBounds.fast_add(var);
+							visitedUpperBoundvalues[var]= val;
+						}
+						//Check that
+						//						if(lvl > backtrack_level)
+						//							backtrack_level = lvl;
+
+					}
+					else
+						bound_literals_to_explore.add(q);
+				}
+				else{
+					add_literal_tobe_explored2(q);
+					++remainPathC;
+				}
+		}
+	}
+
+}
+
 Explanation * Mistral::Solver::get_next_to_explore2(Literal & lit) {
 
 	//Literal l;
@@ -9520,6 +9772,30 @@ void Mistral::Solver::treat_explanation2 (Explanation* explanation,  Explanation
 		++start;
 	}
 }
+
+void Mistral::Solver::treat_explanation3 (Explanation* explanation,  Explanation::iterator start,Explanation::iterator end ){
+	//Literal q;
+	while(start < end) {
+		//q = *start;
+		//++start;
+#ifdef 	_DEBUG_FD_NOGOOD
+		if(_DEBUG_FD_NOGOOD){
+			std::cout << " q : "<< *start << std::endl;
+		}
+#endif
+		//		std::cout << " *start: "<< *start << std::endl;
+		if (is_a_bound_literal(*start))
+		{
+			treat_bound_literal3(*start);
+		}
+		else{
+			treat_assignment_literal2(*start);
+		}
+		++start;
+	}
+}
+
+
 
 void Mistral::Solver::clean_fdlearn2() {
 
@@ -10181,7 +10457,666 @@ void Mistral::Solver::clean_fdlearn2() {
 }
 
 
+void Mistral::Solver::clean_fdlearn3() {
 
+
+	//std::cout << " \n\n\n fdlearn_ " << std::endl;
+	//std::cout << " \n\n\n variablessize " << variables.size << std::endl;
+	//std::cout << " \n\n\n start_from " << start_from << std::endl;
+	//std::cout << " \n\n\n level " << level <<  std::endl;
+
+#ifdef latest_bounds_learning
+	propagate_literal_in_learnt_clause= true;
+#endif
+
+	/*std::cout << " \n\n\n clean_fdlearn " << std::endl;
+	std::cout << " parameters.bounded_by_decision  " << parameters.bounded_by_decision  << std::endl;
+	std::cout << " parameters.max_nogood_size  " << parameters.max_nogood_size  << std::endl;
+	std::cout << " parameters.simple_learn  " << parameters.simple_learn  << std::endl;
+	//	std::cout << " parameters.simple_learn  " << parameters.simple_learn  << std::endl;
+	std::cout << " parameters.lazy_generation  " << parameters.lazy_generation  << std::endl;
+	std::cout << " parameters.semantic_learning  " << parameters.semantic_learning  << std::endl;
+	exit(1);
+	 */
+
+	if (parameters.simple_learn &&  decisions.size < (unsigned int) parameters.simple_learn)
+		simple_fdlearn_nogood();
+	else
+	{
+		//	int pathC = 0, index = sequence.size-1;
+		Literal q , a_literal;
+		//Atom a = NULL_ATOM;
+		a_literal = NULL_ATOM;
+
+		Explanation::iterator start,end ;
+		//Variable x;
+		//int lvl;
+		//Explanation::iterator tmp;
+
+		//	visited.extend(variables.size);
+		/*	bool is_lb ;
+		int val ;
+		int var ;
+		VariableRangeWithLearning* tmp_VariableRangeWithLearning ;
+		DomainFaithfulnessConstraint* dom_constraint ;
+		 */
+		//int old_generation_size = variables.size;
+
+		// double *lit_activity = base->lit_activity.stack_;
+		// double *var_activity = base->var_activity.stack_;
+
+		// We start from the constraint that failed
+		Explanation *current_explanation ;
+		//		if (__failure)
+		//			current_explanation=__failure;
+		//		else
+		current_explanation= culprit.propagator;
+		remainPathC=0;
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+		if (culprit.propagator!=__failure)
+		{
+			std::cout << " culprit.propagator :  " <<culprit.propagator <<std::endl;
+			std::cout << " wheareas the real failure comes from " <<__failure <<std::endl;
+			exit(1);
+		}
+#endif
+
+		//UNSAT!
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+		if (current_explanation == NULL )
+		{
+			//Not finished yet
+			std::cout << "Should be UNSAT! " << std::endl;
+			exit (1);
+		}
+#endif
+
+		// Variable *scope = culprit.get_scope();
+		// int arity = culprit.arity();
+		// for(int i=0; i<arity; ++i) {
+		//   var_activity[scope[i].id()] += 10 * parameters.activity_increment;
+		// }
+
+		//	backtrack_level = 0;
+		//search_root!
+		backtrack_level = search_root;
+		graph_size = 0;
+		// the resulting nogood is stored in the vector 'learnt_clause'
+		learnt_clause.clear();
+		//This first literal will contain the last literal in the current level appearing in the learnt clause. Here we just initialize it to 0
+		learnt_clause.add(0);
+
+
+		//		bool orderedExploration = true;
+		if (parameters.orderedExploration){
+			//	ordered_boolean_vairables_to_explore.clear();
+			std::cout << " NOT YET" << std::endl;
+			exit(1);
+		}
+		else
+			//	boolean_vairables_to_explore.clear();
+			literals_to_explore.clear();
+		bound_literals_to_explore.clear();
+
+		visitedLowerBounds.clear();
+		visitedUpperBounds.clear();
+
+
+		visited.clear();
+		do {
+
+
+			//	std::cout << "\nDO " << std::endl;
+			//	std::cout << "a =  "<< a << std::endl;
+			//	std::cout << "PathC =  "<< pathC << std::endl;
+			//	std::cout << "CURRENT learnt_clause size "  << learnt_clause.size << " and the values : \n        " << learnt_clause << std::endl;
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+			//		if(a != NULL_ATOM && (!assignment_level[a])) {
+			//			std::cout << "a != NULL_ATOM && (!assignment_level[a]   " << std::endl;
+			//			exit(1);
+			//		}
+#endif
+			/*			std::cout << "?? current_explanation == NULL "  << std::endl;
+			std::cout << "a =  "<< a << std::endl;
+			std::cout << "NULL_ATOM =  "<< NULL_ATOM << std::endl;
+
+			std::cout << " assignment_level[a] "  << assignment_level[a] << std::endl;
+			std::cout << "  level "  << level << std::endl;
+			 */
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+			if(current_explanation == NULL) {
+				std::cout << "?? current_explanation == NULL "  << std::endl;
+				exit (1);
+			}
+			else{
+#endif
+
+				//	start = current_explanation->get_reason_for(a, (a != NULL_ATOM ? assignment_level[a] : level), end);
+				start = current_explanation->get_reason_for_literal(a_literal, end);
+				++graph_size;
+
+
+#ifdef 	_DEBUG_FD_NOGOOD
+				if(_DEBUG_FD_NOGOOD){
+					if (a==NULL_ATOM)
+						std::cout << " \n explaining a failure " << std::endl;
+					else
+					{
+
+						std::cout << " \n \n \n we will explain the boolean variable " << variables[a] << " ; its domain : " << variables[a].get_domain() << " its assignment_level : " << assignment_level[a] << std::endl;
+					}
+					std::cout << " this action (i.e. its explanation) comes from : "<< current_explanation << std::endl;
+				}
+
+#endif
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+				if(start >= end)
+				{
+					std::cout << " tmp >= stop \n"  ;
+					exit(1);
+				}
+#endif
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+
+				//Additionnal test - not necessary
+				//std::cout << " check clause " << this << std::endl;
+				if (dynamic_cast<Array<Literal> *>(current_explanation))
+				{
+					//	std::cout << "is a clause? \n" << current_explanation << std::endl;
+					//exit(1);
+					int level__ ;
+					Explanation::iterator tmp__iterator = start;
+
+					while(tmp__iterator < end) {
+						q = *tmp__iterator;
+						++tmp__iterator;
+						//TODO recheck this
+						/*		if (get_id_boolean_variable(q)!=a){
+							level__= assignment_level[get_id_boolean_variable(q)];
+							if (level__> level){
+								std::cout << " check clause ERROR : level__> lvl " << std::endl;
+								exit(1);
+							}
+						}
+						 */
+					}
+
+				}
+#endif
+
+				treat_explanation2(current_explanation, start, end);
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+			}
+#endif
+
+			current_explanation = get_next_to_explore2(a_literal);
+
+			//		std::cout << "latest before while =" << pathC << std::endl;
+			//		} while( boolean_vairables_to_explore.size );
+		} while( --remainPathC );
+
+
+
+		//std::cout << "\n BEFORE we will explain.size "<< bound_literals_to_explore.size << std::endl;
+		//exit(1);
+		bool old_semantic= parameters.semantic_learning ;
+
+		if (parameters.semantic_learning && !parameters.lazy_generation  ) {
+			/*			if (is_lb){
+				if (!visitedLowerBounds.fast_contain(var))
+					visitedLowerBounds.fast_add(var);
+				visitedLowerBoundvalues[var]= val;
+			}
+			else
+			{
+				if (!visitedUpperBounds.fast_contain(var))
+					visitedUpperBounds.fast_add(var);
+				visitedUpperBoundvalues[var]= val;
+			}
+			//Check that
+			//						if(lvl > backtrack_level)
+			//							backtrack_level = lvl;
+
+
+			bound_literals_to_explore.add(q);
+			 */
+			//std::cout << " \n \n \n  iterate " << std::endl;
+			int var = visitedLowerBounds.min();
+			int val, lvl , tmp_id;
+			Literal tmp_literal;
+			VariableRangeWithLearning* __x;
+			//std::cout << "visitedLowerBounds [i]? " << min <<std::endl;
+			for (int i = visitedLowerBounds.size() ; i>0; --i ){
+				val = visitedLowerBoundvalues[var] ;
+
+				tmp_literal=encode_bound_literal(var, val,0);
+				bound_literals_to_explore.add(tmp_literal);
+
+				/*
+				__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
+
+
+				tmp_id = __x->domainConstraint->value_exist( val-1 ) ;
+
+				if ( tmp_id< 0){
+					lvl = __x->level_of(val,1);
+					tmp_id= generate_new_variable(__x->domainConstraint, val, true, lvl, var);
+				}
+				else
+					lvl =assignment_level[tmp_id];
+
+				learnt_clause.add(encode_boolean_variable_as_literal(tmp_id, 1));
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+				if(lvl > backtrack_level){
+					std::cout << " lvl > backtrack_level " << std::endl;
+					exit(1);
+					backtrack_level = lvl;
+				}
+#endif
+				 */
+				var= visitedLowerBounds.next(var);
+			}
+
+			var = visitedUpperBounds.min();
+			//std::cout << "visitedLowerBounds [i]? " << min <<std::endl;
+			for (int i = visitedUpperBounds.size() ; i>0; --i ){
+				val = visitedUpperBoundvalues[var] ;
+				tmp_literal=encode_bound_literal(var, val,1);
+				bound_literals_to_explore.add(tmp_literal);
+
+				/*		__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
+
+				tmp_id = __x->domainConstraint->value_exist( val) ;
+				if ( tmp_id< 0)
+				{
+					lvl = __x->level_of(val,0);
+					tmp_id= generate_new_variable(__x->domainConstraint, val, false, lvl, var);
+				}
+				else
+					lvl =assignment_level[tmp_id];
+
+				learnt_clause.add(encode_boolean_variable_as_literal(tmp_id, 0));
+				 */
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+				if(lvl > backtrack_level){
+					std::cout << " lvl > backtrack_level " << std::endl;
+					exit(1);
+					backtrack_level = lvl;
+				}
+#endif
+
+				var= visitedUpperBounds.next(var);
+			}
+
+			parameters.semantic_learning =false;
+		}
+
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+
+
+#endif
+
+		//	std::cout << "\n we will explain.size "<< bound_literals_to_explore.size << std::endl;
+		//	exit(1);
+
+		while (bound_literals_to_explore.size)
+		{
+			//should be checked
+			q= bound_literals_to_explore.pop();
+
+
+			current_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->reason_for(q) ;
+			graph_size++;
+#ifdef 	_DEBUG_FD_NOGOOD
+			if(_DEBUG_FD_NOGOOD){
+				std::cout << "\n we will explain "<< q << std::endl;
+				std::cout << "which corresponds to " << std::endl;
+				std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
+				std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
+				std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
+			}
+#endif
+			if(current_explanation)
+			{
+#ifdef 	_DEBUG_FD_NOGOOD
+				if(_DEBUG_FD_NOGOOD){
+					std::cout << " \n \n  new explanation coming from : " << current_explanation << std::endl;
+				}
+#endif
+
+				//Note that we do not need the level here ! I should remove that later
+				//start = current_explanation->get_reason_for(q, level, end);
+				start = current_explanation->get_reason_for_literal(q, end);
+				treat_explanation2(current_explanation, start, end);
+			}
+		}
+		parameters.semantic_learning= old_semantic;
+		if (parameters.bounded_by_decision && (learnt_clause.size > decisions.size))
+			simple_fdlearn_nogood();
+		else {
+			if (parameters.max_nogood_size && (learnt_clause.size > parameters.max_nogood_size)) {
+				//		std::cout << "parameters.max_nogood_size " << parameters.max_nogood_size  << std::endl;
+				//		std::cout << "learnt_clause.size  " <<learnt_clause.size   << std::endl;
+				simple_fdlearn_nogood();
+			}
+			else
+				//check if we should forget in the case of semantic lerning
+				//	if (parameters.lazy_generation && (parameters.semantic_learning))
+
+				if (parameters.semantic_learning &&
+						(parameters.forget_relatedto_nogood_size) && (learnt_clause.size > parameters.forget_relatedto_nogood_size)) {
+					//std::cout << " c static learnt_clause.size  forget "  << learnt_clause.size  << std::endl;
+					simple_fdlearn_nogood(true);
+				}
+				else if (parameters.semantic_learning &&
+						(parameters.forget_retatedto_backjump) && ((level-backtrack_level) < parameters.forget_retatedto_backjump)) {
+					//		std::cout << "\n c static bjm forget : lvl"  << level << std::endl;
+					//		std::cout << " c                   : backtrack_level"  << backtrack_level << std::endl;
+					simple_fdlearn_nogood(true);
+				}
+				else if (parameters.semantic_learning &&
+						(parameters.Forgetfulness_retated_to_backjump>0.0) &&
+						(   (((double) (level- backtrack_level) / (double)level)) <parameters.Forgetfulness_retated_to_backjump )) {
+					//std::cout << " c % of backjump "  << tmp << std::endl;
+					simple_fdlearn_nogood(true);
+				}
+			//}
+				else {
+					//bool no_semantic = true;
+					//bool lazy_generation = false;
+
+					if (parameters.lazy_generation && (parameters.semantic_learning))
+						generate_variables();
+
+					//		std::cout << "after while !!!!! " << std::endl;
+					//		std::cout << "\n p =" << p << std::endl;
+					//		std::cout << "\n NULLATOM =" << NULL_ATOM << std::endl;
+					//		std::cout << "learnt_clause size =" << learnt_clause.size << std::endl;
+					//		std::cout << "learnt_clause =" << learnt_clause << std::endl;
+
+
+					// p is the last decision, since all atoms above it in the
+					// assumption stack have been skipped or expended.
+
+					//TODO check
+					//reprale with a_literal
+					//q= encode_boolean_variable_as_literal(variables[a].id(),variables[a].get_min() );
+					//learnt_clause[0] = NOT(q);
+					learnt_clause[0] = a_literal;
+#ifdef 	_DEBUG_FD_NOGOOD
+					if(_DEBUG_FD_NOGOOD){
+						std::cout << " \n learn :  " << variables[a] << "  = " <<  variables[a].get_domain() << " ; assignment_level : " << assignment_level[a]<< std::endl;
+					}
+#endif
+#ifdef _DEBUG_SEARCH
+					if(_DEBUG_SEARCH) {
+						for(int i=0; i<level; ++i) std::cout << " ";
+						std::cout << "learn " << learnt_clause.size << " (";
+						print_literal(std::cout, learnt_clause[0]);
+						for(unsigned int i=1; i<learnt_clause.size; ++i) {
+							std::cout << " v " ;//<< learnt_clause[i];
+							print_literal(std::cout, learnt_clause[i]);
+						}
+						std::cout << " ) " << (backtrack_level<level-1 ? "-backjump" : "") << std::endl;
+					}
+#endif
+
+					//exit(1);
+#ifdef 	_DEBUG_FD_NOGOOD
+					if(_DEBUG_FD_NOGOOD){
+						std::cout << " c END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
+						std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
+						std::cout << "learnt_clause : "  << learnt_clause.size  << std::endl;
+						//exit(1);
+					}
+#endif
+
+#ifdef _CHECK_NOGOOD
+					//	if (graph_size <35)
+					{
+						//		std::cout << "graph_size : "  << graph_size  << std::endl;
+						//		std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
+						/*
+			for (int i = 0; i< learnt_clause.size; ++i)
+			{
+				std::cout << "assignment level [i] = " << assignment_level[get_id_boolean_variable(learnt_clause[i])] << std::endl;
+			}
+			std::cout << "END! current level  "  << level << " \n and backtrack_level :     " << backtrack_level << std::endl;
+						 */
+						// bug in instance 1
+						/*	Vector<Literal > tmp_nogood;
+			tmp_nogood.add(241) ;
+			tmp_nogood.add(3811) ;
+			tmp_nogood.add(3798) ;
+			tmp_nogood.add(3796) ;
+			tmp_nogood.add(3795) ;
+
+			if (learnt_clause.size == tmp_nogood.size){
+				bool equal = true;
+				for (int i = 0; i < learnt_clause.size ; ++i)
+					if (learnt_clause[i]!= tmp_nogood[i]){
+						equal=false;
+						break;
+					}
+
+				if (equal){
+					std::cout << "learnt_clause==tmp_nogood  " <<std::endl;
+					std::cout << "\n \n simple_fdlearn_nogood " <<std::endl;
+					simple_fdlearn_nogood();
+					std::cout << "\n \n simple_fdlearn_nogood " <<std::endl;
+					//		fdlearn_nogood();
+					std::cout << "\n \n fdlearn_nogood_nosequence " <<std::endl;
+					visited.clear();
+
+					fdlearn_nogood_nosequence();
+
+					exit(1);
+				}
+			}
+						 */
+
+						//std::cout << " CHECK NOGOOD IN clean_fdlearn " << std::endl;
+						((SchedulingSolver *) this)->	check_nogood(learnt_clause);
+						//	store_nogood(learnt_clause);
+					}
+#endif
+
+
+					/*		std::cout << "  \n \n statistics" <<std::endl;
+				std::cout << "  statistics.size_learned   "   << statistics.size_learned <<std::endl;
+				std::cout << "  statistics.avg_learned_size "   << statistics.avg_learned_size <<std::endl;
+					 */
+
+					if (parameters.reduce_learnt_clause){
+						if (learnt_clause.size != 1){
+							//	std::cout << "reducing clause  "  << learnt_clause <<  std::endl;
+
+							std::cout << "  \n clause being reduced from  \n "  << learnt_clause.size ;
+							reduce_clause();
+
+							//std::cout << "reduced clause \n "  << learnt_clause <<  std::endl;
+							//		std::cout << " to "  << learnt_clause.size <<  std::endl;
+#ifdef _CHECK_NOGOOD
+							//	if (graph_size <35)
+							{
+								//		std::cout << "graph_size : "  << graph_size  << std::endl;
+								//		std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
+								/*
+		for (int i = 0; i< learnt_clause.size; ++i)
+		{
+			std::cout << "assignment level [i] = " << assignment_level[get_id_boolean_variable(learnt_clause[i])] << std::endl;
+		}
+		std::cout << "END! current level  "  << level << " \n and backtrack_level :     " << backtrack_level << std::endl;
+								 */
+								// bug in instance 1
+								/*	Vector<Literal > tmp_nogood;
+		tmp_nogood.add(241) ;
+		tmp_nogood.add(3811) ;
+		tmp_nogood.add(3798) ;
+		tmp_nogood.add(3796) ;
+		tmp_nogood.add(3795) ;
+
+		if (learnt_clause.size == tmp_nogood.size){
+			bool equal = true;
+			for (int i = 0; i < learnt_clause.size ; ++i)
+				if (learnt_clause[i]!= tmp_nogood[i]){
+					equal=false;
+					break;
+				}
+
+			if (equal){
+				std::cout << "learnt_clause==tmp_nogood  " <<std::endl;
+				std::cout << "\n \n simple_fdlearn_nogood " <<std::endl;
+				simple_fdlearn_nogood();
+				std::cout << "\n \n simple_fdlearn_nogood " <<std::endl;
+				//		fdlearn_nogood();
+				std::cout << "\n \n fdlearn_nogood_nosequence " <<std::endl;
+				visited.clear();
+
+				fdlearn_nogood_nosequence();
+
+				exit(1);
+			}
+		}
+								 */
+								((SchedulingSolver *) this)->	check_nogood(learnt_clause);
+								//	store_nogood(learnt_clause);
+							}
+#endif
+						}
+					}
+
+					statistics.size_learned += learnt_clause.size;
+					statistics.avg_learned_size =
+							((statistics.avg_learned_size * (double)(statistics.num_failures)) + (double)(learnt_clause.size))
+							/ ((double)(++statistics.num_failures));
+
+					if( learnt_clause.size != 1 ) {
+
+						// if(lit_activity) {
+						//   int i=learnt_clause.size;
+						//   while(i--) {
+						// 	var_activity[UNSIGNED(learnt_clause[i])] += parameters.activity_increment;
+						//   }
+						// }
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+						/*				std::cout << " \n \n \n learn  "  << std::endl;
+					std::cout << "before ordering! " << learnt_clause <<  std::endl;
+
+					std::cout << "levels! "  <<  std::endl;
+
+					for (int i = 0 ; i< learnt_clause.size ; ++i){
+
+						std::cout << " "  <<  assignment_level[get_id_boolean_variable(learnt_clause[i])];
+					}
+
+					std::cout << " END ?????? "  <<  std::endl;
+						 */
+#endif
+						orderedliterals.clear();
+						for (int i = (learnt_clause.size-1) ; i> 0; --i){
+							q = learnt_clause[i];
+							orderedliterals.fast_sorted_add((_valued_literal( assignment_level[get_id_boolean_variable(q)] , q)));
+						}
+
+						//					q = learnt_clause[0];
+						//					orderedliterals.fast_add(_valued_literal( assignment_level[get_id_boolean_variable(q)] , q));
+
+						learnt_clause.size = 1;
+						for (int i = (orderedliterals.size-1) ; i>= 0; --i){
+							//q = orderedliterals[i].l;
+							learnt_clause.fast_add(orderedliterals[i].l);
+						}
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+						/*					std::cout << "after  ordering! " << learnt_clause <<  std::endl;
+					std::cout << "levels! "  <<  std::endl;
+
+
+					for (int i = 0 ; i< learnt_clause.size ; ++i){
+
+						std::cout << " "  <<  assignment_level[get_id_boolean_variable(learnt_clause[i])];
+					}
+
+					std::cout << " "  <<  std::endl;
+						 */
+#endif
+
+						base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
+						try_to_keep_or_forget();
+
+						//add_clause( learnt, learnt_clause, stats.learnt_avg_size );
+						//reason[UNSIGNED(p)] = base->learnt.back();
+
+						// EXPL
+						//base->reason_for[UNSIGNED(p)] = base->learnt.back();
+
+						//base->reason_for[UNSIGNED(p)] = base->learnt.back();
+						//reason_for[UNSIGNED(p)] = base;
+						//taboo_constraint = base;
+
+						taboo_constraint = (ConstraintImplementation*)(base->learnt.back());
+						//reason_for[UNSIGNED(p)].store_reason_for_change(VALUE_EVENT, base->learnt.back());
+					} else {
+						taboo_constraint = NULL;
+					}
+
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+					__failure=NULL;
+#endif
+
+					//#ifdef _DEBUG
+					//		std::cout << "END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
+					//			std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
+					/*		std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
+		for (int i = 0; i< learnt_clause.size; ++i)
+		{
+			std::cout << "assignment level [i] = " << assignment_level[get_id_boolean_variable(learnt_clause[i])] << std::endl;
+		}
+		std::cout << "END! current level  "  << level << " \n and backtrack_level :     " << backtrack_level << std::endl;
+
+		std::cout << "endl no_recursive \n"  << std::endl;
+					 */
+					// int real_size = 0;
+					// for(int i=0; i<base->learnt.size; ++i) {
+					//   real_size += base->learnt[i]->size;
+					// }
+					// if(real_size != statistics.size_learned) {
+					//   std::cout << "discrepancy after learning!!\n" ;
+					//   exit(1);
+					// }
+
+					//backjump_decision = decision(variables[UNSIGNED(p)], Decision::REMOVAL, SIGN(p));
+
+#ifdef _DEBUG_NOGOOD
+					if(_DEBUG_NOGOOD) {
+						//for(int i=0; i<level; ++i) std::cout << " ";
+						std::cout << "backtrackLevel = " << backtrack_level << "/" << (decisions.size) << std::endl;
+					}
+#endif
+
+					//   while(level>backtrack_level) {
+					//     restore();
+					//     decisions.pop();
+					//   }
+
+					//return decision;
+
+
+					//	std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
+
+				}	//exit(1);
+		}
+	}
+
+}
 
 
 void Mistral::Solver::reduce_clause(unsigned int old_generation_size){
@@ -10697,6 +11632,8 @@ Mistral::Outcome Mistral::Solver::branch_right() {
     	    		clean_fdlearn();
     	else if(parameters.fd_learning==6)
     	    		clean_fdlearn2();
+    	else if(parameters.fd_learning==7)
+    	    		clean_fdlearn3();
 
     	else {
     		std::cout << " c Model not implemented" << std::endl;
