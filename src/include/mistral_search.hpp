@@ -2950,7 +2950,7 @@ namespace Mistral {
 
     /**@name Constructors*/
     //@{
-    MinNeighborDomainOverWeight() {dom_ = LARGE_VALUE; wei_ = 0;}
+    MinNeighborDomainOverWeight() {dom_ = LARGE_VALUE; wei_ = 0;weight=NULL;}
     void initialise(double* _w=NULL) {dom_ = LARGE_VALUE; wei_ = 0; weight = _w;}
     //@}
 

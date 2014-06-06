@@ -9644,12 +9644,12 @@ void Mistral::Solver::clean_fdlearn2() {
 
 		//		bool orderedExploration = true;
 		if (parameters.orderedExploration){
-		//	ordered_boolean_vairables_to_explore.clear();
-		std::cout << " NOT YET" << std::endl;
-		exit(1);
+			//	ordered_boolean_vairables_to_explore.clear();
+			std::cout << " NOT YET" << std::endl;
+			exit(1);
 		}
 		else
-		//	boolean_vairables_to_explore.clear();
+			//	boolean_vairables_to_explore.clear();
 			literals_to_explore.clear();
 		bound_literals_to_explore.clear();
 
@@ -9667,10 +9667,10 @@ void Mistral::Solver::clean_fdlearn2() {
 			//	std::cout << "CURRENT learnt_clause size "  << learnt_clause.size << " and the values : \n        " << learnt_clause << std::endl;
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-	//		if(a != NULL_ATOM && (!assignment_level[a])) {
-	//			std::cout << "a != NULL_ATOM && (!assignment_level[a]   " << std::endl;
-	//			exit(1);
-	//		}
+			//		if(a != NULL_ATOM && (!assignment_level[a])) {
+			//			std::cout << "a != NULL_ATOM && (!assignment_level[a]   " << std::endl;
+			//			exit(1);
+			//		}
 #endif
 			/*			std::cout << "?? current_explanation == NULL "  << std::endl;
 			std::cout << "a =  "<< a << std::endl;
@@ -9687,15 +9687,8 @@ void Mistral::Solver::clean_fdlearn2() {
 			}
 			else{
 #endif
-#ifdef _CHECK_NOGOOD
-				// std::cout << (int*)current_explanation << " " ;
-				// std::cout.flush();
-				// std::cout << current_explanation << std::endl;
 
-				store_reason(current_explanation, a);
-#endif
-
-			//	start = current_explanation->get_reason_for(a, (a != NULL_ATOM ? assignment_level[a] : level), end);
+				//	start = current_explanation->get_reason_for(a, (a != NULL_ATOM ? assignment_level[a] : level), end);
 				start = current_explanation->get_reason_for_literal(a_literal, end);
 				++graph_size;
 
@@ -9735,14 +9728,14 @@ void Mistral::Solver::clean_fdlearn2() {
 						q = *tmp__iterator;
 						++tmp__iterator;
 						//TODO recheck this
-				/*		if (get_id_boolean_variable(q)!=a){
+						/*		if (get_id_boolean_variable(q)!=a){
 							level__= assignment_level[get_id_boolean_variable(q)];
 							if (level__> level){
 								std::cout << " check clause ERROR : level__> lvl " << std::endl;
 								exit(1);
 							}
 						}
-						*/
+						 */
 					}
 
 				}
@@ -9858,8 +9851,14 @@ void Mistral::Solver::clean_fdlearn2() {
 			parameters.semantic_learning =false;
 		}
 
-	//	std::cout << "\n we will explain.size "<< bound_literals_to_explore.size << std::endl;
-	//	exit(1);
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+
+
+#endif
+
+		//	std::cout << "\n we will explain.size "<< bound_literals_to_explore.size << std::endl;
+		//	exit(1);
 
 		while (bound_literals_to_explore.size)
 		{

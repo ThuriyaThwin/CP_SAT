@@ -696,6 +696,8 @@ namespace Mistral {
     //for checking nogoods
     int init_obj;
 #ifdef _CHECK_NOGOOD
+
+    int dicho_lb, dicho_ub;
     void check_nogood(Vector<Literal> & c);
 #endif
     virtual int get_lb() = 0;

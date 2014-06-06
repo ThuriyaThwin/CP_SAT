@@ -2928,7 +2928,7 @@ void SchedulingSolver::dichotomic_search()
 
   //TODO Check if to destroy activity vectors
   LearningActivityManager * activity_mngr = NULL;
-  if (parameters.forgetfulness)
+  if (parameters.fd_learning && parameters.forgetfulness)
 	  activity_mngr =  new LearningActivityManager(this);
 
   //BranchingHeuristic *heu = new GenericHeuristic < NoOrder, MinValue > (this);
@@ -3016,8 +3016,6 @@ void SchedulingSolver::dichotomic_search()
   }
  // std::cout << " \n END initial_list__of_changes : "  << std::endl;
 
-
-
   //std::cout << " solver : \n " << this << std::endl ;
   init_obj  = (int)(floor(((double)minfsble + (double)maxfsble)/2));
 #ifdef _CHECK_NOGOOD
@@ -3028,9 +3026,12 @@ void SchedulingSolver::dichotomic_search()
 #ifdef _DEBUG_SCHEDULER
   //We need this flag only when debugging specific bounds with dichotomy! just change them here
   {
-	  // 1228 to  1262
-	  minfsble = 1228;
-	  maxfsble = 1262;
+	  // 1228 to  1262 : instance 1
+//	  bin/scheduler data/scheduling/jsp/15x15/1 -fdlearning 6 -lazygeneration 1 -semantic 1  -forgetfulness 0.99411764705  -algo qsf
+	  //1267 to  1290 : instance 4 :
+	  //bin/scheduler data/scheduling/jsp/15x15/4 -fdlearning 6 -lazygeneration 1 -semantic 1  -forgetfulness 0.99411764705  -algo qsdfsdf
+	  minfsble = 1267;
+	  maxfsble = 1290;
   }
   //  objective = 1245;
 #endif
@@ -3046,8 +3047,9 @@ void SchedulingSolver::dichotomic_search()
 	  if(remaining_time < (2*params->NodeBase)) break;
 
 	  objective = (int)(floor(((double)minfsble + (double)maxfsble)/2));
-#ifdef _DEBUG_SCHEDULER
-	  //objective = 1245;
+#ifdef _CHECK_NOGOOD
+	  dicho_lb=minfsble;
+	  dicho_ub= maxfsble;
 #endif
 	  std::cout << " c \n c \n c+=========[ start dichotomic step ]=========+" << std::endl;
 	  //       setPropagsLimit(params->NodeCutoff);
@@ -3144,6 +3146,11 @@ void SchedulingSolver::dichotomic_search()
 		  std::cout << std::left << std::setw(30) << " c | nb variables " << ":" << std::right << std::setw(15) << variables.size<< " |" << std::endl;
 		  std::cout << std::left << std::setw(30) << " c | learnt clauses " << ":" << std::right << std::setw(15) << base->learnt.size << " |" << std::endl;
 		  std::cout << std::left << std::setw(30) << " c | avg nogood size " << ":" << std::right << std::setw(15) <<(int)statistics.avg_learned_size<< " |" << std::endl;
+
+#ifdef _CHECK_NOGOOD
+		  std::cout << std::left << std::setw(30) << " c | All nogoods are correct " << std::right << std::setw(15) <<" |" << std::endl;
+#endif
+
 	/*	  __size = base->learnt.size;
 		  std::cout << " c dichotomy ended with " << __size << " learnt clause" << std::endl;
 		  std::cout << " c dichotomy ended with AVG Nogood size" <<  << std::endl;
@@ -3163,7 +3170,6 @@ void SchedulingSolver::dichotomic_search()
 
 	  // A module for checking learnt nogoods
 #ifdef _CHECK_NOGOOD
-
 	  nogood_origin.clear();
 	  nogood_clause.clear();
 	  __nogoods.clear();
@@ -3339,9 +3345,7 @@ void SchedulingSolver::dichotomic_search()
 	  //exit(1);
 	  ++iteration;
 
-
 #ifdef _DEBUG_SCHEDULER
-	  //exit(1);
 	  return;
 #endif
   } 
@@ -3914,6 +3918,7 @@ void SchedulingSolver::print_solution(std::ostream& os, std::string type)
   pool->getBestSolution()->print(os, type);
   os << std::endl;
 }
+
 #ifdef _CHECK_NOGOOD
 //For each single nogood we create a new solver with exactly the same parameters!
 void SchedulingSolver::check_nogood(Vector<Literal> & c){
@@ -3928,14 +3933,19 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 	params->FD_learning = 0;
 	params->keeplearning_in_bb = 0;
 
+	int lb = params->LBinit ;
+	int ub = params->UBinit ;
+
+
 	//solver->parameters.backjump = false;
 	//	std::cout << " \n\n c Lower Bound  " << stats->lower_bound ;
 	//	std::cout << " c Upper Bound  " << stats->upper_bound ;
-	int obj  = (int)(floor(((double)stats->lower_bound  + (double)stats->upper_bound)/2));
+	int obj  = (int)(floor(((double) dicho_lb  + (double) dicho_ub)/2));
 	//	std::cout << " c obj  " << stats->upper_bound ;
 
-	params->LBinit = stats->lower_bound ;
-	params->UBinit = obj;
+	params->LBinit = dicho_lb ;
+	//params->UBinit = obj;
+	params->UBinit =  dicho_ub;
 	//	params->print(std::cout);
 	SchedulingSolver *__solver;
 	if(params->Objective == "makespan") {
@@ -3956,7 +3966,9 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 	}
 	__solver->consolidate();
 	//__solver->save();
-	__solver->set_objective(init_obj);
+//	std::cout << "c obj" << obj <<std::endl;
+//	std::cout << "c init_obj" << init_obj <<std::endl;
+	__solver->set_objective(obj);
 
 	//std::cout << " check learnt nogood :  "<< c << std::endl;
 
@@ -4002,8 +4014,6 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 		std::cout << " ERROR : assignment_level[id] != level" << std::endl;
 		exit(1);
 	}
-
-
 
 	for(int j=1; j<c.size; ++j) {
 		int id =get_id_boolean_variable(c[j]);
@@ -4086,12 +4096,14 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 	//	cout << s.statistics << endl;
 	if(__result)
 	{
-		std::cout << " WRONG NOGOOD!!\n";
+		std::cout << " c WRONG NOGOOD!!\n";
 		//		params->LBinit = stats->lower_bound ;
 		//		params->UBinit = obj;
 		std::cout << " Lower Bound  " << stats->lower_bound;
 		std::cout << " Upper Bound  " << obj ;
 		std::cout << "Solver level " << level ;
+		std::cout << "clause size " << c.size ;
+		std::cout << "clause " << c ;
 		std::cout << std::endl;
 
 		//		std::cout << " Lower Bound  " << __stats.lower_bound ;
@@ -4101,7 +4113,7 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 	else
 //		std::cout << " Is a valid nogood !\n" << std::endl;
 
-	std::cout << " 1 ";
+	//std::cout << " 1 ";
 	//delete __pol;
 	//delete __heu;
 	delete __solver;
@@ -4112,8 +4124,8 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 		std::cout << " !backjump " << std::endl;
 		exit(1);
 	}
-	params->LBinit = -1;
-	params->UBinit = -1 ;
+	params->LBinit = lb;
+	params->UBinit = ub ;
 	/*if(__solver->propagate()) {
 		std::cout << " WRONG NOGOOD!!\n";
 		exit(1);
