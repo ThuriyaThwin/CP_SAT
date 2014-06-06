@@ -16151,11 +16151,9 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 
 			i=idx;
 			//	for (int i = 1 ; i < scope.size; ++i)
-			if (scope[i].id() == a) {
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-
+			if (scope[i].id() == a) {
 				if (! scope[i].is_ground()) {
-
 					std::cout <<" \n \n boolean variable not decided! "  << std::endl;
 					exit(1);
 				}
@@ -16278,14 +16276,31 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 
 #endif
 
+#ifdef _BOUND_EQUIVALENCE
+					int v__ ;
+					Literal q = eager_explanations[i];
+					if (is_a_bound_literal(q)) {
+						v__ = get_value_from_literal(q);
+						Explanation *current_explanation= _x->reason_for(q) ;
+						if(current_explanation)
+						{
+							//start = current_explanation->get_reason_for_literal(q, end);
+							return  current_explanation->get_reason_for_literal(q, end);
+						}
+						else{
+							end = &(explanation[0]);
+							return &(explanation[0]);
+						}
+					}
+#endif
+
 					explanation[0] = eager_explanations[i];
 					end = &(explanation[0])+1;
 				}
 				//break;
 				return &(explanation[0]);
-			}
-
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+				}
 			else
 			{
 				std::cout <<" \n \n boolean variable not found "  << std::endl;
