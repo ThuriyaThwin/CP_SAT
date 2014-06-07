@@ -10501,16 +10501,6 @@ void Mistral::Solver::learn_virtualLiteral(Literal q){
 
 void Mistral::Solver::clean_fdlearn3() {
 
-
-	//std::cout << " \n\n\n fdlearn_ " << std::endl;
-	//std::cout << " \n\n\n variablessize " << variables.size << std::endl;
-	//std::cout << " \n\n\n start_from " << start_from << std::endl;
-	//std::cout << " \n\n\n level " << level <<  std::endl;
-
-#ifdef latest_bounds_learning
-	propagate_literal_in_learnt_clause= true;
-#endif
-
 	/*std::cout << " \n\n\n clean_fdlearn " << std::endl;
 	std::cout << " parameters.bounded_by_decision  " << parameters.bounded_by_decision  << std::endl;
 	std::cout << " parameters.max_nogood_size  " << parameters.max_nogood_size  << std::endl;
@@ -10531,27 +10521,10 @@ void Mistral::Solver::clean_fdlearn3() {
 		a_literal = NULL_ATOM;
 
 		Explanation::iterator start,end ;
-		//Variable x;
-		//int lvl;
-		//Explanation::iterator tmp;
-
-		//	visited.extend(variables.size);
-		/*	bool is_lb ;
-		int val ;
-		int var ;
-		VariableRangeWithLearning* tmp_VariableRangeWithLearning ;
-		DomainFaithfulnessConstraint* dom_constraint ;
-		 */
-		//int old_generation_size = variables.size;
-
-		// double *lit_activity = base->lit_activity.stack_;
-		// double *var_activity = base->var_activity.stack_;
 
 		// We start from the constraint that failed
 		Explanation *current_explanation ;
-		//		if (__failure)
-		//			current_explanation=__failure;
-		//		else
+
 		current_explanation= culprit.propagator;
 		remainPathC=0;
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
@@ -10563,25 +10536,16 @@ void Mistral::Solver::clean_fdlearn3() {
 		}
 #endif
 
-		//UNSAT!
-
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 		if (current_explanation == NULL )
 		{
 			//Not finished yet
-			std::cout << "Should be UNSAT! " << std::endl;
+			std::cout << "??Should be UNSAT! " << std::endl;
 			exit (1);
 		}
 #endif
 
-		// Variable *scope = culprit.get_scope();
-		// int arity = culprit.arity();
-		// for(int i=0; i<arity; ++i) {
-		//   var_activity[scope[i].id()] += 10 * parameters.activity_increment;
-		// }
 
-		//	backtrack_level = 0;
-		//search_root!
 		backtrack_level = search_root;
 		graph_size = 0;
 		// the resulting nogood is stored in the vector 'learnt_clause'
@@ -10589,8 +10553,6 @@ void Mistral::Solver::clean_fdlearn3() {
 		//This first literal will contain the last literal in the current level appearing in the learnt clause. Here we just initialize it to 0
 		learnt_clause.add(0);
 
-
-		//		bool orderedExploration = true;
 		if (parameters.orderedExploration){
 			//	ordered_boolean_vairables_to_explore.clear();
 			std::cout << " NOT YET" << std::endl;
@@ -10599,33 +10561,20 @@ void Mistral::Solver::clean_fdlearn3() {
 		else
 			//	boolean_vairables_to_explore.clear();
 			literals_to_explore.clear();
-		bound_literals_to_explore.clear();
 
+		bound_literals_to_explore.clear();
 		visitedLowerBounds.clear();
 		visitedUpperBounds.clear();
 		visited.clear();
 
 		do {
 
-
-			//	std::cout << "\nDO " << std::endl;
-			//	std::cout << "a =  "<< a << std::endl;
-			//	std::cout << "PathC =  "<< pathC << std::endl;
-			//	std::cout << "CURRENT learnt_clause size "  << learnt_clause.size << " and the values : \n        " << learnt_clause << std::endl;
-
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-			//		if(a != NULL_ATOM && (!assignment_level[a])) {
-			//			std::cout << "a != NULL_ATOM && (!assignment_level[a]   " << std::endl;
-			//			exit(1);
-			//		}
+			//	if(a_literal != NULL_ATOM && (!assignment_level[a_literal])) {
+			//		std::cout << "a != NULL_ATOM && (!assignment_level[a]   " << std::endl;
+			//		exit(1);
+			//	}
 #endif
-			/*			std::cout << "?? current_explanation == NULL "  << std::endl;
-			std::cout << "a =  "<< a << std::endl;
-			std::cout << "NULL_ATOM =  "<< NULL_ATOM << std::endl;
-
-			std::cout << " assignment_level[a] "  << assignment_level[a] << std::endl;
-			std::cout << "  level "  << level << std::endl;
-			 */
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 			if(current_explanation == NULL) {
@@ -10639,17 +10588,17 @@ void Mistral::Solver::clean_fdlearn3() {
 				start = current_explanation->get_reason_for_literal(a_literal, end);
 				++graph_size;
 
-
 #ifdef 	_DEBUG_FD_NOGOOD
 				if(_DEBUG_FD_NOGOOD){
-					if (a==NULL_ATOM)
+					if (a_literal==NULL_ATOM)
 						std::cout << " \n explaining a failure " << std::endl;
 					else
 					{
 
-						std::cout << " \n \n \n we will explain the boolean variable " << variables[a] << " ; its domain : " << variables[a].get_domain() << " its assignment_level : " << assignment_level[a] << std::endl;
+						//						std::cout << " \n \n \n we will explain the boolean variable " << variables[a] << " ; its domain : " << variables[a].get_domain() << " its assignment_level : " << assignment_level[a] << std::endl;
+						std::cout << " \n \n \n we will explain the literal " << a_literal << std::endl;
 					}
-					std::cout << " this action (i.e. its explanation) comes from : "<< current_explanation << std::endl;
+					std::cout << " its explanation comes from : "<< current_explanation << std::endl;
 				}
 
 #endif
@@ -10687,19 +10636,14 @@ void Mistral::Solver::clean_fdlearn3() {
 
 				}
 #endif
-
 				treat_explanation3(current_explanation, start, end);
-
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 			}
 #endif
-
 			current_explanation = get_next_to_explore2(a_literal);
-
 			//		std::cout << "latest before while =" << pathC << std::endl;
 			//		} while( boolean_vairables_to_explore.size );
 		} while( --remainPathC );
-
 
 
 		//std::cout << "\n BEFORE we will explain.size "<< bound_literals_to_explore.size << std::endl;
@@ -10822,24 +10766,11 @@ void Mistral::Solver::clean_fdlearn3() {
 					if (parameters.lazy_generation && (parameters.semantic_learning))
 						generate_variables();
 
-					//		std::cout << "after while !!!!! " << std::endl;
-					//		std::cout << "\n p =" << p << std::endl;
-					//		std::cout << "\n NULLATOM =" << NULL_ATOM << std::endl;
-					//		std::cout << "learnt_clause size =" << learnt_clause.size << std::endl;
-					//		std::cout << "learnt_clause =" << learnt_clause << std::endl;
-
-
-					// p is the last decision, since all atoms above it in the
-					// assumption stack have been skipped or expended.
-
-					//TODO check
-					//reprale with a_literal
-					//q= encode_boolean_variable_as_literal(variables[a].id(),variables[a].get_min() );
-					//learnt_clause[0] = NOT(q);
 					learnt_clause[0] = a_literal;
 #ifdef 	_DEBUG_FD_NOGOOD
 					if(_DEBUG_FD_NOGOOD){
-						std::cout << " \n learn :  " << variables[a] << "  = " <<  variables[a].get_domain() << " ; assignment_level : " << assignment_level[a]<< std::endl;
+						//						std::cout << " \n learn :  " << variables[a] << "  = " <<  variables[a].get_domain() << " ; assignment_level : " << assignment_level[a]<< std::endl;
+						std::cout << " \n learn :  " << a_literal<< std::endl;
 					}
 #endif
 #ifdef _DEBUG_SEARCH
@@ -10868,63 +10799,14 @@ void Mistral::Solver::clean_fdlearn3() {
 #ifdef _CHECK_NOGOOD
 					//	if (graph_size <35)
 					{
-						//		std::cout << "graph_size : "  << graph_size  << std::endl;
-						//		std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
-						/*
-			for (int i = 0; i< learnt_clause.size; ++i)
-			{
-				std::cout << "assignment level [i] = " << assignment_level[get_id_boolean_variable(learnt_clause[i])] << std::endl;
-			}
-			std::cout << "END! current level  "  << level << " \n and backtrack_level :     " << backtrack_level << std::endl;
-						 */
-						// bug in instance 1
-						/*	Vector<Literal > tmp_nogood;
-			tmp_nogood.add(241) ;
-			tmp_nogood.add(3811) ;
-			tmp_nogood.add(3798) ;
-			tmp_nogood.add(3796) ;
-			tmp_nogood.add(3795) ;
-
-			if (learnt_clause.size == tmp_nogood.size){
-				bool equal = true;
-				for (int i = 0; i < learnt_clause.size ; ++i)
-					if (learnt_clause[i]!= tmp_nogood[i]){
-						equal=false;
-						break;
-					}
-
-				if (equal){
-					std::cout << "learnt_clause==tmp_nogood  " <<std::endl;
-					std::cout << "\n \n simple_fdlearn_nogood " <<std::endl;
-					simple_fdlearn_nogood();
-					std::cout << "\n \n simple_fdlearn_nogood " <<std::endl;
-					//		fdlearn_nogood();
-					std::cout << "\n \n fdlearn_nogood_nosequence " <<std::endl;
-					visited.clear();
-
-					fdlearn_nogood_nosequence();
-
-					exit(1);
-				}
-			}
-						 */
-
-						//std::cout << " CHECK NOGOOD IN clean_fdlearn " << std::endl;
 						((SchedulingSolver *) this)->	check_nogood(learnt_clause);
 						//	store_nogood(learnt_clause);
 					}
 #endif
 
-
-					/*		std::cout << "  \n \n statistics" <<std::endl;
-				std::cout << "  statistics.size_learned   "   << statistics.size_learned <<std::endl;
-				std::cout << "  statistics.avg_learned_size "   << statistics.avg_learned_size <<std::endl;
-					 */
-
 					if (parameters.reduce_learnt_clause){
 						if (learnt_clause.size != 1){
 							//	std::cout << "reducing clause  "  << learnt_clause <<  std::endl;
-
 							std::cout << "  \n clause being reduced from  \n "  << learnt_clause.size ;
 							reduce_clause();
 
@@ -10933,46 +10815,6 @@ void Mistral::Solver::clean_fdlearn3() {
 #ifdef _CHECK_NOGOOD
 							//	if (graph_size <35)
 							{
-								//		std::cout << "graph_size : "  << graph_size  << std::endl;
-								//		std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
-								/*
-		for (int i = 0; i< learnt_clause.size; ++i)
-		{
-			std::cout << "assignment level [i] = " << assignment_level[get_id_boolean_variable(learnt_clause[i])] << std::endl;
-		}
-		std::cout << "END! current level  "  << level << " \n and backtrack_level :     " << backtrack_level << std::endl;
-								 */
-								// bug in instance 1
-								/*	Vector<Literal > tmp_nogood;
-		tmp_nogood.add(241) ;
-		tmp_nogood.add(3811) ;
-		tmp_nogood.add(3798) ;
-		tmp_nogood.add(3796) ;
-		tmp_nogood.add(3795) ;
-
-		if (learnt_clause.size == tmp_nogood.size){
-			bool equal = true;
-			for (int i = 0; i < learnt_clause.size ; ++i)
-				if (learnt_clause[i]!= tmp_nogood[i]){
-					equal=false;
-					break;
-				}
-
-			if (equal){
-				std::cout << "learnt_clause==tmp_nogood  " <<std::endl;
-				std::cout << "\n \n simple_fdlearn_nogood " <<std::endl;
-				simple_fdlearn_nogood();
-				std::cout << "\n \n simple_fdlearn_nogood " <<std::endl;
-				//		fdlearn_nogood();
-				std::cout << "\n \n fdlearn_nogood_nosequence " <<std::endl;
-				visited.clear();
-
-				fdlearn_nogood_nosequence();
-
-				exit(1);
-			}
-		}
-								 */
 								((SchedulingSolver *) this)->	check_nogood(learnt_clause);
 								//	store_nogood(learnt_clause);
 							}
@@ -10994,20 +10836,6 @@ void Mistral::Solver::clean_fdlearn3() {
 						//   }
 						// }
 
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-						/*				std::cout << " \n \n \n learn  "  << std::endl;
-					std::cout << "before ordering! " << learnt_clause <<  std::endl;
-
-					std::cout << "levels! "  <<  std::endl;
-
-					for (int i = 0 ; i< learnt_clause.size ; ++i){
-
-						std::cout << " "  <<  assignment_level[get_id_boolean_variable(learnt_clause[i])];
-					}
-
-					std::cout << " END ?????? "  <<  std::endl;
-						 */
-#endif
 						orderedliterals.clear();
 						for (int i = (learnt_clause.size-1) ; i> 0; --i){
 							q = learnt_clause[i];
@@ -11023,66 +10851,18 @@ void Mistral::Solver::clean_fdlearn3() {
 							learnt_clause.fast_add(orderedliterals[i].l);
 						}
 
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-						/*					std::cout << "after  ordering! " << learnt_clause <<  std::endl;
-					std::cout << "levels! "  <<  std::endl;
-
-
-					for (int i = 0 ; i< learnt_clause.size ; ++i){
-
-						std::cout << " "  <<  assignment_level[get_id_boolean_variable(learnt_clause[i])];
-					}
-
-					std::cout << " "  <<  std::endl;
-						 */
-#endif
-
 						base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
 						try_to_keep_or_forget();
-
-						//add_clause( learnt, learnt_clause, stats.learnt_avg_size );
-						//reason[UNSIGNED(p)] = base->learnt.back();
-
-						// EXPL
-						//base->reason_for[UNSIGNED(p)] = base->learnt.back();
-
-						//base->reason_for[UNSIGNED(p)] = base->learnt.back();
-						//reason_for[UNSIGNED(p)] = base;
-						//taboo_constraint = base;
 
 						taboo_constraint = (ConstraintImplementation*)(base->learnt.back());
 						//reason_for[UNSIGNED(p)].store_reason_for_change(VALUE_EVENT, base->learnt.back());
 					} else {
 						taboo_constraint = NULL;
 					}
-
-
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 					__failure=NULL;
 #endif
 
-					//#ifdef _DEBUG
-					//		std::cout << "END! current level  "  << level << " and backtrack_level :     " << backtrack_level << std::endl;
-					//			std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
-					/*		std::cout << "\n learnt_clause size "  << learnt_clause.size << " \n and the clause : \n        " << learnt_clause << std::endl;
-		for (int i = 0; i< learnt_clause.size; ++i)
-		{
-			std::cout << "assignment level [i] = " << assignment_level[get_id_boolean_variable(learnt_clause[i])] << std::endl;
-		}
-		std::cout << "END! current level  "  << level << " \n and backtrack_level :     " << backtrack_level << std::endl;
-
-		std::cout << "endl no_recursive \n"  << std::endl;
-					 */
-					// int real_size = 0;
-					// for(int i=0; i<base->learnt.size; ++i) {
-					//   real_size += base->learnt[i]->size;
-					// }
-					// if(real_size != statistics.size_learned) {
-					//   std::cout << "discrepancy after learning!!\n" ;
-					//   exit(1);
-					// }
-
-					//backjump_decision = decision(variables[UNSIGNED(p)], Decision::REMOVAL, SIGN(p));
 
 #ifdef _DEBUG_NOGOOD
 					if(_DEBUG_NOGOOD) {
@@ -11091,17 +10871,7 @@ void Mistral::Solver::clean_fdlearn3() {
 					}
 #endif
 
-					//   while(level>backtrack_level) {
-					//     restore();
-					//     decisions.pop();
-					//   }
-
-					//return decision;
-
-
-					//	std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
-
-				}	//exit(1);
+				}
 		}
 	}
 
