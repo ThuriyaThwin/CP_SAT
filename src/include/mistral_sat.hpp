@@ -306,7 +306,7 @@ namespace Mistral {
     Vector< Vector< Clause* > > is_watched_by;
 #ifdef _IMPROVE_UP
     Vector< Vector< Clause* > > clauses_of_literal;
-    void update_clauses_of_literal(Literal p);
+    void update_clauses_of_literal(const Literal p);
 #endif
 
     //@}

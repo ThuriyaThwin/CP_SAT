@@ -920,7 +920,9 @@ Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
 #endif
 
 
+#ifdef _IMPROVE_UP
     update_clauses_of_literal(NOT(p));
+#endif
 
     cw = is_watched_by[p].size;
     while(cw-- && !conflict) {
@@ -1265,7 +1267,7 @@ Mistral::Clause* Mistral::ConstraintClauseBase::update_watcher(const int cw,
 }
 
 #ifdef _IMPROVE_UP
-void Mistral::ConstraintClauseBase::update_clauses_of_literal(Literal p)
+void Mistral::ConstraintClauseBase::update_clauses_of_literal(const Literal p)
 {
 	unsigned int _size = clauses_of_literal[p].size;
 
@@ -1283,34 +1285,36 @@ void Mistral::ConstraintClauseBase::update_clauses_of_literal(Literal p)
 				break;
 			}
 
-		if ((position==0) || (position ==1))
-			return;
+		//		if ((position==0) || (position ==1))
+		//			return;
+		if (position>1){
 
-		Literal q = clause[0];
-		Variable v;
-		int vb;
-		v=scope[UNSIGNED(q)];
-		vb=*(v.bool_domain);
-
-		//check if the other watched lit is assigned
-		//if( !v.is_ground() || v.get_min() != (int)SIGN(q) ) {
-		if( vb==3 || vb>>1 != (int)SIGN(q) ) {
-			q = clause[1];
+			Literal q = clause[0];
+			Variable v;
+			int vb;
 			v=scope[UNSIGNED(q)];
 			vb=*(v.bool_domain);
-			if( vb==3 || vb>>1 != (int)SIGN(q) ) {
-				//Here non of the first literals satisfy the clause!
-				q = clause[0];
-				//v=scope[UNSIGNED(q)];
-				//vb=*(v.bool_domain);
-				// this literal is not set
-				//if( !w.is_ground() ) { // this literal is not set
-				// then it is a good candidate to replace p
 
-				clause[0] = p;
-				clause[position] = q;
-				is_watched_by[q].remove_elt(cl);
-				is_watched_by[p].add(cl);
+			//check if the other watched lit is assigned
+			//if( !v.is_ground() || v.get_min() != (int)SIGN(q) ) {
+			if( vb==3 || vb>>1 != (int)SIGN(q) ) {
+				q = clause[1];
+				v=scope[UNSIGNED(q)];
+				vb=*(v.bool_domain);
+				if( vb==3 || vb>>1 != (int)SIGN(q) ) {
+					//Here non of the first literals satisfy the clause!
+					q = clause[0];
+					//v=scope[UNSIGNED(q)];
+					//vb=*(v.bool_domain);
+					// this literal is not set
+					//if( !w.is_ground() ) { // this literal is not set
+					// then it is a good candidate to replace p
+
+					clause[0] = p;
+					clause[position] = q;
+					is_watched_by[q].remove_elt(cl);
+					is_watched_by[p].add(cl);
+				}
 			}
 		}
 	}
