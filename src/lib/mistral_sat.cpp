@@ -682,7 +682,7 @@ void Mistral::ConstraintClauseBase::add( Vector < Literal >& clause, double acti
  }
 }
 
-void Mistral::ConstraintClauseBase::learn( Vector < Literal >& clause, double activity_increment) {
+void Mistral::ConstraintClauseBase::learn( Vector < Literal >& clause, double activity_increment, bool forget_immediately) {
  if(clause.size > 1) {
    Clause *cl = (Clause*)(Clause::Array_new(clause));
    learnt.add( cl );
@@ -697,9 +697,13 @@ void Mistral::ConstraintClauseBase::learn( Vector < Literal >& clause, double ac
    //     var_activity[UNSIGNED(clause[i])] += activity_increment;
    //   }
    // }
-
-   is_watched_by[clause[0]].add(cl);
-   is_watched_by[clause[1]].add(cl);
+   if (forget_immediately){
+	   will_be_forgotten.add(learnt.size -1);
+   }
+   else{
+	   is_watched_by[clause[0]].add(cl);
+	   is_watched_by[clause[1]].add(cl);
+   }
 
  } else {
    scope[UNSIGNED(clause[0])].set_domain(SIGN(clause[0]));

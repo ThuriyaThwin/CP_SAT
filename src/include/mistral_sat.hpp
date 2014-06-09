@@ -320,7 +320,8 @@ namespace Mistral {
     virtual bool explained() { return true; }
     void add( Variable x );
     void add( Vector < Literal >& clause, double init_activity=0.0 );
-    void learn( Vector < Literal >& clause, double init_activity=0.0);
+    //void learn( Vector < Literal >& clause, double init_activity=0.0);
+    void learn( Vector < Literal >& clause, double init_activity, bool forget_immediately=false);
     void remove( const int cidx ,bool static_forget= false);
 
     //New way of forgetting clauses (directly whithin learning)
