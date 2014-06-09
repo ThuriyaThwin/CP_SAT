@@ -438,6 +438,9 @@ void Mistral::ConstraintClauseBase::initialise() {
   GlobalConstraint::initialise();
 
   is_watched_by.initialise(0,2*scope.size);
+#ifdef _IMPROVE_UP
+  clauses_of_literal.initialise(0,2*scope.size);
+#endif
   // lit_activity.initialise(0,2*scope.size);
   // var_activity.initialise(0,scope.size);
 
@@ -498,6 +501,11 @@ void Mistral::ConstraintClauseBase::add(Variable x) {
 
   while(is_watched_by.capacity <= 2*idx)
     is_watched_by.extendStack();
+
+#ifdef _IMPROVE_UP
+  while(clauses_of_literal.capacity <= 2*idx)
+	  clauses_of_literal.extendStack();
+#endif
   // while(lit_activity.capacity <= 2*idx)
   //   lit_activity.extendStack();
   // while(var_activity.capacity <= idx)
@@ -558,6 +566,11 @@ void Mistral::ConstraintClauseBase::extend_scope(Variable x){
 
 	while(is_watched_by.capacity <= 2*idx)
 		is_watched_by.extendStack();
+
+#ifdef _IMPROVE_UP
+	while(clauses_of_literal.capacity <= 2*idx)
+		clauses_of_literal.extendStack();
+#endif
 	// while(lit_activity.capacity <= 2*idx)
 	//   lit_activity.extendStack();
 	// while(var_activity.capacity <= idx)
@@ -663,6 +676,13 @@ void Mistral::ConstraintClauseBase::add( Vector < Literal >& clause, double acti
    is_watched_by[clause[0]].add(cl);
    is_watched_by[clause[1]].add(cl);
 
+#ifdef _IMPROVE_UP
+   unsigned _size = clause.size;
+   for (unsigned int i = 0; i< _size; ++i){
+	   clauses_of_literal[clause[i]].add(cl);
+   }
+#endif
+
    // // should we split the increment?
    // activity_increment /= clause.size;
 
@@ -703,6 +723,14 @@ void Mistral::ConstraintClauseBase::learn( Vector < Literal >& clause, double ac
    else{
 	   is_watched_by[clause[0]].add(cl);
 	   is_watched_by[clause[1]].add(cl);
+
+#ifdef _IMPROVE_UP
+	   unsigned _size = clause.size;
+	   for (unsigned int i = 0; i< _size; ++i){
+		   clauses_of_literal[clause[i]].add(cl);
+	   }
+#endif
+
    }
 
  } else {
@@ -794,6 +822,16 @@ void Mistral::ConstraintClauseBase::start_over() {
 			exit(1);
 	  }
 
+
+#ifdef _IMPROVE_UP
+	for (int i =  init_var_size*2 ; i < ((2* scope.size) -1) ; ++i)
+		if (clauses_of_literal[i].size)
+		{
+			std::cout << "ERROR  (clauses_of_literal[i].size) " <<  (clauses_of_literal[i].size) <<  std::endl;
+			exit(1);
+		}
+#endif
+
 	scope.size = init_var_size;
 	_scope.size = init_var_size;
 
@@ -880,6 +918,9 @@ Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
     std::cout << " " << is_watched_by[p].size << std::endl;
     std::cout << " " << is_watched_by[NOT(p)].size << std::endl;
 #endif
+
+
+    update_clauses_of_literal(NOT(p));
 
     cw = is_watched_by[p].size;
     while(cw-- && !conflict) {
@@ -1223,6 +1264,59 @@ Mistral::Clause* Mistral::ConstraintClauseBase::update_watcher(const int cw,
   return NULL;
 }
 
+#ifdef _IMPROVE_UP
+void Mistral::ConstraintClauseBase::update_clauses_of_literal(Literal p)
+{
+	unsigned int _size = clauses_of_literal[p].size;
+
+
+	for (unsigned int i = 0; i< _size; ++i){
+		Clause *cl = clauses_of_literal[p][i];
+		Clause& clause = *cl;
+
+		unsigned int position =0 ;
+
+		unsigned int _s = clause.size;
+		for (unsigned int j=0; j<_s; ++j)
+			if (clause[j]==p){
+				position=j;
+				break;
+			}
+
+		if ((position==0) || (position ==1))
+			return;
+
+		Literal q = clause[0];
+		Variable v;
+		int vb;
+		v=scope[UNSIGNED(q)];
+		vb=*(v.bool_domain);
+
+		//check if the other watched lit is assigned
+		//if( !v.is_ground() || v.get_min() != (int)SIGN(q) ) {
+		if( vb==3 || vb>>1 != (int)SIGN(q) ) {
+			q = clause[1];
+			v=scope[UNSIGNED(q)];
+			vb=*(v.bool_domain);
+			if( vb==3 || vb>>1 != (int)SIGN(q) ) {
+				//Here non of the first literals satisfy the clause!
+				q = clause[0];
+				//v=scope[UNSIGNED(q)];
+				//vb=*(v.bool_domain);
+				// this literal is not set
+				//if( !w.is_ground() ) { // this literal is not set
+				// then it is a good candidate to replace p
+
+				clause[0] = p;
+				clause[position] = q;
+				is_watched_by[q].remove_elt(cl);
+				is_watched_by[p].add(cl);
+			}
+		}
+	}
+}
+#endif
+
 void Mistral::ConstraintClauseBase::remove( const int cidx , bool static_forget)
 {
   Clause *clause = learnt[cidx];
@@ -1233,6 +1327,13 @@ void Mistral::ConstraintClauseBase::remove( const int cidx , bool static_forget)
   if (!static_forget){
 	  is_watched_by[clause->data[0]].remove_elt( clause );
 	  is_watched_by[clause->data[1]].remove_elt( clause );
+
+#ifdef _IMPROVE_UP
+	  unsigned _size = clause->size;
+	  for (unsigned int i = 0; i< _size; ++i){
+		  clauses_of_literal[(*clause)[i]].remove_elt(clause);
+	  }
+#endif
   }
 
   //We suppose that we never remove a clause that will_be_kept!

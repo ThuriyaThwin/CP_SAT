@@ -668,6 +668,14 @@ const int NOVAL = (int)((~(unsigned int)0)/2);
     		add(x);
     }
 
+    //Here we suppose that elt already exists! Otherwise, we should add some tests and change the outcome type
+    inline unsigned int index_of_elt(DATA_TYPE& elt)
+    {
+    	unsigned int j=size;
+    	while(j && stack_[--j] != elt);
+    	return j;
+    }
+
     inline const DATA_TYPE operator[](const int i) const
     {
       return stack_[i];

@@ -103,6 +103,8 @@ namespace Mistral {
 #define V_FALSE   0
 #define V_UNKNOWN 2
 
+#define _IMPROVE_UP true
+
   void print_clause(std::ostream& o, Clause* cl,unsigned int start_from=0) ;
   void print_literal(std::ostream& o, Literal l, unsigned int start_from=0, bool dir=true) ;
 
@@ -302,6 +304,11 @@ namespace Mistral {
     Vector< Clause* > learnt;
     // the watched literals data structure
     Vector< Vector< Clause* > > is_watched_by;
+#ifdef _IMPROVE_UP
+    Vector< Vector< Clause* > > clauses_of_literal;
+    void update_clauses_of_literal(Literal p);
+#endif
+
     //@}
     
     /**@name Constructors*/
@@ -332,10 +339,19 @@ namespace Mistral {
     void forget_last(){
     	will_be_forgotten.add(learnt.size -1);
     	Clause& clause = *(learnt[learnt.size -1]);
-    	Atom a = clause[0];
-    	Atom b =clause[1];
+    	Literal a = clause[0];
+    	Literal b =clause[1];
     	is_watched_by[a].pop();
     	is_watched_by[b].pop();
+#ifdef _IMPROVE_UP
+    	std::cout << " NOT YET" << std::endl;
+    	exit(1);
+      /*  unsigned int _index=clauses_of_literal[];
+         while(j && stack_[--j] != elt);
+         stack_[j] = stack_[--size];
+    	int  = ;
+*/
+#endif
     }
 
     void keep_last(){
