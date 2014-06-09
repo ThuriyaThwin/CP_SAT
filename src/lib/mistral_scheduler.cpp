@@ -450,7 +450,8 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[24] != NOVAL) lazy_generation  = int_param[24];
   if(int_param[25] != NOVAL) semantic_learning  = int_param[25];
   if(int_param[26] != NOVAL) simple_learn  = int_param[26];
-  if(int_param[27] != NOVAL) max_nogood_size  = int_param[27];
+  if(int_param[27] != NOVAL) { std::cout <<" No longer used! " << std::endl; exit(1); //max_nogood_size  = int_param[27];
+  }
   if(int_param[28] != NOVAL) bounded_by_decision  = int_param[28];
   if(int_param[29] != NOVAL) forget_relatedto_nogood_size  = int_param[29];
   if(int_param[30] != NOVAL) forget_retatedto_backjump  = int_param[30];
@@ -518,7 +519,7 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | lazy_generation " << ":" << std::right << std::setw(15) << lazy_generation << " |" << std::endl;
   os << std::left << std::setw(30) << " c | semantic_learning " << ":" << std::right << std::setw(15) << semantic_learning << " |" << std::endl;
   os << std::left << std::setw(30) << " c | simple_learn " << ":" << std::right << std::setw(15) << simple_learn << " |" << std::endl;
-  os << std::left << std::setw(30) << " c | max_nogood_size " << ":" << std::right << std::setw(15) << max_nogood_size << " |" << std::endl;
+  //os << std::left << std::setw(30) << " c | max_nogood_size " << ":" << std::right << std::setw(15) << max_nogood_size << " |" << std::endl;
   os << std::left << std::setw(30) << " c | bounded_by_decision " << ":" << std::right << std::setw(15) << bounded_by_decision << " |" << std::endl;
   os << std::left << std::setw(30) << " c | forget all clauses " << ":" << std::right << std::setw(15) << (forgetall? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | hard_keep " << ":" << std::right << std::setw(15) << (hard_keep? "yes" : "no") << " |" << std::endl;
@@ -4016,6 +4017,27 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 	}
 
 	for(int j=1; j<c.size; ++j) {
+		if (is_a_bound_literal(c[j])){
+
+			int id_range = 	get_variable_from_literal(c[j]);
+			int val_range =	get_value_from_literal(c[j]);
+			bool isub =is_upper_bound(c[j]);
+
+			//	std::cout << " OK : id_range = " << id_range << std::endl;
+			//	std::cout << " OK : val_range = " << val_range << std::endl;
+
+			if (isub){
+				__solver->variables[id_range].set_max(val_range);
+	//			std::cout << " Bound literal associated to :  " << variables[id_range] << " <=  " << val_range <<  std::endl;
+
+			}
+			else{
+				__solver->variables[id_range].set_min(val_range);
+	//			std::cout << " Bound literal associated to :  " << variables[id_range] << " >=  " << val_range+1 <<  std::endl;
+			}
+		}
+		else{
+
 		int id =get_id_boolean_variable(c[j]);
 	//	std::cout << " j = " << j << std::endl;
 	//	std::cout << " id = " << id << std::endl;
@@ -4066,7 +4088,7 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 
 		//		std::cout << " the new domain is : " << __solver->variables[id].get_domain() << " because its literal is " <<  nogood_clause[i][j] <<std::endl;
 	}
-
+	}
 
 	//	->chronological_dfs();
 	//Outcome  __result= __solver->depth_first_search();

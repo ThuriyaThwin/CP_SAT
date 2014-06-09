@@ -884,8 +884,10 @@ namespace Mistral {
     void clean_fdlearn2() ;
 
     void treat_bound_literal3(Literal q);
+    void treat_bound_literal4(Literal q);
     void learn_virtualLiteral(Literal q);
     void treat_explanation3 (Explanation* explanation,  Explanation::iterator start,Explanation::iterator end );
+    void treat_explanation4 (Explanation* explanation,  Explanation::iterator start,Explanation::iterator end );
     void clean_fdlearn3();
     void clean_fdlearn4();
     bool should_forget();

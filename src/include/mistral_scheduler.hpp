@@ -122,7 +122,9 @@ namespace Mistral {
     int lazy_generation;
     int semantic_learning;
     int simple_learn ;
+    //TODO remove this!
     int max_nogood_size;
+    //TODO remove this!
     int bounded_by_decision;
     int forget_relatedto_nogood_size;
     int forget_retatedto_backjump;
