@@ -4016,12 +4016,21 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 		exit(1);
 	}
 
+	int bts = 0;
 	for(int j=1; j<c.size; ++j) {
 		if (is_a_bound_literal(c[j])){
 
 			int id_range = 	get_variable_from_literal(c[j]);
 			int val_range =	get_value_from_literal(c[j]);
 			bool isub =is_upper_bound(c[j]);
+			VariableRangeWithLearning* tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[id_range].range_domain);
+			int lvl = tmp_VariableRangeWithLearning->level_of(val_range,!isub) ;
+
+
+			if (bts < lvl){
+				bts = lvl;
+			}
+
 
 			//	std::cout << " OK : id_range = " << id_range << std::endl;
 			//	std::cout << " OK : val_range = " << val_range << std::endl;
@@ -4039,6 +4048,11 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 		else{
 
 		int id =get_id_boolean_variable(c[j]);
+
+		if (bts < assignment_level[id]){
+			bts = assignment_level[id];
+		}
+
 	//	std::cout << " j = " << j << std::endl;
 	//	std::cout << " id = " << id << std::endl;
 		//		std::cout << " the variable is : " << variables[id] <<" and its domain is : " <<  variables[id].get_domain() << std::endl;
@@ -4089,6 +4103,14 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 		//		std::cout << " the new domain is : " << __solver->variables[id].get_domain() << " because its literal is " <<  nogood_clause[i][j] <<std::endl;
 	}
 	}
+
+
+	if (bts != backtrack_level){
+
+		std::cout << " ERROR : backtrack_level is not correct! " << std::endl;
+		exit(1);
+	}
+
 
 	//	->chronological_dfs();
 	//Outcome  __result= __solver->depth_first_search();
