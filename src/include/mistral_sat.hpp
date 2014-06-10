@@ -306,7 +306,7 @@ namespace Mistral {
     Vector< Vector< Clause* > > is_watched_by;
 #ifdef _IMPROVE_UP
     Vector< Vector< Clause* > > clauses_of_literal;
-    void update_clauses_of_literal(const Literal p);
+    void update_clauses_of_literal(const Literal p, unsigned int i);
 #endif
 
     //@}
@@ -336,6 +336,7 @@ namespace Mistral {
     //Clauses that will be kept between dichotomy
 	BitSet will_be_kept;
 
+//TODO Will not be used anymore! we handle this stuff with learn(..,..,true);
     void forget_last(){
     	will_be_forgotten.add(learnt.size -1);
     	Clause& clause = *(learnt[learnt.size -1]);

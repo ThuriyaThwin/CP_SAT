@@ -895,7 +895,7 @@ void Mistral::ConstraintClauseBase::start_over() {
 
 }
 
-//#define _CHECKED_CLAUSES
+//#define _CHECKED_CLAUSES true
 
 Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
   conflict=NULL;
@@ -921,7 +921,13 @@ Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
 
 
 #ifdef _IMPROVE_UP
-    update_clauses_of_literal(NOT(p));
+
+	unsigned int _size = clauses_of_literal[NOT(p)].size;
+
+	for (unsigned int i = 0; i< _size; ++i){
+	    update_clauses_of_literal(NOT(p), i);
+	}
+
 #endif
 
     cw = is_watched_by[p].size;
@@ -1267,57 +1273,62 @@ Mistral::Clause* Mistral::ConstraintClauseBase::update_watcher(const int cw,
 }
 
 #ifdef _IMPROVE_UP
-void Mistral::ConstraintClauseBase::update_clauses_of_literal(const Literal p)
+void Mistral::ConstraintClauseBase::update_clauses_of_literal(const Literal p, unsigned int i)
 {
-	unsigned int _size = clauses_of_literal[p].size;
+	//	unsigned int _size = clauses_of_literal[p].size;
 
+	Clause *	cl = clauses_of_literal[p][i];
+	Clause& clause = *cl;
+	//Clause& clause = *cl;
+	Literal q ;
+	//Variable v;
+	int vb;
+	unsigned int position =0 ,  _s = clause.size;
 
-	for (unsigned int i = 0; i< _size; ++i){
-		Clause *cl = clauses_of_literal[p][i];
-		Clause& clause = *cl;
+	//for (unsigned int i = 0; i< _size; ++i){
+	//cl = clauses_of_literal[p][i];
+	//	Clause& clause = *cl;
 
-		unsigned int position =0 ;
+	//		position =0 ;
 
-		unsigned int _s = clause.size;
-		for (unsigned int j=0; j<_s; ++j)
-			if (clause[j]==p){
-				position=j;
-				break;
-			}
+	//		_s = clause.size;
+	for (unsigned int j=0; j<_s; ++j)
+		if (clause[j]==p){
+			position=j;
+			break;
+		}
 
-		//		if ((position==0) || (position ==1))
-		//			return;
-		if (position>1){
+	//		if ((position==0) || (position ==1))
+	//			return;
+	if (position>1){
 
-			Literal q = clause[0];
-			Variable v;
-			int vb;
-			v=scope[UNSIGNED(q)];
-			vb=*(v.bool_domain);
+		q = clause[0];
 
-			//check if the other watched lit is assigned
-			//if( !v.is_ground() || v.get_min() != (int)SIGN(q) ) {
+		vb=*(scope[UNSIGNED(q)].bool_domain);
+
+		//check if the other watched lit is assigned
+		//if( !v.is_ground() || v.get_min() != (int)SIGN(q) ) {
+		if( vb==3 || vb>>1 != (int)SIGN(q) ) {
+			q = clause[1];
+			//v=scope[UNSIGNED(q)];
+			vb=*(scope[UNSIGNED(q)].bool_domain);
 			if( vb==3 || vb>>1 != (int)SIGN(q) ) {
-				q = clause[1];
-				v=scope[UNSIGNED(q)];
-				vb=*(v.bool_domain);
-				if( vb==3 || vb>>1 != (int)SIGN(q) ) {
-					//Here non of the first literals satisfy the clause!
-					q = clause[0];
-					//v=scope[UNSIGNED(q)];
-					//vb=*(v.bool_domain);
-					// this literal is not set
-					//if( !w.is_ground() ) { // this literal is not set
-					// then it is a good candidate to replace p
+				//Here non of the first literals satisfy the clause!
+				q = clause[0];
+				//v=scope[UNSIGNED(q)];
+				//vb=*(v.bool_domain);
+				// this literal is not set
+				//if( !w.is_ground() ) { // this literal is not set
+				// then it is a good candidate to replace p
 
-					clause[0] = p;
-					clause[position] = q;
-					is_watched_by[q].remove_elt(cl);
-					is_watched_by[p].add(cl);
-				}
+				clause[0] = p;
+				clause[position] = q;
+				is_watched_by[p].add(cl);
+				is_watched_by[q].remove_elt(cl);
 			}
 		}
 	}
+	//}
 }
 #endif
 
@@ -1334,8 +1345,9 @@ void Mistral::ConstraintClauseBase::remove( const int cidx , bool static_forget)
 
 #ifdef _IMPROVE_UP
 	  unsigned _size = clause->size;
+	  Clause& c = *clause;
 	  for (unsigned int i = 0; i< _size; ++i){
-		  clauses_of_literal[(*clause)[i]].remove_elt(clause);
+		  clauses_of_literal[c[i]].remove_elt(clause);
 	  }
 #endif
   }
