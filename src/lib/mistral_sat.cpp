@@ -707,6 +707,7 @@ void Mistral::ConstraintClauseBase::learn( Vector < Literal >& clause, double ac
    Clause *cl = (Clause*)(Clause::Array_new(clause));
    learnt.add( cl );
 
+   //std::cout << " c LEARN " << forget_immediately  << std::endl;
    // // should we split the increment?
    // activity_increment /= clause.size;
 
@@ -970,6 +971,10 @@ Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
     } else {
 
     	for(i=0; !violated && num_literals <= 1 && i<learnt.size; ++i) {
+    		//A test if will_be_forgotten doesn't contain i
+    		if (!will_be_forgotten.size  ||
+    		(!will_be_forgotten.index_of_elt(i) &&  will_be_forgotten[0] != i)){
+
     		Clause& clause = *(learnt[i]);
     		violated = false;
     		num_literals = clause.size;
@@ -998,6 +1003,8 @@ Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
     			} else violated = false;
     		}
     	}
+    	}
+
     	if(violated  && num_literals<=1) {
     		--i;
     		std::cout << "unit propagation was not complete!!" << std::endl;
@@ -1411,7 +1418,7 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
 					  )
 {
 
-//std::cout << "\n \n c start forget with " << learnt.size << std::endl;
+	//std::cout << "\n \n c start forget with " << learnt.size << std::endl;
   int removed = 0;
   int * solution = get_solver()->last_solution_lb.stack_;
 

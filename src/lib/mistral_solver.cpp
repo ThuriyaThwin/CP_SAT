@@ -11245,8 +11245,8 @@ bool Mistral::Solver::learn_virtual_literals() {
 		}
 		parameters.semantic_learning= old_semantic;
 
+		}
 		return false;
-	}
 	}
 }
 
@@ -11432,6 +11432,8 @@ void Mistral::Solver::clean_fdlearn4() {
 
 		if (learn_virtual_literals()){
 
+//			std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
+//			exit(1);
 #ifdef _CHECK_NOGOOD
 			//	if (graph_size <35)
 			{
@@ -11463,8 +11465,8 @@ void Mistral::Solver::clean_fdlearn4() {
 
 		}
 		else{
-		//	std::cout << "learnt_clause : "  << learnt_clause  << std::endl;
-		//	exit(1);
+			//std::cout << "OK learnt_clause : "  << learnt_clause  << std::endl;
+			//exit(1);
 #ifdef _CHECK_NOGOOD
 			//	if (graph_size <35)
 			{
