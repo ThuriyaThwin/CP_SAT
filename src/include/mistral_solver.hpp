@@ -886,14 +886,19 @@ namespace Mistral {
     void treat_bound_literal3(Literal q);
     void treat_bound_literal4(Literal q);
     void learn_virtualLiteral(Literal q);
+    void repace_with_disjunctions(Literal q);
+    void generate_and_learn(Literal q);
     void treat_explanation3 (Explanation* explanation,  Explanation::iterator start,Explanation::iterator end );
     void treat_explanation4 (Explanation* explanation,  Explanation::iterator start,Explanation::iterator end );
     void clean_fdlearn3();
     void clean_fdlearn4();
+
+
     bool should_forget();
     bool learn_virtual_literals();
 
     Vector <Literal > literals_to_explore;
+	bool all_reasons_before_search_root;
 
     				//TODO declare them only when needen!
 #ifdef _RECOVER_GENERATED

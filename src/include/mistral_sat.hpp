@@ -103,7 +103,7 @@ namespace Mistral {
 #define V_FALSE   0
 #define V_UNKNOWN 2
 
-#define _IMPROVE_UP true
+//#define _IMPROVE_UP true
 
   void print_clause(std::ostream& o, Clause* cl,unsigned int start_from=0) ;
   void print_literal(std::ostream& o, Literal l, unsigned int start_from=0, bool dir=true) ;

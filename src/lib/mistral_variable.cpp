@@ -2036,14 +2036,9 @@ int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 		exit(1);
 		//	return lower_bound_reasons[0];
 
-
-
-
-
 }
 
  */
-
 
 
 int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {

@@ -4016,7 +4016,7 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 		exit(1);
 	}
 
-	int bts = 0;
+	int bts = search_root;
 	for(int j=1; j<c.size; ++j) {
 		if (is_a_bound_literal(c[j])){
 
@@ -4108,6 +4108,12 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 	if (bts != backtrack_level){
 
 		std::cout << " ERROR : backtrack_level is not correct! " << std::endl;
+		std::cout << " clause :  " << c << std::endl;
+		std::cout << " bts :  " << bts << std::endl;
+		std::cout << " search root  :  " << search_root << std::endl;
+		std::cout << " level   :  " << level << std::endl;
+		std::cout << " backtrack_level :  " << backtrack_level << std::endl;
+
 		exit(1);
 	}
 
@@ -4143,12 +4149,14 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 		std::cout << " c WRONG NOGOOD!!\n";
 		//		params->LBinit = stats->lower_bound ;
 		//		params->UBinit = obj;
+
 		std::cout << " Lower Bound  " << stats->lower_bound;
 		std::cout << " Upper Bound  " << obj ;
 		std::cout << "Solver level " << level ;
 		std::cout << "clause size " << c.size ;
 		std::cout << "clause " << c ;
-		std::cout << std::endl;
+		std::cout << "and bounds to explore " << literals_to_explore ;
+				std::cout << std::endl;
 
 		//		std::cout << " Lower Bound  " << __stats.lower_bound ;
 		//		std::cout << " Upper Bound  " << __stats.upper_bound ;
