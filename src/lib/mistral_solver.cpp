@@ -11425,24 +11425,105 @@ bool Mistral::Solver::learn_virtual_literals() {
 
 	if (should_forget()){
 
-	//	std::cout << " \n \n \n  yes " << std::endl;
-	//	exit(1);
+		//std::cout << " \n \n \n  yes " << std::endl;
+		//	exit(1);
 
 		if (parameters.semantic_learning ) {
 
-			//std::cout << " \n \n \n  iterate " << std::endl;
-			int var = visitedLowerBounds.min();
-			int val, lvl , tmp_id;
-			Literal tmp_literal;
-			VariableRangeWithLearning* __x;
-			//std::cout << "visitedLowerBounds [i]? " << min <<std::endl;
-			for (int i = visitedLowerBounds.size() ; i>0; --i ){
-				val = visitedLowerBoundvalues[var] ;
 
-				tmp_literal=encode_bound_literal(var, val,0);
-				bound_literals_to_explore.add(tmp_literal);
+			if (parameters.lazy_generation){
+				Literal tmp_literal;
+				//std::cout << " \n \n \n  iterate " << std::endl;
+				int var = visitedLowerBounds.min();
+				int val, lvl , tmp_id = -1;
+				VariableRangeWithLearning* __x;
+				//std::cout << "visitedLowerBounds [i]? " << min <<std::endl;
+				for (int i = visitedLowerBounds.size() ; i>0; --i ){
+					val = visitedLowerBoundvalues[var] ;
+					__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
 
-				/*
+
+					tmp_id = __x->domainConstraint->value_exist( val-1 ) ;
+
+					if ( tmp_id< 0){
+						lvl = __x->level_of(val,1);
+						//				tmp_id= generate_new_variable(__x->domainConstraint, val, true, lvl, var);
+						tmp_literal=encode_bound_literal(var, val,0);
+					}
+					else{
+						lvl =assignment_level[tmp_id];
+						tmp_literal=encode_boolean_variable_as_literal(tmp_id, 1);
+					}
+
+					//					learnt_clause.add(encode_boolean_variable_as_literal(tmp_id, 1));
+
+					//tmp_literal=encode_bound_literal(var, val,0);
+					learnt_clause.add(tmp_literal);
+
+					if(lvl > backtrack_level)
+						backtrack_level = lvl;
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+					if(lvl > backtrack_level){
+						std::cout << " 1 lvl > backtrack_level " << std::endl;
+						exit(1);
+						backtrack_level = lvl;
+					}
+#endif
+					var= visitedLowerBounds.next(var);
+				}
+
+				var = visitedUpperBounds.min();
+				//std::cout << "visitedLowerBounds [i]? " << min <<std::endl;
+				for (int i = visitedUpperBounds.size() ; i>0; --i ){
+					val = visitedUpperBoundvalues[var] ;
+					__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
+
+					tmp_id = __x->domainConstraint->value_exist( val) ;
+					if ( tmp_id< 0)
+					{
+						lvl = __x->level_of(val,0);
+						tmp_literal=encode_bound_literal(var, val,1);
+						//			tmp_id= generate_new_variable(__x->domainConstraint, val, false, lvl, var);
+					}
+					else{
+						lvl =assignment_level[tmp_id];
+						learnt_clause.add(encode_boolean_variable_as_literal(tmp_id, 0));
+					}
+
+					//		learnt_clause.add(encode_boolean_variable_as_literal(tmp_id, 0));
+
+	//				tmp_literal=encode_bound_literal(var, val,1);
+					learnt_clause.add(tmp_literal);
+
+					if(lvl > backtrack_level)
+						backtrack_level = lvl;
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+					if(lvl > backtrack_level){
+						std::cout << " 2 lvl > backtrack_level " << std::endl;
+						exit(1);
+						backtrack_level = lvl;
+					}
+#endif
+
+					var= visitedUpperBounds.next(var);
+				}
+			}
+			else {
+				//std::cout << " \n \n \n  iterate " << std::endl;
+				int var = visitedLowerBounds.min();
+				int val, tmp_id;
+				Literal tmp_literal;
+				VariableRangeWithLearning* __x;
+				//std::cout << "visitedLowerBounds [i]? " << min <<std::endl;
+				for (int i = visitedLowerBounds.size() ; i>0; --i ){
+					val = visitedLowerBoundvalues[var] ;
+
+					tmp_literal=encode_bound_literal(var, val,0);
+					bound_literals_to_explore.add(tmp_literal);
+
+					/*
 				__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
 
 
@@ -11463,18 +11544,18 @@ bool Mistral::Solver::learn_virtual_literals() {
 					backtrack_level = lvl;
 				}
 	#endif
-				 */
-				var= visitedLowerBounds.next(var);
-			}
+					 */
+					var= visitedLowerBounds.next(var);
+				}
 
-			var = visitedUpperBounds.min();
-			//std::cout << "visitedLowerBounds [i]? " << min <<std::endl;
-			for (int i = visitedUpperBounds.size() ; i>0; --i ){
-				val = visitedUpperBoundvalues[var] ;
-				tmp_literal=encode_bound_literal(var, val,1);
-				bound_literals_to_explore.add(tmp_literal);
+				var = visitedUpperBounds.min();
+				//std::cout << "visitedLowerBounds [i]? " << min <<std::endl;
+				for (int i = visitedUpperBounds.size() ; i>0; --i ){
+					val = visitedUpperBoundvalues[var] ;
+					tmp_literal=encode_bound_literal(var, val,1);
+					bound_literals_to_explore.add(tmp_literal);
 
-				/*		__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
+					/*		__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
 
 				tmp_id = __x->domainConstraint->value_exist( val) ;
 				if ( tmp_id< 0)
@@ -11486,16 +11567,18 @@ bool Mistral::Solver::learn_virtual_literals() {
 					lvl =assignment_level[tmp_id];
 
 				learnt_clause.add(encode_boolean_variable_as_literal(tmp_id, 0));
-				 */
+					 */
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-				if(lvl > backtrack_level){
+					/*		if(lvl > backtrack_level){
 					std::cout << " 4 lvl > backtrack_level " << std::endl;
 					exit(1);
 					backtrack_level = lvl;
 				}
+					 */
 #endif
 
-				var= visitedUpperBounds.next(var);
+					var= visitedUpperBounds.next(var);
+				}
 			}
 		}
 
@@ -11507,6 +11590,8 @@ bool Mistral::Solver::learn_virtual_literals() {
 			int val_range =	get_value_from_literal(_q);
 			bool isub =is_upper_bound(_q);
 			VariableRangeWithLearning* tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[id_range].range_domain);
+
+			//	std::cout << " \n \n \n HERE ?  " << std::endl;
 			int lvl = tmp_VariableRangeWithLearning->level_of(val_range,!isub) ;
 
 			if (backtrack_level < lvl){
@@ -11794,6 +11879,7 @@ void Mistral::Solver::clean_fdlearn4() {
 				/ ((double)(++statistics.num_failures));
 
 
+//		std::cout << " \n \n \n  TEST  " << std::endl;
 		if (learn_virtual_literals()){
 
 //			std::cout << "learnt_clause [will be forgotten]: "  << learnt_clause  << std::endl;
