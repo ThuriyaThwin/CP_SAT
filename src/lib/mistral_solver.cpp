@@ -37,7 +37,7 @@
 //#define _OLD_ true
 //#define _DEBUG_NOGOOD true //(statistics.num_filterings == 491)
 //#define _DEBUG_SEARCH true
-//#define _DEBUG_FD_NOGOOD true //(level==110) //((variables.size== 16678) && (level==20)) //true // ((variables.size == 221)) //&& (solver->level == 22))//true
+//#define _DEBUG_FD_NOGOOD ((variables.size== 2433) && (level==40)) //true // ((variables.size == 221)) //&& (solver->level == 22))//true
 //#define _DEBUG_SHOW_LEARNT_BOUNDS true
 
 //#define _TRACKING_ATOM 368
@@ -9614,7 +9614,6 @@ void Mistral::Solver::treat_bound_literal4(Literal q){
 	}
 #endif
 
-	bool already_explored = false;
 	if (lvl == search_root){
 		all_reasons_before_search_root = false;
 	}
@@ -9640,6 +9639,8 @@ void Mistral::Solver::treat_bound_literal4(Literal q){
 
 		if (parameters.semantic_learning)
 		{
+
+			bool already_explored = false;
 			if (is_lb && visitedLowerBounds.fast_contain(var)){
 				if (visitedLowerBoundvalues[var] >= val){
 					/*				std::cout << " \n \n is_lb : " << is_lb << std::endl;
@@ -10647,8 +10648,8 @@ void Mistral::Solver::clean_fdlearn2() {
 
 					//backjump_decision = decision(variables[UNSIGNED(p)], Decision::REMOVAL, SIGN(p));
 
-#ifdef _DEBUG_NOGOOD
-					if(_DEBUG_NOGOOD) {
+#ifdef _DEBUG_FD_NOGOOD
+					if(_DEBUG_FD_NOGOOD) {
 						//for(int i=0; i<level; ++i) std::cout << " ";
 						std::cout << "backtrackLevel = " << backtrack_level << "/" << (decisions.size) << std::endl;
 					}
@@ -11388,8 +11389,8 @@ void Mistral::Solver::clean_fdlearn3() {
 #endif
 
 
-#ifdef _DEBUG_NOGOOD
-					if(_DEBUG_NOGOOD) {
+#ifdef _DEBUG_FD_NOGOOD
+					if(_DEBUG_FD_NOGOOD) {
 						//for(int i=0; i<level; ++i) std::cout << " ";
 						std::cout << "backtrackLevel = " << backtrack_level << "/" << (decisions.size) << std::endl;
 					}
@@ -11425,6 +11426,12 @@ bool Mistral::Solver::learn_virtual_literals() {
 
 	if (should_forget()){
 
+#ifdef _DEBUG_FD_NOGOOD
+			if(_DEBUG_FD_NOGOOD) {
+				std::cout << " the clause will be forgotten. Current size is " << learnt_clause.size << std::endl;
+				std::cout << " Clause : " << learnt_clause << std::endl;
+			}
+#endif
 		//std::cout << " \n \n \n  yes " << std::endl;
 		//	exit(1);
 
@@ -11488,7 +11495,7 @@ bool Mistral::Solver::learn_virtual_literals() {
 					}
 					else{
 						lvl =assignment_level[tmp_id];
-						learnt_clause.add(encode_boolean_variable_as_literal(tmp_id, 0));
+						tmp_literal=(encode_boolean_variable_as_literal(tmp_id, 0));
 					}
 
 					//		learnt_clause.add(encode_boolean_variable_as_literal(tmp_id, 0));
@@ -11584,6 +11591,14 @@ bool Mistral::Solver::learn_virtual_literals() {
 
 		while (bound_literals_to_explore.size)
 		{
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+			if (parameters.lazy_generation && parameters.semantic_learning){
+				std::cout << "ERROR parameters.lazy_generation && parameters.semantic_learning &  bound_literals_to_explore.size " << std::endl;
+				exit(1);
+			}
+#endif
+
 			//graph_size++;
 			Literal _q= bound_literals_to_explore.pop();
 			int id_range = 	get_variable_from_literal(_q);
@@ -11601,6 +11616,11 @@ bool Mistral::Solver::learn_virtual_literals() {
 			learnt_clause.add(_q);
 		}
 
+#ifdef _DEBUG_FD_NOGOOD
+			if(_DEBUG_FD_NOGOOD) {
+				std::cout << " Final size is " << learnt_clause.size << std::endl;
+			}
+#endif
 		return true;
 	}
 	else{
@@ -11796,7 +11816,7 @@ void Mistral::Solver::clean_fdlearn4() {
 					{
 						std::cout << " \n Explain the literal " << a_literal << std::endl;
 					}
-					//std::cout << " its explanation comes from : "<< current_explanation << std::endl;
+					std::cout << " its explanation comes from : "<< current_explanation << std::endl;
 				}
 
 #endif
@@ -11811,7 +11831,7 @@ void Mistral::Solver::clean_fdlearn4() {
 
 				//Additionnal test - not necessary
 				//std::cout << " check clause " << this << std::endl;
-
+				//TODO perform test
 				if (dynamic_cast<Array<Literal> *>(current_explanation))
 				{
 					//	std::cout << "is a clause? \n" << current_explanation << std::endl;
@@ -11826,10 +11846,10 @@ void Mistral::Solver::clean_fdlearn4() {
 						if (! is_a_bound_literal(q))
 								if (get_id_boolean_variable(q)!=a_literal){
 							level__= assignment_level[get_id_boolean_variable(q)];
-							if (level__> level){
-								std::cout << " check clause ERROR : level__> lvl " << std::endl;
-								exit(1);
-							}
+				//			if (level__> level){
+				//				std::cout << " check clause ERROR : level__> lvl " << std::endl;
+				//				exit(1);
+				//			}
 						}
 					}
 				}
@@ -11837,6 +11857,12 @@ void Mistral::Solver::clean_fdlearn4() {
 				treat_explanation4(current_explanation, start, end);
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 			}
+
+			if (literals_to_explore.size != remainPathC){
+				std::cout << " literals_to_explore.size != remainPathC " << std::endl;
+				exit(1);
+			}
+
 #endif
 			current_explanation = get_next_to_explore2(a_literal);
 			//		std::cout << "latest before while =" << pathC << std::endl;
@@ -11845,6 +11871,13 @@ void Mistral::Solver::clean_fdlearn4() {
 
 		//std::cout << "\n BEFORE we will explain.size "<< bound_literals_to_explore.size << std::endl;
 		//exit(1);
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+		if (is_a_bound_literal(a_literal)) {
+			std::cout << " is_a_bound_literal a_literal " << std::endl;
+			exit(1);
+		}
+#endif
 		learnt_clause[0] = a_literal;
 #ifdef 	_DEBUG_FD_NOGOOD
 		if(_DEBUG_FD_NOGOOD){
@@ -11893,12 +11926,34 @@ void Mistral::Solver::clean_fdlearn4() {
 #endif
 
 
-#ifdef _DEBUG_NOGOOD
-			if(_DEBUG_NOGOOD) {
+#ifdef _DEBUG_FD_NOGOOD
+			if(_DEBUG_FD_NOGOOD) {
 				std::cout << " [static] Forget  clause" << std::endl;
 			}
 #endif
 			if( learnt_clause.size != 1 ) {
+
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+				Literal __l ;
+				unsigned int __size = learnt_clause.size;
+				for (unsigned i = 0 ; i< __size; ++i)
+				{
+					__l = learnt_clause[i];
+					for (unsigned j = i+1 ; j< __size; ++j)
+					{
+						if (__l == learnt_clause[j]){
+							std::cout << " Literal appears twice in a clause that will be deleted! " << __l << std::endl;
+							std::cout << "learnt_clause " << learnt_clause << std::endl;
+							std::cout << " current lvl  " << level << std::endl;
+							std::cout << " variablesize  " << variables.size << std::endl;
+
+							exit(1);
+						}
+
+					}
+				}
+#endif
 
 				base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0), true);
 				//	try_to_keep_or_forget();
@@ -11966,8 +12021,8 @@ void Mistral::Solver::clean_fdlearn4() {
 			}
 #endif
 
-#ifdef _DEBUG_NOGOOD
-			if(_DEBUG_NOGOOD) {
+#ifdef _DEBUG_FD_NOGOOD
+			if(_DEBUG_FD_NOGOOD) {
 				std::cout << " keep clause" << std::endl;
 			}
 #endif
@@ -12011,6 +12066,24 @@ void Mistral::Solver::clean_fdlearn4() {
 					//q = orderedliterals[i].l;
 					learnt_clause.fast_add(orderedliterals[i].l);
 				}
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+				Literal __l ;
+				unsigned int __size = learnt_clause.size;
+				for (unsigned i = 0 ; i< __size; ++i)
+				{
+					__l = learnt_clause[i];
+					for (unsigned j = i+1 ; j< __size; ++j)
+					{
+						if (__l == learnt_clause[j]){
+							std::cout << " Literal appears twice!! " << __l << std::endl;
+							std::cout << "learnt_clause " << learnt_clause << std::endl;
+							exit(1);
+						}
+
+					}
+				}
+#endif
 
 				base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
 				//	try_to_keep_or_forget();
@@ -15179,11 +15252,11 @@ std::string Mistral::SolverCmdLine::get_filename() {
   return fileArg->getValue(); //.c_str();
 }
 
-int Mistral::SolverCmdLine::get_seed() { 
+int Mistral::SolverCmdLine::get_seed() {
   return seedArg->getValue();
 }
 
-int Mistral::SolverCmdLine::get_randomization() { 
+int Mistral::SolverCmdLine::get_randomization() {
   return randomizationArg->getValue();
 }
 
@@ -15230,13 +15303,13 @@ bool Mistral::SolverCmdLine::enumerate_solutions() {
 void Mistral::Solver::store_reason(Explanation *expl, Atom a) {
   Explanation::iterator stop;
   Explanation::iterator lit = expl->get_reason_for(a, ((a != NULL_ATOM) ? assignment_level[a] : level), stop);
-  
+
   Vector< Literal > ng;
   while(lit < stop) {
     ng.add(*lit);
     ++lit;
   }
-  
+
   if(a != NULL_ATOM) {
 
     Literal l = literal(variables[a]);
@@ -15284,7 +15357,7 @@ void Mistral::Solver::check_nogoods() {
     std::cout << " " << ((int*)(nogood_origin[i])) << " ";
     std::cout.flush();
 
-    if(nogood_origin[i]) 
+    if(nogood_origin[i])
       std::cout << nogood_origin[i];
     else
       std::cout << "learning";
