@@ -8156,8 +8156,15 @@ void Mistral::Solver::generate_variables(){
 			lvl =assignment_level[tmp_id];
 
 		learnt_clause.add(encode_boolean_variable_as_literal(tmp_id, 1));
-		if(lvl > backtrack_level)
-			backtrack_level = lvl;
+		//if(lvl > backtrack_level)
+		//	backtrack_level = lvl;
+
+		if (backtrack_level < lvl){
+			std::cout << "ERROR backtrack_level < lvl !! " << std::endl;
+			//backtrack_level = lvl;
+			exit(1);
+		}
+
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 		if(lvl > backtrack_level){
@@ -8186,8 +8193,14 @@ void Mistral::Solver::generate_variables(){
 
 		learnt_clause.add(encode_boolean_variable_as_literal(tmp_id, 0));
 
-		if(lvl > backtrack_level)
-				backtrack_level = lvl;
+//		if(lvl > backtrack_level)
+//				backtrack_level = lvl;
+
+		if (backtrack_level < lvl){
+			std::cout << "ERROR backtrack_level < lvl !! " << std::endl;
+			//backtrack_level = lvl;
+			exit(1);
+		}
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 		if(lvl > backtrack_level){
@@ -9089,6 +9102,9 @@ void Mistral::Solver::treat_assignment_literal2(Literal q){
 							}
 						}
 
+						if(lvl > backtrack_level)
+								backtrack_level = lvl;
+
 					}
 				}
 
@@ -9703,6 +9719,9 @@ void Mistral::Solver::treat_bound_literal4(Literal q){
 					//TODO remove this!
 				//	if(lvl > backtrack_level)
 				//		backtrack_level = lvl;
+					if(lvl > backtrack_level)
+						backtrack_level = lvl;
+
 				}
 				else{
 
@@ -9750,6 +9769,10 @@ void Mistral::Solver::treat_bound_literal4(Literal q){
 				//TODO remove this if the clause will be learnt
 				//	if(lvl > backtrack_level)
 				//		backtrack_level = lvl;
+
+				if(lvl > backtrack_level)
+						backtrack_level = lvl;
+
 			}
 			else{
 
@@ -10770,8 +10793,15 @@ void Mistral::Solver::generate_and_learn(Literal q){
 		}
 	}
 	//TODO : Shouldn't be in the previsous test?
-	if(lvl > backtrack_level)
-		backtrack_level = lvl;
+//	if(lvl > backtrack_level)
+//		backtrack_level = lvl;
+
+	if (backtrack_level < lvl){
+		std::cout << "ERROR backtrack_level < lvl !! " << std::endl;
+		//backtrack_level = lvl;
+		exit(1);
+	}
+
 }
 
 void Mistral::Solver::repace_with_disjunctions(Literal q){
@@ -10801,7 +10831,7 @@ void Mistral::Solver::repace_with_disjunctions(Literal q){
 		//start = current_explanation->get_reason_for(q, level, end);
 		start = current_explanation->get_reason_for_literal(q, end);
 
-		Literal q;
+	//	Literal q;
 
 		while(start < end) {
 			q = *start;
@@ -10863,8 +10893,14 @@ void Mistral::Solver::repace_with_disjunctions(Literal q){
 						visited.fast_add(x);
 						// q's level is below the current level, we are not expending it further
 						learnt_clause.add(q);
-						if(lvl > backtrack_level)
-							backtrack_level = lvl;
+//						if(lvl > backtrack_level)
+//							backtrack_level = lvl;
+
+						if (backtrack_level < lvl){
+							std::cout << "ERROR backtrack_level < lvl !! " << std::endl;
+							//backtrack_level = lvl;
+							exit(1);
+						}
 					}
 			}
 			++start;
@@ -11467,8 +11503,15 @@ bool Mistral::Solver::learn_virtual_literals() {
 					//tmp_literal=encode_bound_literal(var, val,0);
 					learnt_clause.add(tmp_literal);
 
-					if(lvl > backtrack_level)
-						backtrack_level = lvl;
+//					if(lvl > backtrack_level)
+//						backtrack_level = lvl;
+
+					if (backtrack_level < lvl){
+						std::cout << "ERRORbacktrack_level < lvl !! " << std::endl;
+						//backtrack_level = lvl;
+						exit(1);
+					}
+
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 					if(lvl > backtrack_level){
@@ -11503,8 +11546,15 @@ bool Mistral::Solver::learn_virtual_literals() {
 	//				tmp_literal=encode_bound_literal(var, val,1);
 					learnt_clause.add(tmp_literal);
 
-					if(lvl > backtrack_level)
-						backtrack_level = lvl;
+//					if(lvl > backtrack_level)
+//						backtrack_level = lvl;
+
+					if (backtrack_level < lvl){
+						std::cout << "ERROR backtrack_level < lvl !! " << std::endl;
+						//backtrack_level = lvl;
+						exit(1);
+					}
+
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 					if(lvl > backtrack_level){
@@ -11518,6 +11568,7 @@ bool Mistral::Solver::learn_virtual_literals() {
 				}
 			}
 			else {
+				//TODO Improve thiw by adding the literals directly in the clause!!
 				//std::cout << " \n \n \n  iterate " << std::endl;
 				int var = visitedLowerBounds.min();
 				int val, tmp_id;
@@ -11610,7 +11661,9 @@ bool Mistral::Solver::learn_virtual_literals() {
 			int lvl = tmp_VariableRangeWithLearning->level_of(val_range,!isub) ;
 
 			if (backtrack_level < lvl){
-				backtrack_level = lvl;
+				std::cout << "ERRORbacktrack_level < lvl !! " << std::endl;
+				//backtrack_level = lvl;
+				exit(1);
 			}
 
 			learnt_clause.add(_q);
@@ -11633,7 +11686,7 @@ bool Mistral::Solver::learn_virtual_literals() {
 			{
 			bool old_semantic= parameters.semantic_learning ;
 			if (parameters.semantic_learning ) {
-
+				//TODO improve this by calling remplace with disjunctions directly !!
 				//std::cout << " \n \n \n  iterate " << std::endl;
 				int var = visitedLowerBounds.min();
 				int val, tmp_id , lvl;
