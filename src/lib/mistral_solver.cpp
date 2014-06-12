@@ -11935,6 +11935,7 @@ void Mistral::Solver::clean_fdlearn4() {
 
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+				if (parameters.semantic_learning){
 				Literal __l ;
 				unsigned int __size = learnt_clause.size;
 				for (unsigned i = 0 ; i< __size; ++i)
@@ -11952,6 +11953,7 @@ void Mistral::Solver::clean_fdlearn4() {
 						}
 
 					}
+				}
 				}
 #endif
 
@@ -12068,19 +12070,21 @@ void Mistral::Solver::clean_fdlearn4() {
 				}
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-				Literal __l ;
-				unsigned int __size = learnt_clause.size;
-				for (unsigned i = 0 ; i< __size; ++i)
-				{
-					__l = learnt_clause[i];
-					for (unsigned j = i+1 ; j< __size; ++j)
+				if (parameters.semantic_learning){
+					Literal __l ;
+					unsigned int __size = learnt_clause.size;
+					for (unsigned i = 0 ; i< __size; ++i)
 					{
-						if (__l == learnt_clause[j]){
-							std::cout << " Literal appears twice!! " << __l << std::endl;
-							std::cout << "learnt_clause " << learnt_clause << std::endl;
-							exit(1);
-						}
+						__l = learnt_clause[i];
+						for (unsigned j = i+1 ; j< __size; ++j)
+						{
+							if (__l == learnt_clause[j]){
+								std::cout << " Literal appears twice!! " << __l << std::endl;
+								std::cout << "learnt_clause " << learnt_clause << std::endl;
+								exit(1);
+							}
 
+						}
 					}
 				}
 #endif
