@@ -11568,7 +11568,7 @@ bool Mistral::Solver::learn_virtual_literals() {
 				}
 			}
 			else {
-				//TODO Improve thiw by adding the literals directly in the clause!!
+				//TODO Improve this by adding the literals directly in the clause!!
 				//std::cout << " \n \n \n  iterate " << std::endl;
 				int var = visitedLowerBounds.min();
 				int val, tmp_id;
@@ -11579,7 +11579,9 @@ bool Mistral::Solver::learn_virtual_literals() {
 					val = visitedLowerBoundvalues[var] ;
 
 					tmp_literal=encode_bound_literal(var, val,0);
-					bound_literals_to_explore.add(tmp_literal);
+			//		bound_literals_to_explore.add(tmp_literal);
+
+					learnt_clause.add(tmp_literal);
 
 					/*
 				__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
@@ -11611,7 +11613,8 @@ bool Mistral::Solver::learn_virtual_literals() {
 				for (int i = visitedUpperBounds.size() ; i>0; --i ){
 					val = visitedUpperBoundvalues[var] ;
 					tmp_literal=encode_bound_literal(var, val,1);
-					bound_literals_to_explore.add(tmp_literal);
+					//bound_literals_to_explore.add(tmp_literal);
+					learnt_clause.add(tmp_literal);
 
 					/*		__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
 
@@ -11639,9 +11642,14 @@ bool Mistral::Solver::learn_virtual_literals() {
 				}
 			}
 		}
-
+		//else
 		while (bound_literals_to_explore.size)
 		{
+
+			if (parameters.semantic_learning){
+				std::cout << "ERROR  && parameters.semantic_learning &  bound_literals_to_explore.size " << std::endl;
+				exit(1);
+			}
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 			if (parameters.lazy_generation && parameters.semantic_learning){
@@ -11686,7 +11694,7 @@ bool Mistral::Solver::learn_virtual_literals() {
 			{
 			bool old_semantic= parameters.semantic_learning ;
 			if (parameters.semantic_learning ) {
-				//TODO improve this by calling remplace with disjunctions directly !!
+				//TODO improve this by calling repace_with_disjunctions directly !!
 				//std::cout << " \n \n \n  iterate " << std::endl;
 				int var = visitedLowerBounds.min();
 				int val, tmp_id , lvl;
@@ -11697,8 +11705,8 @@ bool Mistral::Solver::learn_virtual_literals() {
 					val = visitedLowerBoundvalues[var] ;
 
 					tmp_literal=encode_bound_literal(var, val,0);
-					bound_literals_to_explore.add(tmp_literal);
-
+				//	bound_literals_to_explore.add(tmp_literal);
+					repace_with_disjunctions(tmp_literal);
 					/*
 			__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
 
@@ -11723,14 +11731,13 @@ bool Mistral::Solver::learn_virtual_literals() {
 					 */
 					var= visitedLowerBounds.next(var);
 				}
-
 				var = visitedUpperBounds.min();
 				//std::cout << "visitedLowerBounds [i]? " << min <<std::endl;
 				for (int i = visitedUpperBounds.size() ; i>0; --i ){
 					val = visitedUpperBoundvalues[var] ;
 					tmp_literal=encode_bound_literal(var, val,1);
-					bound_literals_to_explore.add(tmp_literal);
-
+				//	bound_literals_to_explore.add(tmp_literal);
+					repace_with_disjunctions(tmp_literal);
 					/*		__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
 
 			tmp_id = __x->domainConstraint->value_exist( val) ;
@@ -11756,7 +11763,7 @@ bool Mistral::Solver::learn_virtual_literals() {
 				}
 				parameters.semantic_learning =false;
 			}
-
+			//else
 			if (parameters.lazy_generation ) {
 				while (bound_literals_to_explore.size)
 				{
