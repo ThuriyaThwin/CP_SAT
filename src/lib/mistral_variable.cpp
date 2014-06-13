@@ -8334,15 +8334,48 @@ Mistral::Outcome Mistral::Goal::notify_solution(Solver *solver) {
       //std::cout << "LEVEL: " << solver->level << std::endl;
       // search the deepest level 
       int level, search_root = solver->search_root;
-      do {
-	level = solver->level;
-	if(level == search_root) {
-	  lower_bound = upper_bound;
-	  return OPT;
-	}
-	solver->restore(level-1);
-      } while(upper_bound <= objective.get_min());
-	
+      bool backjump = solver->parameters.backjump;
+      if (backjump){
+    	  if(level == search_root) {
+    		  lower_bound = upper_bound;
+    		  //	  std::cout << " level : " << level << std::endl;
+    		  //	  std::cout << "search_root : " << search_root << std::endl;
+    		  return OPT;
+    	  }
+    	  do {
+    		  level = solver->level;
+    		  solver->restore(level-1);
+    		  //} while(upper_bound <= objective.get_min());
+    	  }while(solver->level > search_root);
+
+    	  if (upper_bound <= objective.get_min()){
+    		  lower_bound = upper_bound;
+    		  //	  std::cout << " level : " << level << std::endl;
+    		  //	  std::cout << "search_root : " << search_root << std::endl;
+    		  return OPT;
+    	  }
+      }
+      else{
+    	  //  std::cout << "\n \n \n begin search root : " << search_root << std::endl;
+    	  do {
+    		  level = solver->level;
+
+    		  //	  std::cout << "lvl: " << level << std::endl;
+    		  //	  std::cout << " search root : " << search_root << std::endl;
+
+    		  //Used only without learning
+    		  if(level == search_root) {
+    			  lower_bound = upper_bound;
+    			  //	  std::cout << " level : " << level << std::endl;
+    			  //	  std::cout << "search_root : " << search_root << std::endl;
+    			  return OPT;
+    		  }
+    		  solver->restore(level-1);
+    	  } while(upper_bound <= objective.get_min());
+      }
+      //}while(solver->level > search_root);
+
+
       Decision deduction(objective, Decision::UPPERBOUND, upper_bound-1);
 
 
@@ -8355,6 +8388,7 @@ Mistral::Outcome Mistral::Goal::notify_solution(Solver *solver) {
 // 		  << deduction << " (upper bound)" << std::endl;
 //       }
 // #endif
+   //	std::cout << "backtrack to lvl " << solver->level << " and deduce "  << deduction << " (upper bound)" << std::endl;
 
       deduction.make();
 

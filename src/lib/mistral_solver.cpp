@@ -37,7 +37,7 @@
 //#define _OLD_ true
 //#define _DEBUG_NOGOOD true //(statistics.num_filterings == 491)
 //#define _DEBUG_SEARCH true
-//#define _DEBUG_FD_NOGOOD ((variables.size== 2433) && (level==40)) //true // ((variables.size == 221)) //&& (solver->level == 22))//true
+//#define _DEBUG_FD_NOGOOD (level==95) //((variables.size== 2433) && (level==40)) //true // ((variables.size == 221)) //&& (solver->level == 22))//true
 //#define _DEBUG_SHOW_LEARNT_BOUNDS true
 
 //#define _TRACKING_ATOM 368
@@ -2484,10 +2484,12 @@ void Mistral::Solver::restore() {
 
 void Mistral::Solver::restore(const int lvl) {
 
-	//std::cout << " \n lvl" << lvl << std::endl;
-	//std::cout << " \n search root" << search_root << std::endl;
-	//std::cout << "level" << level << std::endl;
-
+	/*std::cout << "\n \n restore" << level << std::endl;
+	std::cout << " \n lvl" << lvl << std::endl;
+	std::cout << " \n search root" << search_root << std::endl;
+	std::cout << "level" << level << std::endl;
+	std::cout << " decisions.size " <<  decisions.size  << std::endl;
+	*/
   decisions.size = lvl -search_root;
   while(lvl < level) restore();
 }
@@ -9841,8 +9843,7 @@ Explanation * Mistral::Solver::get_next_to_explore2(Literal & lit) {
 #endif
 							if(!_explanation)
 							{
-
-								std::cout << " \n \n !current_explanation: "  << std::endl;
+								std::cout << " \n \n !current_explanation&& not is_a_bound_literal"  << std::endl;
 								exit(1);
 							}
 							if (!literals_to_explore.size)
@@ -9890,8 +9891,30 @@ Explanation * Mistral::Solver::get_next_to_explore2(Literal & lit) {
 #endif
 				if(!_explanation)
 				{
+					std::cout << " \n \n !current_explanation with a virtual literal "  << lit << std::endl;
 
-					std::cout << " \n \n !current_explanation: "  << std::endl;
+					bool is_lb = is_lower_bound(lit);
+					int val = get_value_from_literal(lit);
+					int var = get_variable_from_literal(lit);
+					VariableRangeWithLearning* tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
+					int lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
+
+
+					std::cout << lit << "  : "  << std::endl;
+					std::cout << " variable  " << var << std::endl;
+					if (is_lb){
+						std::cout << " is lower bound " << val << std::endl;
+					}
+					else{
+						std::cout << " is upper bound " << val << std::endl;
+					}
+
+					std::cout << " lvl  " << lvl << std::endl;
+
+
+					std::cout << " \n \n literals_to_explore "  << literals_to_explore << std::endl;
+					std::cout << " \n \n variables size "  <<  variables.size  << std::endl;
+					std::cout << " \n \n level "  << level << std::endl;
 					exit(1);
 				}
 				if (!literals_to_explore.size)
@@ -12879,8 +12902,8 @@ void Mistral::Solver::branch_left() {
   }
 
   if((decision.var.id() < start_from) || (decision.var.id() >= initial_variablesize)) {
-	  std::cout << " (decision.var.id() < start_from) || (decision.var.id() >= initial_variablesize)) " << std::endl;
-	  std::cout << " (decision.var.id()) " << decision.var.id() <<std::endl;
+//	  std::cout << " (decision.var.id() < start_from) || (decision.var.id() >= initial_variablesize)) " << std::endl;
+//	  std::cout << " (decision.var.id()) " << decision.var.id() <<std::endl;
     exit(1);
   }
 #endif
@@ -12895,6 +12918,9 @@ void Mistral::Solver::branch_left() {
     exit(1);
   }
 #endif
+
+//  std::cout << " (decision.  " << decision  <<std::endl;
+//  std::cout << " (level .  " << level   <<std::endl;
 
   decision.make();
 
