@@ -2928,7 +2928,9 @@ void SchedulingSolver::dichotomic_search()
   BranchingHeuristic *heu = new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
 
   //TODO Check if to destroy activity vectors
-  LearningActivityManager * activity_mngr = NULL;
+//  LearningActivityManager * activity_mngr = NULL;
+
+  //TODO relate it to VSIDS!
   if (parameters.fd_learning && parameters.forgetfulness)
 	  activity_mngr =  new LearningActivityManager(this);
 
@@ -2957,53 +2959,10 @@ void SchedulingSolver::dichotomic_search()
 
   //std::cout << " b1491 after propag:  " << variables[1491].get_domain() << std::endl;
   //exit(1);
-  init_expression_store_size = expression_store.size;
-  int init_constraint_graph_size = constraint_graph.size;
 
-  init_booleans_last_size_size = booleans.size.back();
-  init_booleans_slot_size = booleans.slots.size;
-
- /* std::cout << " \n \n \n BEGIN expression_store.size" << expression_store.size << std::endl;
-  std::cout << " init variables.size" << initial_variablesize << std::endl;
-  std::cout << " variables.size" << variables.size << std::endl;
-  std::cout << " assignment_level.size" << assignment_level.size << std::endl;
-  std::cout << " variables.size" << assignment_order.size << std::endl;
-  std::cout << " variables.size" << reason_for.size << std::endl;
-  std::cout << " variables.size" << domain_types.size << std::endl;
-  std::cout << " variables.size" << last_solution_lb.size << std::endl;
-  std::cout << " variables.size" << last_solution_ub.size << std::endl;
-  std::cout << " \n constraint_graph.size" << constraint_graph.size << std::endl;
-  std::cout << " variable_triggers.size" << variable_triggers.size << std::endl;
-
-
-
-  std::cout << " active_variables.size" << active_variables.size << std::endl;
-  std::cout << " removed_variables.size" << removed_variables.size << std::endl;
-  std::cout << " assigned.size" << assigned.size << std::endl;
-  std::cout << " constraints.size" << constraints.size << std::endl;
-  //std::cout << " active_constraints.size" << active_constraints.size << std::endl;
-  std::cout << " posted_constraints.size" << posted_constraints.size << std::endl;
-
-  std::cout << " decisions.size" << decisions.size << std::endl;
-
-  std::cout << " solution_triggers.size" << solution_triggers.size << std::endl;
-  std::cout << " restart_triggers.size" << restart_triggers.size << std::endl;
-  std::cout << " success_triggers.size" << success_triggers.size << std::endl;
-  std::cout << " failure_triggers.size" << failure_triggers.size << std::endl;
-  std::cout << " decision_triggers.size" << decision_triggers.size << std::endl;
-  std::cout << " variable_triggers.size" << variable_triggers.size << std::endl;
-  std::cout << " constraint_triggers.size" << constraint_triggers.size << std::endl;
-  std::cout << " iterator_space.size" << iterator_space.size << std::endl;
-  std::cout << " booleans.size" << booleans.size << std::endl;
-  std::cout << " booleans.slots" << booleans.slots << std::endl;
-
-  std::cout << " \n trail : " << trail_ << std::endl;
-
-  std::cout << " \n \n \n initial_list__of_changes : "  << std::endl;
-  */
   if (params->lazy_generation)
   if (base){
-
+	  init_lazy_generation();
 	  base->extend_vectors(10000);
 	  for (int i = 0; i < start_from; ++i)
 		  (static_cast<VariableRangeWithLearning*> (variables[i].range_domain))->domainConstraint->extend_vectors();
@@ -3199,70 +3158,13 @@ void SchedulingSolver::dichotomic_search()
 #ifdef _RECOVER_GENERATED
 			  varsIds_lazy.clear();
 			  value_lazy.clear();
-			  std::cout << " c clear   varsIds_lazy and  value_lazy" << std::endl;
+//			  std::cout << " c clear   varsIds_lazy and  value_lazy" << std::endl;
 #endif
-
-
-
 			  while (__size--)
 				  base->remove(__size);
-
-
 			  if (params->lazy_generation){
-				  for( int i=init_expression_store_size; i<expression_store.size;++i) {
-					  delete expression_store[i];
-				  }
-
-				  expression_store.size =  init_expression_store_size;
-				  variables.size =initial_variablesize;
-				  assignment_level.size = initial_variablesize;
-				  assignment_order.size = initial_variablesize;
-				  reason_for.size = initial_variablesize;
-				  domain_types.size=initial_variablesize;
-				  last_solution_lb.size=initial_variablesize;
-				  last_solution_ub.size=initial_variablesize;
-				  constraint_graph.size=init_constraint_graph_size;
-				  //variable_triggers.size = 1;
-
-
-				  /*
-    		if(size.back() < 1024) {
-    		    x->bool_domain = slots.back()+size.back();
-    		    ++size.back();
-    		  } else {
-    		    int *nslot = new int[1024];
-    		    std::fill(nslot, nslot+1024, 3);
-    		    size.add(1);
-    		    slots.add(nslot);
-    		    x->bool_domain = nslot;
-    		  }
-				   */
-
-				  //booleans.size.size = init_booleans_slot_size;
-
-				  for (int i = init_booleans_last_size_size; i <1024; ++i )
-					  booleans.slots[init_booleans_slot_size-1][i]=3;
-
-				  for (int j = init_booleans_slot_size; j <booleans.slots.size; ++j )
-					  delete [] booleans.slots[j];
-
-
-
-				  booleans.size.size = init_booleans_slot_size;
-				  booleans.size[init_booleans_slot_size-1] = init_booleans_last_size_size;
-				  booleans.slots.size = init_booleans_slot_size;
-
-				  if (activity_mngr)
-					  activity_mngr->start_over();
-
-				  base->start_over();
-				  //    		VariableRangeWithLearning *__x;
-				  for (int i = 0; i < start_from; ++i)
-					  (static_cast<VariableRangeWithLearning*> (variables[i].range_domain))->domainConstraint->start_over();
+				  start_over();
 			  }
-
-			  //TODO
-			  //variables[i].free_object();?
 		  }
 		  else{
 			  __size = base->learnt.size -current_learnClauses_size;
@@ -3310,37 +3212,6 @@ void SchedulingSolver::dichotomic_search()
 		//  std::cout << " NEW  base->learnt " << base->learnt  << std::endl;
 		//  exit(1);
 	  }
-
-	/*  std::cout << " \n \n \n  expression_store.size" << expression_store.size << std::endl;
-	  std::cout << " variables.size" << variables.size << std::endl;
-	  std::cout << " assignment_level.size" << assignment_level.size << std::endl;
-	  std::cout << " variables.size" << assignment_order.size << std::endl;
-	  std::cout << " variables.size" << reason_for.size << std::endl;
-	  std::cout << " variables.size" << domain_types.size << std::endl;
-	  std::cout << " variables.size" << last_solution_lb.size << std::endl;
-	  std::cout << " variables.size" << last_solution_ub.size << std::endl;
-	  std::cout << " \n constraint_graph.size" << constraint_graph.size << std::endl;
-	  std::cout << " variable_triggers.size" << variable_triggers.size << std::endl;
-	  std::cout << " active_variables.size" << active_variables.size << std::endl;
-	  std::cout << " removed_variables.size" << removed_variables.size << std::endl;
-	  std::cout << " assigned.size" << assigned.size << std::endl;
-	  std::cout << " constraints.size" << constraints.size << std::endl;
-	  // std::cout << " active_constraints.size" << active_constraints.size << std::endl;
-	  std::cout << " posted_constraints.size" << posted_constraints.size << std::endl;
-	  std::cout << " decisions.size" << decisions.size << std::endl;
-	  std::cout << " solution_triggers.size" << solution_triggers.size << std::endl;
-	  std::cout << " restart_triggers.size" << restart_triggers.size << std::endl;
-	  std::cout << " success_triggers.size" << success_triggers.size << std::endl;
-	  std::cout << " failure_triggers.size" << failure_triggers.size << std::endl;
-	  std::cout << " decision_triggers.size" << decision_triggers.size << std::endl;
-	  std::cout << " variable_triggers.size" << variable_triggers.size << std::endl;
-	  std::cout << " constraint_triggers.size" << constraint_triggers.size << std::endl;
-	  std::cout << " iterator_space.size" << iterator_space.size << std::endl;
-	  std::cout << " booleans.size" << booleans.size << std::endl;
-	  std::cout << " booleans.size" << booleans.slots << std::endl;
-	  std::cout << " \n trail : " << trail_ << std::endl;
-
-*/
 	//  std::cout << " SLEEP FOR 10s " << std::endl;
 	//  std::this_thread::sleep_for (std::chrono::seconds(10));
 	  //exit(1);
@@ -3697,7 +3568,7 @@ void SchedulingSolver::branch_and_bound()
   statistics.start_time = get_run_time();
 
   //std::cout << (get_run_time() - statistics.start_time) << std::endl;
-  int old_learning = parameters.fd_learning;
+  //int old_learning = parameters.fd_learning;
   //Cancel learning : check this when alowing lazy generation
   if(base)
   {
@@ -3747,7 +3618,6 @@ void SchedulingSolver::branch_and_bound()
 	  if (!parameters.keeplearning_in_bb){
 		  parameters.fd_learning = 0;
 		  parameters.backjump = 0;
-
 	  }
   }
 
@@ -3844,7 +3714,7 @@ void SchedulingSolver::branch_and_bound()
     std::cout << " c +==========[ end branch & bound ]===========+" << std::endl;
     
   }
-  parameters.fd_learning = old_learning;
+//  parameters.fd_learning = old_learning;
 }
 
 // void StoreStats::execute()

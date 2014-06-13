@@ -398,6 +398,8 @@ namespace Mistral {
   class Goal;
   class VariableImplementation;
   class ConstraintClauseBase;
+  //Declared here to undo lazy generation!
+  class LearningActivityManager;
 
 //  class DomainFaithfulness;
   class Solver : public Environment {
@@ -802,11 +804,22 @@ namespace Mistral {
 	//
 //	LearningActivityManager * activity_mngr;
 
-	//We need these vectors only to update the size of var_activity and lit_activity
+	//We need these vectors only to update the size of var_activity and lit_activity with lazy generation
 
     Vector<double> *activity_var_activity;
     Vector<double> *activity_lit_activity;
 
+    //This method undo all the generated variables.
+    void start_over();
+    void init_lazy_generation();
+    //However it needs all these variables
+    //TODO remove useless variables..
+    LearningActivityManager * activity_mngr;
+
+    int init_booleans_slot_size;
+    int init_booleans_last_size_size;
+    int init_constraint_graph_size;
+    int init_expression_store_size;
 
 	int graph_size;
 	//reduce clause after learning
