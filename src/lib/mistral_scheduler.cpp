@@ -3625,7 +3625,9 @@ void SchedulingSolver::branch_and_bound()
 //	 policy = new Geometric();
 //  else if (params->PolicyRestart==LUBY)
 
-  delete policy ;
+
+  //It looks like there is more stuff to do when changing the policy
+/*  delete policy ;
   if (params->BandBPolicyRestart==GEOMETRIC)
 	  policy = new Geometric();
   else if (params->BandBPolicyRestart==LUBY)
@@ -3634,7 +3636,7 @@ void SchedulingSolver::branch_and_bound()
 	  std::cout << " RestartPolicy not found " << std::endl;
 	  exit(1);
   }
-
+*/
 
 //  else {
 //	  std::cout << " RestartPolicy not found " << std::endl;
