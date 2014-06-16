@@ -11472,7 +11472,7 @@ void Mistral::Solver::clean_fdlearn3() {
 bool Mistral::Solver::should_forget() {
 	bool result = false;
 	if ((parameters.forget_relatedto_nogood_size) &&
-			((learnt_clause.size + bound_literals_to_explore.size + visitedLowerBounds.size()+  visitedUpperBounds.size()) > parameters.forget_relatedto_nogood_size)) {
+			((learnt_clause.size + bound_literals_to_explore.size + visitedLowerBounds.size()+  visitedUpperBounds.size()) >= parameters.forget_relatedto_nogood_size)) {
 		//std::cout << " c static learnt_clause.size  forget "  << learnt_clause.size  << std::endl;
 		result = true;
 	}
@@ -11804,14 +11804,22 @@ bool Mistral::Solver::learn_virtual_literals() {
 				//	exit(1);
 				}
 			}
-			else
+			else{
 				while (bound_literals_to_explore.size)
 				{
 					graph_size++;
 					repace_with_disjunctions(bound_literals_to_explore.pop());
 				}
-			parameters.semantic_learning= old_semantic;
 
+				//We add this test to handle the particular case where the new size of the clause is bigger than the authorized limit.
+				//This can happen only without lazy generation and without learning.
+				if ((parameters.forget_relatedto_nogood_size) &&
+						((learnt_clause.size) >= parameters.forget_relatedto_nogood_size)) {
+					//std::cout << " c static learnt_clause.size  forget "  << learnt_clause.size  << std::endl;
+					return true;
+				}
+			}
+			parameters.semantic_learning= old_semantic;
 		}
 		return false;
 	}
