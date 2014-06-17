@@ -2242,13 +2242,98 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) 
 
 
 //Exact reason for
+Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for_reduction(Literal l, Explanation * default_explanation) {
+
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+	if (!is_a_bound_literal(l))
+	{
+		std::cout << "   is_a_bound_literal ERRORreason_for " << l << std::endl;
+		exit(1);
+	}
+	if (get_variable_from_literal(l) != id )
+	{
+		std::cout << "   get_variable_from_literal(l)!=id() ERROR " << std::endl;
+		exit(1);
+	}
+#endif
+
+	int size , val = get_value_from_literal(l);
+	if (is_lower_bound(l))
+	{
+
+		//		std::cout << "l"<< l << std::endl;
+		//		std::cout << "lowerbounds "<< lowerbounds << std::endl;
+		//		std::cout << "lower_bound_reasons"<< lower_bound_reasons << std::endl;
+		size =lowerbounds.size ;
+
+		//		std::cout << "size" << size<< std::endl;
+		while (size --)
+			if(lowerbounds[size]==val)
+			{
+
+				//			std::cout << " c lower bound found! " << std::endl;
+				//			if (upper_bound_reasons[size+1] == NULL)
+				//				std::cout << "c return NULL " << std::endl;
+				//			else
+				//				std::cout << " c return lowerbounds reason_for --> " << *lower_bound_reasons[size+1] << std::endl;
+				//	latest_visited_lower_bound = lowerbounds[size+1];
+				return lower_bound_reasons[size];
+			}
+//		std::cout << "ERROR lowerbound not found!  " << std::endl;
+
+		return default_explanation;
+
+	}
+	else
+	{
+		size =upperbounds.size ;
+		while (size --)
+			if(upperbounds[size]==val)
+			{
+				//			std::cout << "c upperbound found" << size<< std::endl;
+				//			if (upper_bound_reasons[size+1] == NULL)
+				//				std::cout << "c return NULL " << std::endl;
+				//			else
+
+				//					std::cout <<" c return upperbounds reason_for --> " << *upper_bound_reasons[size+1] << std::endl;
+
+				//		latest_visited_upper_bound = upperbounds[size+1];
+				return upper_bound_reasons[size];
+			}
+		return default_explanation;
+	/*	std::cout << "ERROR upperbound not found ! " << std::endl;
+		std::cout << "l"<< l << std::endl;
+		std::cout << " id : "<< id << std::endl;
+		std::cout << " value "<< val << std::endl;
+		std::cout << "lowerbounds "<< upperbounds << std::endl;
+		std::cout << "upperboundslevels "<< upper_bound_levels << std::endl;
+		std::cout << "upper_bound_reasons"<< upper_bound_reasons << std::endl;
+
+
+		std::cout << "  solver level  " << solver->level << std::endl;
+
+		int bool_var_id = domainConstraint->value_exist(val);
+
+		std::cout << "  bool_var_id " <<bool_var_id << std::endl;
+
+		//	if (bool_var_id<0)
+		exit(1);
+		*/
+		//Reason not found --> return default_explanation
+
+
+		//	else
+		//		return domainConstraint;
+	}
+}
 Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) {
 
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 	if (!is_a_bound_literal(l))
 	{
-		std::cout << "   is_a_bound_literal ERROR " << std::endl;
+		std::cout << "   is_a_bound_literal ERRORreason_for " << l << std::endl;
 		exit(1);
 	}
 	if (get_variable_from_literal(l) != id )

@@ -1577,7 +1577,12 @@ namespace Mistral {
 
 		  //		  std::cout << "ENDDDDD \n \n " << std::endl;
 	  };
+
 	  Explanation* reason_for(Literal l);
+	  Explanation* reason_for_reduction(Literal l, Explanation * default_explanation);
+
+
+
 #ifdef _ASSIGNMENT_ORDER
 	  ReversibleNum<int> *order;
 #endif

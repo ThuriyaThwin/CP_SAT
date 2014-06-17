@@ -825,6 +825,12 @@ namespace Mistral {
 	//reduce clause after learning
 	void reduce_clause(unsigned int old_generation_size= 0);
 
+	bool visited_explanation(Literal q, bool lazygeneration);
+	bool visited_real_literal(Literal q);
+	bool visited_virtual_literal(Literal q);
+	bool visited_virtual_literal(Literal q, int forbidden_var, int forbidden_val,  bool forbidden_lb );
+
+
 //    void learn_with_lazygeneration_no_bound_at_the_end();
 //    void learn_with_lazygeneration_and_semantic_learning();
 //    void learn_with_lazygeneration_and_semantic_learning2();
