@@ -823,10 +823,10 @@ namespace Mistral {
 
 	int graph_size;
 	//reduce clause after learning
-	void reduce_clause(unsigned int old_generation_size= 0);
+	void reduce_clause(bool semantic_reduction=false);
 	int reduce_bounds();
 
-	bool visited_explanation(Literal q, bool lazygeneration);
+	bool visited_explanation(Literal q, bool semantic_reduction);
 	bool visited_real_literal(Literal q);
 	bool visited_virtual_literal(Literal q);
 	bool visited_virtual_literal(Literal q, int forbidden_var, int forbidden_val,  bool forbidden_lb );
