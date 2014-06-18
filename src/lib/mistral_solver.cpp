@@ -12063,6 +12063,9 @@ bool Mistral::Solver::learn_virtual_literals() {
 					//std::cout << " c static learnt_clause.size  forget "  << learnt_clause.size  << std::endl;
 					return true;
 				}
+				//else
+				reduce_clause(false);
+
 			}
 			parameters.semantic_learning= old_semantic;
 		}
@@ -12894,7 +12897,7 @@ bool Mistral::Solver::visited_explanation(Literal q, bool semantic_reduction){
 	 */
 //	std::cout << "  \n "<< q << " will be removed " << " its level " << assignment_level[id] <<  std::endl;
 
-	if (!parameters.lazy_generation)
+	if (semantic_reduction && (!parameters.lazy_generation))
 		visited.fast_remove(id);
 
 	return true;
