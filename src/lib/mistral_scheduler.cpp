@@ -341,7 +341,7 @@ ParameterList::ParameterList(int length, char **commandline) {
 //  Policy    = "geom";
   Policy    = "geom";
   BandBPolicy    = "geom";
-  Factor    = 1.3;
+  Factor    = 1.333;
   Decay     = 0.0;
   Forgetfulness = 0.0;
   Forgetfulness_retated_to_backjump = 0.0;
@@ -2937,7 +2937,7 @@ void SchedulingSolver::dichotomic_search()
   //BranchingHeuristic *heu = new GenericHeuristic < NoOrder, MinValue > (this);
   RestartPolicy *pol ;
   if (params->PolicyRestart==GEOMETRIC)
-	  pol = new Geometric();
+	  pol = new Geometric(256,params->Factor);
   else if (params->PolicyRestart==LUBY)
 	  pol = new Luby();
   else {
@@ -3627,16 +3627,19 @@ void SchedulingSolver::branch_and_bound()
 
 
   //It looks like there is more stuff to do when changing the policy
-/*  delete policy ;
+  delete policy ;
   if (params->BandBPolicyRestart==GEOMETRIC)
-	  policy = new Geometric();
+	  policy = new Geometric(256,params->Factor);
   else if (params->BandBPolicyRestart==LUBY)
 	  policy = new Luby();
   else {
 	  std::cout << " RestartPolicy not found " << std::endl;
 	  exit(1);
   }
-*/
+  //In order to simulate initialise_search() we need these two lines
+  parameters.restart_limit = policy->base;
+  parameters.limit = (policy->base > 0);
+
 
 //  else {
 //	  std::cout << " RestartPolicy not found " << std::endl;

@@ -12897,6 +12897,8 @@ bool Mistral::Solver::visited_explanation(Literal q, bool semantic_reduction){
 	 */
 //	std::cout << "  \n "<< q << " will be removed " << " its level " << assignment_level[id] <<  std::endl;
 
+	//We have to do that otherwise we can have cycles in the conflict graph.
+	//Try for instance  bin/scheduler data/scheduling/jsp/15x15/7 -fdlearning 8  -reduce 1 -semantic 1 Without this test.
 	if (semantic_reduction && (!parameters.lazy_generation))
 		visited.fast_remove(id);
 
