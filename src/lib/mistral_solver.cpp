@@ -12918,8 +12918,8 @@ void Mistral::Solver::reduce_clause(bool semantic_reduction){
 
 //	std::cout << " \n \n \n \n start reduction " << std::endl;
 
-	//TODO chanhe it to be  i> 0
-	for (int i = __size-1; i>1; --i){
+
+	for (int i = __size-1; i>0; --i){
 
 		q = learnt_clause[i];
 		if (visited_explanation(q, semantic_reduction))
