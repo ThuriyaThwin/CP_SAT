@@ -11489,21 +11489,257 @@ bool Mistral::Solver::should_forget() {
 	return result;
 }
 
+int Mistral::Solver::reduce_bounds(){
+
+	int reduced = 0;
+	bool remove ;
+	bool lazygeneration = parameters.lazy_generation;
+
+
+	int var = visitedLowerBounds.min();
+	unsigned int size_bitset =visitedLowerBounds.size();
+	Explanation * explanation;
+	Explanation::iterator start_tmp_iterator, end_tmp_iterator;
+
+	int val , id_bool;
+	Literal tmp_literal, tmp;
+	VariableRangeWithLearning* __x;
+	DomainFaithfulnessConstraint * dom_constraint;
+
+	for (int i = size_bitset; i>0; --i ){
+		val = visitedLowerBoundvalues[var] ;
+		visitedLowerBounds.fast_remove(var);
+		tmp_literal=encode_bound_literal(var, val,0);
+
+
+		VariableRangeWithLearning* tmp_VariableRangeWithLearning =
+				static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
+
+		if (lazygeneration){
+			dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
+			id_bool = -1;
+			//	if (!is_lb)
+			//		id_bool = dom_constraint->value_exist( val ) ;
+			//	else
+			//We know that it is a lower bound
+			id_bool = dom_constraint->value_exist( val-1 ) ;
+
+			if (id_bool>0)
+				explanation = tmp_VariableRangeWithLearning->reason_for_reduction(tmp_literal, reason_for[id_bool]);
+			else
+				explanation = tmp_VariableRangeWithLearning->reason_for(tmp_literal);
+		}
+		else
+			explanation = tmp_VariableRangeWithLearning->reason_for(tmp_literal);
+
+		//	explanation = tmp_VariableRangeWithLearning->reason_for_reduction(q, reason_for[id]);
+		remove=true;
+		//exit(1);
+		if (!explanation) {
+			std::cout << " NULL explanation of a virtual literal when reducing the nogood" << std::endl;
+			exit(1);
+		}
+
+
+		start_tmp_iterator = explanation->get_reason_for_literal(tmp_literal, end_tmp_iterator);
+
+		while(remove && (start_tmp_iterator < end_tmp_iterator)) {
+
+			tmp = *start_tmp_iterator;
+			++start_tmp_iterator;
+			//	std::cout << " tmp : "<< tmp << std::endl;
+			if (is_a_bound_literal(tmp))
+			{
+				//						if (!visited_virtual_literal(tmp, forbidden_var,forbidden_val, forbidden_lb))
+				if (!visited_virtual_literal(tmp))
+					//explored = false;
+					remove = false;
+			}
+			else{
+				//					return false;
+				int id_tmp = get_id_boolean_variable(tmp);
+				if (id_tmp < initial_variablesize){
+					if ( !visited.fast_contain(id_tmp))
+						//explored = false;
+						remove = false;
+				}
+				else {
+					int var = varsIds_lazy[id_tmp - initial_variablesize];
+					//bool already_explored = false ;
+					bool already_explored = false ;
+					//	bool var_visited = false ;
+
+					//bool isub = SIGN(NOT(q));
+					bool islb = SIGN((tmp));
+
+					//				if (var==forbidden_var && islb==forbidden_lb)
+					//					return false;
+
+					int val = value_lazy[id_tmp - initial_variablesize];
+					//TODO Improve this by integrating return false without already_explored
+					//var_visited & already_explored
+					if (!islb) {
+						if (visitedUpperBounds.fast_contain(var)){
+							//	var_visited = true;
+							if (visitedUpperBoundvalues[var] <= val){
+								already_explored = true;
+							}
+						}
+					}
+					else {
+						if (visitedLowerBounds.fast_contain(var)){
+							//	var_visited = true;
+							if (visitedLowerBoundvalues[var] >= (val+1))
+								already_explored = true;
+						}
+					}
+					if (!already_explored)
+						//explored = false;
+						remove = false;
+				}
+			}
+		}
+
+
+		if(!remove)
+			visitedLowerBounds.fast_add(var);
+		else
+			++reduced;
+		var= visitedLowerBounds.next(var);
+	}
+
+	size_bitset =visitedUpperBounds.size();
+
+	var = visitedUpperBounds.min();
+
+	for (int i = size_bitset ; i>0; --i ){
+		val = visitedUpperBoundvalues[var] ;
+		visitedUpperBounds.fast_remove(var);
+		tmp_literal=encode_bound_literal(var, val,1);
+
+
+		VariableRangeWithLearning* tmp_VariableRangeWithLearning =
+				static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
+
+
+		if (lazygeneration){
+			dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
+			id_bool = -1;
+			//We know that it is an Upper bound
+			//	if (!is_lb)
+			id_bool = dom_constraint->value_exist( val ) ;
+			//	else
+
+			//id_bool = dom_constraint->value_exist( val-1 ) ;
+
+			if (id_bool>0)
+				explanation = tmp_VariableRangeWithLearning->reason_for_reduction(tmp_literal, reason_for[id_bool]);
+			else
+				explanation = tmp_VariableRangeWithLearning->reason_for(tmp_literal);
+		}
+		else
+			explanation = tmp_VariableRangeWithLearning->reason_for(tmp_literal);
+
+		remove=true;
+		//exit(1);
+		if (!explanation) {
+			std::cout << " NULL explanation of a virtual literal when reducing the nogood" << std::endl;
+			exit(1);
+		}
+
+
+		start_tmp_iterator = explanation->get_reason_for_literal(tmp_literal, end_tmp_iterator);
+
+		while(remove && (start_tmp_iterator < end_tmp_iterator)) {
+
+			tmp = *start_tmp_iterator;
+			++start_tmp_iterator;
+			//	std::cout << " tmp : "<< tmp << std::endl;
+			if (is_a_bound_literal(tmp))
+			{
+				//						if (!visited_virtual_literal(tmp, forbidden_var,forbidden_val, forbidden_lb))
+				if (!visited_virtual_literal(tmp))
+					//explored = false;
+					remove = false;
+			}
+			else{
+				//					return false;
+				int id_tmp = get_id_boolean_variable(tmp);
+				if (id_tmp < initial_variablesize){
+					if ( !visited.fast_contain(id_tmp))
+						//explored = false;
+						remove = false;
+				}
+				else {
+					int var = varsIds_lazy[id_tmp - initial_variablesize];
+					//bool already_explored = false ;
+					bool already_explored = false ;
+					//	bool var_visited = false ;
+
+					//bool isub = SIGN(NOT(q));
+					bool islb = SIGN((tmp));
+
+					//				if (var==forbidden_var && islb==forbidden_lb)
+					//					return false;
+
+					int val = value_lazy[id_tmp - initial_variablesize];
+					//TODO Improve this by integrating return false without already_explored
+					//var_visited & already_explored
+					if (!islb) {
+						if (visitedUpperBounds.fast_contain(var)){
+							//	var_visited = true;
+							if (visitedUpperBoundvalues[var] <= val){
+								already_explored = true;
+							}
+						}
+					}
+					else {
+						if (visitedLowerBounds.fast_contain(var)){
+							//	var_visited = true;
+							if (visitedLowerBoundvalues[var] >= (val+1))
+								already_explored = true;
+						}
+					}
+					if (!already_explored)
+						//explored = false;
+						remove = false;
+				}
+			}
+		}
+
+		if(!remove)
+			visitedUpperBounds.fast_add(var);
+		else
+			++reduced;
+
+		var= visitedUpperBounds.next(var);
+	}
+
+	return reduced;
+
+}
+
+
+
+
 bool Mistral::Solver::learn_virtual_literals() {
+
+	if (parameters.semantic_learning  && parameters.reduce_learnt_clause){
+		reduce_bounds();
+	}
 
 	if (should_forget()){
 
 #ifdef _DEBUG_FD_NOGOOD
-			if(_DEBUG_FD_NOGOOD) {
-				std::cout << " the clause will be forgotten. Current size is " << learnt_clause.size << std::endl;
-				std::cout << " Clause : " << learnt_clause << std::endl;
-			}
+		if(_DEBUG_FD_NOGOOD) {
+			std::cout << " the clause will be forgotten. Current size is " << learnt_clause.size << std::endl;
+			std::cout << " Clause : " << learnt_clause << std::endl;
+		}
 #endif
 		//std::cout << " \n \n \n  yes " << std::endl;
 		//	exit(1);
 
 		if (parameters.semantic_learning ) {
-
 
 			if (parameters.lazy_generation){
 				Literal tmp_literal;
@@ -11534,8 +11770,8 @@ bool Mistral::Solver::learn_virtual_literals() {
 					//tmp_literal=encode_bound_literal(var, val,0);
 					learnt_clause.add(tmp_literal);
 
-//					if(lvl > backtrack_level)
-//						backtrack_level = lvl;
+					//					if(lvl > backtrack_level)
+					//						backtrack_level = lvl;
 
 					if (backtrack_level < lvl){
 						std::cout << "ERRORbacktrack_level < lvl !! " << std::endl;
@@ -11574,11 +11810,11 @@ bool Mistral::Solver::learn_virtual_literals() {
 
 					//		learnt_clause.add(encode_boolean_variable_as_literal(tmp_id, 0));
 
-	//				tmp_literal=encode_bound_literal(var, val,1);
+					//				tmp_literal=encode_bound_literal(var, val,1);
 					learnt_clause.add(tmp_literal);
 
-//					if(lvl > backtrack_level)
-//						backtrack_level = lvl;
+					//					if(lvl > backtrack_level)
+					//						backtrack_level = lvl;
 
 					if (backtrack_level < lvl){
 						std::cout << "ERROR backtrack_level < lvl !! " << std::endl;
@@ -11610,7 +11846,7 @@ bool Mistral::Solver::learn_virtual_literals() {
 					val = visitedLowerBoundvalues[var] ;
 
 					tmp_literal=encode_bound_literal(var, val,0);
-			//		bound_literals_to_explore.add(tmp_literal);
+					//		bound_literals_to_explore.add(tmp_literal);
 
 					learnt_clause.add(tmp_literal);
 
@@ -11709,9 +11945,9 @@ bool Mistral::Solver::learn_virtual_literals() {
 		}
 
 #ifdef _DEBUG_FD_NOGOOD
-			if(_DEBUG_FD_NOGOOD) {
-				std::cout << " Final size is " << learnt_clause.size << std::endl;
-			}
+		if(_DEBUG_FD_NOGOOD) {
+			std::cout << " Final size is " << learnt_clause.size << std::endl;
+		}
 #endif
 		return true;
 	}
@@ -11722,7 +11958,7 @@ bool Mistral::Solver::learn_virtual_literals() {
 		if (parameters.lazy_generation && parameters.semantic_learning)
 			generate_variables();
 		else
-			{
+		{
 			bool old_semantic= parameters.semantic_learning ;
 			if (parameters.semantic_learning ) {
 				//TODO improve this by calling repace_with_disjunctions directly !!
@@ -11736,7 +11972,7 @@ bool Mistral::Solver::learn_virtual_literals() {
 					val = visitedLowerBoundvalues[var] ;
 
 					tmp_literal=encode_bound_literal(var, val,0);
-				//	bound_literals_to_explore.add(tmp_literal);
+					//	bound_literals_to_explore.add(tmp_literal);
 					repace_with_disjunctions(tmp_literal);
 					/*
 			__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
@@ -11767,7 +12003,7 @@ bool Mistral::Solver::learn_virtual_literals() {
 				for (int i = visitedUpperBounds.size() ; i>0; --i ){
 					val = visitedUpperBoundvalues[var] ;
 					tmp_literal=encode_bound_literal(var, val,1);
-				//	bound_literals_to_explore.add(tmp_literal);
+					//	bound_literals_to_explore.add(tmp_literal);
 					repace_with_disjunctions(tmp_literal);
 					/*		__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
 
@@ -11800,8 +12036,8 @@ bool Mistral::Solver::learn_virtual_literals() {
 				{
 					graph_size++;
 					generate_and_learn(bound_literals_to_explore.pop());
-				//	std::cout << " \n \n \n parameters.lazygeneration NOT YET" << std::endl;
-				//	exit(1);
+					//	std::cout << " \n \n \n parameters.lazygeneration NOT YET" << std::endl;
+					//	exit(1);
 				}
 			}
 			else{
@@ -12017,6 +12253,8 @@ void Mistral::Solver::clean_fdlearn4() {
 
 
 //		std::cout << " \n \n \n  TEST  " << std::endl;
+
+		//check clause before this ?
 		if (learn_virtual_literals()){
 
 //			std::cout << "learnt_clause [will be forgotten]: "  << learnt_clause  << std::endl;
@@ -12059,6 +12297,7 @@ void Mistral::Solver::clean_fdlearn4() {
 				}
 #endif
 
+				/*
 				if (parameters.reduce_learnt_clause){
 
 					//	std::cout << "reducing clause  "  << learnt_clause <<  std::endl;
@@ -12078,7 +12317,7 @@ void Mistral::Solver::clean_fdlearn4() {
 					}
 #endif
 				}
-
+*/
 				base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0), true);
 				//	try_to_keep_or_forget();
 				//		base->forget_last();
@@ -12212,11 +12451,10 @@ void Mistral::Solver::clean_fdlearn4() {
 						}
 #endif
 
-				if (parameters.reduce_learnt_clause){
+/*				if (parameters.reduce_learnt_clause){
 
 						//	std::cout << "reducing clause  "  << learnt_clause <<  std::endl;
 					int s = learnt_clause.size;
-
 //					std::cout << "  \n begin reduce :  clause :  \n "  << learnt_clause << std::endl; ;
 			//		std::cout << "  \n clause will be redured from size \n "  << learnt_clause.size ;
 						reduce_clause();
@@ -12224,7 +12462,6 @@ void Mistral::Solver::clean_fdlearn4() {
 			//					std::cout << " to "  << learnt_clause.size <<  std::endl;
 						if (s > learnt_clause.size)
 							std::cout << " reduction effect  "  << s-learnt_clause.size <<  std::endl;
-
 #ifdef _CHECK_NOGOOD
 						//	if (graph_size <35)
 						{
@@ -12232,8 +12469,8 @@ void Mistral::Solver::clean_fdlearn4() {
 							//	store_nogood(learnt_clause);
 						}
 #endif
-
 				}
+*/
 
 				base->learn(learnt_clause, (parameters.init_activity ? parameters.activity_increment : 0.0));
 				//	try_to_keep_or_forget();
@@ -12509,7 +12746,8 @@ bool Mistral::Solver::visited_explanation(Literal q, bool lazygeneration){
 						//	bool var_visited = false ;
 
 						//bool isub = SIGN(NOT(q));
-						bool islb = SIGN((q));
+						//bool islb = SIGN((q));
+						bool islb = SIGN((tmp));
 
 						if (var==forbidden_var && islb==forbidden_lb)
 							return false;
@@ -12599,7 +12837,8 @@ bool Mistral::Solver::visited_explanation(Literal q, bool lazygeneration){
 					//	bool var_visited = false ;
 
 					//bool isub = SIGN(NOT(q));
-					bool islb = SIGN((q));
+					//bool islb = SIGN((q));
+					bool islb = SIGN((tmp));
 
 					if (var==forbidden_var && islb==forbidden_lb)
 						return false;
