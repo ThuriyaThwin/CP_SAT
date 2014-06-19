@@ -2938,7 +2938,7 @@ void SchedulingSolver::dichotomic_search()
   RestartPolicy *pol ;
   if (params->PolicyRestart==GEOMETRIC)
 	  //TODO recheck that
-	  //In dichotomy we keep everythink as default
+	  //In dichotomy we keep everything as default
 	  pol = new Geometric();
 	//  pol = new Geometric(256,params->Factor);
   else if (params->PolicyRestart==LUBY)
