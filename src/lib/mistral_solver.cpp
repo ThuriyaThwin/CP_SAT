@@ -15871,7 +15871,7 @@ void Mistral::Solver::start_over(bool lazygeneration){
 		while (__size--)
 			base->remove(__size);
 
-	//	policy->initialise(parameters.restart_limit);
+		policy->initialise(parameters.restart_limit);
 
 		//	std::cout << " ERROR CALLING solve::start_over without lazygeneration" << std::endl;
 		//	exit(1);
