@@ -2095,7 +2095,7 @@ int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 	}
 
 
-	std::cout << " ERROR level_of END ? " << std::endl;
+	std::cout << " ERROR level_of END ? TRY TO USE level_of_inreduction instead!!! " << std::endl;
 	std::cout << " \n level_of " << std::endl;
 	std::cout << " variable " << id << std::endl;
 	std::cout << " val " << val << std::endl;
