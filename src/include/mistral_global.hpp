@@ -226,7 +226,7 @@ namespace Mistral {
 #define SIZEOF_VARIABLES 100000
 #endif
 
-// MAX_GENERATED_VARIABLES is the limite we can tolorate of variables.
+// MAX_GENERATED_VARIABLES is the limit we can tolorate of variables.
 //Wheneve we reach this limit we undo lazy generation
 #ifndef _64BITS_LITERALS
 #define MAX_GENERATED_VARIABLES 14000

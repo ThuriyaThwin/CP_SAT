@@ -1979,6 +1979,18 @@ Mistral::Outcome Mistral::Solver::restart_search(const int root, const bool _res
 
   while(satisfiability == UNKNOWN) {
 
+	  //We need this to control the maximum possible number of generated variables
+	  if (variables.size >MAX_GENERATED_VARIABLES){
+		  std::cout << " c MAX_GENERATED_VARIABLES reached" << std::endl;
+		  if (parameters.lazy_generation)
+			  start_over(true);
+		  else{
+			  std::cout << " ERROR start_over without LazyGeneration" << std::endl;
+			  exit(1);
+		  }
+	  }
+
+
     statistics.num_constraints = posted_constraints.size;
     if(base) statistics.num_clauses = base->clauses.size;
     if(base) statistics.num_learned = base->learnt.size;
@@ -12088,6 +12100,7 @@ bool Mistral::Solver::learn_virtual_literals() {
 					repace_with_disjunctions(bound_literals_to_explore.pop());
 				}
 
+				reduce_clause(false);
 				//We add this test to handle the particular case where the new size of the clause is bigger than the authorized limit.
 				//This can happen only without lazy generation and without learning.
 				if ((parameters.forget_relatedto_nogood_size) &&
@@ -12096,7 +12109,6 @@ bool Mistral::Solver::learn_virtual_literals() {
 					return true;
 				}
 				//else
-				reduce_clause(false);
 
 			}
 			parameters.semantic_learning= old_semantic;
@@ -12120,16 +12132,7 @@ void Mistral::Solver::clean_fdlearn4() {
 		simple_fdlearn_nogood();
 	else
 	{
-		if (variables.size >MAX_GENERATED_VARIABLES){
-			std::cout << " c MAX_GENERATED_VARIABLES reached" << std::endl;
-			if (parameters.lazy_generation)
-				start_over(true);
-			else{
-				std::cout << " ERROR start_over without LazyGeneration" << std::endl;
-				exit(1);
-			}
 
-		}
 
 		all_reasons_before_search_root = true;
 		//	int pathC = 0, index = sequence.size-1;
