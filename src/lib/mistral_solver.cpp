@@ -168,6 +168,7 @@ void Mistral::SolverParameters::initialise() {
   keep_when_size =0 ;
   keep_when_bjm =0;
   keeplearning_in_bb=0;
+  iterforget=0;
 
   prefix_comment = "c";
   prefix_statistics = "d";
@@ -12121,7 +12122,13 @@ void Mistral::Solver::clean_fdlearn4() {
 	{
 		if (variables.size >MAX_GENERATED_VARIABLES){
 			std::cout << " c MAX_GENERATED_VARIABLES reached" << std::endl;
-			start_over();
+			if (parameters.lazy_generation)
+				start_over(true);
+			else{
+				std::cout << " ERROR start_over without LazyGeneration" << std::endl;
+				exit(1);
+			}
+
 		}
 
 		all_reasons_before_search_root = true;
@@ -15672,7 +15679,8 @@ void Mistral::Solver::set_fdlearning_on(
 	    int hard_forget,
 	    int keep_when_size,
 	    int keep_when_bjm ,
-	    int keeplearning_in_bb
+	    int keeplearning_in_bb,
+	    int _iterforget
 	    ) {
 
 	//	parameters.jsp_backjump = true;
@@ -15698,6 +15706,13 @@ void Mistral::Solver::set_fdlearning_on(
 	parameters.keep_when_size =  keep_when_size;
 	parameters.keep_when_bjm = keep_when_bjm;
 	parameters.keeplearning_in_bb = keeplearning_in_bb;
+	parameters.iterforget = _iterforget;
+	//std::cout << "\n \n _iterforget !!!  : "  << _iterforget << std::endl;
+	//if (parameters.iterforget){
+//		std::cout << "\n \n iterforget !!!  : "  << std::endl;
+		//solver->forget();
+//	}
+
 
 	std::cout << " c start_from : " << start_from << std::endl;
 	visitedUpperBounds.initialise(0, start_from  , BitSet::empt);
@@ -15767,9 +15782,10 @@ void Mistral::Solver::init_lazy_generation(){
 	  init_booleans_slot_size = booleans.slots.size;
 }
 
-void Mistral::Solver::start_over(){
+void Mistral::Solver::start_over(bool lazygeneration){
 
-	if (base && parameters.lazy_generation)
+	if (base){
+	if (lazygeneration)
 	{
 		std::cout << " c undo lazy generation" << std::endl;
 		unsigned int __size = base->learnt.size;
@@ -15840,8 +15856,26 @@ void Mistral::Solver::start_over(){
 	}
 	else
 	{
-		std::cout << " ERROR CALLING solve::start_over without lazygeneration" << std::endl;
-		exit(1);
+		base->static_forget();
+
+		unsigned int __size = base->learnt.size;
+		/*	  std::cout << " c dichotomy ended with variables.size" << variables.size << std::endl;
+		  __size = base->learnt.size;
+		  std::cout << " c dichotomy ended with " << __size << " learnt clause" << std::endl;
+		  std::cout << " c dichotomy ended with AVG Nogood size" <<  statistics.avg_learned_size<< std::endl;
+		 */
+#ifdef _RECOVER_GENERATED
+		varsIds_lazy.clear();
+		value_lazy.clear();
+#endif
+		while (__size--)
+			base->remove(__size);
+
+	//	policy->initialise(parameters.restart_limit);
+
+		//	std::cout << " ERROR CALLING solve::start_over without lazygeneration" << std::endl;
+		//	exit(1);
+	}
 	}
 	/*  std::cout << " \n \n \n  expression_store.size" << expression_store.size << std::endl;
 	  std::cout << " variables.size" << variables.size << std::endl;

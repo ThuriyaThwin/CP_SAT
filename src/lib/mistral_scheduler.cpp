@@ -271,7 +271,7 @@ const char* ParameterList::int_ident[ParameterList::nia] =
    "-fdlearning" , "-forgetall" , "-reduce" ,  "-orderedexploration" , "-lazygeneration" ,
    "-semantic" , "-simplelearn" , "-maxnogoodsize" , "-boundedbydecision" , "-forgetsize" ,
    "-forgetbackjump" , "-hardkeep", "-hardforget" ,"-keepwhensize" , "-keepwhenbjm" ,
-   "-keeplearning"
+   "-keeplearning" , "-iterforget"
   };
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
@@ -377,7 +377,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   keep_when_size =0;
   keep_when_bjm =0;
   keeplearning_in_bb = 0;
-
+  iterforget=0;
 
   FD_learning=0;
   reduce_clauses =0;
@@ -460,6 +460,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[33] != NOVAL) keep_when_size  = int_param[33];
   if(int_param[34] != NOVAL) keep_when_bjm  = int_param[34];
   if(int_param[35] != NOVAL) keeplearning_in_bb  = int_param[35];
+  if(int_param[36] != NOVAL) iterforget  = int_param[36];
 
 
 
@@ -527,6 +528,7 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | keep_when_size " << ":" << std::right << std::setw(15) << keep_when_size << " |" << std::endl;
   os << std::left << std::setw(30) << " c | keep_when_bjm" << ":" << std::right << std::setw(15) << keep_when_bjm << " |" << std::endl;
   os << std::left << std::setw(30) << " c | keeplearning_in_bb" << ":" << std::right << std::setw(15) <<   keeplearning_in_bb << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | iterforget" << ":" << std::right << std::setw(15) <<   iterforget << " |" << std::endl;
   os << std::left << std::setw(30) << " c | reduce learnt clause " << ":" << std::right << std::setw(15) << (reduce_clauses? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | clause forgetfulness %" << ":" << std::right << std::setw(15) << Forgetfulness << " |" << std::endl;
   os << std::left << std::setw(30) << " c | backjump forgetfulness %" << ":" << std::right << std::setw(15) << Forgetfulness_retated_to_backjump << " |" << std::endl;
@@ -1950,7 +1952,7 @@ void SchedulingSolver::setup() {
 			  params->max_nogood_size, params->bounded_by_decision, params->Forgetfulness,
 			  params->forget_relatedto_nogood_size , params->forget_retatedto_backjump ,params->Forgetfulness_retated_to_backjump,
 			  params->hard_keep, params->hard_forget,params->keep_when_size,
-			  params->keep_when_bjm ,  params->keeplearning_in_bb
+			  params->keep_when_bjm ,  params->keeplearning_in_bb, params->iterforget
 	  );
   }
 
@@ -3166,7 +3168,7 @@ void SchedulingSolver::dichotomic_search()
 			  while (__size--)
 				  base->remove(__size);
 			  if (params->lazy_generation){
-				  start_over();
+				  start_over(true);
 			  }
 		  }
 		  else{

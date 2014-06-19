@@ -118,7 +118,8 @@ namespace Mistral {
 	int keep_when_size ;
 	int keep_when_bjm ;
 	int keeplearning_in_bb;
-
+	//Used with B&B
+	int iterforget;
     /// whether solutions are checked
     // 0 -> not checked
     // 1 -> check constraints which variables are all assigned
@@ -810,7 +811,7 @@ namespace Mistral {
     Vector<double> *activity_lit_activity;
 
     //This method undo all the generated variables.
-    void start_over();
+    void start_over(bool lazygeneration);
     void init_lazy_generation();
     //However it needs all these variables
     //TODO remove useless variables..
@@ -1014,7 +1015,7 @@ namespace Mistral {
     		int max_nogood_size, int bounded_by_decision, double forgetfulness ,
     		int forget_relatedto_nogood_size , int static_forget_retatedto_backjump ,double Forgetfulness_retated_to_backjump,
     		int hard_keep, int hard_forget, int keep_when_size,
-    		int keep_when_bjm , int keeplearning_in_bb
+    		int keep_when_bjm , int keeplearning_in_bb , int _iterforget
     );
 
     void close_propagation();

@@ -8439,6 +8439,17 @@ Mistral::Outcome Mistral::Goal::notify_solution(Solver *solver) {
     		  //	  std::cout << "search_root : " << search_root << std::endl;
     		  return OPT;
     	  }
+
+    	  if (solver->parameters.iterforget){
+    		  // std::cout << "iterforget !!!  : "  << std::endl;
+    		  //solver->forget();
+    		  //TODO update statistics like avg learnt nogood size... (take this from solver->forget!!)
+    		  //This call simulates a linear exploration instead of binary search
+    		  solver->start_over(solver->parameters.lazy_generation);
+
+    		  //??
+    		//  solver->policy->initialise(solver->parameters.restart_limit);
+    	  }
       }
       else{
     	  //  std::cout << "\n \n \n begin search root : " << search_root << std::endl;

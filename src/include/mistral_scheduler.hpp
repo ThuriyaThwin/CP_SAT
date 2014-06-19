@@ -80,7 +80,7 @@ namespace Mistral {
     static const int RGUIDED =  3;
     static const int RAND    =  4;
 
-    static const int nia = 36;
+    static const int nia = 37;
     static const char* int_ident[nia];
     
     static const int nsa = 15;
@@ -135,7 +135,8 @@ namespace Mistral {
     int keep_when_bjm ;
     //Whether we keep use learning in B&B after dichotomy or not
     int keeplearning_in_bb;
-
+    //We use this to call forget whenever we find a new bound in B&B. Note that this simulates a normal linear exploration instead of dichotomy
+    int iterforget;
 
 
     double Factor;
