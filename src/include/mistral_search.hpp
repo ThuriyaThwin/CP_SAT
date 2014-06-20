@@ -1334,7 +1334,9 @@ namespace Mistral {
     RestartPolicy(const unsigned int b=256);
     virtual void reset(unsigned int& limit) = 0;
     virtual void initialise(unsigned int& limit) = 0;
-    
+    //used with BranchAndBound
+    virtual void bbinitialise(unsigned int& limit) {}
+
   };
 
 
@@ -1394,7 +1396,13 @@ namespace Mistral {
       increment = base;
       reset(limit);
     }
-    
+
+    //used with BranchAndBound
+    void bbinitialise(unsigned int& limit) {
+      //limit = 0;
+      increment = base;
+    //  reset(limit);
+    }
   };
 
   class Luby : public RestartPolicy {

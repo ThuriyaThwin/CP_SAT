@@ -16017,6 +16017,10 @@ void Mistral::Solver::start_over(bool lazygeneration){
 		//}
 		//TODO
 		//variables[i].free_object();?
+
+		//policy->initialise(parameters.restart_limit);
+
+
 	}
 	else
 	{
@@ -16035,12 +16039,16 @@ void Mistral::Solver::start_over(bool lazygeneration){
 		while (__size--)
 			base->remove(__size);
 
-		policy->initialise(parameters.restart_limit);
-
+		//policy->initialise(parameters.restart_limit);
+	//	policy->bbinitialise(parameters.restart_limit);
 		//	std::cout << " ERROR CALLING solve::start_over without lazygeneration" << std::endl;
 		//	exit(1);
 	}
 	}
+
+	policy->bbinitialise(parameters.restart_limit);
+	parameters.restart_limit=statistics.num_failures;
+
 	/*  std::cout << " \n \n \n  expression_store.size" << expression_store.size << std::endl;
 	  std::cout << " variables.size" << variables.size << std::endl;
 	  std::cout << " assignment_level.size" << assignment_level.size << std::endl;

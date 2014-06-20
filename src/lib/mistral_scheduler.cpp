@@ -1943,6 +1943,8 @@ void SchedulingSolver::setup() {
   }
   start_from = tasks.size +1;
   initial_variablesize= variables.size;
+  parameters.iterforget= params->iterforget;
+
 
   if (params->FD_learning)
   {

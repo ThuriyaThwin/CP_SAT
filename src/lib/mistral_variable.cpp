@@ -8506,37 +8506,30 @@ Mistral::Outcome Mistral::Goal::notify_solution(Solver *solver) {
       int level, search_root = solver->search_root;
       bool backjump = solver->parameters.backjump;
       if (backjump){
+
     	  if(level == search_root) {
     		  lower_bound = upper_bound;
     		  //	  std::cout << " level : " << level << std::endl;
     		  //	  std::cout << "search_root : " << search_root << std::endl;
     		  return OPT;
     	  }
-    	  do {
+/*    	  do {
     		  level = solver->level;
     		  solver->restore(level-1);
     		  //} while(upper_bound <= objective.get_min());
     	  }while(solver->level > search_root);
+*/
+    	  solver->restore(search_root);
 
     	  if (upper_bound <= objective.get_min()){
     		  lower_bound = upper_bound;
-    		  //	  std::cout << " level : " << level << std::endl;
-    		  //	  std::cout << "search_root : " << search_root << std::endl;
+
     		  return OPT;
     	  }
 
-    	  if (solver->parameters.iterforget){
-    		  // std::cout << "iterforget !!!  : "  << std::endl;
-    		  //solver->forget();
-    		  //TODO update statistics like avg learnt nogood size... (take this from solver->forget!!)
-    		  //This call simulates a linear exploration instead of binary search
-    		  solver->start_over(solver->parameters.lazy_generation);
-
-    		  //??
-    		//  solver->policy->initialise(solver->parameters.restart_limit);
-    	  }
       }
       else{
+
     	  //  std::cout << "\n \n \n begin search root : " << search_root << std::endl;
     	  do {
     		  level = solver->level;
@@ -8556,6 +8549,13 @@ Mistral::Outcome Mistral::Goal::notify_solution(Solver *solver) {
       }
       //}while(solver->level > search_root);
 
+      if (solver->parameters.iterforget){
+    	  // std::cout << "iterforget !!!  : "  << std::endl;
+    	  //solver->forget();
+    	  //TODO update statistics like avg learnt nogood size... (take this from solver->forget!!)
+    	  //This call simulates a linear exploration instead of binary search
+    	  solver->start_over(solver->parameters.lazy_generation);
+      }
 
       Decision deduction(objective, Decision::UPPERBOUND, upper_bound-1);
 
@@ -8578,6 +8578,11 @@ Mistral::Outcome Mistral::Goal::notify_solution(Solver *solver) {
       // upper_bound = objective.get_min();
       // if(!solver->level) lower_bound = upper_bound;
     } else { //if(sub_type == MAXIMIZATION) {
+
+    	if (solver->parameters.backjump)
+    	{
+    		std::cout << "ERROR NOT YET " << std::endl;
+    	}
 
       lower_bound = objective.get_max();
 
