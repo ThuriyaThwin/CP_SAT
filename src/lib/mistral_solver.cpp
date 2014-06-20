@@ -15791,6 +15791,8 @@ void Mistral::Solver::start_over(bool lazygeneration){
 	if (lazygeneration)
 	{
 		std::cout << " c undo lazy generation" << std::endl;
+		base->static_forget();
+
 		unsigned int __size = base->learnt.size;
 		/*	  std::cout << " c dichotomy ended with variables.size" << variables.size << std::endl;
 		  __size = base->learnt.size;
