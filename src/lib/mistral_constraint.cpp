@@ -2234,6 +2234,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 	//	std::cout <<" \n \n \ExplainedConstraintLess  get_reason_for "  << std::endl;
 
 	if(a == NULL_ATOM) {
+		//TODO Add these tests with a compilation flag! ()_VERIFY_BEHAVIOUR_WHEN_LEARNING
 		if (
 				scope[0].get_min() <=
 				scope0->lowerbounds[0]
@@ -2275,7 +2276,8 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 			}
 			else
 			{
-				std::cout << " ERROR !!" << std::endl;
+				//TODO Add these tests with a compilation flag! ()_VERIFY_BEHAVIOUR_WHEN_LEARNING
+				std::cout << " ERROR !! LB " << std::endl;
 				exit(1);
 			}
 		}
@@ -2299,7 +2301,8 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 			}
 			else
 			{
-				std::cout << " ERROR !!" << std::endl;
+				//TODO Add these tests with a compilation flag! ()_VERIFY_BEHAVIOUR_WHEN_LEARNING
+				std::cout << " ERROR !! UB" << std::endl;
 				exit(1);
 			}
 	}

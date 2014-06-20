@@ -860,6 +860,7 @@ namespace Mistral {
     	}
     };
 
+    //TODO Should be deleted when we update the bts with the corresponded literal
     //Used to order the learnt clause at the end in a decreasing order
     struct _valued_literal
     {
@@ -877,13 +878,44 @@ namespace Mistral {
     	}
     };
 
+    //TODO Should be deleted when we update the bts with the corresponded literal
     Vector <_valued_literal > orderedliterals;
+
+
 
    // std::ostream& operator<< (std::ostream& os, const __boundLiteral & x) ;
 
 
     Vector <Atom > boolean_vairables_to_explore;
     Vector <_valued_atom > ordered_boolean_vairables_to_explore;
+
+
+
+
+
+    //Used when orderedexploration is true
+    struct ordered_literal
+    {
+    	Literal l;
+    	int assignment_order;
+    	Explanation * explanation;
+
+    	ordered_literal(Literal _l, int _assignment_order, Explanation * _e) : assignment_order(_assignment_order), l(_l), explanation(_e) {}
+    	ordered_literal() {}
+    	bool operator < (const ordered_literal& lit) const
+    	{
+    		return (assignment_order < lit.assignment_order);
+    	}
+    	bool operator > (const ordered_literal& lit) const
+    	{
+    		return (assignment_order > lit.assignment_order);
+    	}
+
+    };
+
+    Vector <ordered_literal > ordered_literals_to_explore;
+
+
 
     Explanation * get_next_to_explore(Atom & a);
     void add_atom_tobe_explored(Atom a);
@@ -897,6 +929,9 @@ namespace Mistral {
     //New clean learning
 
     void add_literal_tobe_explored2(Literal l);
+    void add_Orderedliteral_tobe_explored(Literal l, int assignment_odr, Explanation* e);
+
+
     void treat_assignment_literal2(Literal q);
     void treat_bound_literal2(Literal q);
     Explanation * get_next_to_explore2(Literal & a) ;
@@ -1351,6 +1386,8 @@ public:
   std::ostream& operator<< (std::ostream& os, ConstraintTriggerArray& x);
   std::ostream& operator<< (std::ostream& os, ConstraintTriggerArray* x);
 
+
+  std::ostream& operator<< (std::ostream& os, const Solver::ordered_literal & x) ;
 
 
   SearchMonitor& operator<< (SearchMonitor& os, Variable& x);

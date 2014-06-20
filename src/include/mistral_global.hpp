@@ -154,7 +154,7 @@ namespace Mistral {
 //#define _VERIFY_BEHAVIOUR_WHEN_LEARNING true
 #define _RECOVER_GENERATED true
 //#define _BOUND_EQUIVALENCE true
-//#define _ASSIGNMENT_ORDER
+#define _ASSIGNMENT_ORDER true
 
   //#define   _DEBUG_FAIL true
 //  #define latest_bounds_learning true

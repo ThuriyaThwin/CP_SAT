@@ -1604,6 +1604,11 @@ namespace Mistral {
 	  bool should_be_learnt(Literal q);
 	  int level_of(int val, bool lb) ;
 
+#ifdef _ASSIGNMENT_ORDER
+	  int assignment_of(int val, bool lb) ;
+#endif
+
+
 	  //	  bool set_visited(unsigned int literal);
 	  /// Remove all values strictly lower than l
 	  inline Event set_min(const int lo,  Explanation * C) {

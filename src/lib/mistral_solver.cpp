@@ -8974,9 +8974,15 @@ void Mistral::Solver::add_literal_tobe_explored2(Literal l){
 	else {
 		//boolean_vairables_to_explore.add(a);
 		//ordered_boolean_vairables_to_explore.fast_sorted_add(_valued_atom(assignment_order[a], a));
-		std::cout << "NOT YET" << std::endl;
+		std::cout << "ERROR" << std::endl;
 		exit(1);
 	}
+}
+
+void Mistral::Solver::add_Orderedliteral_tobe_explored(Literal l, int assignment_odr, Explanation* e){
+
+ordered_literals_to_explore.fast_sorted_add(ordered_literal(l,assignment_odr,e));
+
 }
 
 void Mistral::Solver::treat_assignment_literal2(Literal q){
@@ -9074,7 +9080,13 @@ void Mistral::Solver::treat_assignment_literal2(Literal q){
 							std::cout << q << " is added to the queue to be explored" << std::endl;
 						}
 #endif
-						add_literal_tobe_explored2(q);
+
+//						std::cout << q << " assignment order" << x << "]"<<  assignment_order[x]<< std::endl;
+
+						if (parameters.orderedExploration)
+							add_Orderedliteral_tobe_explored(q,assignment_order[x], reason_for[x]);
+						else
+							add_literal_tobe_explored2(q);
 
 						++remainPathC;
 					} else {
@@ -9153,6 +9165,11 @@ void Mistral::Solver::treat_assignment_literal2(Literal q){
 						std::cout << q << " is added to the queue to be explored" << std::endl;
 					}
 #endif
+//					std::cout << q << " assignment order" << x << "]"<<  assignment_order[x]<< std::endl;
+
+					if (parameters.orderedExploration)
+						add_Orderedliteral_tobe_explored(q,assignment_order[x], reason_for[x]);
+					else
 					add_literal_tobe_explored2(q);
 
 					++remainPathC;
@@ -9759,6 +9776,17 @@ void Mistral::Solver::treat_bound_literal4(Literal q){
 					}
 #endif
 					//TODO Add test id already generated will be explored
+
+#ifdef _ASSIGNMENT_ORDER
+//					std::cout << q << " assignment order" << var <<
+//							"]"<<  tmp_VariableRangeWithLearning->assignment_of(val,is_lb) << std::endl;
+
+
+					if (parameters.orderedExploration)
+						add_Orderedliteral_tobe_explored(q,tmp_VariableRangeWithLearning->assignment_of(val,is_lb),
+								tmp_VariableRangeWithLearning->reason_for(q));
+					else
+#endif
 					add_literal_tobe_explored2(q);
 					++remainPathC;
 				}
@@ -9808,6 +9836,16 @@ void Mistral::Solver::treat_bound_literal4(Literal q){
 					std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
 
 				}
+#endif
+
+#ifdef _ASSIGNMENT_ORDER
+//				std::cout << q << " assignment order" << var <<
+//						"]"<<  tmp_VariableRangeWithLearning->assignment_of(val,is_lb) << std::endl;
+
+				if (parameters.orderedExploration)
+					add_Orderedliteral_tobe_explored(q,tmp_VariableRangeWithLearning->assignment_of(val,is_lb),
+							tmp_VariableRangeWithLearning->reason_for(q));
+				else
 #endif
 				add_literal_tobe_explored2(q);
 				++remainPathC;
@@ -9956,13 +9994,110 @@ Explanation * Mistral::Solver::get_next_to_explore2(Literal & lit) {
 
 	else {
 
-		std::cout << "\n \n \n NOT YET !!!!! " << std::endl;
-		exit(1);
+	//	std::cout << "\n \n \n NOT YET !!!!! " << std::endl;
+	//	exit(1);
+
+//		std::cout << "\n \n BEFORE ordered_literals_to_explore " << ordered_literals_to_explore << std::endl;
 
 		//Find the next variable to explore
-		if (ordered_boolean_vairables_to_explore.size>0)
+	//	if (ordered_boolean_vairables_to_explore.size>0)
+		if (ordered_literals_to_explore.size>0)
 		{
-			Atom a= ordered_boolean_vairables_to_explore.pop().a;
+	//		std::cout << "\n \n After ordered_literals_to_explore " << ordered_literals_to_explore << std::endl;
+
+		//	Atom a= ordered_boolean_vairables_to_explore.pop().a;
+			ordered_literal o_l = ordered_literals_to_explore.pop();
+			lit = o_l.l;
+
+			if ((!ordered_literals_to_explore.size && is_a_bound_literal(lit)))
+			{
+		//		std::cout << " \n \n !ordered_literals_to_explore.size: "  << std::endl;
+		//		std::cout << " \n \n !ordered_literals_to_explore "  << ordered_literals_to_explore << std::endl;
+		//		std::cout << " \n \n !size  "  << ordered_literals_to_explore.size << std::endl;
+		//		exit(1);
+
+
+				--remainPathC;
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+				if(o_l.explanation == NULL) {
+					std::cout << "?? current_explanation == NULL "  << std::endl;
+					exit (1);
+				}
+				else{
+#endif
+
+					//	start = current_explanation->get_reason_for(a, (a != NULL_ATOM ? assignment_level[a] : level), end);
+					Explanation::iterator start, end;
+					start = o_l.explanation->get_reason_for_literal(lit, end);
+					++graph_size;
+
+#ifdef 	_DEBUG_FD_NOGOOD
+					if(_DEBUG_FD_NOGOOD){
+						if (a_literal==NULL_ATOM)
+							std::cout << " \n \n c New failure! \n c Explaining a failure " << std::endl;
+						else
+						{
+							std::cout << " \n Explain the literal " << a_literal << std::endl;
+						}
+						std::cout << " its explanation comes from : "<< current_explanation << std::endl;
+					}
+
+#endif
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+					if(start >= end)
+					{
+						std::cout << " tmp >= stop \n"  ;
+						exit(1);
+					}
+#endif
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+
+					//Additionnal test - not necessary
+					//std::cout << " check clause " << this << std::endl;
+					//TODO perform test
+					if (dynamic_cast<Array<Literal> *>(o_l.explanation))
+					{
+						//	std::cout << "is a clause? \n" << current_explanation << std::endl;
+						//exit(1);
+						int level__ ;
+						Explanation::iterator tmp__iterator = start;
+						Literal q;
+						while(tmp__iterator < end) {
+							q = *tmp__iterator;
+							++tmp__iterator;
+							//TODO recheck this
+							if (! is_a_bound_literal(q))
+								if (get_id_boolean_variable(q)!=lit){
+									level__= assignment_level[get_id_boolean_variable(q)];
+									//			if (level__> level){
+									//				std::cout << " check clause ERROR : level__> lvl " << std::endl;
+									//				exit(1);
+									//			}
+								}
+						}
+					}
+#endif
+					treat_explanation4( o_l.explanation, start, end);
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+				}
+
+				if ((!parameters.orderedExploration) &&  literals_to_explore.size != remainPathC){
+					std::cout << " literals_to_explore.size != remainPathC " << std::endl;
+					exit(1);
+				}
+				if ((parameters.orderedExploration) &&  ordered_literals_to_explore.size != remainPathC){
+					std::cout << " ordered_literals_to_explore.size != remainPathC " << std::endl;
+					exit(1);
+				}
+
+#endif
+				return  get_next_to_explore2(lit);
+				//		std::cout << "latest before while =" << pathC << std::endl;
+				//		} while( boolean_vairables_to_explore.size );
+
+			}
+
 			/*
 			if (reason_for[a] == NULL)
 
@@ -9991,7 +10126,9 @@ Explanation * Mistral::Solver::get_next_to_explore2(Literal & lit) {
 			std::cout << " pathC " << pathC << std::endl;
 			 */
 
-			return reason_for[a];
+			//return reason_for[a];
+			return o_l.explanation;
+
 			//visited.fast_add(a);
 			//		}
 		}
@@ -10005,6 +10142,13 @@ Explanation * Mistral::Solver::get_next_to_explore2(Literal & lit) {
 	}
 }
 
+/*
+std::ostream& Mistral::operator<< (std::ostream& os, const Mistral::ordered_literal & x) {
+	//	os << x.value << "--" << x.x.id() ;
+	os << "literal " x.l << " order " << x.assignment_order << " e : " <<  explanation;
+	return os;
+}
+*/
 
 
 void Mistral::Solver::treat_explanation2 (Explanation* explanation,  Explanation::iterator start,Explanation::iterator end ){
@@ -12173,19 +12317,21 @@ void Mistral::Solver::clean_fdlearn4() {
 		//This first literal will contain the last literal in the current level appearing in the learnt clause. Here we just initialize it to 0
 		learnt_clause.add(0);
 
-		if (parameters.orderedExploration){
+		/*	if (parameters.orderedExploration){
 			//	ordered_boolean_vairables_to_explore.clear();
 			std::cout << " NOT YET" << std::endl;
 			exit(1);
 		}
-		else
+		else */
 			//	boolean_vairables_to_explore.clear();
-			literals_to_explore.clear();
 
+		literals_to_explore.clear();
+		ordered_literals_to_explore.clear();
 		bound_literals_to_explore.clear();
 		visitedLowerBounds.clear();
 		visitedUpperBounds.clear();
 		visited.clear();
+//		ordered_literals_to_explore.clear();
 
 		do {
 
@@ -12251,8 +12397,12 @@ void Mistral::Solver::clean_fdlearn4() {
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 			}
 
-			if (literals_to_explore.size != remainPathC){
+			if ((!parameters.orderedExploration) &&  literals_to_explore.size != remainPathC){
 				std::cout << " literals_to_explore.size != remainPathC " << std::endl;
+				exit(1);
+			}
+			if ((parameters.orderedExploration) &&  ordered_literals_to_explore.size != remainPathC){
+				std::cout << " ordered_literals_to_explore.size != remainPathC " << std::endl;
 				exit(1);
 			}
 
@@ -14071,6 +14221,12 @@ std::ostream& Mistral::operator<< (std::ostream& os, const Mistral::SolverStatis
 }
 
 
+std::ostream& Mistral::operator<< (std::ostream& os, const Mistral::Solver::ordered_literal & x) {
+	//	os << x.value << "--" << x.x.id() ;
+	os << "literal " <<  x.l << " order " << x.assignment_order << " e : " <<  x.explanation ;
+	return os;
+}
+
 void Mistral::SearchMonitor::add(Variable x) {
   sequence.add(0);
   sequence.add(x.id());
@@ -15728,8 +15884,11 @@ void Mistral::Solver::set_fdlearning_on(
 	boolean_vairables_to_explore.initialise(SIZEOF_VARIABLES);
 	literals_to_explore.initialise(SIZEOF_VARIABLES);
 	orderedliterals.initialise(SIZEOF_VARIABLES);
+
 	ordered_boolean_vairables_to_explore.initialise(SIZEOF_VARIABLES);
-	bound_literals_to_explore.initialise(100000);
+
+	bound_literals_to_explore.initialise(1000000);
+	ordered_literals_to_explore.initialise(1000000);
 	//visited.extend(54000);
 	//bounds_under_exploration.initialise(0,  start_from +1 , BitSet::empt);
 	//boundvalues_under_exploration = new unsigned int [start_from +1 ];
