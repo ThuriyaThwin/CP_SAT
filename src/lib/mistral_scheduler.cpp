@@ -2899,7 +2899,7 @@ void SchedulingSolver::dichotomic_search()
   int minfsble = stats->lower_bound;
   int maxfsble = stats->upper_bound;
   
-  int objective = -1;
+  int int_objective = -1;
   int new_objective = -1;
   //   int ngd_stamp = 0;
   //   int lit_stamp = 0;
@@ -3011,7 +3011,7 @@ void SchedulingSolver::dichotomic_search()
 
 	  if(remaining_time < (2*params->NodeBase)) break;
 
-	  objective = (int)(floor(((double)minfsble + (double)maxfsble)/2));
+	  int_objective = (int)(floor(((double)minfsble + (double)maxfsble)/2));
 #ifdef _CHECK_NOGOOD
 	  dicho_lb=minfsble;
 	  dicho_ub= maxfsble;
@@ -3029,7 +3029,7 @@ void SchedulingSolver::dichotomic_search()
 			  << std::right << " " << std::setw(5) << minfsble
 			  << " to " << std::setw(5) << maxfsble << " |" << std::endl;
 	  std::cout << std::left << std::setw(30) << " c | target objective" << ":"
-			  << std::right << std::setw(15) << objective << " |" << std::endl;
+			  << std::right << std::setw(15) << int_objective << " |" << std::endl;
 
 
 	  statistics.start_time = get_run_time();
@@ -3037,7 +3037,7 @@ void SchedulingSolver::dichotomic_search()
 	  save();
 
 
-	  result = set_objective(objective);
+	  result = set_objective(int_objective);
 
 
 #ifdef _DEBUG_PRUNING
@@ -3076,8 +3076,8 @@ void SchedulingSolver::dichotomic_search()
 
 	  } else {
 		  //s    	std::cout << " c NOT SAT! " ;
-		  new_objective = objective;
-		  minfsble = objective+1;
+		  new_objective = int_objective;
+		  minfsble = int_objective+1;
 
 		  if( result == UNSAT ) {
 			  //	  std::cout << " UNSAT! " ;
@@ -3235,6 +3235,7 @@ void SchedulingSolver::dichotomic_search()
   //   }
     
   //std::cout << std::endl;
+  delete objective;
 }
  
 
@@ -3632,7 +3633,8 @@ void SchedulingSolver::branch_and_bound()
 
 
   //It looks like there is more stuff to do when changing the policy
-  delete policy ;
+  if (policy)
+	  delete policy ;
   if (params->BandBPolicyRestart==GEOMETRIC)
 	  policy = new Geometric(256,params->Factor);
   else if (params->BandBPolicyRestart==LUBY)
@@ -3644,6 +3646,7 @@ void SchedulingSolver::branch_and_bound()
   //In order to simulate initialise_search() we need these two lines
   parameters.restart_limit = policy->base;
   parameters.limit = (policy->base > 0);
+
 
 
 //  else {
