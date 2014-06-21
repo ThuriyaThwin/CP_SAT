@@ -6692,12 +6692,12 @@ int Mistral::Solver::reduce_bounds(){
 
 bool Mistral::Solver::learn_virtual_literals() {
 
-	if (parameters.semantic_learning  && parameters.reduce_learnt_clause){
+	bool __reduce = parameters.reduce_learnt_clause;
+	if (__reduce){
 		//HERE
 		//std::cout << " \n \n \n  start reduction" << std::endl;
 		reduce_bounds();
 		reduce_clause(true);
-
 		//std::cout << "end reduction" << std::endl;
 	}
 
@@ -7020,7 +7020,9 @@ bool Mistral::Solver::learn_virtual_literals() {
 					repace_with_disjunctions(bound_literals_to_explore.pop());
 				}
 
-				reduce_clause(false);
+				if (__reduce)
+					reduce_clause(false);
+
 				//We add this test to handle the particular case where the new size of the clause is bigger than the authorized limit.
 				//This can happen only without lazy generation and without learning.
 				if ((parameters.forget_relatedto_nogood_size) &&
@@ -7381,6 +7383,12 @@ void Mistral::Solver::clean_fdlearn() {
 							break;
 						}
 					}
+
+	//				if (___size<2){
+	//					std::cout << " ___size<2 " << std::endl;
+	//					exit(1);
+	//				}
+
 				}
 
 				/*
