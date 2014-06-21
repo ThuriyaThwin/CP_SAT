@@ -3238,6 +3238,7 @@ void SchedulingSolver::dichotomic_search()
     
   //std::cout << std::endl;
   delete objective;
+  objective=NULL;
 }
  
 

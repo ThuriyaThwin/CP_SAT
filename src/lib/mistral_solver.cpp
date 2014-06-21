@@ -2265,6 +2265,7 @@ Mistral::Solver::~Solver() {
 
   delete heuristic;
   delete policy;
+  if (objective)
   delete objective;
 
   //std::cout << "c delete consolidate manager" << std::endl;
