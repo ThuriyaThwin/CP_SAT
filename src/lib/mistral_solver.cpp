@@ -6695,10 +6695,10 @@ bool Mistral::Solver::learn_virtual_literals() {
 	bool __reduce = parameters.reduce_learnt_clause;
 	if (__reduce){
 		//HERE
-		//std::cout << " \n \n \n  start reduction" << std::endl;
+//		std::cout << " \n \n \n  start reduction with clause " <<learnt_clause  <<  std::endl;
 		reduce_bounds();
 		reduce_clause(true);
-		//std::cout << "end reduction" << std::endl;
+//		std::cout << "end reduction" << std::endl;
 	}
 
 	if (should_forget()){
@@ -7660,7 +7660,7 @@ bool Mistral::Solver::visited_explanation(Literal q, bool semantic_reduction){
 
 void Mistral::Solver::reduce_clause(bool semantic_reduction){
 //	std::cout << " \n \n \n \n start reduction " << std::endl;
-	for (unsigned int i = learnt_clause.size; i>0; --i){
+	for (unsigned int i = (learnt_clause.size -1); i>0; --i){
 		if (visited_explanation(learnt_clause[i], semantic_reduction))
 			learnt_clause.remove(i);
 	}
