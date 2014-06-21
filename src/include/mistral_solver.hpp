@@ -823,39 +823,18 @@ namespace Mistral {
     int init_expression_store_size;
 
 	int graph_size;
-	//reduce clause after learning
+
+	//Reduce clause
 	void reduce_clause(bool semantic_reduction=false);
 	int reduce_bounds();
-
 	bool visited_explanation(Literal q, bool semantic_reduction);
-	bool visited_real_literal(Literal q);
 	bool visited_virtual_literal(Literal q);
-	bool visited_virtual_literal(Literal q, int forbidden_var, int forbidden_val,  bool forbidden_lb );
 
-
-
+	//TODO Should probably be deleted
     void try_to_keep_or_forget();
 
+
     unsigned int remainPathC;
-
-    //Used when orderedexploration is true
-    struct _valued_atom
-    {
-    	int assignment_order;
-    	Atom a;
-    	_valued_atom(int _assignment_order, Atom _a) : assignment_order(_assignment_order), a(_a) {}
-    	_valued_atom() {}
-    	bool operator < (const _valued_atom& atom) const
-    	{
-    		return (assignment_order < atom.assignment_order);
-    	}
-    	bool operator > (const _valued_atom& atom) const
-    	{
-    		return (assignment_order > atom.assignment_order);
-    	}
-    };
-
-    //TODO Should be deleted when we update the bts with the corresponded literal
     //Used to order the learnt clause at the end in a decreasing order
     struct _valued_literal
     {
@@ -876,18 +855,6 @@ namespace Mistral {
     //TODO Should be deleted when we update the bts with the corresponded literal
     Vector <_valued_literal > orderedliterals;
 
-
-
-   // std::ostream& operator<< (std::ostream& os, const __boundLiteral & x) ;
-
-
-    Vector <Atom > boolean_vairables_to_explore;
-    Vector <_valued_atom > ordered_boolean_vairables_to_explore;
-
-
-
-
-
     //Used when orderedexploration is true
     struct ordered_literal
     {
@@ -907,38 +874,25 @@ namespace Mistral {
     	}
 
     };
-
     Vector <ordered_literal > ordered_literals_to_explore;
-
-    void add_atom_tobe_explored(Atom a);
-    unsigned int generate_new_variable(DomainFaithfulnessConstraint * dom_constraint, int val, bool is_lb, int lvl , int range_id);
-
-    void generate_variables();
-    //New clean learning
-
-    void add_literal_tobe_explored2(Literal l);
-    void add_Orderedliteral_tobe_explored(Literal l, int assignment_odr, Explanation* e);
-
-
-    Explanation * get_next_to_explore2(Literal & a) ;
-
-
-    void treat_assignment_literal4(Literal q);
-    void treat_bound_literal4(Literal q);
-
-    void repace_with_disjunctions(Literal q);
-    void generate_and_learn(Literal q);
-
-    void treat_explanation4 (Explanation* explanation,  Explanation::iterator start,Explanation::iterator end );
-
-    void clean_fdlearn4();
-
-
-    bool should_forget();
-    bool learn_virtual_literals();
-
     Vector <Literal > literals_to_explore;
 	bool all_reasons_before_search_root;
+
+
+    unsigned int generate_new_variable(DomainFaithfulnessConstraint * dom_constraint, int val, bool is_lb, int lvl , int range_id);
+    void generate_variables();
+    //New clean learning
+    void add_literal_tobe_explored4(Literal l);
+    void add_Orderedliteral_tobe_explored4(Literal l, int assignment_odr, Explanation* e);
+    Explanation * get_next_to_explore4(Literal & a) ;
+    void treat_assignment_literal4(Literal q);
+    void treat_bound_literal4(Literal q);
+    void repace_with_disjunctions(Literal q);
+    void generate_and_learn(Literal q);
+    void treat_explanation4(Explanation* explanation,  Explanation::iterator start,Explanation::iterator end );
+    void clean_fdlearn4();
+    bool should_forget();
+    bool learn_virtual_literals();
 
     				//TODO declare them only when needen!
 #ifdef _RECOVER_GENERATED
@@ -947,32 +901,19 @@ namespace Mistral {
 	Vector<int> value_lazy ;
 #endif
 
-	//Vector<Literal> graph_premise ;
-	//Vector<Literal> graph_implied;
-
 	BitSet visitedUpperBounds;
 	BitSet visitedLowerBounds;
-	//BitSet bounds_under_exploration;
+
+	//TODO : Should be int * not unsigned int* !!
 	unsigned int * visitedUpperBoundvalues;
 	unsigned int * visitedLowerBoundvalues;
 
-    //Data Structures needed with jsp_learn_nogood
-//    Vector<VariableRangeWithLearning*> Visited_lower_bound_variables ;
-//    Vector<VariableRangeWithLearning*> Visited_upper_bound_variables ;
-    //start_from is the index of the first boolean variable in the sequence
     int start_from;
     int initial_variablesize;
     //Here we suppose we index first range variables then boolean variables, hence start_from should be equal to nb_range_variables. I'll be back later to that
-    //   inline int get_id_boolean_variable (unsigned int literal ) {return (((literal-start_from) /2) + start_from) ;}
+
     inline unsigned int get_id_boolean_variable (Literal literal ) {return ((literal /2) + start_from) ;}
     inline Literal encode_boolean_variable_as_literal (unsigned int id_var, int sign) {return (((id_var - start_from)*2 ) + sign);}
-   // inline Literal encode_boolean_variable_as_literal_alongsideLatest (unsigned int id_var, int sign) {return (((id_var - start_from)*2 ) + sign);}
-    //inline int get_index_of_variable(int var) {return (var>start_from ? start_from : var); }
-    inline int get_index_of_variable(int var) {return var; }
-//    inline int get_varID_from_index(int index) {return (index<start_from ? index : variables.size -1); }
-    inline int get_varID_from_index(int index) {return index;}
-
-    //void treat_explanation(Explanation::iterator & lit, Explanation::iterator & stop, int& pathC );
 
     BranchingHeuristic *heuristic_factory(std::string var_ordering, std::string branching, const int randomness=1);
     // {
