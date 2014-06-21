@@ -2180,7 +2180,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 	//	std::cout <<" \n \n \ExplainedConstraintLess  get_reason_for "  << std::endl;
 
 	if(a == NULL_ATOM) {
-		//TODO Add these tests with a compilation flag! ()_VERIFY_BEHAVIOUR_WHEN_LEARNING
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 		if (
 				scope[0].get_min() <=
 				scope0->lowerbounds[0]
@@ -2197,15 +2197,17 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 			std::cout << " ERROR scope[1].get_max <= scope[1].upperbounds[0] <=" << std::endl;
 			exit(1);
 		}
-
+#endif
 		explanation[0] = encode_bound_literal(scope[0].id(),scope[0].get_min(),0 ) ;
 		explanation[1] =  encode_bound_literal(scope[1].id(),scope[1].get_max(),1) ;
 		end = &(explanation[0])+2;
 	} else {
 		if (is_lower_bound(a))
 		{
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 			if(get_variable_from_literal(a) == scope[1].id())
 			{
+#endif
 				if (
 						(get_value_from_literal(a)-offset) <=
 						scope0->lowerbounds[0]
@@ -2219,18 +2221,21 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 
 					end = &(explanation[0])+1;
 				}
-			}
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+				}
 			else
 			{
 				//TODO Add these tests with a compilation flag! ()_VERIFY_BEHAVIOUR_WHEN_LEARNING
 				std::cout << " ERROR !! LB " << std::endl;
 				exit(1);
 			}
+#endif
 		}
 		else{
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 			if(get_variable_from_literal(a) == scope[0].id())
 			{
-
+#endif
 				if (
 						(get_value_from_literal(a)+offset) >=
 						scope1->upperbounds[0]
@@ -2241,9 +2246,9 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 					explanation[0] = encode_bound_literal(scope[1].id(),get_value_from_literal(a)+offset,1 ) ;
 					//	else
 					//		std::cout<< " c should be a problem here!! Wrong call for reason" << std::endl;
-
 					end = &(explanation[0])+1;
 				}
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 			}
 			else
 			{
@@ -2251,9 +2256,9 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 				std::cout << " ERROR !! UB" << std::endl;
 				exit(1);
 			}
+#endif
 	}
 	}
-
 
 
 
@@ -2421,15 +2426,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 		}
 	}
 #endif
-
-
-
-
-
-
-
 	return &(explanation[0]);
-
 }
 
 
@@ -2443,9 +2440,9 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::get_reason_for(const Atom a, const int lvl, iterator& end){
 
 	//	std::cout <<" \n \n \nExplainedConstraintReifiedDisjunctive  get_reason_for "  << std::endl;
-
 	if(a == NULL_ATOM) {
 		int tmp = -1;
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 		if (!scope[2].is_ground())
 		{
 			//ToDo better test using the tightest bound i.e. its explanation is NULL
@@ -2483,7 +2480,8 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 
 
 		}
-		else
+#endif
+
 		{
 			explanation[++tmp] =  NOT (((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), scope[2].get_min()));
 			if(scope[2].get_min())
@@ -2527,35 +2525,12 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 
 		if (!is_a_bound_literal(a))
 		{
-#ifdef _TRACKING_ATOM
-			if (scope2->id==_TRACKING_ATOM)
-			{
-				std::cout << " \n \n bool_explanation_size " << bool_explanation_size << std::endl;
-				std::cout << " \n \n scope2->id== " << scope2->id << std::endl;
-				std::cout << "literal " << explanation[4] << std::endl;
-				std::cout << "literal " << explanation[5] << std::endl;
-				std::cout << " \n \n We will send as an explanation (but check bool_explanation_size BEFORE) :  " <<  std::endl;
-				Literal q =explanation[4];
-				std::cout << "\n is_a_bound_literal  "<< std::endl;
-				std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-				std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-				std::cout << " var id is is "<< get_variable_from_literal(q) << std::endl;
-				q =explanation[5];
-				std::cout << "\n is_a_bound_literal  "<< std::endl;
-				std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-				std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-				std::cout << " var id "<< get_variable_from_literal(q) << std::endl;
-			}
-#endif
-
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 			if (bool_explanation_size <0)
 			{
 				std::cout << " Not sure if it's a real problem but .. bool_explanation_size <=0 \n " ;
 				exit (1);
 			}
-#endif
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 			if (bool_explanation_size==2){
 				if (get_variable_from_literal(explanation[4]) == get_variable_from_literal(explanation[5]) ){
 					std::cout << " \n \n \n                     explanation[4] ==    explanation[5]        THEY SHOULD BE DIFFERENT " << std::endl;
@@ -2574,7 +2549,6 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 			}
 
 #endif
-
 			end = &(explanation[4])+bool_explanation_size;
 			return &(explanation[4]);
 		}
@@ -2627,16 +2601,12 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 					}
 #endif
 
-
 					explanation[0] =  NOT(((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), 0));
 					if ((get_value_from_literal(a)-processing_time[1]) <= scope1->lowerbounds[0])
 						end = &(explanation[0])+1;
 					else {
 						//						explanation[1] = encode_bound_literal(scope[1].id(),get_value_from_literal(a)-processing_time[1]<0 ? 0 :get_value_from_literal(a)-processing_time[1] ,0 ) ;
 						explanation[1] = encode_bound_literal(scope[1].id() , get_value_from_literal(a)-processing_time[1],0 ) ;
-
-						//					std::cout << "explanation[0]: " << explanation[0] << std::endl;
-						//				std::cout << "explanation[1]: " << explanation[1] << std::endl;
 
 						end = &(explanation[0])+2;
 					}
@@ -2685,7 +2655,6 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 				if ( get_variable_from_literal(a) == scope[0].id())
 				{
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-
 					if (!scope[2].is_ground()){
 						std::cout <<" \n \n ERROR  !scope[2].is_ground() "  << std::endl;
 						exit(1);
@@ -2702,7 +2671,6 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 							(get_value_from_literal(a)+processing_time[0]) >=
 							scope1->upperbounds[0]
 					)
-
 						end = &(explanation[0])+1;
 					else {
 						explanation[1] = encode_bound_literal(scope[1].id(),get_value_from_literal(a)+processing_time[0],1 ) ;
@@ -3294,7 +3262,6 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 			}
 		}
 	}
-
 #endif
 	return &(explanation[0]);
 }
@@ -3388,39 +3355,16 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
 
 		if( *min_t0_ptr + processing_time[0] > *max_t1_ptr ) {
 
-			//TODO  not necessary?
-			((Solver* ) solver) -> reason_for[scope[2].id()] = this;
-			((Solver* ) solver) -> assignment_level[scope[2].id()] = solver->level;
+			//TODO  not necessary!!!!!!!!!!!!!!!!!!
+			//((Solver* ) solver) -> reason_for[scope[2].id()] = this;
+			//((Solver* ) solver) -> assignment_level[scope[2].id()] = solver->level;
+
 			bool_explanation_size=3;
 			if(scope0->lowerbounds[0] < *min_t0_ptr )
 				explanation[++bool_explanation_size] = encode_bound_literal(scope[0].id(),*min_t0_ptr,0 );
 			if(scope1->upperbounds[0] > *max_t1_ptr )
 				explanation[++bool_explanation_size] = encode_bound_literal(scope[1].id(),*max_t1_ptr,1 );
 			bool_explanation_size-=3;
-
-#ifdef _TRACKING_ATOM
-			if (scope2->id==_TRACKING_ATOM)
-			{
-				std::cout << " \n \n FOUND it!  SET TO 0 and bool_explanation_size is = " << bool_explanation_size << std::endl;
-				std::cout << " \n \n scope 0   " << scope[0] <<   "[" << scope0->get_min() << ".." <<  scope0->get_max() << "]" << std::endl;
-				std::cout << " \n \n scope 1   " << scope[1] <<   "[" << scope1->get_min() << ".." <<  scope1->get_max() << "]" << std::endl;
-				std::cout << " check bool_explanation_size before! otherwise this doen't make sence " << std::endl;
-				std::cout << "literal " << explanation[4] << std::endl;
-				std::cout << " literal" << explanation[5]  << std::endl;
-
-				Literal q =explanation[4];
-				std::cout << "\n is_a_bound_literal  "<< std::endl;
-				std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-				std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-				std::cout << " var id is is "<< get_variable_from_literal(q) << std::endl;
-				q =explanation[5];
-				std::cout << "\n is_a_bound_literal  "<< std::endl;
-				std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-				std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-				std::cout << " var id "<< get_variable_from_literal(q) << std::endl;
-			}
-
-#endif
 
 			if( scope[2].set_domain(0) == FAIL_EVENT)
 			{
@@ -3445,32 +3389,15 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
 		} else if( *min_t1_ptr + processing_time[1] > *max_t0_ptr ) {
 
 			//        ((Solver* ) solver) -> jsp_reason_for[scope[2].id()-((Solver* ) solver)->start_from] = this;
-			((Solver* ) solver) -> reason_for[scope[2].id()] = this;
-			((Solver* ) solver) -> assignment_level[scope[2].id()] = solver->level;
+			//TODO DELETE THESE TWO LINES!!!
+		//	((Solver* ) solver) -> reason_for[scope[2].id()] = this;
+		//	((Solver* ) solver) -> assignment_level[scope[2].id()] = solver->level;
 			bool_explanation_size=3;
 			if(scope0->upperbounds[0] > *max_t0_ptr )
 				explanation[++bool_explanation_size] = encode_bound_literal(scope[0].id(),*max_t0_ptr,1 );
 			if(scope1->lowerbounds[0] < *min_t1_ptr)
 				explanation[++bool_explanation_size] = encode_bound_literal(scope[1].id(),*min_t1_ptr,0 );
 			bool_explanation_size-=3;
-
-#ifdef _TRACKING_ATOM
-			if (scope[2].id() == _TRACKING_ATOM)
-			{
-				std::cout << "First literal : "<< encode_bound_literal(scope[0].id(),*max_t0_ptr,1 ) << std::endl;
-				std::cout << "Second literal : "<<  encode_bound_literal(scope[1].id(),*min_t1_ptr,0 )<< std::endl;
-				std::cout << "scope[0].id() " <<scope[0].id() << std::endl;
-				std::cout << "scope[1].id() " << scope[1].id() << std::endl;
-				std::cout << "max_t0_ptr" << *max_t0_ptr << std::endl;
-				std::cout << "min_t1_ptr " << *min_t1_ptr << std::endl;
-				Literal a = encode_bound_literal(scope[1].id(),*min_t1_ptr,0 );
-				//			if (is_a_bound_literal(a))
-				//			std::cout << "is_a_bound_literal " <<std::endl;
-				//		else
-				//			std::cout << "NOOOOOOOOOOO " <<std::endl;
-				//		exit(1);
-			}
-#endif
 
 			if( scope[2].set_domain(1) == FAIL_EVENT)
 			{
@@ -3489,33 +3416,6 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
 			display(std::cout);
 			std::cout << std::endl;
 #endif
-
-#ifdef _TRACKING_ATOM
-			if (scope2->id==_TRACKING_ATOM)
-			{
-				std::cout << " \n \n FOUND ya SET TO 1! bool_explanation_size " << bool_explanation_size << std::endl;
-
-				std::cout << " \n \n scope 0   " << scope[0] <<   "[" << scope0->get_min() << ".." <<  scope0->get_max() << "]" << std::endl;
-				std::cout << " \n \n scope 1   " << scope[1] <<   "[" << scope1->get_min() << ".." <<  scope1->get_max() << "]" << std::endl;
-				//  		std::cout << " \n \n FOUND ya ! bool_explanation_size " << bool_explanation_size << std::endl;
-				std::cout << "literal " << explanation[2] << std::endl;
-				std::cout << " literal" << explanation[3]  << std::endl;
-
-				Literal q =explanation[4];
-				std::cout << "\n is_a_bound_literal  "<< std::endl;
-				std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-				std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-				std::cout << " var id is is "<< get_variable_from_literal(q) << std::endl;
-
-
-				q =explanation[5];
-				std::cout << "\n is_a_bound_literal  "<< std::endl;
-				std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-				std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-				std::cout << " var id "<< get_variable_from_literal(q) << std::endl;
-			}
-#endif
-
 		}
 #ifdef _DEBUG_RDISJUNCTIVE
 		else
@@ -3556,8 +3456,9 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
 	//std::cout<< " ExplainedConstraintReifiedDisjunctive::propagate ! \n" << std::endl;
 	//		exit(1);
 	if( *min_t0_ptr + processing_time[0] > *max_t1_ptr ) {
-		((Solver* ) solver) -> reason_for[scope[2].id()] = this;
-		((Solver* ) solver) -> assignment_level[scope[2].id()] = solver->level;
+		//TODO REMOVE THAT !!!!!!!!
+	//	((Solver* ) solver) -> reason_for[scope[2].id()] = this;
+	//	((Solver* ) solver) -> assignment_level[scope[2].id()] = solver->level;
 		if( scope[2].set_domain(0) == FAIL_EVENT) wiped = FAILURE(2);
 		// x[1]+p[1] <= x[0] because x[0]'s min is too high or x[1]'s max is too low
 		else if( scope0->set_min( *min_t1_ptr+processing_time[1],this ) == FAIL_EVENT) wiped = FAILURE(0);
@@ -3570,8 +3471,9 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintReifiedDisjunctive::prop
 #endif
 
 	} else if( *min_t1_ptr + processing_time[1] > *max_t0_ptr ) {
-		((Solver* ) solver) -> reason_for[scope[2].id()] = this;
-		((Solver* ) solver) -> assignment_level[scope[2].id()] = solver->level;
+		//TODO REMOVE THAT
+		//((Solver* ) solver) -> reason_for[scope[2].id()] = this;
+		//((Solver* ) solver) -> assignment_level[scope[2].id()] = solver->level;
 		if( scope[2].set_domain(1) == FAIL_EVENT) wiped = FAILURE(2);
 		else if( scope0->set_max( *max_t1_ptr-processing_time[0],NULL ) == FAIL_EVENT) wiped = FAILURE(0);
 		else if( scope1->set_min( *min_t0_ptr+processing_time[0], NULL ) == FAIL_EVENT) wiped = FAILURE(1);

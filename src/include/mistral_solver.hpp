@@ -791,22 +791,11 @@ namespace Mistral {
     double get_current_target();
     // //@}
 
-    //FD learning
+    //FD Learning
     void simple_fdlearn_nogood(bool will_be_forgotten = false);
-    void fdlearn_nogood();
-    //fdlearn_nogood without using sequence to select the nextliteral to explore
-    void fdlearn_nogood_nosequence();
-  //  void fdimprovedlearn_nogood();
-  //  void learn_withoutClosingPropagation();
-  //  void learn_with_lazygeneration();
-	Vector<Literal> bound_literals_to_explore;
-	//Instead of using sequence we will use this vector to select the next literal to explore
 
-	//
-//	LearningActivityManager * activity_mngr;
-
-	//We need these vectors only to update the size of var_activity and lit_activity with lazy generation
-
+    Vector<Literal> bound_literals_to_explore;
+    //We need these vectors only to update the size of var_activity and lit_activity with lazy generation
     Vector<double> *activity_var_activity;
     Vector<double> *activity_lit_activity;
 
@@ -882,15 +871,15 @@ namespace Mistral {
     unsigned int generate_new_variable(DomainFaithfulnessConstraint * dom_constraint, int val, bool is_lb, int lvl , int range_id);
     void generate_variables();
     //New clean learning
-    void add_literal_tobe_explored4(Literal l);
-    void add_Orderedliteral_tobe_explored4(Literal l, int assignment_odr, Explanation* e);
-    Explanation * get_next_to_explore4(Literal & a) ;
-    void treat_assignment_literal4(Literal q);
-    void treat_bound_literal4(Literal q);
+    void add_literal_tobe_explored(Literal l);
+    void add_Orderedliteral_tobe_explored(Literal l, int assignment_odr, Explanation* e);
+    Explanation * get_next_to_explore(Literal & a) ;
+    void treat_assignment_literal(Literal q);
+    void treat_bound_literal(Literal q);
     void repace_with_disjunctions(Literal q);
     void generate_and_learn(Literal q);
-    void treat_explanation4(Explanation* explanation,  Explanation::iterator start,Explanation::iterator end );
-    void clean_fdlearn4();
+    void treat_explanation(Explanation* explanation,  Explanation::iterator start,Explanation::iterator end );
+    void clean_fdlearn();
     bool should_forget();
     bool learn_virtual_literals();
 
@@ -1342,7 +1331,6 @@ public:
 
 #else
   inline Literal encode_bound_literal (unsigned int id_variable, unsigned int value, unsigned int sign) {
-	  //TODO Add compilation flag
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 	  if ((value < 0) || (!value && (!sign)))
 	  {
@@ -1350,30 +1338,13 @@ public:
 		  exit(1);
 	  }
 #endif
-	  //TODO add more tests !
-	  return ( (((Literal) 1) << 63) | (((Literal) sign) << 62) | (((Literal) value) << 30) | id_variable);}
-	  //return ( ((((Literal) 1) << 61) | (((Literal) sign) << 60)) | (((Literal) value) << 30));}
-  inline unsigned int get_variable_from_literal (Literal literal) { return ( 0x3FFFFFFF & literal) ;}
-	  inline unsigned int get_value_from_literal (Literal literal) {
-	//	  std::cout <<" \n \n  get_value_from_literal "  << std::endl;
-		  Literal tmp;
-		  tmp = (0x3FFFFFFFFFFFFFFF & literal) >> 30;
-		  //TODO : check why it is different !!!!!
-	//	  std::cout <<" \n \n  tmp  "  << tmp << std::endl;
-		  return ( unsigned int) tmp;
-	  }
-//	  inline int get_sign_from_literal (unsigned int literal) {return (literal >> 31);}
-	  inline bool is_upper_bound (Literal literal) {
-/*		  Literal tmp;
-		  tmp = literal >>  ;
-		  std::cout <<" \n \n  tmp   "  << tmp << std::endl;
-		  tmp = ((literal & 0x4000000000000000)) ;
-		  std::cout <<" \n \n  tmp   "  << tmp << std::endl;
-		  tmp = ((literal & 0x4000000000000000) >> 60) ;
-		  std::cout <<" \n \n  tmp   "  << tmp << std::endl;
-	*/	  return  ((literal & 0x4000000000000000) >> 62) ;}
-	  inline bool is_lower_bound (Literal literal) {return (1- ((literal & 0x4000000000000000) >> 62)) ;}
-	  inline bool is_a_bound_literal (Literal literal) {return literal >> 63;}
+	  return ( (((Literal) 1) << 63) | (((Literal) sign) << 62) | (((Literal) value) << 30) | id_variable);
+  }
+  inline unsigned int get_variable_from_literal (Literal literal) {return ( 0x3FFFFFFF & literal) ;}
+  inline unsigned int get_value_from_literal (Literal literal) {return ((0x3FFFFFFFFFFFFFFF & literal) >> 30); }
+  inline bool is_upper_bound (Literal literal) {return  ((literal & 0x4000000000000000) >> 62) ;}
+  inline bool is_lower_bound (Literal literal) {return (1- ((literal & 0x4000000000000000) >> 62)) ;}
+  inline bool is_a_bound_literal (Literal literal) {return literal >> 63;}
 #endif
 
 }

@@ -5444,7 +5444,7 @@ void Mistral::Solver::try_to_keep_or_forget() {
 
 
 //New
-void Mistral::Solver::add_literal_tobe_explored4(Literal l){
+void Mistral::Solver::add_literal_tobe_explored(Literal l){
 
 //	bool orderedExploration = true;
 	if (!parameters.orderedExploration)
@@ -5458,13 +5458,13 @@ void Mistral::Solver::add_literal_tobe_explored4(Literal l){
 	}
 }
 
-void Mistral::Solver::add_Orderedliteral_tobe_explored4(Literal l, int assignment_odr, Explanation* e){
+void Mistral::Solver::add_Orderedliteral_tobe_explored(Literal l, int assignment_odr, Explanation* e){
 
 ordered_literals_to_explore.fast_sorted_add(ordered_literal(l,assignment_odr,e));
 
 }
 
-void Mistral::Solver::treat_assignment_literal4(Literal q){
+void Mistral::Solver::treat_assignment_literal(Literal q){
 
 	unsigned int x = get_id_boolean_variable(q);
 	int lvl = assignment_level[x];
@@ -5563,9 +5563,9 @@ void Mistral::Solver::treat_assignment_literal4(Literal q){
 //						std::cout << q << " assignment order" << x << "]"<<  assignment_order[x]<< std::endl;
 
 						if (parameters.orderedExploration)
-							add_Orderedliteral_tobe_explored4(q,assignment_order[x], reason_for[x]);
+							add_Orderedliteral_tobe_explored(q,assignment_order[x], reason_for[x]);
 						else
-							add_literal_tobe_explored4(q);
+							add_literal_tobe_explored(q);
 
 						++remainPathC;
 					} else {
@@ -5647,9 +5647,9 @@ void Mistral::Solver::treat_assignment_literal4(Literal q){
 //					std::cout << q << " assignment order" << x << "]"<<  assignment_order[x]<< std::endl;
 
 					if (parameters.orderedExploration)
-						add_Orderedliteral_tobe_explored4(q,assignment_order[x], reason_for[x]);
+						add_Orderedliteral_tobe_explored(q,assignment_order[x], reason_for[x]);
 					else
-					add_literal_tobe_explored4(q);
+					add_literal_tobe_explored(q);
 
 					++remainPathC;
 				} else {
@@ -5692,7 +5692,7 @@ void Mistral::Solver::treat_assignment_literal4(Literal q){
 
 }
 
-void Mistral::Solver::treat_bound_literal4(Literal q){
+void Mistral::Solver::treat_bound_literal(Literal q){
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 	if ((is_lower_bound(q)))
@@ -5859,11 +5859,11 @@ void Mistral::Solver::treat_bound_literal4(Literal q){
 
 
 					if (parameters.orderedExploration)
-						add_Orderedliteral_tobe_explored4(q,tmp_VariableRangeWithLearning->assignment_of(val,is_lb),
+						add_Orderedliteral_tobe_explored(q,tmp_VariableRangeWithLearning->assignment_of(val,is_lb),
 								tmp_VariableRangeWithLearning->reason_for(q));
 					else
 #endif
-					add_literal_tobe_explored4(q);
+					add_literal_tobe_explored(q);
 					++remainPathC;
 				}
 			}
@@ -5919,11 +5919,11 @@ void Mistral::Solver::treat_bound_literal4(Literal q){
 //						"]"<<  tmp_VariableRangeWithLearning->assignment_of(val,is_lb) << std::endl;
 
 				if (parameters.orderedExploration)
-					add_Orderedliteral_tobe_explored4(q,tmp_VariableRangeWithLearning->assignment_of(val,is_lb),
+					add_Orderedliteral_tobe_explored(q,tmp_VariableRangeWithLearning->assignment_of(val,is_lb),
 							tmp_VariableRangeWithLearning->reason_for(q));
 				else
 #endif
-				add_literal_tobe_explored4(q);
+				add_literal_tobe_explored(q);
 				++remainPathC;
 			}
 		}
@@ -5931,7 +5931,7 @@ void Mistral::Solver::treat_bound_literal4(Literal q){
 }
 
 
-Explanation * Mistral::Solver::get_next_to_explore4(Literal & lit) {
+Explanation * Mistral::Solver::get_next_to_explore(Literal & lit) {
 
 	//Literal l;
 	//	bool orderedExploration = true;
@@ -6133,7 +6133,7 @@ Explanation * Mistral::Solver::get_next_to_explore4(Literal & lit) {
 					}
 #endif
 
-					treat_explanation4( o_l.explanation, start, end);
+					treat_explanation( o_l.explanation, start, end);
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 				}
 
@@ -6147,7 +6147,7 @@ Explanation * Mistral::Solver::get_next_to_explore4(Literal & lit) {
 				}
 
 #endif
-				return  get_next_to_explore4(lit);
+				return  get_next_to_explore(lit);
 			}
 			return o_l.explanation;
 		}
@@ -6161,7 +6161,7 @@ Explanation * Mistral::Solver::get_next_to_explore4(Literal & lit) {
 	}
 }
 
-void Mistral::Solver::treat_explanation4(Explanation* explanation,  Explanation::iterator start,Explanation::iterator end ){
+void Mistral::Solver::treat_explanation(Explanation* explanation,  Explanation::iterator start,Explanation::iterator end ){
 	//Literal q;
 #ifdef 	_DEBUG_FD_NOGOOD
 	if(_DEBUG_FD_NOGOOD){
@@ -6177,10 +6177,10 @@ void Mistral::Solver::treat_explanation4(Explanation* explanation,  Explanation:
 		//		std::cout << " *start: "<< *start << std::endl;
 		if (is_a_bound_literal(*start))
 		{
-			treat_bound_literal4(*start);
+			treat_bound_literal(*start);
 		}
 		else{
-			treat_assignment_literal4(*start);
+			treat_assignment_literal(*start);
 		}
 		++start;
 	}
@@ -6337,7 +6337,7 @@ void Mistral::Solver::repace_with_disjunctions(Literal q){
 			//		std::cout << " *start: "<< *start << std::endl;
 			if (is_a_bound_literal(q))
 			{
-				//			treat_bound_literal4(*start);
+				//			treat_bound_literal(*start);
 				bool is_lb = is_lower_bound(q);
 				int val = get_value_from_literal(q);
 				int var = get_variable_from_literal(q);
@@ -7036,7 +7036,7 @@ bool Mistral::Solver::learn_virtual_literals() {
 	}
 }
 
-void Mistral::Solver::clean_fdlearn4() {
+void Mistral::Solver::clean_fdlearn() {
 	//std::cout << " \n\n\n clean_fdlearn " << std::endl;
 	/*std::cout << " parameters.bounded_by_decision  " << parameters.bounded_by_decision  << std::endl;
 	std::cout << " parameters.max_nogood_size  " << parameters.max_nogood_size  << std::endl;
@@ -7168,7 +7168,7 @@ void Mistral::Solver::clean_fdlearn4() {
 					}
 				}
 #endif
-				treat_explanation4(current_explanation, start, end);
+				treat_explanation(current_explanation, start, end);
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 			}
 
@@ -7182,7 +7182,7 @@ void Mistral::Solver::clean_fdlearn4() {
 			}
 
 #endif
-			current_explanation = get_next_to_explore4(a_literal);
+			current_explanation = get_next_to_explore(a_literal);
 			//		std::cout << "latest before while =" << pathC << std::endl;
 			//		} while( boolean_vairables_to_explore.size );
 		} while( --remainPathC );
@@ -7794,7 +7794,7 @@ Mistral::Outcome Mistral::Solver::branch_right() {
     	//fdimprovedlearn_nogood();
     	//learn_withoutClosingPropagation();
     	else if(parameters.fd_learning==2)
-    		clean_fdlearn4();
+    		clean_fdlearn();
   /*  	else if(parameters.fd_learning==3)
     		fdlearn_nogood_nosequence();
     	else if(parameters.fd_learning==4)
@@ -7807,7 +7807,6 @@ Mistral::Outcome Mistral::Solver::branch_right() {
     		learn_with_lazygeneration_and_semantic_learning2();
     	else if(parameters.fd_learning==6)
     		learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables2();
-
     	else if(parameters.fd_learning==5)
     	    		clean_fdlearn();
     	else if(parameters.fd_learning==6)
