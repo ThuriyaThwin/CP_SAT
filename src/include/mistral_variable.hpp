@@ -1531,13 +1531,6 @@ namespace Mistral {
 
   public:
 	  VariableRangeWithLearning(const int lb, const int ub) : VariableRange(lb,ub) {
-		  //	  std::cout << "HERE \n \n " << std::endl;
-
-#ifdef latest_bounds_learning
-		  latest_visited_upper_bound = INFTY;
-		  latest_visited_lower_bound = -INFTY;
-#endif
-
 		  lowerbounds.clear();
 		  upperbounds.clear();
 		  lower_bound_reasons.clear();
@@ -1559,17 +1552,6 @@ namespace Mistral {
 		  lower_bound_orders.add(0);
 		  upper_bound_orders.add(0);
 #endif
-		  //  std::cout << "111NDDDDD \n \n " << std::endl;
-		  //	  std::cout << "level  \n \n " << solver->level <<std::endl;
-
-
-#ifdef latest_bounds_learning
-		  latest = true;
-		  LB_Explanation = NULL;
-		  UB_Explanation = NULL;
-		  explanation_trail.add(LB_Explanation);
-		  explanation_trail.add(UB_Explanation);
-#endif
 		  domainConstraint = NULL;
 #ifdef _ASSIGNMENT_ORDER
 		  order=NULL;
@@ -1586,20 +1568,6 @@ namespace Mistral {
 #ifdef _ASSIGNMENT_ORDER
 	  ReversibleNum<int> *order;
 #endif
-
-#ifdef latest_bounds_learning
-	  void set_latest_visited_lower_bound(int l){latest_visited_lower_bound=l;} ;
-	  int get_latest_visited_lower_bound(){ return latest_visited_lower_bound;} ;
-	  void set_latest_visited_upper_bound(int u){latest_visited_upper_bound = u;} ;
-	  int get_latest_visited_upper_bound(){return latest_visited_upper_bound;} ;
-#endif
-
-#ifdef latest_bounds_learning
-	  void initialise_latest_visited_upper_bounds () {latest_visited_upper_bound = INFTY;}
-	  void initialise_latest_visited_lower_bounds () {latest_visited_lower_bound = -INFTY;}
-#endif
-
-//	  bool first_time_visited (bool is_a_lowerbound) ;
 	  DomainFaithfulnessConstraint* domainConstraint;
 	  bool should_be_learnt(Literal q);
 	  int level_of(int val, bool lb) ;
@@ -1617,41 +1585,15 @@ namespace Mistral {
 		  // first check if we can abort early
 		  if(max <  lo) return FAIL_EVENT;
 		  if(min >= lo) return NO_EVENT;
-#ifdef latest_bounds_learning
-		  if(trail_.back() != solver->level)
-			  if(latest)
-			  {
-				  explanation_trail.add(LB_Explanation);
-				  explanation_trail.add(UB_Explanation);
-			  }
-#endif
 		  save();
 
 		  min = lo;
-#ifdef latest_bounds_learning
-		  if (!latest)
-		  {
-#endif
 			  lowerbounds.add(lo);
 			  lower_bound_reasons.add(C);
 			  lower_bound_levels.add(solver->level);
 #ifdef _ASSIGNMENT_ORDER
 			  lower_bound_orders.add(*order);
 			  ++ (*order);
-#endif
-
-			  //  std::cout << "NEW LOWER BOUND \n \n " << std::endl;
-			  //  std::cout << "lowerbounds"<< lowerbounds << std::endl;
-			  //	  std::cout << "lower_bound_reasons"<< lower_bound_reasons << std::endl;
-			  //	  int size =lowerbounds.size ;
-			  //	  std::cout << "size" << size<< std::endl;
-#ifdef latest_bounds_learning
-		  }
-		  else{
-
-			  LB_Explanation = C;
-
-		  }
 #endif
 
 		  if(min == max) lower_bound |= VALUE_EVENT;
@@ -1667,21 +1609,10 @@ namespace Mistral {
 		  // first check if we can abort early
 		  if(min >  up) return FAIL_EVENT;
 		  if(max <= up) return NO_EVENT;
-#ifdef latest_bounds_learning
-		  if(trail_.back() != solver->level)
-			  if(latest)
-			  {
-				  explanation_trail.add(LB_Explanation);
-				  explanation_trail.add(UB_Explanation);
-			  }
-#endif
 		  save();
 
 		  max = up;
-#ifdef latest_bounds_learning
-		  if(!latest)
-		  {
-#endif
+
 			  upperbounds.add(up);
 			  upper_bound_reasons.add(C);
 			  upper_bound_levels.add(solver->level);
@@ -1696,13 +1627,6 @@ namespace Mistral {
 			  //		  int size =lowerbounds.size ;
 			  //		  std::cout << "size" << size<< std::endl;
 
-#ifdef latest_bounds_learning
-		  }
-		  else{
-
-			  UB_Explanation = C;
-		  }
-#endif
 
 		  //HERE : How to backtrack ?
 		  if(max == min) upper_bound |= VALUE_EVENT;
@@ -1812,10 +1736,6 @@ namespace Mistral {
 		  trail_.pop(max);
 		  trail_.pop(min);
 
-#ifdef latest_bounds_learning
-		  if(!latest)
-		  {
-#endif
 			  int size = lowerbounds.size;
 			  while(size--)
 			  {
@@ -1856,29 +1776,12 @@ namespace Mistral {
 					  break;
 				  }
 			  }
-#ifdef latest_bounds_learning
-		  }
-		  else
-		  {
-			  explanation_trail.pop(UB_Explanation);
-			  explanation_trail.pop(LB_Explanation);
-		  }
-#endif
-
 		  return NO_EVENT;
 	  }
 
 
 	  Vector<int> lowerbounds;
 	  Vector<int> upperbounds;
-
-#ifdef latest_bounds_learning
-	  bool latest;
-	  Vector<Explanation* > explanation_trail;
-	  //Reasoning about latest changes
-	  Explanation* LB_Explanation;
-	  Explanation* UB_Explanation;
-#endif
 
 	  //TODO : private ???
   private:

@@ -157,7 +157,6 @@ namespace Mistral {
 #define _ASSIGNMENT_ORDER true
 
   //#define   _DEBUG_FAIL true
-//  #define latest_bounds_learning true
 
 #define NORESTART 0
 #define GEOMETRIC 1

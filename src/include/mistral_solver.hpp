@@ -833,12 +833,7 @@ namespace Mistral {
 	bool visited_virtual_literal(Literal q, int forbidden_var, int forbidden_val,  bool forbidden_lb );
 
 
-//    void learn_with_lazygeneration_no_bound_at_the_end();
-//    void learn_with_lazygeneration_and_semantic_learning();
-//    void learn_with_lazygeneration_and_semantic_learning2();
-//    void learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables();
-//    void learn_with_lazygeneration_and_semantic_learning_with_convert_generated_variables2();
-    void clean_fdlearn();
+
     void try_to_keep_or_forget();
 
     unsigned int remainPathC;
@@ -915,38 +910,27 @@ namespace Mistral {
 
     Vector <ordered_literal > ordered_literals_to_explore;
 
-
-
-    Explanation * get_next_to_explore(Atom & a);
     void add_atom_tobe_explored(Atom a);
     unsigned int generate_new_variable(DomainFaithfulnessConstraint * dom_constraint, int val, bool is_lb, int lvl , int range_id);
 
     void generate_variables();
-    void treat_bound_literal (Literal q);
-    void treat_assignment_literal (Literal q);
-    void treat_explanation (Explanation* explanation,  Explanation::iterator start,Explanation::iterator end );
-
     //New clean learning
 
     void add_literal_tobe_explored2(Literal l);
     void add_Orderedliteral_tobe_explored(Literal l, int assignment_odr, Explanation* e);
 
 
-    void treat_assignment_literal2(Literal q);
-    void treat_bound_literal2(Literal q);
     Explanation * get_next_to_explore2(Literal & a) ;
-    void treat_explanation2 (Explanation* explanation,  Explanation::iterator start,Explanation::iterator end );
 
-    void clean_fdlearn2() ;
 
-    void treat_bound_literal3(Literal q);
+    void treat_assignment_literal4(Literal q);
     void treat_bound_literal4(Literal q);
-    void learn_virtualLiteral(Literal q);
+
     void repace_with_disjunctions(Literal q);
     void generate_and_learn(Literal q);
-    void treat_explanation3 (Explanation* explanation,  Explanation::iterator start,Explanation::iterator end );
+
     void treat_explanation4 (Explanation* explanation,  Explanation::iterator start,Explanation::iterator end );
-    void clean_fdlearn3();
+
     void clean_fdlearn4();
 
 
@@ -971,12 +955,7 @@ namespace Mistral {
 	//BitSet bounds_under_exploration;
 	unsigned int * visitedUpperBoundvalues;
 	unsigned int * visitedLowerBoundvalues;
-	//unsigned int * boundvalues_under_exploration;
-#ifdef latest_bounds_learning
-    bool propagate_literal_in_learnt_clause;
-    void fdlearn_nogood_using_only_latest_bounds();
-    void learn_cycle_nogood(Literal * l);
-#endif
+
     //Data Structures needed with jsp_learn_nogood
 //    Vector<VariableRangeWithLearning*> Visited_lower_bound_variables ;
 //    Vector<VariableRangeWithLearning*> Visited_upper_bound_variables ;
@@ -1403,7 +1382,7 @@ public:
   //The next 16 bits for values : --> biggest value is 65535.
   //the last 4 bits are for the variable_id : biggest variable_id is 32767.
 
-#ifndef latest_bounds_learning
+
 #ifndef _64BITS_LITERALS
   inline unsigned int encode_bound_literal (int id_variable, int value,int sign) {
 	  //TODO Add compilation flag
@@ -1421,13 +1400,6 @@ public:
   inline bool is_a_bound_literal (unsigned int literal) {return (literal > 0x7FFF ) ;}
 
 #else
-
-  //The structure is the folowing (from the most significance bit) :
-  //1 bit : is a bound literal?
-  //1 bit : is an upper bound?
-  //32 bits : value
-  //30 bits : variable id
-
   inline Literal encode_bound_literal (unsigned int id_variable, unsigned int value, unsigned int sign) {
 	  //TODO Add compilation flag
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
@@ -1437,11 +1409,9 @@ public:
 		  exit(1);
 	  }
 #endif
-
 	  //TODO add more tests !
 	  return ( (((Literal) 1) << 63) | (((Literal) sign) << 62) | (((Literal) value) << 30) | id_variable);}
 	  //return ( ((((Literal) 1) << 61) | (((Literal) sign) << 60)) | (((Literal) value) << 30));}
-
   inline unsigned int get_variable_from_literal (Literal literal) { return ( 0x3FFFFFFF & literal) ;}
 	  inline unsigned int get_value_from_literal (Literal literal) {
 	//	  std::cout <<" \n \n  get_value_from_literal "  << std::endl;
@@ -1455,41 +1425,14 @@ public:
 	  inline bool is_upper_bound (Literal literal) {
 /*		  Literal tmp;
 		  tmp = literal >>  ;
-
 		  std::cout <<" \n \n  tmp   "  << tmp << std::endl;
-
 		  tmp = ((literal & 0x4000000000000000)) ;
-
 		  std::cout <<" \n \n  tmp   "  << tmp << std::endl;
 		  tmp = ((literal & 0x4000000000000000) >> 60) ;
-
 		  std::cout <<" \n \n  tmp   "  << tmp << std::endl;
 	*/	  return  ((literal & 0x4000000000000000) >> 62) ;}
-
 	  inline bool is_lower_bound (Literal literal) {return (1- ((literal & 0x4000000000000000) >> 62)) ;}
 	  inline bool is_a_bound_literal (Literal literal) {return literal >> 63;}
-
-#endif
-
-#endif
- // inline int negate_literal (unsigned int literal) { return ( 0x7FFF & literal) ;}
-
-  //with latest bounds
-#ifdef latest_bounds_learning
-  inline bool is_a_latest_upper_bound (Literal literal) {return 2^(literal >> 30) ;}
-  inline bool is_a_latest_lower_bound (Literal literal) {return 3^(literal >> 30) ;}
-  inline bool is_a_latest_bound_literal (Literal literal) {return  (literal >> 31) ;}
-  inline Literal encode_latest_bound_literal (unsigned int id_variable,int sign) {return ( ((2+sign) << 30) | id_variable);}
-  inline int get_variable_from_latest_literal (Literal literal) { return ( 0x3FFFFFFF & literal) ;}
-
-
-  inline bool is_upper_bound (Literal literal) {return 2^(literal >> 30) ;}
-  inline bool is_lower_bound (Literal literal) {return 3^(literal >> 30) ;}
-  inline bool is_a_bound_literal (Literal literal) {return  (literal >> 31) ;}
-  inline Literal encode_bound_literal (unsigned int id_variable,int value, int sign) {return ( ((2+sign) << 30) | id_variable);}
-  inline int get_variable_from_literal (Literal literal) { return ( 0x3FFFFFFF & literal) ;}
-
-  inline int get_value_from_literal (unsigned int literal) {return ( (literal & 0x7FFFFFFF) >> 15);}
 #endif
 
 }
