@@ -7370,6 +7370,20 @@ void Mistral::Solver::clean_fdlearn() {
 				//   }
 				// }
 
+
+				if (assignment_level[get_id_boolean_variable(learnt_clause[1])]!=backtrack_level){
+					unsigned int ___size= learnt_clause.size;
+					Literal __q = learnt_clause[1];
+					while (--___size){
+						if (assignment_level[get_id_boolean_variable(learnt_clause[___size])]==backtrack_level){
+							learnt_clause[1]=learnt_clause[___size];
+							learnt_clause[___size]= __q;
+							break;
+						}
+					}
+				}
+
+				/*
 				orderedliterals.clear();
 				for (int i = (learnt_clause.size-1) ; i> 0; --i){
 					q = learnt_clause[i];
@@ -7384,6 +7398,7 @@ void Mistral::Solver::clean_fdlearn() {
 					//q = orderedliterals[i].l;
 					learnt_clause.fast_add(orderedliterals[i].l);
 				}
+				*/
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 				if (parameters.semantic_learning){
