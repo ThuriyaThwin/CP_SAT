@@ -3488,14 +3488,24 @@ if (enforce_nfc1)
   public:
 
 	  ExplainedConstraintReifiedDisjunctive(Variable x, Variable y, Variable z, const int p0, const int p1):
-		  ConstraintReifiedDisjunctive(x, y, z, p0, p1), scope0(static_cast<VariableRangeWithLearning*> (x.range_domain)), scope1(static_cast<VariableRangeWithLearning*> (y.range_domain)) {}
-	  ExplainedConstraintReifiedDisjunctive(Vector< Variable >& scp, const int p0, const int p1) :
+		  ConstraintReifiedDisjunctive(x, y, z, p0, p1), scope0(static_cast<VariableRangeWithLearning*> (x.range_domain)), scope1(static_cast<VariableRangeWithLearning*> (y.range_domain)) {
+	//	  positive = ((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), 1);
+	//	  negative = ((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), 0);
+		  std::cout << " Error Should use the other constructor of ExplainedConstraintReifiedDisjunctive?" << std::endl;
+		  exit(1);
+	  }
+
+	  ExplainedConstraintReifiedDisjunctive(Vector< Variable >& scp, const int p0, const int p1); /*:
 		  ConstraintReifiedDisjunctive(scp,p0, p1), scope0(static_cast<VariableRangeWithLearning*>(scp[0].range_domain)), scope1(static_cast<VariableRangeWithLearning*>(scp[1].range_domain)) {
+		  //	  positive = ((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), 1);
+		  //	  negative = ((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), 0);
 		  if (scp.size > 3) {
 			  std::cout << " c ExplainedConstraintReifiedDisjunctive works only with 3 variables" << std::endl;
 			  exit(1);
 		  }
+
 	  }
+	  */
 	  // ConstraintReifiedDisjunctive(std::vector< Variable >& scp, const int p0, const int p1);
 
 	  virtual PropagationOutcome propagate(const int changed_idx, const Event evt);
@@ -3517,6 +3527,8 @@ if (enforce_nfc1)
 	  virtual iterator get_reason_for(const Atom a, const int lvl, iterator& end);
 	  virtual iterator get_reason_for_literal(const Literal a, iterator& end);
 	  //virtual iterator get_bound_reason_for(const Literal l, iterator& end);
+
+	  Literal positive, negative;
 
   private:
 	  VariableRangeWithLearning* scope0;

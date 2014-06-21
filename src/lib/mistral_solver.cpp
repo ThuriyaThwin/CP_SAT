@@ -10051,7 +10051,7 @@ void Mistral::Solver::set_fdlearning_on(
 	parameters.keeplearning_in_bb = keeplearning_in_bb;
 	//Should be already set
 	parameters.iterforget = _iterforget;
-	//std::cout << " c start_from : " << start_from << std::endl;
+	std::cout << " c start_from : " << start_from << std::endl;
 	visitedUpperBounds.initialise(0, start_from  , BitSet::empt);
 	visitedLowerBounds.initialise(0,  start_from  ,BitSet::empt);
 	visitedUpperBoundvalues = new unsigned int [start_from ];

@@ -2208,14 +2208,26 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 			if(get_variable_from_literal(a) == scope[1].id())
 			{
 #endif
-				if (
+/*				if (
 						(get_value_from_literal(a)-offset) <=
 						scope0->lowerbounds[0]
 						)
 					end = &(explanation[0]);
 				else
+
+
+*/
 				{
-					explanation[0] = encode_bound_literal(scope[0].id(),get_value_from_literal(a)-offset,0 ) ;
+
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+					if (get_value_from_literal(a)<offset)
+					{
+						std::cout<< " ERROR get_value_from_literal(a)<offset " << std::endl;
+						exit(1);
+					}
+#endif
+				explanation[0] = encode_bound_literal(scope[0].id(),get_value_from_literal(a)-offset,0 ) ;
 					//	else
 					//		std::cout<< " c should be a problem here!! Wrong call for reason" << std::endl;
 
@@ -2236,12 +2248,13 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 			if(get_variable_from_literal(a) == scope[0].id())
 			{
 #endif
-				if (
+/*				if (
 						(get_value_from_literal(a)+offset) >=
 						scope1->upperbounds[0]
 				)
 					end = &(explanation[0]);
 				else
+				*/
 				{
 					explanation[0] = encode_bound_literal(scope[1].id(),get_value_from_literal(a)+offset,1 ) ;
 					//	else
@@ -2430,6 +2443,23 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 }
 
 
+Mistral::ExplainedConstraintReifiedDisjunctive::ExplainedConstraintReifiedDisjunctive(Vector< Variable >& scp, const int p0, const int p1) :
+			  ConstraintReifiedDisjunctive(scp,p0, p1), scope0(static_cast<VariableRangeWithLearning*>(scp[0].range_domain)), scope1(static_cast<VariableRangeWithLearning*>(scp[1].range_domain)) {
+
+	//std::cout << " id " << scp[2].id() << std::endl;
+//	std::cout << " start_from " << ((Solver *)solver)<< std::endl;
+	Solver * s = scp[0].get_solver();
+
+	positive = s->encode_boolean_variable_as_literal(scp[2].id(), 1);
+	negative = s->encode_boolean_variable_as_literal(scp[2].id(), 0);
+//	std::cout << " id ??" << scp[2].id() << std::endl;
+
+	if (scp.size > 3) {
+		std::cout << " c ExplainedConstraintReifiedDisjunctive works only with 3 variables" << std::endl;
+		exit(1);
+	}
+}
+
 Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::get_reason_for_literal(const Literal a, iterator& end){
 	if (is_a_bound_literal(a) || a== NULL_ATOM)
 		get_reason_for (a, solver->level ,end);
@@ -2439,10 +2469,13 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 }
 Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::get_reason_for(const Atom a, const int lvl, iterator& end){
 
+	//TODO Add a test on the level
+
 	//	std::cout <<" \n \n \nExplainedConstraintReifiedDisjunctive  get_reason_for "  << std::endl;
 	if(a == NULL_ATOM) {
-		int tmp = -1;
+		//int tmp = -1;
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+		//int tmp = -1;
 		if (!scope[2].is_ground())
 		{
 			//ToDo better test using the tightest bound i.e. its explanation is NULL
@@ -2478,46 +2511,57 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 
 			end = &(explanation[0])+tmp+1;
 
-
 		}
 #endif
 
 		{
-			explanation[++tmp] =  NOT (((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), scope[2].get_min()));
+//			explanation[++tmp] =  NOT (((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), scope[2].get_min()));
 			if(scope[2].get_min())
 			{
-				if (
+//				explanation[++tmp]= negative;
+				//++tmp
+				explanation[0]= negative;
+
+/*				if (
 						scope[0].get_min() >
 				scope0->lowerbounds[0]
 				)
+*/
+				//++tmp
+				explanation[1] = encode_bound_literal(scope[0].id(),scope[0].get_min(),0 ) ;
 
-					explanation[++tmp] = encode_bound_literal(scope[0].id(),scope[0].get_min(),0 ) ;
-
-				if (
+/*				if (
 						scope[1].get_max() <
 						scope1->upperbounds[0]
 				)
-
-					explanation[++tmp] =  encode_bound_literal(scope[1].id(),scope[1].get_max(),1) ;
+*/
+					//++tmp
+					explanation[2] =  encode_bound_literal(scope[1].id(),scope[1].get_max(),1) ;
 			}
 			else
 			{
-				if (
+				//++tmp
+				explanation[0]= positive;
+	/*			if (
 						scope[0].get_max() <
 						scope0->upperbounds[0]
 				)
+*/
+				//++tmp
+				explanation[1] =  encode_bound_literal(scope[0].id(),scope[0].get_max(),1) ;
 
-					explanation[++tmp] =  encode_bound_literal(scope[0].id(),scope[0].get_max(),1) ;
-
-				if (
+	/*			if (
 						scope[1].get_min() >
 				scope1->lowerbounds[0]
 				)
-
-					explanation[++tmp] = encode_bound_literal(scope[1].id(),scope[1].get_min(),0 ) ;
+*/
+					//++tmp
+					explanation[2] = encode_bound_literal(scope[1].id(),scope[1].get_min(),0 ) ;
 
 			}
-			end = &(explanation[0])+tmp+1;
+//			end = &(explanation[0])+tmp+1;
+			end = &(explanation[0])+3;
+
 		}
 	}
 	else {
@@ -2554,7 +2598,6 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 		}
 		else if (is_lower_bound(a))
 		{
-
 			if ( get_variable_from_literal(a) == scope[1].id())
 			{
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
@@ -2572,49 +2615,52 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 #endif
 				//TODO Change (Solver *) solver)->encode_b.. with the id of the variable in the class directly!
 				//ToDo Chenge get_value_from_literal. with a variable along all the code!
-				explanation[0] =  NOT (((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), 1));
-				if (
+				//explanation[0] =  NOT (((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), 1));
+				explanation[0] =  negative;
+
+			/*	if (
 						(get_value_from_literal(a)-processing_time[0]) <=
 						scope0->lowerbounds[0]
 				)
 
 					end = &(explanation[0])+1;
-				else {
+				else
+				*/
+				{
 					explanation[1] = encode_bound_literal(scope[0].id(),get_value_from_literal(a)-processing_time[0],0 ) ;
 					end = &(explanation[0])+2;
 				}
 			}
 			else {
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 				if ( get_variable_from_literal(a) == scope[0].id())
 				{
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-
 					if (!scope[2].is_ground()){
 						std::cout <<" \n \n ERROR  !scope[2].is_ground() "  << std::endl;
 						exit(1);
 					}
-
 					if (scope[2].get_max()==1)
 					{
 						std::cout << "scope[2]  should be assigned to 0" << std::endl;
 						exit(1);
 					}
 #endif
-
-					explanation[0] =  NOT(((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), 0));
-					if ((get_value_from_literal(a)-processing_time[1]) <= scope1->lowerbounds[0])
+					//explanation[0] =  NOT(((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), 0));
+					explanation[0] = positive;
+					/*if ((get_value_from_literal(a)-processing_time[1]) <= scope1->lowerbounds[0])
 						end = &(explanation[0])+1;
-					else {
+					else
+					*/
+					{
 						//						explanation[1] = encode_bound_literal(scope[1].id(),get_value_from_literal(a)-processing_time[1]<0 ? 0 :get_value_from_literal(a)-processing_time[1] ,0 ) ;
 						explanation[1] = encode_bound_literal(scope[1].id() , get_value_from_literal(a)-processing_time[1],0 ) ;
-
 						end = &(explanation[0])+2;
 					}
-				}
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+					}
 				else
 				{
-					std::cout << " NOT FOUND! " << std::endl;
+					std::cout << "EXPLANATION ERROR!! NOT FOUND! " << std::endl;
 					exit(1);
 				}
 #endif
@@ -2639,22 +2685,27 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 				}
 #endif
 				//			std::cout <<" 22 "  << std::endl;
-				explanation[0] = NOT( ((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), 0));
-				if (
+//				explanation[0] = NOT( ((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), 0));
+				explanation[0] =  positive;
+
+				/*
+				 if (
 						(get_value_from_literal(a)+processing_time[1]) >=
 						scope0->upperbounds[0]
 				)
 
 					end = &(explanation[0])+1;
-				else {
+				else
+				*/
+				{
 					explanation[1] = encode_bound_literal(scope[0].id(),get_value_from_literal(a)+processing_time[1],1 ) ;
 					end = &(explanation[0])+2;
 				}
 			}
 			else {
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 				if ( get_variable_from_literal(a) == scope[0].id())
 				{
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 					if (!scope[2].is_ground()){
 						std::cout <<" \n \n ERROR  !scope[2].is_ground() "  << std::endl;
 						exit(1);
@@ -2666,18 +2717,22 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 						exit(1);
 					}
 #endif
-					explanation[0] = NOT ( ((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), 1));
-					if (
+					//explanation[0] = NOT ( ((Solver *) solver)->encode_boolean_variable_as_literal(scope[2].id(), 1));
+					explanation[0] =  negative;
+
+					/*if (
 							(get_value_from_literal(a)+processing_time[0]) >=
 							scope1->upperbounds[0]
 					)
 						end = &(explanation[0])+1;
-					else {
+					else
+					*/
+					{
 						explanation[1] = encode_bound_literal(scope[1].id(),get_value_from_literal(a)+processing_time[0],1 ) ;
 						end = &(explanation[0])+2;
 					}
-				}
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+				}
 				else
 				{
 					std::cout << " NOT FOUND! " << std::endl;
