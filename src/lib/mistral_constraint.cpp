@@ -15144,8 +15144,9 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 				//	for (int j = 0; j< scope.size; ++j)
 					//	if ( scope[j].id() == ub[i].x.id())
 						{
-							((Solver* ) solver) -> reason_for[scope[ ub[i].idx].id()] = this;
-							((Solver* ) solver) -> assignment_level[scope[ub[i].idx].id()] = solver->level;
+							//TODO is there a problem with the new generated variables here ?
+			//				((Solver* ) solver) -> reason_for[scope[ ub[i].idx].id()] = this;
+			//				((Solver* ) solver) -> assignment_level[scope[ub[i].idx].id()] = solver->level;
 
 							if (
 									_lb >
@@ -15231,9 +15232,8 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 						//for (int j = 0; j< scope.size; ++j)
 						//	if ( scope[j].id() == ub[idx].x.id())
 						{
-								((Solver* ) solver) -> reason_for[scope[ub[idx].idx].id()] = this;
-								((Solver* ) solver) -> assignment_level[scope[ub[idx].idx].id()] = solver->level;
-
+//								((Solver* ) solver) -> reason_for[scope[ub[idx].idx].id()] = this;
+//								((Solver* ) solver) -> assignment_level[scope[ub[idx].idx].id()] = solver->level;
 
 								if (
 										_ub <
@@ -15362,8 +15362,8 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 				//	if ( scope[j].id() == ub[i].x.id())
 				{
 
-						((Solver* ) solver) -> reason_for[scope[ub[i].idx].id()] = this;
-						((Solver* ) solver) -> assignment_level[scope[ub[i].idx].id()] = solver->level;
+//						((Solver* ) solver) -> reason_for[scope[ub[i].idx].id()] = this;
+//						((Solver* ) solver) -> assignment_level[scope[ub[i].idx].id()] = solver->level;
 
 						eager_explanations[ub[i].idx]=tmp;
 						//break;
@@ -15416,8 +15416,8 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
 					//for (int j = 1; j< scope.size; ++j)
 					//	if ( scope[j].id() == ub[i].x.id())
 					{
-							((Solver* ) solver) -> reason_for[scope[ub[i].idx].id()] = this;
-							((Solver* ) solver) -> assignment_level[scope[ub[i].idx].id()] = solver->level;
+//							((Solver* ) solver) -> reason_for[scope[ub[i].idx].id()] = this;
+//							((Solver* ) solver) -> assignment_level[scope[ub[i].idx].id()] = solver->level;
 
 							eager_explanations[ub[i].idx]=tmp;
 							//break;
