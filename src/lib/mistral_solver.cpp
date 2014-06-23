@@ -2260,6 +2260,13 @@ Mistral::Solver::~Solver() {
   if (parameters.fd_learning){
 	  delete[] visitedUpperBoundvalues;
 	  delete[] visitedLowerBoundvalues;
+
+	  delete[] visitedLowerBoundExplanations;
+	  delete[] visitedUpperBoundExplanations;
+
+	  delete[] visitedLowerBoundlevels;
+	  delete[] visitedUpperBoundlevels;
+
 	 // delete [] boundvalues_under_exploration;
   }
 
@@ -5313,6 +5320,7 @@ void Mistral::Solver::generate_variables(){
 	//std::cout << "visitedLowerBounds [i]? " << min <<std::endl;
 	for (int i = visitedLowerBounds.size() ; i>0; --i ){
 		val = visitedLowerBoundvalues[var] ;
+		lvl = visitedLowerBoundlevels[var];
 		__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
 
 
@@ -5322,7 +5330,7 @@ void Mistral::Solver::generate_variables(){
 			//lvl = __x->level_of(val,1);
 
 //#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-			__x->get_informations_of(val,1, lvl, odr);
+			//__x->get_informations_of(val,1, lvl, odr);
 //#endif
 			tmp_id= generate_new_variable(__x->domainConstraint, val, true, lvl, var);
 		}
@@ -5354,6 +5362,8 @@ if(lvl > backtrack_level){
 	//std::cout << "visitedLowerBounds [i]? " << min <<std::endl;
 	for (int i = visitedUpperBounds.size() ; i>0; --i ){
 		val = visitedUpperBoundvalues[var] ;
+		lvl = visitedUpperBoundlevels[var] ;
+
 		__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
 
 		tmp_id = __x->domainConstraint->value_exist( val) ;
@@ -5362,12 +5372,13 @@ if(lvl > backtrack_level){
 			//lvl = __x->level_of(val,0);
 
 //#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-			__x->get_informations_of(val,0, lvl, odr);
+			//__x->get_informations_of(val,0, lvl, odr);
 //#endif
 			tmp_id= generate_new_variable(__x->domainConstraint, val, false, lvl, var);
 		}
-		else
-			lvl =assignment_level[tmp_id];
+
+//		else
+//			lvl =assignment_level[tmp_id];
 
 		learnt_clause.add(encode_boolean_variable_as_literal(tmp_id, 0));
 
@@ -5617,19 +5628,33 @@ void Mistral::Solver::treat_assignment_literal(Literal q){
 						if (var_visited){
 							if (isub){
 								visitedUpperBoundvalues[var]= val;
+								visitedUpperBoundlevels[var] = lvl;
+								visitedUpperBoundExplanations[var] = reason_for[x];
+
 							}
 							else
+								{
 								visitedLowerBoundvalues[var]= (val+1);
+								visitedLowerBoundlevels[var] = lvl;
+								visitedLowerBoundExplanations[var] = reason_for[x];
+
+								}
 						}
 						else
 						{
 							if (isub){
 								visitedUpperBounds.fast_add(var);
 								visitedUpperBoundvalues[var]= val;
+
+								visitedUpperBoundlevels[var] = lvl;
+								visitedUpperBoundExplanations[var] = reason_for[x];
 							}
 							else{
 								visitedLowerBounds.fast_add(var);
 								visitedLowerBoundvalues[var]= (val+1);
+
+								visitedLowerBoundlevels[var] = lvl;
+								visitedLowerBoundExplanations[var] = reason_for[x];
 							}
 						}
 
@@ -5846,12 +5871,19 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 						if (!visitedLowerBounds.fast_contain(var))
 							visitedLowerBounds.fast_add(var);
 						visitedLowerBoundvalues[var]= val;
+
+						visitedLowerBoundlevels[var] = lvl;
+						visitedLowerBoundExplanations[var] = e;
+
 					}
 					else
 					{
 						if (!visitedUpperBounds.fast_contain(var))
 							visitedUpperBounds.fast_add(var);
 						visitedUpperBoundvalues[var]= val;
+
+						visitedUpperBoundlevels[var] = lvl;
+						visitedUpperBoundExplanations[var] = e;
 					}
 
 					//TODO remove this!
@@ -6236,15 +6268,25 @@ void Mistral::Solver::treat_explanation(Explanation* explanation,  Explanation::
 	}
 }
 
-void Mistral::Solver::generate_and_learn(Literal q){
-	bool is_lb = is_lower_bound(q);
-	int val = get_value_from_literal(q);
-	int var = get_variable_from_literal(q);
+void Mistral::Solver::generate_and_learn(complete_virtual_literal_informations info){
+//void Mistral::Solver::generate_and_learn(Literal q){
+//	bool is_lb = is_lower_bound(q);
+//	int val = get_value_from_literal(q);
+//	int var = get_variable_from_literal(q);
+
+	bool is_lb = info.is_lb;
+	int val = info.val;
+	int var = info.var;
+
 	VariableRangeWithLearning* tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>
 	(variables[var].range_domain);
 //	int lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
-	int lvl , odr;
-	Explanation * e = tmp_VariableRangeWithLearning->get_informations_of(val, is_lb, lvl, odr);
+
+	//int lvl , odr;
+	//Explanation * e = tmp_VariableRangeWithLearning->get_informations_of(val, is_lb, lvl, odr);
+
+	int lvl = info.lvl;
+	Explanation * e = info.explanation;
 
 	DomainFaithfulnessConstraint * dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
 	int tmp__id = -1;
@@ -6351,14 +6393,13 @@ void Mistral::Solver::generate_and_learn(Literal q){
 }
 
 //void Mistral::Solver::repace_with_disjunctions(Literal q){
-void Mistral::Solver::repace_with_disjunctions(int var, int val, int is_lb){
+void Mistral::Solver::repace_with_disjunctions(int var, int val, int is_lb, Explanation * current_explanation){
 
 	Explanation::iterator start,end ;
-	Explanation * current_explanation;
+//	Explanation * current_explanation;
 	int lvl, odr;
 //	current_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(q)].range_domain)->reason_for(q) ;
-	current_explanation= static_cast<VariableRangeWithLearning*>(variables[var].range_domain)->
-			get_informations_of(val,is_lb, lvl, odr);
+	//current_explanation= static_cast<VariableRangeWithLearning*>(variables[var].range_domain)-> get_informations_of(val,is_lb, lvl, odr);
 
 #ifdef 	_DEBUG_FD_NOGOOD
 	if(_DEBUG_FD_NOGOOD){
@@ -6815,7 +6856,9 @@ bool Mistral::Solver::learn_virtual_literals() {
 						tmp_literal=encode_bound_literal(var, val,0);
 					}
 					else{
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 						lvl =assignment_level[tmp_id];
+#endif
 						tmp_literal=encode_boolean_variable_as_literal(tmp_id, 1);
 					}
 
@@ -6849,6 +6892,9 @@ bool Mistral::Solver::learn_virtual_literals() {
 				//std::cout << "visitedLowerBounds [i]? " << min <<std::endl;
 				for (int i = visitedUpperBounds.size() ; i>0; --i ){
 					val = visitedUpperBoundvalues[var] ;
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+					lvl = visitedUpperBoundlevels[var] ;
+#endif
 					__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
 
 					tmp_id = __x->domainConstraint->value_exist( val) ;
@@ -6857,13 +6903,13 @@ bool Mistral::Solver::learn_virtual_literals() {
 					//	lvl = __x->level_of(val,0);
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-						__x->get_informations_of(val,0, lvl,odr);
+//						__x->get_informations_of(val,0, lvl,odr);
 #endif
 						tmp_literal=encode_bound_literal(var, val,1);
 						//			tmp_id= generate_new_variable(__x->domainConstraint, val, false, lvl, var);
 					}
 					else{
-						lvl =assignment_level[tmp_id];
+	//					lvl =assignment_level[tmp_id];
 						tmp_literal=(encode_boolean_variable_as_literal(tmp_id, 0));
 					}
 
@@ -7033,15 +7079,17 @@ bool Mistral::Solver::learn_virtual_literals() {
 				int val, tmp_id , lvl;
 				Literal tmp_literal;
 				VariableRangeWithLearning* __x;
+				Explanation * __e;
 				//std::cout << "visitedLowerBounds [i]? " << min <<std::endl;
 				for (int i = visitedLowerBounds.size() ; i>0; --i ){
 					val = visitedLowerBoundvalues[var] ;
+					__e = visitedLowerBoundExplanations[var];
 
 				//	tmp_literal=encode_bound_literal(var, val,0);
 					//	bound_literals_to_explore.add(tmp_literal);
 					//repace_with_disjunctions(tmp_literal);
 
-					repace_with_disjunctions(var, val, 1);
+					repace_with_disjunctions(var, val, 1,__e);
 
 
 					/*
@@ -7072,10 +7120,12 @@ bool Mistral::Solver::learn_virtual_literals() {
 				//std::cout << "visitedLowerBounds [i]? " << min <<std::endl;
 				for (int i = visitedUpperBounds.size() ; i>0; --i ){
 					val = visitedUpperBoundvalues[var] ;
+					__e = visitedUpperBoundExplanations[var];
+
 					//tmp_literal=encode_bound_literal(var, val,1);
 					//repace_with_disjunctions(tmp_literal);
 
-					repace_with_disjunctions(var, val, 0);
+					repace_with_disjunctions(var, val, 0, __e);
 
 					/*		__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
 
@@ -7107,22 +7157,26 @@ bool Mistral::Solver::learn_virtual_literals() {
 				while (bound_literals_to_explore.size)
 				{
 					graph_size++;
-					generate_and_learn(bound_literals_to_explore.pop().l);
+					generate_and_learn(bound_literals_to_explore.pop());
 					//	std::cout << " \n \n \n parameters.lazygeneration NOT YET" << std::endl;
 					//	exit(1);
 				}
 			}
 			else{
-				Literal __tmp;
+				//Literal __tmp;
+				complete_virtual_literal_informations __tmp;
 				while (bound_literals_to_explore.size)
 				{
 					graph_size++;
 			//		repace_with_disjunctions(bound_literals_to_explore.pop());
-					__tmp= bound_literals_to_explore.pop().l;
-					repace_with_disjunctions(get_variable_from_literal(__tmp),
-							get_value_from_literal(__tmp),
-							is_lower_bound(__tmp)
-							);
+
+//					__tmp= bound_literals_to_explore.pop().l;
+//					repace_with_disjunctions(get_variable_from_literal(__tmp),
+//							get_value_from_literal(__tmp),
+//							is_lower_bound(__tmp)
+//					);
+					__tmp= bound_literals_to_explore.pop();
+					repace_with_disjunctions( __tmp.var,  __tmp.val,  __tmp.is_lb, __tmp.explanation);
 				}
 
 				if (__reduce)
@@ -10186,8 +10240,16 @@ void Mistral::Solver::set_fdlearning_on(
 	std::cout << " c start_from : " << start_from << std::endl;
 	visitedUpperBounds.initialise(0, start_from  , BitSet::empt);
 	visitedLowerBounds.initialise(0,  start_from  ,BitSet::empt);
+
 	visitedUpperBoundvalues = new unsigned int [start_from ];
 	visitedLowerBoundvalues = new unsigned int [start_from ];
+
+	visitedLowerBoundExplanations= new Explanation* [start_from ];
+	visitedLowerBoundlevels = new int [start_from ];
+
+	visitedUpperBoundExplanations= new Explanation* [start_from ];
+	visitedUpperBoundlevels = new int [start_from ];
+
 
 	//init structures
 	visited.extend(SIZEOF_VARIABLES);

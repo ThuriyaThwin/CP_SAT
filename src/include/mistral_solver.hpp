@@ -900,8 +900,9 @@ namespace Mistral {
     void treat_assignment_literal(Literal q);
     void treat_bound_literal(Literal q);
 //    void repace_with_disjunctions(Literal q);
-    void repace_with_disjunctions(int var, int val, int is_lb);
-    void generate_and_learn(Literal q);
+    void repace_with_disjunctions(int var, int val, int is_lb, Explanation * current_explanation);
+    //void generate_and_learn(Literal q);
+    void generate_and_learn(complete_virtual_literal_informations info);
     void treat_explanation(Explanation* explanation,  Explanation::iterator start,Explanation::iterator end );
     void clean_fdlearn();
     bool should_forget();
@@ -920,6 +921,12 @@ namespace Mistral {
 	//TODO : Should be int * not unsigned int* !!
 	unsigned int * visitedUpperBoundvalues;
 	unsigned int * visitedLowerBoundvalues;
+
+	int * visitedUpperBoundlevels;
+	int * visitedLowerBoundlevels;
+
+	Explanation** visitedLowerBoundExplanations;
+	Explanation** visitedUpperBoundExplanations;
 
     int start_from;
     int initial_variablesize;
