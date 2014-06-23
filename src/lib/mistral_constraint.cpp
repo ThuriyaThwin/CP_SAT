@@ -2475,7 +2475,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::g
 	if(a == NULL_ATOM) {
 		//int tmp = -1;
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-		//int tmp = -1;
+		int tmp = -1;
 		if (!scope[2].is_ground())
 		{
 			//ToDo better test using the tightest bound i.e. its explanation is NULL

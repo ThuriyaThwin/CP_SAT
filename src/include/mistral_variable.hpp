@@ -1560,7 +1560,7 @@ namespace Mistral {
 		  //		  std::cout << "ENDDDDD \n \n " << std::endl;
 	  };
 
-	  Explanation* reason_for(Literal l);
+//	  Explanation* reason_for(Literal l);
 	  Explanation* reason_for_reduction(Literal l, Explanation * default_explanation);
 
 
@@ -1569,11 +1569,17 @@ namespace Mistral {
 	  ReversibleNum<int> *order;
 #endif
 	  DomainFaithfulnessConstraint* domainConstraint;
-	  bool should_be_learnt(Literal q);
+	//  bool should_be_learnt(Literal q);
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 	  int level_of(int val, bool lb) ;
+#endif
+
+
+	  Explanation* get_informations_of(int val , int lb, int & lvl, int & assign_order);
 
 #ifdef _ASSIGNMENT_ORDER
-	  int assignment_of(int val, bool lb) ;
+	//  int assignment_of(int val, bool lb) ;
 #endif
 
 
@@ -1657,7 +1663,10 @@ namespace Mistral {
 		  //add chech here!
 		  //level of previous max !
 		  //  int __level = level_of(trail_.back(2),0);
-		  int __level = level_of(max,0);
+		  //int __level = level_of(max,0);
+		  int __level,b ;
+		  get_informations_of(max,0, __level,b);
+
 		  bool max_will_be_restored =1, min_will_be_restored =1;
 		  if (__level !=  solver->level)
 		  {
@@ -1671,7 +1680,10 @@ namespace Mistral {
 			  std::cout << " upper_bound_level " << upper_bound_levels << std::endl;
 			  exit(1);*/
 		  }
-		  __level = level_of(min,1);
+		//  __level = level_of(min,1);
+
+		  get_informations_of(min,1, __level,b);
+
 		  if (__level  !=   solver->level)
 		  {
 			  min_will_be_restored =0;
@@ -1690,12 +1702,12 @@ namespace Mistral {
 			  std::cout << " ERROR : (__level !=  solver->level) in VariableRangeWithLearning restore min" << std::endl;
 			  std::cout << " solver->level " << solver->level << std::endl;
 			  std::cout << " min " << min << std::endl;
-			  std::cout << "  level_of(min,1) :  " <<  level_of(min,0)  << std::endl;
+		//	  std::cout << "  level_of(min,1) :  " <<  level_of(min,0)  << std::endl;
 			  std::cout << " lowerbounds " << lowerbounds << std::endl;
 			  std::cout << " lower_bound_levels " << lower_bound_levels << std::endl;
 			  std::cout << " max " << max << std::endl;
 
-			  std::cout << "  level_of(max,0) :  " <<  level_of(max,0) << std::endl;
+//			  std::cout << "  level_of(max,0) :  " <<  level_of(max,0) << std::endl;
 			  std::cout << " upperbounds " << upperbounds << std::endl;
 			  std::cout << " upper_bound_level " << upper_bound_levels << std::endl;
 
@@ -1708,7 +1720,7 @@ namespace Mistral {
 				  std::cout << " trail " << trail_ << std::endl;
 				  std::cout << " solver->level " << solver->level << std::endl;
 				  std::cout << " max " << max << std::endl;
-				  std::cout << "  level_of(max,0) :  " <<  level_of(max,0) << std::endl;
+				//  std::cout << "  level_of(max,0) :  " <<  level_of(max,0) << std::endl;
 				  std::cout << " upperbounds " << upperbounds << std::endl;
 				  std::cout << " upper_bound_level " << upper_bound_levels << std::endl;
 				  exit(1);
@@ -1723,7 +1735,7 @@ namespace Mistral {
 				  std::cout << " trail " << trail_ << std::endl;
 				  std::cout << " solver->level " << solver->level << std::endl;
 				  std::cout << " max " << min << std::endl;
-				  std::cout << "  level_of(max,0) :  " <<  level_of(min,0) << std::endl;
+				//  std::cout << "  level_of(max,0) :  " <<  level_of(min,0) << std::endl;
 				  exit(1);
 			  }
 		  }
@@ -1784,12 +1796,11 @@ namespace Mistral {
 	  Vector<int> upperbounds;
 
 	  //TODO : private ???
-  private:
+ // private:
 	  Vector<Explanation*> lower_bound_reasons;
 	  Vector<Explanation*> upper_bound_reasons;
 	  Vector<int> lower_bound_levels;
 	  Vector<int> upper_bound_levels;
-
 #ifdef _ASSIGNMENT_ORDER
 	  Vector<int> lower_bound_orders;
 	  Vector<int> upper_bound_orders;

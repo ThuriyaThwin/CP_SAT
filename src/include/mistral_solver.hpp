@@ -876,7 +876,8 @@ namespace Mistral {
     Explanation * get_next_to_explore(Literal & a) ;
     void treat_assignment_literal(Literal q);
     void treat_bound_literal(Literal q);
-    void repace_with_disjunctions(Literal q);
+//    void repace_with_disjunctions(Literal q);
+    void repace_with_disjunctions(int var, int val, int is_lb);
     void generate_and_learn(Literal q);
     void treat_explanation(Explanation* explanation,  Explanation::iterator start,Explanation::iterator end );
     void clean_fdlearn();
@@ -1330,18 +1331,23 @@ public:
   inline bool is_a_bound_literal (unsigned int literal) {return (literal > 0x7FFF ) ;}
 
 #else
-  inline Literal encode_bound_literal (unsigned int id_variable, unsigned int value, unsigned int sign) {
+  inline Literal encode_bound_literal (unsigned int id_variable, int value, unsigned int sign) {
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 	  if ((value < 0) || (!value && (!sign)))
 	  {
-		  std::cout <<" \n \n \encode_bound_literal  ERROR "  << std::endl;
+//		  std::cout <<" \n \n \encode_bound_literal  ERROR "  << value << std::endl;
+//		  exit(1);
+	  }
+	  if (value < 0)
+	  {
+		  std::cout <<" \n \n \encode_bound_literal  ERROR "  << value << std::endl;
 		  exit(1);
 	  }
 #endif
 	  return ( (((Literal) 1) << 63) | (((Literal) sign) << 62) | (((Literal) value) << 30) | id_variable);
   }
   inline unsigned int get_variable_from_literal (Literal literal) {return ( 0x3FFFFFFF & literal) ;}
-  inline unsigned int get_value_from_literal (Literal literal) {return ((0x3FFFFFFFFFFFFFFF & literal) >> 30); }
+  inline int get_value_from_literal (Literal literal) {return ((0x3FFFFFFFFFFFFFFF & literal) >> 30); }
   inline bool is_upper_bound (Literal literal) {return  ((literal & 0x4000000000000000) >> 62) ;}
   inline bool is_lower_bound (Literal literal) {return (1- ((literal & 0x4000000000000000) >> 62)) ;}
   inline bool is_a_bound_literal (Literal literal) {return literal >> 63;}

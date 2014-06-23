@@ -1859,7 +1859,7 @@ void SchedulingSolver::setup() {
   }
 
   start_from = tasks.size +1;
-  std::cout << "SET START FROM " << start_from << std::endl;
+//  std::cout << "SET START FROM " << start_from << std::endl;
 
   // mutual exclusion constraints
   for(k=0; k<data->nMachines(); ++k) 
