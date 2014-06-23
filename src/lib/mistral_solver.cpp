@@ -5453,7 +5453,8 @@ void Mistral::Solver::try_to_keep_or_forget() {
 
 
 //New
-void Mistral::Solver::add_literal_tobe_explored(Literal l){
+
+/*void Mistral::Solver::add_literal_tobe_explored(Literal l){
 
 //	bool orderedExploration = true;
 	if (!parameters.orderedExploration)
@@ -5466,10 +5467,15 @@ void Mistral::Solver::add_literal_tobe_explored(Literal l){
 		exit(1);
 	}
 }
+*/
 
 void Mistral::Solver::add_Orderedliteral_tobe_explored(Literal l, int assignment_odr, Explanation* e){
 
-ordered_literals_to_explore.fast_sorted_add(ordered_literal(l,assignment_odr,e));
+//	if (parameters.orderedExploration)
+	if (assignment_odr>=0)
+		ordered_literals_to_explore.fast_sorted_add(ordered_literal(l,assignment_odr,e));
+	else
+		ordered_literals_to_explore.add(ordered_literal(l,e));
 
 }
 
@@ -5574,7 +5580,9 @@ void Mistral::Solver::treat_assignment_literal(Literal q){
 						if (parameters.orderedExploration)
 							add_Orderedliteral_tobe_explored(q,assignment_order[x], reason_for[x]);
 						else
-							add_literal_tobe_explored(q);
+							//add_literal_tobe_explored(q);
+							add_Orderedliteral_tobe_explored(q,-1, reason_for[x]);
+
 
 						++remainPathC;
 					} else {
@@ -5658,7 +5666,8 @@ void Mistral::Solver::treat_assignment_literal(Literal q){
 					if (parameters.orderedExploration)
 						add_Orderedliteral_tobe_explored(q,assignment_order[x], reason_for[x]);
 					else
-					add_literal_tobe_explored(q);
+	//				add_literal_tobe_explored(q);
+						add_Orderedliteral_tobe_explored(q,-1, reason_for[x]);
 
 					++remainPathC;
 				} else {
@@ -5878,7 +5887,9 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 
 					else
 #endif
-					add_literal_tobe_explored(q);
+					//add_literal_tobe_explored(q);
+						add_Orderedliteral_tobe_explored(q,-1, e);
+
 					++remainPathC;
 				}
 			}
@@ -5939,7 +5950,9 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 					add_Orderedliteral_tobe_explored(q,odr,e);
 				else
 #endif
-				add_literal_tobe_explored(q);
+				//add_literal_tobe_explored(q);
+				 add_Orderedliteral_tobe_explored(q,-1, e);
+
 				++remainPathC;
 			}
 		}
@@ -5951,6 +5964,7 @@ Explanation * Mistral::Solver::get_next_to_explore(Literal & lit) {
 
 	//Literal l;
 	//	bool orderedExploration = true;
+/*
 	if (!parameters.orderedExploration) {
 
 		//Find the next variable to explore
@@ -5980,13 +5994,7 @@ Explanation * Mistral::Solver::get_next_to_explore(Literal & lit) {
 									get_informations_of(val, islb, lvl, odr);
 #ifdef 	_DEBUG_FD_NOGOOD
 							if(_DEBUG_FD_NOGOOD){
-						/*		Literal q =
-								std::cout << "\n we will explain "<< q << std::endl;
-								std::cout << "which corresponds to " << std::endl;
-								std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-								std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-								std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-						*/
+
 								}
 #endif
 							if(!_explanation)
@@ -6019,11 +6027,6 @@ Explanation * Mistral::Solver::get_next_to_explore(Literal & lit) {
 				//should be checked
 				//	q= bound_literals_to_explore.pop();
 				//graph_size++;
-				/*if (literals_to_explore.size>0){
-					std::cout << " ERROR is_a_bound_literal(lit)! " <<  std::endl;
-					exit(1);
-				}
-				 */
 
 				//Explanation *_explanation= static_cast<VariableRangeWithLearning*>(variables[get_variable_from_literal(lit)].range_domain)->reason_for(lit) ;
 
@@ -6038,12 +6041,7 @@ Explanation * Mistral::Solver::get_next_to_explore(Literal & lit) {
 
 #ifdef 	_DEBUG_FD_NOGOOD
 				if(_DEBUG_FD_NOGOOD){
-/*					std::cout << "\n we will explain "<< q << std::endl;
-					std::cout << "which corresponds to " << std::endl;
-					std::cout << " Range variable id : "<< get_variable_from_literal(q) << std::endl;
-					std::cout << " is a " << (is_lower_bound(q) ? "lower" : "upper" ) << "bound :  " << get_value_from_literal(q) << std::endl;
-					std::cout << " current domain of this variable is "<< variables[get_variable_from_literal(q)].get_domain() << std::endl;
-	*/
+
 					}
 #endif
 				if(!_explanation)
@@ -6103,7 +6101,9 @@ Explanation * Mistral::Solver::get_next_to_explore(Literal & lit) {
 		}
 	}
 
-	else {
+	else
+	*/
+	{
 		if (ordered_literals_to_explore.size>0)
 		{
 	//		std::cout << "\n \n After ordered_literals_to_explore " << ordered_literals_to_explore << std::endl;
@@ -6184,7 +6184,18 @@ Explanation * Mistral::Solver::get_next_to_explore(Literal & lit) {
 #endif
 				return  get_next_to_explore(lit);
 			}
-			return o_l.explanation;
+			else {
+				if (o_l.explanation == NULL)
+				{
+					if (ordered_literals_to_explore.size){
+						ordered_literal o_l2 = ordered_literals_to_explore[0];
+						lit = o_l2.l;
+						ordered_literals_to_explore[0] = o_l;
+						return o_l2.explanation;
+					}
+				}
+				return o_l.explanation;
+			}
 		}
 		else
 		{
@@ -6192,7 +6203,6 @@ Explanation * Mistral::Solver::get_next_to_explore(Literal & lit) {
 			std::cout << "\n \n \n boolean_vairables_to_explore.size  == 0 !!!!! " << std::endl;
 			exit(1);
 		}
-
 	}
 }
 
@@ -7188,7 +7198,7 @@ void Mistral::Solver::clean_fdlearn() {
 		else */
 			//	boolean_vairables_to_explore.clear();
 
-		literals_to_explore.clear();
+	//	literals_to_explore.clear();
 		ordered_literals_to_explore.clear();
 		bound_literals_to_explore.clear();
 		visitedLowerBounds.clear();
@@ -10171,8 +10181,8 @@ void Mistral::Solver::set_fdlearning_on(
 
 	//init structures
 	visited.extend(SIZEOF_VARIABLES);
-	literals_to_explore.initialise(SIZEOF_VARIABLES);
-	orderedliterals.initialise(SIZEOF_VARIABLES);
+	//literals_to_explore.initialise(SIZEOF_VARIABLES);
+	//orderedliterals.initialise(SIZEOF_VARIABLES);
 	bound_literals_to_explore.initialise(1000000);
 	ordered_literals_to_explore.initialise(1000000);
 	//visited.extend(54000);

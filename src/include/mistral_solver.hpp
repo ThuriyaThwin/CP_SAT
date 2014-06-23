@@ -824,6 +824,7 @@ namespace Mistral {
 
 
     unsigned int remainPathC;
+ /*
     //Used to order the learnt clause at the end in a decreasing order
     struct _valued_literal
     {
@@ -840,9 +841,9 @@ namespace Mistral {
     		return (lvl > literal.lvl);
     	}
     };
-
+*/
     //TODO Should be deleted when we update the bts with the corresponded literal
-    Vector <_valued_literal > orderedliterals;
+   // Vector <_valued_literal > orderedliterals;
 
     //Used when orderedexploration is true
     struct ordered_literal
@@ -852,7 +853,8 @@ namespace Mistral {
     	Explanation * explanation;
 
     	ordered_literal(Literal _l, int _assignment_order, Explanation * _e) : assignment_order(_assignment_order), l(_l), explanation(_e) {}
-    	ordered_literal() {}
+    	ordered_literal(Literal _l, Explanation * _e) : assignment_order(-1), l(_l), explanation(_e) {}
+        ordered_literal() {}
     	bool operator < (const ordered_literal& lit) const
     	{
     		return (assignment_order < lit.assignment_order);
@@ -863,15 +865,16 @@ namespace Mistral {
     	}
 
     };
+
     Vector <ordered_literal > ordered_literals_to_explore;
-    Vector <Literal > literals_to_explore;
+    //Vector <Literal > literals_to_explore;
 	bool all_reasons_before_search_root;
 
 
     unsigned int generate_new_variable(DomainFaithfulnessConstraint * dom_constraint, int val, bool is_lb, int lvl , int range_id);
     void generate_variables();
     //New clean learning
-    void add_literal_tobe_explored(Literal l);
+   // void add_literal_tobe_explored(Literal l);
     void add_Orderedliteral_tobe_explored(Literal l, int assignment_odr, Explanation* e);
     Explanation * get_next_to_explore(Literal & a) ;
     void treat_assignment_literal(Literal q);
