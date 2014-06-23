@@ -5321,9 +5321,9 @@ void Mistral::Solver::generate_variables(){
 		if ( tmp_id< 0){
 			//lvl = __x->level_of(val,1);
 
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+//#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 			__x->get_informations_of(val,1, lvl, odr);
-#endif
+//#endif
 			tmp_id= generate_new_variable(__x->domainConstraint, val, true, lvl, var);
 		}
 		else
@@ -5361,9 +5361,9 @@ if(lvl > backtrack_level){
 		{
 			//lvl = __x->level_of(val,0);
 
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+//#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 			__x->get_informations_of(val,0, lvl, odr);
-#endif
+//#endif
 			tmp_id= generate_new_variable(__x->domainConstraint, val, false, lvl, var);
 		}
 		else
