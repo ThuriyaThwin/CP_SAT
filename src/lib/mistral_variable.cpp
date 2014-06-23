@@ -2259,6 +2259,7 @@ int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 
 
 //Exact reason for
+/*
 Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for_reduction(Literal l, Explanation * default_explanation) {
 
 
@@ -2319,7 +2320,7 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for_reduction(L
 				return upper_bound_reasons[size];
 			}
 		return default_explanation;
-	/*	std::cout << "ERROR upperbound not found ! " << std::endl;
+		std::cout << "ERROR upperbound not found ! " << std::endl;
 		std::cout << "l"<< l << std::endl;
 		std::cout << " id : "<< id << std::endl;
 		std::cout << " value "<< val << std::endl;
@@ -2336,7 +2337,7 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for_reduction(L
 
 		//	if (bool_var_id<0)
 		exit(1);
-		*/
+
 		//Reason not found --> return default_explanation
 
 
@@ -2344,7 +2345,7 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for_reduction(L
 		//		return domainConstraint;
 	}
 }
-
+*/
 /*
 Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) {
 

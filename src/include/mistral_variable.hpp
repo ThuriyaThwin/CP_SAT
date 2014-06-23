@@ -1561,7 +1561,7 @@ namespace Mistral {
 	  };
 
 //	  Explanation* reason_for(Literal l);
-	  Explanation* reason_for_reduction(Literal l, Explanation * default_explanation);
+//	  Explanation* reason_for_reduction(Literal l, Explanation * default_explanation);
 
 
 

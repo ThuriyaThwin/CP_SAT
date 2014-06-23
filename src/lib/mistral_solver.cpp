@@ -6548,6 +6548,8 @@ int Mistral::Solver::reduce_bounds(){
 
 	for (int i = size_bitset; i>0; --i ){
 		visited_val = visitedLowerBoundvalues[visited_var] ;
+		explanation =  visitedLowerBoundExplanations[visited_var] ;
+
 		visitedLowerBounds.fast_remove(visited_var);
 		tmp_literal=encode_bound_literal(visited_var, visited_val,0);
 
@@ -6564,11 +6566,12 @@ int Mistral::Solver::reduce_bounds(){
 			//We know that it is a lower bound
 			id_bool = dom_constraint->value_exist( visited_val-1 ) ;
 
+
 			if (id_bool>0){
 			//	std::cout << "id_bool" << id_bool <<std::endl;
 
 		//		std::cout << "reason_for[id_bool]" << reason_for[id_bool] <<std::endl;
-				explanation = tmp_VariableRangeWithLearning->reason_for_reduction(tmp_literal, reason_for[id_bool]);
+//				explanation = tmp_VariableRangeWithLearning->reason_for_reduction(tmp_literal, reason_for[id_bool]);
 				if (explanation == reason_for[id_bool])
 					start_tmp_iterator = explanation->get_reason_for_literal(encode_boolean_variable_as_literal(id_bool, 1), end_tmp_iterator);
 				else
@@ -6578,16 +6581,16 @@ int Mistral::Solver::reduce_bounds(){
 			else{
 
 				//explanation = tmp_VariableRangeWithLearning->reason_for(tmp_literal);
-				int a ,b;
-				explanation = tmp_VariableRangeWithLearning->get_informations_of(visited_val, 1, a,b);
+//				int a ,b;
+//				explanation = tmp_VariableRangeWithLearning->get_informations_of(visited_val, 1, a,b);
 				start_tmp_iterator = explanation->get_reason_for_literal(tmp_literal, end_tmp_iterator);
 			}
 		}
 		else{
 
 			//explanation = tmp_VariableRangeWithLearning->reason_for(tmp_literal);
-			int a ,b;
-			explanation = tmp_VariableRangeWithLearning->get_informations_of(visited_val, 1, a,b);
+//			int a ,b;
+//			explanation = tmp_VariableRangeWithLearning->get_informations_of(visited_val, 1, a,b);
 
 			start_tmp_iterator = explanation->get_reason_for_literal(tmp_literal, end_tmp_iterator);
 		}
@@ -6682,6 +6685,8 @@ int Mistral::Solver::reduce_bounds(){
 
 	for (int i = size_bitset ; i>0; --i ){
 		visited_val = visitedUpperBoundvalues[visited_var] ;
+		explanation =  visitedUpperBoundExplanations[visited_var] ;
+
 		visitedUpperBounds.fast_remove(visited_var);
 		tmp_literal=encode_bound_literal(visited_var, visited_val,1);
 
@@ -6700,7 +6705,7 @@ int Mistral::Solver::reduce_bounds(){
 			//id_bool = dom_constraint->value_exist( val-1 ) ;
 
 			if (id_bool>0){
-				explanation = tmp_VariableRangeWithLearning->reason_for_reduction(tmp_literal, reason_for[id_bool]);
+				//explanation = tmp_VariableRangeWithLearning->reason_for_reduction(tmp_literal, reason_for[id_bool]);
 
 				if (explanation == reason_for[id_bool])
 					start_tmp_iterator = explanation->get_reason_for_literal(encode_boolean_variable_as_literal(id_bool, 0), end_tmp_iterator);
@@ -6710,16 +6715,17 @@ int Mistral::Solver::reduce_bounds(){
 			}
 			else{
 //				explanation = tmp_VariableRangeWithLearning->reason_for(tmp_literal);
-				int a ,b;
-				explanation = tmp_VariableRangeWithLearning->get_informations_of(visited_val,0, a,b);
+
+				//int a ,b;
+				//explanation = tmp_VariableRangeWithLearning->get_informations_of(visited_val,0, a,b);
 
 				start_tmp_iterator = explanation->get_reason_for_literal(tmp_literal, end_tmp_iterator);
 			}
 		}
 		else{
 //			explanation = tmp_VariableRangeWithLearning->reason_for(tmp_literal);
-			int a ,b;
-			explanation = tmp_VariableRangeWithLearning->get_informations_of(visited_val,0, a,b);
+			//int a ,b;
+			//explanation = tmp_VariableRangeWithLearning->get_informations_of(visited_val,0, a,b);
 
 			start_tmp_iterator = explanation->get_reason_for_literal(tmp_literal, end_tmp_iterator);
 		}
@@ -6810,7 +6816,7 @@ int Mistral::Solver::reduce_bounds(){
 
 bool Mistral::Solver::learn_virtual_literals() {
 
-	bool __reduce = parameters.reduce_learnt_clause;
+	int __reduce = parameters.reduce_learnt_clause;
 	if (__reduce){
 		//HERE
 //		std::cout << " \n \n \n  start reduction with clause " <<learnt_clause  <<  std::endl;
@@ -7179,7 +7185,7 @@ bool Mistral::Solver::learn_virtual_literals() {
 					repace_with_disjunctions( __tmp.var,  __tmp.val,  __tmp.is_lb, __tmp.explanation);
 				}
 
-				if (__reduce)
+				if (__reduce>1)
 					reduce_clause(false);
 
 				//We add this test to handle the particular case where the new size of the clause is bigger than the authorized limit.
