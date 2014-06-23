@@ -794,7 +794,27 @@ namespace Mistral {
     //FD Learning
     void simple_fdlearn_nogood(bool will_be_forgotten = false);
 
-    Vector<Literal> bound_literals_to_explore;
+    struct complete_virtual_literal_informations
+    {
+    	Literal l;
+    	int lvl;
+    	Explanation * explanation;
+    	int var;
+    	int val;
+    	int is_lb;
+    	complete_virtual_literal_informations(){}
+    	complete_virtual_literal_informations(Literal _l,
+    			int _lvl,
+    			Explanation * _explanation,
+    			int _var,
+    			int _val,
+    			int _is_lb) :
+    				l(_l), lvl (_lvl) , explanation(_explanation), var(_var), val (_val), is_lb(_is_lb){
+    	}
+    };
+
+  //  Vector<Literal> bound_literals_to_explore;
+    Vector<complete_virtual_literal_informations> bound_literals_to_explore;
     //We need these vectors only to update the size of var_activity and lit_activity with lazy generation
     Vector<double> *activity_var_activity;
     Vector<double> *activity_lit_activity;

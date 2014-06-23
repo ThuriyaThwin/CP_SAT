@@ -5918,7 +5918,12 @@ void Mistral::Solver::treat_bound_literal(Literal q){
 
 				}
 #endif
-				bound_literals_to_explore.add(q);
+		//		bound_literals_to_explore.add(q);
+
+				bound_literals_to_explore.add(
+						complete_virtual_literal_informations(q, lvl, e, var, val, is_lb)
+				);
+
 				//TODO remove this if the clause will be learnt
 				//	if(lvl > backtrack_level)
 				//		backtrack_level = lvl;
@@ -6397,7 +6402,7 @@ void Mistral::Solver::repace_with_disjunctions(int var, int val, int is_lb){
 						<VariableRangeWithLearning*>(variables[__var].range_domain);
 				int __lvl, __odr;
 				//lvl= tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
-				tmp_VariableRangeWithLearning->get_informations_of(__val,__is_lb,__lvl, __odr);
+				Explanation * _e = tmp_VariableRangeWithLearning->get_informations_of(__val,__is_lb,__lvl, __odr);
 
 #ifdef 	_DEBUG_FD_NOGOOD
 				if(_DEBUG_FD_NOGOOD){
@@ -6408,7 +6413,11 @@ void Mistral::Solver::repace_with_disjunctions(int var, int val, int is_lb){
 				if (__lvl>search_root){
 					//lvl is necessarily
 					//						if ( lvl < level) {
-					bound_literals_to_explore.add(q);
+					//bound_literals_to_explore.add(q);
+					bound_literals_to_explore.add(
+					complete_virtual_literal_informations(q, __lvl, _e, __var, __val, __is_lb)
+					);
+
 				}
 			}
 			else{
@@ -6977,7 +6986,8 @@ bool Mistral::Solver::learn_virtual_literals() {
 #endif
 
 			//graph_size++;
-			Literal _q= bound_literals_to_explore.pop();
+			//Literal _q= bound_literals_to_explore.pop();
+			Literal _q= bound_literals_to_explore.pop().l;
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 
@@ -7097,7 +7107,7 @@ bool Mistral::Solver::learn_virtual_literals() {
 				while (bound_literals_to_explore.size)
 				{
 					graph_size++;
-					generate_and_learn(bound_literals_to_explore.pop());
+					generate_and_learn(bound_literals_to_explore.pop().l);
 					//	std::cout << " \n \n \n parameters.lazygeneration NOT YET" << std::endl;
 					//	exit(1);
 				}
@@ -7108,7 +7118,7 @@ bool Mistral::Solver::learn_virtual_literals() {
 				{
 					graph_size++;
 			//		repace_with_disjunctions(bound_literals_to_explore.pop());
-					__tmp= bound_literals_to_explore.pop();
+					__tmp= bound_literals_to_explore.pop().l;
 					repace_with_disjunctions(get_variable_from_literal(__tmp),
 							get_value_from_literal(__tmp),
 							is_lower_bound(__tmp)
