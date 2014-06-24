@@ -2022,7 +2022,7 @@ Mistral::Outcome Mistral::Solver::restart_search(const int root, const bool _res
     ++statistics.num_restarts;
 
 
-    //std::cout << " c notify restart" << std::endl;
+    std::cout << " c notify restart" << std::endl;
     notify_restart(progress_i);
 
 
@@ -5070,10 +5070,14 @@ void Mistral::Solver::learn_nogood() {
 
 
   statistics.size_learned += learnt_clause.size;
-  statistics.avg_learned_size = 
-    ((statistics.avg_learned_size * (double)(statistics.num_failures)) + (double)(learnt_clause.size))
-    / ((double)(++statistics.num_failures));
+//  statistics.avg_learned_size =
+//    ((statistics.avg_learned_size * (double)(statistics.num_failures)) + (double)(learnt_clause.size))
+//    / ((double)(++statistics.num_failures));
   
+    statistics.avg_learned_size =
+      ((statistics.avg_learned_size * (double)(statistics.num_failures -1 )) + (double)(learnt_clause.size))
+      / ((double)(statistics.num_failures));
+
 
   
   if( learnt_clause.size != 1 ) {
@@ -5165,9 +5169,13 @@ void Mistral::Solver::simple_fdlearn_nogood(bool will_be_forgotten) {
 	}
 
 	statistics.size_learned += learnt_clause.size;
+//	statistics.avg_learned_size =
+//			((statistics.avg_learned_size * (double)(statistics.num_failures)) + (double)(learnt_clause.size))
+//			/ ((double)(++statistics.num_failures));
+
 	statistics.avg_learned_size =
-			((statistics.avg_learned_size * (double)(statistics.num_failures)) + (double)(learnt_clause.size))
-			/ ((double)(++statistics.num_failures));
+      ((statistics.avg_learned_size * (double)(statistics.num_failures -1 )) + (double)(learnt_clause.size))
+      / ((double)(statistics.num_failures));
 
 
 #ifdef _CHECK_NOGOOD
@@ -7646,9 +7654,13 @@ void Mistral::Solver::clean_fdlearn() {
 			}
 
 			statistics.size_learned += learnt_clause.size;
+			//statistics.avg_learned_size =
+			//		((statistics.avg_learned_size * (double)(statistics.num_failures)) + (double)(learnt_clause.size))
+			//		/ ((double)(++statistics.num_failures));
+
 			statistics.avg_learned_size =
-					((statistics.avg_learned_size * (double)(statistics.num_failures)) + (double)(learnt_clause.size))
-					/ ((double)(++statistics.num_failures));
+					((statistics.avg_learned_size * (double)(statistics.num_failures -1 )) + (double)(learnt_clause.size))
+					/ ((double)(statistics.num_failures));
 
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
