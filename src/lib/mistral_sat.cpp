@@ -1434,15 +1434,7 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
   int i=0;
   Atom a;
 
-  //TODO improve static forget with parameters
-  //Static forget
-  if (nlearnt>12000){
-	    for(i=nlearnt; i>0 ;) {
-	      removed += learnt[i-1]->size;
-	      remove( --i );
-	    }
-  }
-  else
+
   if( forgetfulness > 0.0 ) {
     // int nlearnt = learnt.size;
     double sa[nlearnt];
@@ -1569,10 +1561,21 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
 
   }
 
-//  std::cout << " c end forget with " << learnt.size << std::endl;
-//  std::cout << " c learnt" << learnt << std::endl;
+  //TODO improve static forget with parameters
+  //Static forget
+  if (nlearnt>12000){
+	  removed= 0;
+	  for(i=nlearnt; i>0 ;) {
+		  removed += learnt[i-1]->size;
+		  remove( --i );
+	  }
+  }
+
+  //  std::cout << " c end forget with " << learnt.size << std::endl;
+  //  std::cout << " c learnt" << learnt << std::endl;
 
   return removed;
+
 }
 
 
