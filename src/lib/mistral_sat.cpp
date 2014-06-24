@@ -1563,6 +1563,7 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
 
   //TODO improve static forget with parameters
   //Static forget
+  nlearnt = learnt.size;
   if (nlearnt>12000){
 	  removed= 0;
 	  for(i=nlearnt; i>0 ;) {
