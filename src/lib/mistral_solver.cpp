@@ -2021,8 +2021,8 @@ Mistral::Outcome Mistral::Solver::restart_search(const int root, const bool _res
 
     ++statistics.num_restarts;
 
-
-    std::cout << " c notify restart" << std::endl;
+    //TODO Check whether everything works fine with the related restart policy
+    //std::cout << " c notify restart" << std::endl;
     notify_restart(progress_i);
 
 
