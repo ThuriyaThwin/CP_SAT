@@ -1566,7 +1566,7 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
   nlearnt = learnt.size;
   if (nlearnt>12000){
 	  //removed= 0;
-	  nlearnt -=1000;
+	 // nlearnt -=1000;
 	  for(i=nlearnt; i>1 ;) {
 		  removed += learnt[i-1]->size;
 		  remove( --i );
