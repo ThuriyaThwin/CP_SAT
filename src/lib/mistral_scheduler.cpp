@@ -2897,7 +2897,7 @@ void SchedulingSolver::dichotomic_search()
 
   stats->lower_bound = get_lb();
   stats->upper_bound = get_ub();
-  int current_learnClauses_size = 0, __size =0;
+  int current_learnClauses_size = 0;
   int iteration = 1;
   
   int minfsble = stats->lower_bound;
@@ -2975,34 +2975,12 @@ void SchedulingSolver::dichotomic_search()
 	  base->extend_vectors(10000);
 	  for (int i = 0; i < start_from; ++i)
 		  (static_cast<VariableRangeWithLearning*> (variables[i].range_domain))->domainConstraint->extend_vectors();
-
-	  if (params->forgetall)
-	  {
-		  base->set_init_changes();
-		  for (int i = 0; i < start_from; ++i)
-			  (static_cast<VariableRangeWithLearning*> (variables[i].range_domain))->domainConstraint->set_init_changes();
-	  }
   }
- // std::cout << " \n END initial_list__of_changes : "  << std::endl;
 
-  //std::cout << " solver : \n " << this << std::endl ;
   init_obj  = (int)(floor(((double)minfsble + (double)maxfsble)/2));
 #ifdef _CHECK_NOGOOD
   //int init_obj  = (int)(floor(((double)minfsble + (double)maxfsble)/2));
-
   int id;
-#endif
-#ifdef _DEBUG_SCHEDULER
-  //We need this flag only when debugging specific bounds with dichotomy! just change them here
-  {
-	  // 1228 to  1262 : instance 1
-//	  bin/scheduler data/scheduling/jsp/15x15/1 -fdlearning 6 -lazygeneration 1 -semantic 1  -forgetfulness 0.99411764705  -algo qsf
-	  //1267 to  1290 : instance 4 :
-	  //bin/scheduler data/scheduling/jsp/15x15/4 -fdlearning 6 -lazygeneration 1 -semantic 1  -forgetfulness 0.99411764705  -algo qsdfsdf
-	  minfsble = 1267;
-	  maxfsble = 1290;
-  }
-  //  objective = 1245;
 #endif
   ////////// dichotomic search ///////////////
   while( //result == UNKNOWN && 
@@ -3115,49 +3093,20 @@ void SchedulingSolver::dichotomic_search()
 		  std::cout << std::left << std::setw(30) << " c | nb variables " << ":" << std::right << std::setw(15) << variables.size<< " |" << std::endl;
 		  std::cout << std::left << std::setw(30) << " c | learnt clauses " << ":" << std::right << std::setw(15) << base->learnt.size << " |" << std::endl;
 		  std::cout << std::left << std::setw(30) << " c | avg nogood size " << ":" << std::right << std::setw(15) <<(int)statistics.avg_learned_size<< " |" << std::endl;
-
 #ifdef _CHECK_NOGOOD
 		  std::cout << std::left << std::setw(30) << " c | All nogoods are correct " << std::right << std::setw(15) <<" |" << std::endl;
 #endif
-
-	  //TODO : Use Solver::forget() to forget?
-	  /* Forgetting Clauses :
-	   * If the flag forgetAll is set to 1 then forget all clauses betweeen all dichotomy iterations
-	   * Otehrwise, forget the newly learnt clauses iff. the result of the current dichotomy is UNSAT
-	   */
-
-		  __size = base->learnt.size;
-		  /*	  std::cout << " c dichotomy ended with variables.size" << variables.size << std::endl;
-			  __size = base->learnt.size;
-			  std::cout << " c dichotomy ended with " << __size << " learnt clause" << std::endl;
-			  std::cout << " c dichotomy ended with AVG Nogood size" <<  statistics.avg_learned_size<< std::endl;
+		  /* Forgetting Clauses :
+		   * If the flag forgetAll is set to 1 then forget all clauses betweeen all dichotomy iterations
+		   * Otehrwise, forget the newly learnt clauses iff. the result of the current dichotomy is UNSAT
 		   */
 		  if (params->forgetall)
 		  {
-#ifdef _RECOVER_GENERATED
-			  varsIds_lazy.clear();
-			  value_lazy.clear();
-			  //			  std::cout << " c clear   varsIds_lazy and  value_lazy" << std::endl;
-#endif
-			  while (__size--)
-				  base->remove(__size);
-			  if (params->lazy_generation){
-				  start_over(true);
-			  }
+			  start_over(false);
 		  }
 		  else{
-			  __size = base->learnt.size -current_learnClauses_size;
-			  //    	std::cout << "  base->learnt.size" << base->learnt.size << std::endl;
-			  //   	std::cout << " current_learnClauses_size" << current_learnClauses_size << std::endl;
-			  //  	std::cout << " __size " << __size << std::endl;
-
+			  int __size = base->learnt.size -current_learnClauses_size;
 			  int idx;
-
-			  //  std::cout << "\n \n \n Ok we will forget all but : " << base->will_be_kept << std::endl;
-			  //std::cout << "will_be_kept fast_contain " << learnt.size -1 << std::endl;
-			  // here we update the index of learnt.size -1 since it will be kept!
-			  //will_be_kept.fast_remove(learnt.size -1);
-			  //will_be_kept.fast_add(cidx);
 
 			  while (__size--){
 				  idx = __size+current_learnClauses_size;
@@ -3165,24 +3114,13 @@ void SchedulingSolver::dichotomic_search()
 					  base->will_be_kept.fast_remove(idx);
 
 				  base->remove(idx);
-				  // 	std::cout << "  \n \n \n " << std::endl;
 			  }
 
 			  if (base->will_be_kept.size()){
 				  __size = base->learnt.size;
-				  //TODO : whith lazy ???
-				  /*
-	#ifdef _RECOVER_GENERATED
-					  varsIds_lazy.clear();
-					  value_lazy.clear();
-					  std::cout << " c clear   varsIds_lazy and  value_lazy" << std::endl;
-	#endif
-				   */
-
 				  while (__size--){
 					  if (! base->will_be_kept.fast_contain(__size))
 						  base->remove(__size);
-					  // 	std::cout << "  \n \n \n " << std::endl;
 				  }
 				  current_learnClauses_size=base->learnt.size;
 			  }
@@ -3210,7 +3148,6 @@ void SchedulingSolver::dichotomic_search()
 	  solution.clear();
 	  node_num.clear();
 	  atom.clear();
-
 #endif
 
 

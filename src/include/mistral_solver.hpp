@@ -813,14 +813,13 @@ namespace Mistral {
     	}
     };
 
-  //  Vector<Literal> bound_literals_to_explore;
     Vector<complete_virtual_literal_informations> bound_literals_to_explore;
     //We need these vectors only to update the size of var_activity and lit_activity with lazy generation
     Vector<double> *activity_var_activity;
     Vector<double> *activity_lit_activity;
 
     //This method undo all the generated variables.
-    void start_over(bool lazygeneration);
+    void start_over(bool changePolicyParameters);
     void init_lazy_generation();
     //However it needs all these variables
     //TODO remove useless variables..
@@ -831,7 +830,7 @@ namespace Mistral {
     int init_constraint_graph_size;
     int init_expression_store_size;
 
-	int graph_size;
+	//int graph_size;
 
 	//Reduce clause
 	void reduce_clause(bool semantic_reduction=false);
@@ -844,28 +843,6 @@ namespace Mistral {
 
 
     unsigned int remainPathC;
- /*
-    //Used to order the learnt clause at the end in a decreasing order
-    struct _valued_literal
-    {
-    	int lvl;
-    	Literal l;
-    	_valued_literal(int _lvl, Literal _l) : lvl(_lvl), l(_l) {}
-    	_valued_literal() {}
-    	bool operator < (const _valued_literal& literal) const
-    	{
-    		return (lvl < literal.lvl);
-    	}
-    	bool operator > (const _valued_literal& literal) const
-    	{
-    		return (lvl > literal.lvl);
-    	}
-    };
-*/
-    //TODO Should be deleted when we update the bts with the corresponded literal
-   // Vector <_valued_literal > orderedliterals;
-
-    //Used when orderedexploration is true
     struct ordered_literal
     {
     	Literal l;
@@ -886,29 +863,26 @@ namespace Mistral {
 
     };
 
-    Vector <ordered_literal > ordered_literals_to_explore;
+    Vector <ordered_literal > currentLVL_literals_to_explore;
     //Vector <Literal > literals_to_explore;
-	bool all_reasons_before_search_root;
 
-
-    unsigned int generate_new_variable(DomainFaithfulnessConstraint * dom_constraint, int val, bool is_lb, int lvl , int range_id);
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+    bool all_reasons_before_search_root;
+#endif
+	unsigned int generate_new_variable(DomainFaithfulnessConstraint * dom_constraint, int val, bool is_lb, int lvl , int range_id);
     void generate_variables();
-    //New clean learning
-   // void add_literal_tobe_explored(Literal l);
     void add_Orderedliteral_tobe_explored(Literal l, int assignment_odr, Explanation* e);
     Explanation * get_next_to_explore(Literal & a) ;
-    void treat_assignment_literal(Literal q);
-    void treat_bound_literal(Literal q);
+    void treat_assignment_literal(Literal q,bool semantic, bool orderedExploration);
+    void treat_bound_literal(Literal q, bool semantic, bool orderedExploration);
 //    void repace_with_disjunctions(Literal q);
     void repace_with_disjunctions(int var, int val, int is_lb, Explanation * current_explanation);
-    //void generate_and_learn(Literal q);
     void generate_and_learn(complete_virtual_literal_informations info);
-    void treat_explanation(Explanation* explanation,  Explanation::iterator start,Explanation::iterator end );
+    void treat_explanation(Explanation::iterator start,Explanation::iterator end, bool semantic, bool orderedExploration);
     void clean_fdlearn();
     bool should_forget();
-    bool learn_virtual_literals();
+    bool learn_virtual_literals(bool semantic, bool lazyGeneration);
 
-    				//TODO declare them only when needen!
 #ifdef _RECOVER_GENERATED
     //used to get the variable id of a lazily generated variable
 	Vector<int> varsIds_lazy ;
@@ -921,10 +895,8 @@ namespace Mistral {
 	//TODO : Should be int * not unsigned int* !!
 	unsigned int * visitedUpperBoundvalues;
 	unsigned int * visitedLowerBoundvalues;
-
 	int * visitedUpperBoundlevels;
 	int * visitedLowerBoundlevels;
-
 	Explanation** visitedLowerBoundExplanations;
 	Explanation** visitedUpperBoundExplanations;
 

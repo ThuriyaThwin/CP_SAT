@@ -5199,18 +5199,11 @@ if (enforce_nfc1)
 	  virtual std::string name() const { return "{DomainFaithfulnessConstraint}"; }
 	  //@}
 
-
-
 	  virtual bool explained() { return true; }
 	  void start_over();
 
-	  void set_init_changes();
-	  Vector<int> initial_list__of_changes;
-
-
 	  virtual iterator get_reason_for(const Atom a, const int lvl, iterator& end);
 	  virtual iterator get_reason_for_literal(const Literal a, iterator& end);
-	  //virtual iterator get_bound_reason_for(const Literal l, iterator& end);
 
 	  Literal explanation[2];
 

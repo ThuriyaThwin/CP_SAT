@@ -403,9 +403,6 @@ namespace Mistral {
     unsigned int init_var_size;
     void start_over();
 
-    void set_init_changes();
-    Vector<int> initial_list__of_changes;
-
     /**@name Miscellaneous*/
     //@{  
 
