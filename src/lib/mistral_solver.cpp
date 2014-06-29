@@ -151,7 +151,7 @@ void Mistral::SolverParameters::initialise() {
   value_selection = 2;
   dynamic_value = 0; //1;
 
-  orderedExploration = true;
+  orderedExploration = false;
   lazy_generation= false;
   semantic_learning = false;
 
@@ -5426,9 +5426,9 @@ void Mistral::Solver::try_to_keep_or_forget() {
 void Mistral::Solver::add_Orderedliteral_tobe_explored(Literal l, int assignment_odr, Explanation* e){
 //	if (parameters.orderedExploration)
 	if (assignment_odr>=0)
-		currentLVL_literals_to_explore.fast_sorted_add(ordered_literal(l,assignment_odr,e));
+		currentLVL_literals_to_explore.fast_sorted_add(currentLVL_literal(l,assignment_odr,e));
 	else
-		currentLVL_literals_to_explore.add(ordered_literal(l,e));
+		currentLVL_literals_to_explore.add(currentLVL_literal(l,e));
 
 }
 
@@ -5870,7 +5870,7 @@ void Mistral::Solver::treat_bound_literal(Literal q,bool semantic, bool orderedE
 				//				std::cout << q << " assignment order" << var <<
 				//						"]"<<  tmp_VariableRangeWithLearning->assignment_of(val,is_lb) << std::endl;
 
-				if (parameters.orderedExploration)
+				if (orderedExploration)
 					//	add_Orderedliteral_tobe_explored(q,tmp_VariableRangeWithLearning->assignment_of(val,is_lb),
 					//	tmp_VariableRangeWithLearning->reason_for(q));
 					add_Orderedliteral_tobe_explored(q,odr,e);
@@ -5896,7 +5896,7 @@ Explanation * Mistral::Solver::get_next_to_explore(Literal & lit) {
 		exit(1);
 	}
 #endif
-	ordered_literal o_l = currentLVL_literals_to_explore.pop();
+	currentLVL_literal o_l = currentLVL_literals_to_explore.pop();
 	lit = o_l.l;
 
 	if ((!currentLVL_literals_to_explore.size && is_a_bound_literal(lit)))
@@ -5991,7 +5991,7 @@ Explanation * Mistral::Solver::get_next_to_explore(Literal & lit) {
 			}
 #endif
 			if (currentLVL_literals_to_explore.size){
-				ordered_literal o_l2 = currentLVL_literals_to_explore[0];
+				currentLVL_literal o_l2 = currentLVL_literals_to_explore[0];
 				lit = o_l2.l;
 				currentLVL_literals_to_explore[0] = o_l;
 				return o_l2.explanation;
@@ -7909,7 +7909,7 @@ std::ostream& Mistral::operator<< (std::ostream& os, const Mistral::SolverStatis
 }
 
 
-std::ostream& Mistral::operator<< (std::ostream& os, const Mistral::Solver::ordered_literal & x) {
+std::ostream& Mistral::operator<< (std::ostream& os, const Mistral::Solver::currentLVL_literal & x) {
 	//	os << x.value << "--" << x.x.id() ;
 	os << "literal " <<  x.l << " order " << x.assignment_order << " e : " <<  x.explanation ;
 	return os;

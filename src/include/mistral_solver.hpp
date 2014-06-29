@@ -830,52 +830,51 @@ namespace Mistral {
     int init_constraint_graph_size;
     int init_expression_store_size;
 
-	//int graph_size;
+    //int graph_size;
 
-	//Reduce clause
-	void reduce_clause(bool semantic_reduction=false);
-	int reduce_bounds();
-	bool visited_explanation(Literal q, bool semantic_reduction);
-	bool visited_virtual_literal(Literal q);
+    //Reduce clause
+    void reduce_clause(bool semantic_reduction=false);
+    int reduce_bounds();
+    bool visited_explanation(Literal q, bool semantic_reduction);
+    bool visited_virtual_literal(Literal q);
 
-	//TODO Should probably be deleted
+    //TODO Should probably be deleted
     void try_to_keep_or_forget();
 
 
     unsigned int remainPathC;
-    struct ordered_literal
+    struct currentLVL_literal
     {
     	Literal l;
     	int assignment_order;
     	Explanation * explanation;
 
-    	ordered_literal(Literal _l, int _assignment_order, Explanation * _e) : assignment_order(_assignment_order), l(_l), explanation(_e) {}
-    	ordered_literal(Literal _l, Explanation * _e) : assignment_order(-1), l(_l), explanation(_e) {}
-        ordered_literal() {}
-    	bool operator < (const ordered_literal& lit) const
+    	currentLVL_literal(Literal _l, int _assignment_order, Explanation * _e) : assignment_order(_assignment_order), l(_l), explanation(_e) {}
+    	currentLVL_literal(Literal _l, Explanation * _e) : assignment_order(-1), l(_l), explanation(_e) {}
+    	currentLVL_literal() {}
+    	bool operator < (const currentLVL_literal& lit) const
     	{
     		return (assignment_order < lit.assignment_order);
     	}
-    	bool operator > (const ordered_literal& lit) const
+    	bool operator > (const currentLVL_literal& lit) const
     	{
     		return (assignment_order > lit.assignment_order);
     	}
 
     };
 
-    Vector <ordered_literal > currentLVL_literals_to_explore;
-    //Vector <Literal > literals_to_explore;
+    Vector <currentLVL_literal > currentLVL_literals_to_explore;
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
     bool all_reasons_before_search_root;
 #endif
-	unsigned int generate_new_variable(DomainFaithfulnessConstraint * dom_constraint, int val, bool is_lb, int lvl , int range_id);
+    unsigned int generate_new_variable(DomainFaithfulnessConstraint * dom_constraint, int val, bool is_lb, int lvl , int range_id);
     void generate_variables();
     void add_Orderedliteral_tobe_explored(Literal l, int assignment_odr, Explanation* e);
     Explanation * get_next_to_explore(Literal & a) ;
     void treat_assignment_literal(Literal q,bool semantic, bool orderedExploration);
     void treat_bound_literal(Literal q, bool semantic, bool orderedExploration);
-//    void repace_with_disjunctions(Literal q);
+    //    void repace_with_disjunctions(Literal q);
     void repace_with_disjunctions(int var, int val, int is_lb, Explanation * current_explanation);
     void generate_and_learn(complete_virtual_literal_informations info);
     void treat_explanation(Explanation::iterator start,Explanation::iterator end, bool semantic, bool orderedExploration);
@@ -885,20 +884,20 @@ namespace Mistral {
 
 #ifdef _RECOVER_GENERATED
     //used to get the variable id of a lazily generated variable
-	Vector<int> varsIds_lazy ;
-	Vector<int> value_lazy ;
+    Vector<int> varsIds_lazy ;
+    Vector<int> value_lazy ;
 #endif
 
-	BitSet visitedUpperBounds;
-	BitSet visitedLowerBounds;
+    BitSet visitedUpperBounds;
+    BitSet visitedLowerBounds;
 
-	//TODO : Should be int * not unsigned int* !!
-	unsigned int * visitedUpperBoundvalues;
-	unsigned int * visitedLowerBoundvalues;
-	int * visitedUpperBoundlevels;
-	int * visitedLowerBoundlevels;
-	Explanation** visitedLowerBoundExplanations;
-	Explanation** visitedUpperBoundExplanations;
+    //TODO : Should be int * not unsigned int* !!
+    unsigned int * visitedUpperBoundvalues;
+    unsigned int * visitedLowerBoundvalues;
+    int * visitedUpperBoundlevels;
+    int * visitedLowerBoundlevels;
+    Explanation** visitedLowerBoundExplanations;
+    Explanation** visitedUpperBoundExplanations;
 
     int start_from;
     int initial_variablesize;
@@ -1299,7 +1298,7 @@ public:
   std::ostream& operator<< (std::ostream& os, ConstraintTriggerArray* x);
 
 
-  std::ostream& operator<< (std::ostream& os, const Solver::ordered_literal & x) ;
+  std::ostream& operator<< (std::ostream& os, const Solver::currentLVL_literal & x) ;
 
 
   SearchMonitor& operator<< (SearchMonitor& os, Variable& x);

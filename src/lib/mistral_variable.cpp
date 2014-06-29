@@ -1962,189 +1962,26 @@ int Mistral::VariableImplementation::assigned_at_last_level() const {
   return ((Solver*)solver)->assignment_level[id] == solver->level;
 }
 
-/*
-bool Mistral::VariableRangeWithLearning::should_be_learnt (Literal q) {
-
-
-	//	std::cout << " should_be_learnt ? " << std::endl;
-
-	//	std::cout << " previsouslevel lower value : " <<  trail_[trail_.size - 3] <<std::endl;
-	//	std::cout << " previsouslevel upper value : " <<  trail_[trail_.size - 2] <<std::endl;
-	//	std::cout << " previsouslevel level : " <<  trail_[trail_.size - 1] <<std::endl;
-
-
-	int value = get_value_from_literal(q);
-	bool islb = is_lower_bound(q);
-	int __level = level_of(value, islb);
-return (__level < (solver->level)) ;
-}
-*/
-
-/*OLD LEVELs
-int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
-
-
-
-
-		int size;
-		if (lb)
-		{
-
-			size =lowerbounds.size ;
-
-
-			while (size --)
-				if(lowerbounds[size]< val)
-				{
-
-					//			std::cout << " c lower bound found! " << std::endl;
-					//			if (upper_bound_reasons[size+1] == NULL)
-					//				std::cout << "c return NULL " << std::endl;
-					//			else
-					//				std::cout << " c return lowerbounds reason_for --> " << *lower_bound_reasons[size+1] << std::endl;
-					//	latest_visited_lower_bound = lowerbounds[size+1];
-					return lower_bound_levels[size+1];
-				}
-		}
-		else
-		{
-
-
-			size =upperbounds.size ;
-
-			while (size --)
-				if(upperbounds[size]> val)
-				{
-					//			std::cout << "c upperbound found" << size<< std::endl;
-					//			if (upper_bound_reasons[size+1] == NULL)
-					//				std::cout << "c return NULL " << std::endl;
-					//			else
-
-					//					std::cout <<" c return upperbounds reason_for --> " << *upper_bound_reasons[size+1] << std::endl;
-
-					//		latest_visited_upper_bound = upperbounds[size+1];
-					return upper_bound_levels[size+1];
-				}
-		}
-		std::cout << "level_of END ? " << std::endl;
-		exit(1);
-		//	return lower_bound_reasons[0];
-
-}
-
- */
-
-
-#ifdef _ASSIGNMENT_ORDER
-/*
-int Mistral::VariableRangeWithLearning::assignment_of(int val, bool lb) {
-	//	std::cout << " \n level_of " << std::endl;
-	//	std::cout << " val " << val << std::endl;
-	//	std::cout << " lb  " << lb << std::endl;
-
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-	if (lowerbounds.size != lower_bound_levels.size){
-		std::cout << " ERROR lowerbounds assignment_of END ? " << std::endl;
-		exit(1);
-	}
-
-	if (upperbounds.size != upper_bound_levels.size){
-		std::cout << " ERROR lowerbounds assignment_of END ? " << std::endl;
-		exit(1);
-	}
-	if (lowerbounds.size != lower_bound_orders.size){
-		std::cout << " ERROR lowerbounds assignment_of END ? " << std::endl;
-		exit(1);
-	}
-
-	if (upperbounds.size != upper_bound_orders.size){
-		std::cout << " ERROR lowerbounds assignment_of END ? " << std::endl;
-		exit(1);
-	}
-
-#endif
-
-	int size;
-	if (lb)
-	{
-
-
-		size =lowerbounds.size ;
-		while (size --)
-			if(lowerbounds[size]== val)
-			{
-				//		std::cout << "  return  " << lower_bound_levels[size] << std::endl;
-				return lower_bound_orders [size];
-			}
-	}
-	else
-	{
-
-
-		size =upperbounds.size ;
-		while (size --)
-			if(upperbounds[size]==val)
-			{
-				//		std::cout << "  return  " << upper_bound_levels[size]<< std::endl;
-
-				return upper_bound_orders[size];
-			}
-	}
-
-
-	std::cout << " ERROR assignment_of END ? !! " << std::endl;
-	std::cout << " \n level_of " << std::endl;
-	std::cout << " variable " << id << std::endl;
-	std::cout << " val " << val << std::endl;
-	std::cout << " lb  " << lb << std::endl;
-	std::cout << "  lowerbounds.size  " << lowerbounds.size << std::endl;
-	std::cout << "  lowerbounds " << lowerbounds << std::endl;
-	std::cout << "  lower_bound_levels.size  " << lower_bound_levels.size << std::endl;
-	std::cout << "  lower_bound_levels " << lower_bound_levels << std::endl;
-	std::cout << "  upperbounds.size  " << upperbounds.size << std::endl;
-	std::cout << "  upperbounds " << upperbounds << std::endl;
-	std::cout << "  upper_bound_levels.size  " << upper_bound_levels.size << std::endl;
-	std::cout << "  upper_bound_levels " << upper_bound_levels << std::endl;
-
-	exit(1);
-
-
-}
-*/
-#endif
 
 Mistral::Explanation* Mistral::VariableRangeWithLearning::get_informations_of(int val , int lb, int & lvl, int & assign_order){
 
-	//	std::cout << " \n level_of " << std::endl;
-	//	std::cout << " val " << val << std::endl;
-	//	std::cout << " lb  " << lb << std::endl;
-
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 	if (lowerbounds.size != lower_bound_levels.size){
 		std::cout << " ERROR lowerbounds level_of END ? " << std::endl;
 		exit(1);
 	}
-
 	if (upperbounds.size != upper_bound_levels.size){
 		std::cout << " ERROR lowerbounds level_of END ? " << std::endl;
 		exit(1);
 	}
 #endif
 
-	int size;
 	if (lb)
 	{
-
-		/*	std::cout << "  lowerbounds.size  " << lowerbounds.size << std::endl;
-				std::cout << "  lowerbounds " << lowerbounds << std::endl;
-				std::cout << "  lower_bound_levels.size  " << lower_bound_levels.size << std::endl;
-				std::cout << "  lower_bound_levels " << lower_bound_levels << std::endl;
-		 */
-		size =lowerbounds.size ;
+		unsigned int size=lowerbounds.size ;
 		while (size --)
 			if(lowerbounds[size]== val)
 			{
-				//		std::cout << "  return  " << lower_bound_levels[size] << std::endl;
 				lvl =  lower_bound_levels[size];
 				assign_order = lower_bound_orders[size];
 				return lower_bound_reasons[size];
@@ -2152,24 +1989,15 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::get_informations_of(in
 	}
 	else
 	{
-
-		/*		std::cout << "  upperbounds.size  " << upperbounds.size << std::endl;
-			std::cout << "  upperbounds " << upperbounds << std::endl;
-			std::cout << "  upper_bound_levels.size  " << upper_bound_levels.size << std::endl;
-			std::cout << "  upper_bound_levels " << upper_bound_levels << std::endl;
-		 */
-		size =upperbounds.size ;
+		unsigned int size=upperbounds.size ;
 		while (size --)
 			if(upperbounds[size]==val)
 			{
-				//		std::cout << "  return  " << upper_bound_levels[size]<< std::endl;
-
 				lvl =  upper_bound_levels[size];
 				assign_order =upper_bound_orders[size];
 				return upper_bound_reasons[size];
 			}
 	}
-
 
 	std::cout << " ERROR get_informations_of END ? TRY TO USE level_of_inreduction instead!!! " << std::endl;
 	std::cout << " \n level_of " << std::endl;
@@ -2184,11 +2012,7 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::get_informations_of(in
 	std::cout << "  upperbounds " << upperbounds << std::endl;
 	std::cout << "  upper_bound_levels.size  " << upper_bound_levels.size << std::endl;
 	std::cout << "  upper_bound_levels " << upper_bound_levels << std::endl;
-
 	exit(1);
-
-
-
 }
 
 
@@ -2251,203 +2075,9 @@ int Mistral::VariableRangeWithLearning::level_of(int val, bool lb) {
 	std::cout << "  upperbounds " << upperbounds << std::endl;
 	std::cout << "  upper_bound_levels.size  " << upper_bound_levels.size << std::endl;
 	std::cout << "  upper_bound_levels " << upper_bound_levels << std::endl;
-
 	exit(1);
-
 }
 #endif
-
-
-//Exact reason for
-/*
-Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for_reduction(Literal l, Explanation * default_explanation) {
-
-
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-	if (!is_a_bound_literal(l))
-	{
-		std::cout << "   is_a_bound_literal ERRORreason_for " << l << std::endl;
-		exit(1);
-	}
-	if (get_variable_from_literal(l) != id )
-	{
-		std::cout << "   get_variable_from_literal(l)!=id() ERROR " << std::endl;
-		exit(1);
-	}
-#endif
-
-	int size , val = get_value_from_literal(l);
-	if (is_lower_bound(l))
-	{
-
-		//		std::cout << "l"<< l << std::endl;
-		//		std::cout << "lowerbounds "<< lowerbounds << std::endl;
-		//		std::cout << "lower_bound_reasons"<< lower_bound_reasons << std::endl;
-		size =lowerbounds.size ;
-
-		//		std::cout << "size" << size<< std::endl;
-		while (size --)
-			if(lowerbounds[size]==val)
-			{
-
-				//			std::cout << " c lower bound found! " << std::endl;
-				//			if (upper_bound_reasons[size+1] == NULL)
-				//				std::cout << "c return NULL " << std::endl;
-				//			else
-				//				std::cout << " c return lowerbounds reason_for --> " << *lower_bound_reasons[size+1] << std::endl;
-				//	latest_visited_lower_bound = lowerbounds[size+1];
-				return lower_bound_reasons[size];
-			}
-//		std::cout << "ERROR lowerbound not found!  " << std::endl;
-
-		return default_explanation;
-
-	}
-	else
-	{
-		size =upperbounds.size ;
-		while (size --)
-			if(upperbounds[size]==val)
-			{
-				//			std::cout << "c upperbound found" << size<< std::endl;
-				//			if (upper_bound_reasons[size+1] == NULL)
-				//				std::cout << "c return NULL " << std::endl;
-				//			else
-
-				//					std::cout <<" c return upperbounds reason_for --> " << *upper_bound_reasons[size+1] << std::endl;
-
-				//		latest_visited_upper_bound = upperbounds[size+1];
-				return upper_bound_reasons[size];
-			}
-		return default_explanation;
-		std::cout << "ERROR upperbound not found ! " << std::endl;
-		std::cout << "l"<< l << std::endl;
-		std::cout << " id : "<< id << std::endl;
-		std::cout << " value "<< val << std::endl;
-		std::cout << "lowerbounds "<< upperbounds << std::endl;
-		std::cout << "upperboundslevels "<< upper_bound_levels << std::endl;
-		std::cout << "upper_bound_reasons"<< upper_bound_reasons << std::endl;
-
-
-		std::cout << "  solver level  " << solver->level << std::endl;
-
-		int bool_var_id = domainConstraint->value_exist(val);
-
-		std::cout << "  bool_var_id " <<bool_var_id << std::endl;
-
-		//	if (bool_var_id<0)
-		exit(1);
-
-		//Reason not found --> return default_explanation
-
-
-		//	else
-		//		return domainConstraint;
-	}
-}
-*/
-/*
-Mistral::Explanation* Mistral::VariableRangeWithLearning::reason_for(Literal l) {
-
-
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-	if (!is_a_bound_literal(l))
-	{
-		std::cout << "   is_a_bound_literal ERRORreason_for " << l << std::endl;
-		exit(1);
-	}
-	if (get_variable_from_literal(l) != id )
-	{
-		std::cout << "   get_variable_from_literal(l)!=id() ERROR " << std::endl;
-		exit(1);
-	}
-#endif
-
-	int size , val = get_value_from_literal(l);
-	if (is_lower_bound(l))
-	{
-
-		//		std::cout << "l"<< l << std::endl;
-		//		std::cout << "lowerbounds "<< lowerbounds << std::endl;
-		//		std::cout << "lower_bound_reasons"<< lower_bound_reasons << std::endl;
-		size =lowerbounds.size ;
-
-		//		std::cout << "size" << size<< std::endl;
-		while (size --)
-			if(lowerbounds[size]==val)
-			{
-
-				//			std::cout << " c lower bound found! " << std::endl;
-				//			if (upper_bound_reasons[size+1] == NULL)
-				//				std::cout << "c return NULL " << std::endl;
-				//			else
-				//				std::cout << " c return lowerbounds reason_for --> " << *lower_bound_reasons[size+1] << std::endl;
-				//	latest_visited_lower_bound = lowerbounds[size+1];
-				return lower_bound_reasons[size];
-			}
-		std::cout << "ERROR lowerbound not found!  " << std::endl;
-		std::cout << "l"<< l << std::endl;
-		std::cout << " id : "<< id << std::endl;
-		std::cout << " value "<< val << std::endl;
-		std::cout << "lowerbounds "<< lowerbounds << std::endl;
-		std::cout << "lowerboundslevels "<< lower_bound_levels << std::endl;
-		std::cout << "lower_bound_reasons"<< lower_bound_reasons << std::endl;
-
-		std::cout << "  solver level  " << solver->level << std::endl;
-		int bool_var_id = domainConstraint->value_exist(val-1);
-
-		std::cout << " bool id   " << bool_var_id << std::endl;
-
-		std::cout << "  bool_var_id " <<bool_var_id << std::endl;
-
-		//	if (bool_var_id<0)
-		exit(1);
-		//else
-		//	return domainConstraint;
-
-
-	}
-	else
-	{
-		size =upperbounds.size ;
-		while (size --)
-			if(upperbounds[size]==val)
-			{
-				//			std::cout << "c upperbound found" << size<< std::endl;
-				//			if (upper_bound_reasons[size+1] == NULL)
-				//				std::cout << "c return NULL " << std::endl;
-				//			else
-
-				//					std::cout <<" c return upperbounds reason_for --> " << *upper_bound_reasons[size+1] << std::endl;
-
-				//		latest_visited_upper_bound = upperbounds[size+1];
-				return upper_bound_reasons[size];
-			}
-
-		std::cout << "ERROR upperbound not found ! " << std::endl;
-		std::cout << "l"<< l << std::endl;
-		std::cout << " id : "<< id << std::endl;
-		std::cout << " value "<< val << std::endl;
-		std::cout << "lowerbounds "<< upperbounds << std::endl;
-		std::cout << "upperboundslevels "<< upper_bound_levels << std::endl;
-		std::cout << "upper_bound_reasons"<< upper_bound_reasons << std::endl;
-
-
-		std::cout << "  solver level  " << solver->level << std::endl;
-
-		int bool_var_id = domainConstraint->value_exist(val);
-
-		std::cout << "  bool_var_id " <<bool_var_id << std::endl;
-
-		//	if (bool_var_id<0)
-		exit(1);
-		//	else
-		//		return domainConstraint;
-
-	}
-}
-*/
-
 
 
 void Mistral::VariableList::initialise(Solver *s) {

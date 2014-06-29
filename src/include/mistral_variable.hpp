@@ -1556,34 +1556,19 @@ namespace Mistral {
 #ifdef _ASSIGNMENT_ORDER
 		  order=NULL;
 #endif
-
-		  //		  std::cout << "ENDDDDD \n \n " << std::endl;
 	  };
-
-//	  Explanation* reason_for(Literal l);
-//	  Explanation* reason_for_reduction(Literal l, Explanation * default_explanation);
-
-
 
 #ifdef _ASSIGNMENT_ORDER
 	  ReversibleNum<int> *order;
 #endif
 	  DomainFaithfulnessConstraint* domainConstraint;
-	//  bool should_be_learnt(Literal q);
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 	  int level_of(int val, bool lb) ;
 #endif
 
-
 	  Explanation* get_informations_of(int val , int lb, int & lvl, int & assign_order);
 
-#ifdef _ASSIGNMENT_ORDER
-	//  int assignment_of(int val, bool lb) ;
-#endif
-
-
-	  //	  bool set_visited(unsigned int literal);
 	  /// Remove all values strictly lower than l
 	  inline Event set_min(const int lo,  Explanation * C) {
 		  Event lower_bound = LB_EVENT;
@@ -1594,9 +1579,9 @@ namespace Mistral {
 		  save();
 
 		  min = lo;
-			  lowerbounds.add(lo);
-			  lower_bound_reasons.add(C);
-			  lower_bound_levels.add(solver->level);
+		  lowerbounds.add(lo);
+		  lower_bound_reasons.add(C);
+		  lower_bound_levels.add(solver->level);
 #ifdef _ASSIGNMENT_ORDER
 			  lower_bound_orders.add(*order);
 			  ++ (*order);
@@ -1619,20 +1604,13 @@ namespace Mistral {
 
 		  max = up;
 
-			  upperbounds.add(up);
-			  upper_bound_reasons.add(C);
-			  upper_bound_levels.add(solver->level);
+		  upperbounds.add(up);
+		  upper_bound_reasons.add(C);
+		  upper_bound_levels.add(solver->level);
 #ifdef _ASSIGNMENT_ORDER
 			  upper_bound_orders.add(*order);
 			  ++ (*order);
 #endif
-
-			  //	  std::cout << "NEW LOWER BOUND \n \n " << std::endl;
-			  //	  std::cout << "lowerbounds"<< lowerbounds << std::endl;
-			  //		  std::cout << "lower_bound_reasons"<< lower_bound_reasons << std::endl;
-			  //		  int size =lowerbounds.size ;
-			  //		  std::cout << "size" << size<< std::endl;
-
 
 		  //HERE : How to backtrack ?
 		  if(max == min) upper_bound |= VALUE_EVENT;
@@ -1743,7 +1721,6 @@ namespace Mistral {
 		  //	  solver->level;
 #endif
 
-		  //  std::cout << "restore restore restore "<< std::endl;
 		  trail_.pop();
 		  trail_.pop(max);
 		  trail_.pop(min);
@@ -1762,9 +1739,6 @@ namespace Mistral {
 				  }
 				  else
 				  {
-
-					  //	  std::cout << "restore lower is done Latest lowerbounds ==  "<< lowerbounds[size] <<std::endl;
-					  //	  std::cout << "min ==  "<< min <<std::endl;
 					  break;
 				  }
 			  }
@@ -1782,9 +1756,6 @@ namespace Mistral {
 				  }
 				  else
 				  {
-
-					  //	  std::cout << "restore lower is done Latest upperbounds ==  "<< upperbounds[size] <<std::endl;
-					  //	  std::cout << "max ==  "<< max <<std::endl;
 					  break;
 				  }
 			  }
@@ -1796,7 +1767,7 @@ namespace Mistral {
 	  Vector<int> upperbounds;
 
 	  //TODO : private ???
- // private:
+  private:
 	  Vector<Explanation*> lower_bound_reasons;
 	  Vector<Explanation*> upper_bound_reasons;
 	  Vector<int> lower_bound_levels;
@@ -1805,8 +1776,6 @@ namespace Mistral {
 	  Vector<int> lower_bound_orders;
 	  Vector<int> upper_bound_orders;
 #endif
-	//  int latest_visited_lower_bound ;
-	//  int latest_visited_upper_bound ;
 
   };
   class VariableVirtual : public VariableBitmap {};

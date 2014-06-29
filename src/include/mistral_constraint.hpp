@@ -1838,7 +1838,7 @@ if (enforce_nfc1)
 
     unsigned int _capacity;
 	unsigned int _currentsize;
-    void extend_vectors(unsigned int increment = 300);
+    void extend_vectors(unsigned int increment = 500);
 
     std::ostream& display(std::ostream& os) const;  
   };
@@ -5156,22 +5156,8 @@ if (enforce_nfc1)
 	  }
 	  DomainFaithfulnessConstraint(Vector< Variable >& scp);
 	  DomainFaithfulnessConstraint(Variable x){
-		  std::cout <<" \n \n ERROR : this Constructor in DomainFaithfulness not yet allowed"  << std::endl;
+		  std::cout <<" \n \n ERROR : this Constructor in DomainFaithfulness is not yet allowed"  << std::endl;
 		  exit(1);
-		  scope.add(x);
-		  _x =   static_cast<VariableRangeWithLearning*>(x.range_domain) ;
-		  _x-> domainConstraint = this;
-
-		  //		 lb.clear();
-		  ub.clear();
-
-		  eager_explanations.clear();
-		  eager_explanations.add(NULL_ATOM);
-		  enforce_nfc1 = false;
-
-
-		  //	  solver->DomainFaithfulnessList.resize( x.id() +1);
-		  //	  solver->DomainFaithfulnessList[x.id()] = this;
 	  }
 
 	  void extend_scope(Variable & x, int value, bool isub, int level);
@@ -5205,6 +5191,7 @@ if (enforce_nfc1)
 	  virtual iterator get_reason_for(const Atom a, const int lvl, iterator& end);
 	  virtual iterator get_reason_for_literal(const Literal a, iterator& end);
 
+	  //TODO private ?
 	  Literal explanation[2];
 
 	  Vector<Literal> eager_explanations;

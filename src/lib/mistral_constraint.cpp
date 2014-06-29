@@ -14744,15 +14744,12 @@ void Mistral::DomainFaithfulnessConstraint::initialise() {
 
 
 int Mistral::DomainFaithfulnessConstraint::value_exist(int value){
-	//std::cout << " \n BEGIN dicho " <<std::endl;
-	//std::cout << " \n ub " << ub << std::endl;
-	//std::cout << " \n value " << value << std::endl;
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 	int expected = -1;
 	for(unsigned int i=0; i<ub.size; ++i)
 		if (ub[i].value == value){
-//			expected =  ub[i].x.id();
+			//			expected =  ub[i].x.id();
 			expected =  scope[ub[i].idx].id();
 			break;
 		}
@@ -14788,17 +14785,20 @@ int Mistral::DomainFaithfulnessConstraint::value_exist(int value){
 		return -1;
 	}
 
+	while (ub[idx].value != value){
+		if (idx_ub == idx_lb){
 
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+			if (expected != -1){
+				std::cout << "Dicho Error" << std::endl;
+				exit(1);
+			}
+#endif
 
-	//if (order)
-	{
-		while (ub[idx].value != value){
-
-			//		std::cout << " \n begin idx :  " << idx <<std::endl;
-			//		std::cout << " idx_ub  " << idx_ub <<std::endl;
-			//		std::cout << " idx_lb :  " << idx_lb <<std::endl;
-
-			if (idx_ub == idx_lb){
+			return -1;
+		}
+		if (ub[idx].value > value){
+			if (idx < idx_lb +1){
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 				if (expected != -1){
@@ -14809,79 +14809,36 @@ int Mistral::DomainFaithfulnessConstraint::value_exist(int value){
 
 				return -1;
 			}
-			if (ub[idx].value > value){
-				if (idx < idx_lb +1){
-
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-					if (expected != -1){
-						std::cout << "Dicho Error" << std::endl;
-						exit(1);
-					}
-#endif
-
-					return -1;
-				}
-				else
-					idx_ub = idx -1;
-			}
-			else{
-				if (idx_ub < idx +1){
-
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-					if (expected != -1){
-						std::cout << "Dicho Error" << std::endl;
-						exit(1);
-					}
-#endif
-
-					return -1;
-				}
-				else
-					idx_lb = idx +1;
-			}
-			//div2
-			//			if (idx_ub < idx_lb){
-			//				return -1;
-			//			}
-
-			idx = (idx_ub + idx_lb)>> 1;
-
-			//		std::cout << " idx_ub  " << idx_ub <<std::endl;
-			//		std::cout << " idx_lb :  " << idx_lb <<std::endl;
+			else
+				idx_ub = idx -1;
 		}
-
-		//	std::cout << " \n Find with idx" << idx << std::endl;
-		//	position = idx;
-		//return true;
+		else{
+			if (idx_ub < idx +1){
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-//		if (expected != ub[idx].x.id()){
-		if (expected != scope[ub[idx].idx].id()){
-			std::cout << "Dicho Error" << std::endl;
-			exit(1);
-		}
+				if (expected != -1){
+					std::cout << "Dicho Error" << std::endl;
+					exit(1);
+				}
 #endif
 
-//		return ub[idx].x.id();
-		return scope[ub[idx].idx].id();
+				return -1;
+			}
+			else
+				idx_lb = idx +1;
+		}
+		idx = (idx_ub + idx_lb)>> 1;
 	}
 
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+	//		if (expected != ub[idx].x.id()){
+	if (expected != scope[ub[idx].idx].id()){
+		std::cout << "Dicho Error" << std::endl;
+		exit(1);
+	}
+#endif
 
-
-	//	if (value== 253)
-	//	std::cout << " \n value_exist? " << value << "\n ub :  " <<  ub << std::endl;
-
-
-	/*	for(unsigned int i=0; i<ub.size; ++i)
-		if (ub[i].value == value)
-			return ub[i].x.id();
-	 */
-	//	if (value== 253)
-	//	std::cout << " \n NO ?  \n ub :  " <<  ub << std::endl;
-
-	//	std::cout << " \n NO ?  " <<  std::endl;
-
-	//	return -1;
+	return scope[ub[idx].idx].id();
 
 }
 
@@ -14889,91 +14846,32 @@ int Mistral::DomainFaithfulnessConstraint::value_exist(int value){
 
 void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value , bool isub, int level){
 
-//	ub.add(__boundLiteral(value,x, scope.size));
-//	ub.sort();
-
 	ub.fast_sorted_add(__boundLiteral(value, scope.size));
 
 	scope.add(x);
-	//_scope.add(x);
 
 	Literal virtual_literal ;
-	//value =
-/*	if (
-			((!isub) &&  (( value+1)  > _x->lowerbounds[0] ) ) ||
-			( isub   &&    (value < _x->upperbounds[0] ) )
-	)
 
-		virtual_literal = encode_bound_literal(scope[0].id(), value + (!isub), isub);
-*/
 	if (isub)
 		virtual_literal = encode_bound_literal(scope[0].id(), value, 1);
 	else
 		virtual_literal = encode_bound_literal(scope[0].id(), value +1, 0);
-
-	//else
-	//	virtual_literal = NULL_ATOM;
-	//	dom_constraint->eager_explanations[dom_constraint->eager_explanations.size -1]
 
 	eager_explanations.add(virtual_literal);
 
 	++_currentsize;
 	if (_currentsize>= _capacity)
 	{
-
+		std::cout << " c _currentsize>= _capacity " << std::endl;
 		extend_vectors();
-
-		std::cout << " c _currentsize>= _capacity " << std::endl;
-/*		_capacity+=300;
-
-		std::cout << " c _currentsize>= _capacity " << std::endl;
-		Event * tmp_event_type = new Event[_capacity];
-		int * tmp_solution = new int[_capacity];
-		Constraint* tmpself = new Constraint[_capacity];
-		int*  tmpindex = new int[_capacity];
-
-		for(unsigned int i=0; i<on.size; ++i)
-			tmp_event_type[i] = event_type[i];
-		delete [] event_type;
-		event_type = tmp_event_type;
-
-		for(unsigned int i=0; i<on.size; ++i)
-			tmp_solution[i] = solution[i];
-		delete [] solution;
-		solution = tmp_solution;
-
-		for(unsigned int i=0; i<on.size; ++i)
-			tmpself[i] = self[i];
-		delete [] self;
-		self = tmpself;
-
-		for(unsigned int i=0; i<on.size; ++i)
-			tmpindex[i] = index[i];
-		delete [] index;
-		index = tmpindex;
-		*/
 	}
-
 
 	event_type[scope.size-1] = NO_EVENT;
 	solution [scope.size-1]  = 0;
 
-	/*	std:: cout << " \n BEFORE : scope.size " << scope.size << std::endl;
-	std:: cout << "changes.size " << changes.size << std::endl;
-	std:: cout << "changes.list_capacity " << changes.list_capacity << std::endl;
-	std:: cout << "changes.index_capacity " << changes.index_capacity << std::endl;
-	std:: cout << "changes " << changes << std::endl;
-	 */
+
 	if ((changes.list_capacity < scope.size) || (changes.index_capacity < scope.size)){
 		changes.extend_lists();
-
-	/*	std:: cout << " \n After : scope.size " << scope.size << std::endl;
-	std:: cout << "changes.size " << changes.size << std::endl;
-	std:: cout << "changes.list_capacity " << changes.list_capacity << std::endl;
-	std:: cout << "changes.index_capacity " << changes.index_capacity << std::endl;
-	std:: cout << "changes " << changes << std::endl;
-	 */
-
 
 //	events.size = changes.size;
 	events.index_capacity = changes.index_capacity;
@@ -14981,27 +14879,23 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 	events.list_ = changes.list_;
 	events.index_ = changes.index_;
 
-
 	//	events.start_ = changes.start_;
 }
-
+/*
 	if (events.start_){
 		std::cout << "start_ " << events.start_ << std::endl;
 		std::cout << "exit start_ " << *events.start_ << std::endl;
 
 		exit(1);
 	}
-
+*/
 
 	int i = scope.size -1;
 	self[i] = Constraint(this, i|type);
 	trigger_on(_VALUE_, scope[scope.size -1]);
 	index[i] = on[i]->post(self[i]);
-
 	//backtrackable??? add lvl!
 	consolidate_var(scope.size -1);
-
-
 }
 
 
