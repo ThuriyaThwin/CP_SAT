@@ -3570,24 +3570,29 @@ void SchedulingSolver::branch_and_bound()
   //It looks like there is more stuff to do when changing the policy
   if (policy)
 	  delete policy ;
+  RestartPolicy *pol ;
   if (params->BandBPolicyRestart==GEOMETRIC)
-	  policy = new Geometric(256,params->Factor);
+	  pol = new Geometric(256,params->Factor);
   else if (params->BandBPolicyRestart==LUBY)
-	  policy = new Luby();
+	  pol = new Luby();
   else {
 	  std::cout << " RestartPolicy not found " << std::endl;
 	  exit(1);
   }
   //In order to simulate initialise_search() we need these two lines
-  parameters.restart_limit = policy->base;
-  parameters.limit = (policy->base > 0);
-
+  parameters.restart_limit = pol->base;
+  parameters.limit = (pol->base > 0);
 
 
 //  else {
 //	  std::cout << " RestartPolicy not found " << std::endl;
 //	  exit(1);
 //  }
+
+
+  delete heuristic;
+  BranchingHeuristic *heu = new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
+  initialise_search(disjuncts, heu, pol);
 
 
   save();

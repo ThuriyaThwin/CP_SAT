@@ -1509,6 +1509,7 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
   //Static forget
   nlearnt = learnt.size;
   if (nlearnt>12000){
+	  std::cout << " c size limit in learntClauses : " << learnt.size << std::endl;
 	  //removed= 0;
 	 // nlearnt -=1000;
 	  for(i=nlearnt; i>1 ;) {

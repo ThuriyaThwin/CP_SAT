@@ -434,12 +434,14 @@ namespace Mistral {
       Constraint con = solver->culprit;
 
 
-      //std::cout << "failure on " << con << std::endl;
+     // std::cout << "failure on " << con << std::endl;
 
       if(!con.empty()) {
 	Variable *scope = con.get_scope();
 	int idx;
 	i = con.arity();
+	if (i< 4)
+	{
 	++constraint_weight[con.id()];
 	if (solver->parameters.fd_learning )
 		while(i--) {
@@ -459,6 +461,9 @@ namespace Mistral {
 		}
 
       } 
+//	else
+//	      std::cout << "failure on " << con << std::endl;
+      }
       // std::cout << std::endl;
 
       // display(std::cout, false);
