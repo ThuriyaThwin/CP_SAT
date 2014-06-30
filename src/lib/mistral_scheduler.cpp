@@ -3590,10 +3590,10 @@ void SchedulingSolver::branch_and_bound()
 //  }
 
 
-  delete heuristic;
+/*  delete heuristic;
   BranchingHeuristic *heu = new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
   initialise_search(disjuncts, heu, pol);
-
+*/
 
   save();
   set_objective(stats->upper_bound-1);
