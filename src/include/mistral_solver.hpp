@@ -899,6 +899,13 @@ namespace Mistral {
     Explanation** visitedLowerBoundExplanations;
     Explanation** visitedUpperBoundExplanations;
 
+    //Used when updating the weight in FailureCountManager. This vector contain the id of
+    //each variable in the failure clause
+    //TODO Improve that by using a Failure Listener
+    Vector<int> failure_scope;
+
+    void update_failure_scope(Clause *c);
+
     int start_from;
     int initial_variablesize;
     //Here we suppose we index first range variables then boolean variables, hence start_from should be equal to nb_range_variables. I'll be back later to that

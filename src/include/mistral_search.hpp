@@ -437,6 +437,19 @@ namespace Mistral {
      // std::cout << "failure on " << con << std::endl;
 
       if(!con.empty()) {
+
+    	  if (solver->failure_scope.size) {
+    		  int idx;
+    		  i = solver->failure_scope.size;
+    		  while(i--) {
+    			  idx = solver->failure_scope[i];
+    			  if((idx>=0) && (idx < solver->initial_variablesize)) {
+    				  variable_weight[idx] += weight_unit;
+    			  }
+    		  }
+    		  solver->failure_scope.clear();
+    	  }
+    	  else{
 	Variable *scope = con.get_scope();
 	int idx;
 	i = con.arity();
@@ -461,8 +474,12 @@ namespace Mistral {
 		}
 
       } 
-//	else
-//	      std::cout << "failure on " << con << std::endl;
+	else{
+		std::cout << " !! failure on " << con << std::endl;
+		exit(1);
+	}
+
+      }
       }
       // std::cout << std::endl;
 

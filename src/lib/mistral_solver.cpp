@@ -1009,6 +1009,7 @@ Mistral::Solver::Solver()
   //We need this to undo lazy generation
 
   activity_mngr = NULL;
+  //failure_scope = NULL;
   init_booleans_slot_size = 0;
   init_booleans_last_size_size= 0;
   init_constraint_graph_size= 0;
@@ -2026,6 +2027,8 @@ Mistral::Outcome Mistral::Solver::restart_search(const int root, const bool _res
     //std::cout << " c notify restart" << std::endl;
     notify_restart(progress_i);
 
+
+    failure_scope.clear();
 
     // std::cout << "seq: [";
     // for(int i=sequence.size; i<variables.size; ++i) {
@@ -6760,6 +6763,14 @@ bool Mistral::Solver::learn_virtual_literals(bool semantic, bool lazyGeneration)
 	}
 }
 
+
+void Mistral::Solver::update_failure_scope(Clause* c){
+	Clause & cl = *c ;
+	failure_scope.clear();
+	for (int size = (cl.size -1); size >=0; --size)
+		failure_scope.add(get_id_boolean_variable(cl[size]));
+}
+
 void Mistral::Solver::clean_fdlearn() {
 	//std::cout << " \n\n\n clean_fdlearn " << std::endl;
 
@@ -6810,6 +6821,7 @@ void Mistral::Solver::clean_fdlearn() {
 		bool semantic= parameters.semantic_learning,
 				orderedExploration= parameters.orderedExploration,
 				lazyGeneration = parameters.lazy_generation;
+
 
 		do {
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING

@@ -1099,6 +1099,9 @@ Mistral::PropagationOutcome Mistral::ConstraintClauseBase::propagate() {
   }
 #endif
 
+  if (conflict){
+	  get_solver()-> update_failure_scope(conflict);
+  }
 
   return wiped;
 }
