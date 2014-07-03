@@ -475,8 +475,9 @@ namespace Mistral {
 
       } 
 	else{
-		std::cout << " !! failure on " << con << std::endl;
-		exit(1);
+		//TODO add get_reason_for_failure instead of using the scope of the constraint
+	//	std::cout << " !! failure on " << con << std::endl;
+	//	exit(1);
 	}
 
       }
