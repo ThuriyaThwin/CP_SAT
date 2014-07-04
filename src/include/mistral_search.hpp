@@ -1593,6 +1593,8 @@ namespace Mistral {
       return(criterion == x.criterion && id == x.id);
     }
     inline void operator=( const Identifiable<VarComparator>& x ) { criterion = x.criterion; id = x.id; }
+
+    //TODO Check this?
     inline void operator=( const Variable x ) {// criterion = x;
     	id = x.id();
     }
@@ -1706,7 +1708,7 @@ namespace Mistral {
     virtual std::ostream& display(std::ostream& os) const { //,  const int n, double* weights) {
 
       manager->display(os, false);
-      //TODO un-comment this
+      //TODO uncomment this
 /*
       //double* weights = (manager ? manager->get_variable_weight() : NULL);
       //int n = RAND;
@@ -1723,8 +1725,6 @@ namespace Mistral {
 	Variable *variables = solver->sequence.list_;
 	unsigned int length = solver->sequence.size-1;
 
-	std:: cout << "length" <<length<< std::endl;
-
 	Variable var = variables[length];
 	
 	
@@ -1733,8 +1733,6 @@ namespace Mistral {
 	std::vector< Identifiable< VarComparator > > all_vars;
 	for(unsigned int i=0; i<=length; ++i) {
 
-
-		std:: cout << "\n i " <<i<< std::endl;
 
 	  Identifiable<VarComparator> vc;
 	  //if(weights) vc.criterion.weight = weights;
