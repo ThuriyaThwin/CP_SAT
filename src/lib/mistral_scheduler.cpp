@@ -2933,7 +2933,7 @@ void SchedulingSolver::dichotomic_search()
 
   BranchingHeuristic *heu = new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
 
-  //TODO Check if to destroy activity vectors
+  //TODO Check destroy activity vectors
 //  LearningActivityManager * activity_mngr = NULL;
 
   //TODO relate it to VSIDS!
@@ -2956,6 +2956,11 @@ void SchedulingSolver::dichotomic_search()
 
   // RestartPolicy *pol = new Luby();
 //  RestartPolicy *pol = new AlwaysRestart();
+
+
+ // std::cout << std::endl << sequence << std::endl;
+
+
 
   initialise_search(disjuncts, heu, pol);
 
@@ -2988,6 +2993,8 @@ void SchedulingSolver::dichotomic_search()
 	 iteration<params->Dichotomy
   ) {
 
+	  //std::cout << "dicho heuristic  \n " << std::endl;
+	  //heuristic->display(std::cout);
 
 	  double remaining_time = params->Optimise - stats->get_total_time();
 
@@ -3154,6 +3161,12 @@ void SchedulingSolver::dichotomic_search()
 	//  std::cout << " SLEEP FOR 10s " << std::endl;
 	//  std::this_thread::sleep_for (std::chrono::seconds(10));
 	  //exit(1);
+
+	  delete heuristic;
+	  heuristic= new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
+	  heuristic->initialise(sequence);
+
+
 	  ++iteration;
 
 #ifdef _DEBUG_SCHEDULER
@@ -3499,6 +3512,8 @@ void SchedulingSolver::dichotomic_search()
 
 void SchedulingSolver::branch_and_bound()
 {
+
+
   stats->num_solutions++;
   int ngd_stamp = 0;
   int lit_stamp = 0;
@@ -3594,6 +3609,18 @@ void SchedulingSolver::branch_and_bound()
   BranchingHeuristic *heu = new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
   initialise_search(disjuncts, heu, pol);
 */
+
+
+  //Delete heuristic
+  //std::cout << "b&b heuristic  \n " << std::endl;
+
+  // heuristic->display(std::cout);
+
+  delete heuristic;
+  heuristic= new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
+  heuristic->initialise(sequence);
+
+  //heuristic->display(std::cout);
 
   save();
   set_objective(stats->upper_bound-1);

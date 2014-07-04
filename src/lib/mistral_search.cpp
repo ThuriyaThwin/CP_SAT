@@ -465,6 +465,8 @@ std::ostream& Mistral::FailureCountManager::display(std::ostream& os, const bool
       weight_sorting_array = constraint_weight.stack_;
       qsort(all_constraints, constraint_weight.size, sizeof(int), decreasing_weight);
 
+      os << " c variable weight size is  " <<variable_weight.size << "\n";
+
       os << " c variable weight: \n c id: ";
       if(solver->parameters.fd_learning)
       for(unsigned int i=0; i<variable_weight.size; ++i) {
@@ -508,6 +510,8 @@ std::ostream& Mistral::FailureCountManager::display(std::ostream& os, const bool
     	  os << std::setw(xwidth) << variable_weight[all_variables[i]] << " ";
     	}
           }
+
+      os << " c constraint_weight size is  " <<constraint_weight.size << "\n";
       os << "\n c constraint weight: \n c id: ";
       for(unsigned int i=0; i<constraint_weight.size; ++i) {
 	xwidth = log10(constraint_weight[all_constraints[i]]);
