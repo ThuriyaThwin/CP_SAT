@@ -172,6 +172,7 @@ namespace Mistral {
       initialise(lb, ub);
     };
 
+    using VariableImplementation::initialise;
     virtual void initialise(const int lb, const int ub) {
       domain.initialise(lb, ub);
       initialise_trail();
@@ -1287,6 +1288,7 @@ namespace Mistral {
       initialise(lb, ub);
     };
 
+    using VariableImplementation::initialise;
     virtual void initialise(const int lb, const int ub) {
       min = lb;
       max = ub;
@@ -2285,6 +2287,9 @@ namespace Mistral {
 
     DeltaBitset( VariableBitmap *x ) {
       initialise( x );
+    }
+
+    virtual ~DeltaBitset( ) {
     }
 
     virtual void initialise( VariableBitmap *x ) {
@@ -3644,6 +3649,7 @@ namespace Mistral {
 
     
     virtual const char* get_name() const;
+    using Expression::display;
     virtual std::ostream& display(std::ostream& os, const bool all=false) const;
     virtual int get_solution_int_value() const ;
     virtual std::string get_solution_str_value() const ;

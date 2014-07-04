@@ -60,20 +60,22 @@ Mistral::Variable::Variable() {
 
 // Constant variable
 Mistral::Variable::Variable(const int value) {
+
   //domain_type = NULL;
+
   domain_type = CONST_VAR;
   variable = NULL;
   constant_value = value;
 }
 
 Mistral::Variable::Variable(VariableImplementation* impl, const int type) {
-  //domain_type = NULL;
+
   domain_type = type;
   variable = impl;
 }
 
 Mistral::Variable::Variable(Expression* exp) {
-  //domain_type = NULL;
+
   domain_type = EXPRESSION;
   expression = exp;
 }
@@ -8225,8 +8227,8 @@ void Mistral::Domain::open() {
     _end_ptr = list_domain->domain.end();
   } else if(is_range()) {
     id = -1;
-    _begin_ptr = (int*)(get_min()*4);
-    _end_ptr = (int*)((get_max()+1)*4);
+    _begin_ptr = (int*)(uintptr_t)(get_min()*4);
+    _end_ptr = (int*)(uintptr_t)((get_max()+1)*4);
   } else {
     Solver *s = get_solver();
     int n = bitset_domain->domain.size;

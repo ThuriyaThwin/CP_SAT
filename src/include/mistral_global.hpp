@@ -102,6 +102,7 @@ namespace Mistral {
   // };
 
 
+  //#define _DEBUG_ACTIVITY true
   //#define _DEBUG_LESS (id == 84)
   //#define _DEBUG_PARITY ((id == 2))
   //#define _DEBUG_BUILD true
@@ -434,7 +435,7 @@ namespace Mistral {
 
   public:
 
-    virtual void store_reason_for_change(const Event evt, const Explanation *expl) = 0;
+    virtual void store_reason_for_change(const Event evt, Explanation *expl) = 0;
     virtual Explanation* get_explanation(const Event evt) = 0;
 
   };

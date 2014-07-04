@@ -25,6 +25,7 @@
 #include <signal.h>
 #include <assert.h>
 
+
 #include <mistral_sat.hpp>
 //#include <mistral_search.hpp>
 #include <mistral_solver.hpp>
@@ -46,6 +47,8 @@
 //#define _DEBUG_RESTORE true
 //#define _DEBUG_REWRITE true
 //#define _OUTPUT_TIKZ false
+
+
 
 
 Mistral::Solver* active_solver;
@@ -986,8 +989,8 @@ Mistral::Solver::Solver()
 
   // lit_activity.initialise(0,8192);
   //  var_activity.initialise(0,4096);
-  lit_activity = NULL;
-  var_activity = NULL;
+  // lit_activity = NULL;
+  // var_activity = NULL;
 
   active_variables.initialise(4096);
 
@@ -1462,7 +1465,9 @@ int Mistral::Solver::declare(Variable x) {
   bool extend_struct = (constraint_graph.capacity == constraint_graph.size);
   constraint_graph.add(array);
   if(extend_struct) {
-//    constraint_graph.add(array);
+
+    //constraint_graph.add(array);
+
     for(int i = constraint_graph.size-1; i>=0; --i) {
       for(int j = 0; j<3; ++j) {
 	for(int k = constraint_graph[i].on[j].size-1; k>=0; --k) {
@@ -2078,14 +2083,13 @@ Mistral::Outcome Mistral::Solver::restart_search(const int root, const bool _res
 Mistral::Outcome Mistral::Solver::get_next_solution()  
 {
   Outcome satisfiability = UNSAT;
-
-  //   std::cout << "get next solution " << (decisions.size) << " "
-  // 	    << search_started << std::endl;
   
   if(search_started) {
     if(decisions.size) 
       branch_right();
-    else return satisfiability;
+    else {
+      return satisfiability;
+    }
   }
    
   search_started = true;
@@ -2509,12 +2513,8 @@ void Mistral::Solver::restore() {
 
 void Mistral::Solver::restore(const int lvl) {
 
-	/*std::cout << "\n \n restore" << level << std::endl;
-	std::cout << " \n lvl" << lvl << std::endl;
-	std::cout << " \n search root" << search_root << std::endl;
-	std::cout << "level" << level << std::endl;
-	std::cout << " decisions.size " <<  decisions.size  << std::endl;
-	*/
+  //decisions.size = lvl;
+
   decisions.size = lvl -search_root;
   while(lvl < level) restore();
 }
@@ -2532,9 +2532,9 @@ void Mistral::Solver::add(Mistral::SuccessListener* l) {
   l->sid = success_triggers.size;
   success_triggers.add(l);
 }
-void Mistral::Solver::add(Mistral::FailureListener* l) {
-  l->fid = failure_triggers.size;
-  failure_triggers.add(l);
+void Mistral::Solver::add(Mistral::BacktrackListener* l) {
+  l->fid = backtrack_triggers.size;
+  backtrack_triggers.add(l);
 }
 void Mistral::Solver::add(Mistral::DecisionListener* l) {
   l->did = decision_triggers.size;
@@ -2568,11 +2568,11 @@ void Mistral::Solver::remove(Mistral::SuccessListener* l) {
   if(success_triggers.size>idx) 
     success_triggers[idx]->sid = idx;
 }
-void Mistral::Solver::remove(Mistral::FailureListener* l) {
+void Mistral::Solver::remove(Mistral::BacktrackListener* l) {
   unsigned int idx = l->fid;
-  failure_triggers.remove(idx);
-  if(failure_triggers.size>idx) 
-    failure_triggers[idx]->fid = idx;
+  backtrack_triggers.remove(idx);
+  if(backtrack_triggers.size>idx) 
+    backtrack_triggers[idx]->fid = idx;
 }
 void Mistral::Solver::remove(Mistral::DecisionListener* l) {
   unsigned int idx = l->did;
@@ -2594,9 +2594,9 @@ void Mistral::Solver::remove(Mistral::ConstraintListener* l) {
 }
 
 
-void Mistral::Solver::notify_failure() { //Constraint *con, const int idx) {
-  for(unsigned int i=0; i<failure_triggers.size; ++i) {
-    failure_triggers[i]->notify_failure();
+void Mistral::Solver::notify_backtrack() { //Constraint *con, const int idx) {
+  for(unsigned int i=0; i<backtrack_triggers.size; ++i) {
+    backtrack_triggers[i]->notify_backtrack();
   }
 } 
 
@@ -3995,18 +3995,18 @@ bool Mistral::Solver::propagate()
 	}
       }
     }
-#ifdef _DEBUG_FAIL
-	if (wiped_idx != CONSISTENT)
-		std::cout << " 0 fail : " << culprit <<  " and its propagator is " << culprit.propagator << std::endl;
-#endif
-	if (IS_OK(wiped_idx))
-    while(!assigned.empty()) {
-      vidx = assigned.pop();
-      for(trig = 0; trig<3; ++trig) {
-	for(cons = constraint_graph[vidx].on[trig].size; --cons>=0;) {
-	  culprit = constraint_graph[vidx].on[trig][cons];
-	  if(culprit.postponed()) {
-	    culprit.notify_assignment();
+
+
+    if(IS_OK(wiped_idx)) {
+      while(!assigned.empty()) {
+	vidx = assigned.pop();
+	for(trig = 0; trig<3; ++trig) {
+	  for(cons = constraint_graph[vidx].on[trig].size; --cons>=0;) {
+	    culprit = constraint_graph[vidx].on[trig][cons];
+	    if(culprit.postponed()) {
+	      culprit.notify_assignment();
+	    }
+
 	  }
 	}
       }
@@ -4141,7 +4141,7 @@ bool Mistral::Solver::propagate()
     if(parameters.backjump)
       close_propagation();
 
-    notify_failure();
+    //notify_failure();
     wiped_idx = CONSISTENT;
     return false;
   }
@@ -4378,7 +4378,7 @@ void Mistral::Solver::fail() {
 
 //     //std::cout << "solver: notify failure" << std::endl;
 
-//     notify_failure();
+//     notify_backtrack();
 //     return false;
 //   }
 // }
@@ -4625,8 +4625,8 @@ std::ostream& Mistral::Solver::display(std::ostream& os, const int current) {
 	       << "]";
 	  }
 	}
-      if(lit_activity)
-	os << lit_activity[2*i] << "/" << lit_activity[2*i+1] << ": " << var_activity[i] ;
+      // if(lit_activity)
+      // 	os << lit_activity[2*i] << "/" << lit_activity[2*i+1] << ": " << var_activity[i] ;
       os << "\n";
     
     } else {
@@ -4718,6 +4718,7 @@ std::ostream& Mistral::Solver::display(std::ostream& os, const int current) {
 //Mistral::Decision 
 void Mistral::Solver::learn_nogood() {
 
+  visited_literals.clear();
 
   //unsigned int vidx;
 
@@ -4942,12 +4943,25 @@ void Mistral::Solver::learn_nogood() {
 #endif
 	
 	if( !visited.fast_contain(a) ) {
-	  if(lit_activity) {
-	    //lit_activity[q] += 0.5 * parameters.activity_increment;
-	    lit_activity[NOT(q)] += // 0.5 *
-	      parameters.activity_increment;
-	    var_activity[a] += parameters.activity_increment;
-	  }
+	  //if(lit_activity) {
+
+// #ifdef _DEBUG_ACTIVITY
+// 	    std::cout << "x" << a << " (" << lit_activity[NEG(a)] << "/" << lit_activity[POS(a)] << ")/" << var_activity[a]
+// 		   << " -> " ; 
+// #endif
+
+	    // //lit_activity[q] += 0.5 * parameters.activity_increment;
+	    // lit_activity[NOT(q)] += // 0.5 *
+	    //   parameters.activity_increment;
+	    // var_activity[a] += parameters.activity_increment;
+	    visited_literals.add(NOT(q));
+
+// #ifdef _DEBUG_ACTIVITY
+// 	    std::cout << " (" << lit_activity[NEG(a)] << "/" << lit_activity[POS(a)] << ")/" << var_activity[a]
+// 		   << std::endl ; 
+// #endif
+
+	      //}
 	  visited.fast_add(a);
 	  
 	  if(lvl >= level) {
@@ -5112,6 +5126,7 @@ void Mistral::Solver::learn_nogood() {
   }
   visited.clear();
 
+  //std::cout << visited_literals << std::endl;
 
   // int real_size = 0;
   // for(int i=0; i<base->learnt.size; ++i) {
@@ -5145,8 +5160,6 @@ void Mistral::Solver::learn_nogood() {
 
 void Mistral::Solver::simple_fdlearn_nogood(bool will_be_forgotten) {
 
-//	std::cout << "simple_fdlearn_nogood  "  << std::endl;
-//	exit(1);
 
 	backtrack_level = level-1;
 	visited.clear();
@@ -7396,6 +7409,9 @@ Mistral::Outcome Mistral::Solver::branch_right() {
     	exit(1);
     }
 
+
+    notify_backtrack();
+
     restore(backtrack_level);  
     
 #ifdef _DEBUG_SEARCH
@@ -7823,6 +7839,7 @@ Mistral::Outcome Mistral::Solver::chronological_dfs(const int _root)
       
 #ifdef _OLD_
       if( parameters.backjump ) learn_nogood();
+
       if( limits_expired() ) {
       	status = //interrupted();
 	  LIMITOUT;

@@ -17732,8 +17732,10 @@ void Mistral::PredicateMin::react_to(PropagationOutcome& wiped, const int change
     }
 #endif
     var = candidates.back();
-    if(IS_OK(wiped)) FILTER3(var, set_domain(scope[n]));
-    
+    if(IS_OK(wiped)) {
+      FILTER3(var, set_domain(scope[n]));
+    }
+
 #ifdef _DEBUG_MIN
     if(_DEBUG_MIN) {
       if(IS_OK(wiped)) {
@@ -17744,8 +17746,10 @@ void Mistral::PredicateMin::react_to(PropagationOutcome& wiped, const int change
     }
 #endif
 
-    if(IS_OK(wiped)) FILTER3(n, set_domain(scope[var]));
-    
+    if(IS_OK(wiped)) {
+      FILTER3(n, set_domain(scope[var]));
+    }
+
 #ifdef _DEBUG_MIN
     if(_DEBUG_MIN) {
       if(IS_OK(wiped)) {
@@ -18301,8 +18305,9 @@ void Mistral::PredicateMax::react_to(PropagationOutcome& wiped, const int change
     }
 #endif
     var = candidates.back();
-    if(IS_OK(wiped)) FILTER3(var, set_domain(scope[n]));
-
+    if(IS_OK(wiped)) {
+      FILTER3(var, set_domain(scope[n]));
+    }
 #ifdef _DEBUG_MAX
     if(_DEBUG_MAX) {
       if(IS_OK(wiped)) {
@@ -18313,8 +18318,9 @@ void Mistral::PredicateMax::react_to(PropagationOutcome& wiped, const int change
     }
 #endif
 
-    if(IS_OK(wiped)) FILTER3(n, set_domain(scope[var]));
-
+    if(IS_OK(wiped)) {
+      FILTER3(n, set_domain(scope[var]));
+    }
 #ifdef _DEBUG_MAX
     if(_DEBUG_MAX) { 
       if(IS_OK(wiped)) {
