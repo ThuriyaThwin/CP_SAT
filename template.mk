@@ -3,7 +3,7 @@ MAINDIR ?= .
 
 COPTIMIZE ?= -O3
 
-CCC = g++ 
+CCC = g++
 
 BIN=$(MAINDIR)/bin
 SRC=$(MAINDIR)/src/lib

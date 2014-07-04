@@ -989,8 +989,8 @@ Mistral::Solver::Solver()
 
   // lit_activity.initialise(0,8192);
   //  var_activity.initialise(0,4096);
-  // lit_activity = NULL;
-  // var_activity = NULL;
+ //  lit_activity = NULL;
+ //  var_activity = NULL;
 
   active_variables.initialise(4096);
 
@@ -4625,8 +4625,8 @@ std::ostream& Mistral::Solver::display(std::ostream& os, const int current) {
 	       << "]";
 	  }
 	}
-      // if(lit_activity)
-      // 	os << lit_activity[2*i] << "/" << lit_activity[2*i+1] << ": " << var_activity[i] ;
+    //   if(lit_activity)
+    //   	os << lit_activity[2*i] << "/" << lit_activity[2*i+1] << ": " << var_activity[i] ;
       os << "\n";
     
     } else {
@@ -4678,8 +4678,8 @@ std::ostream& Mistral::Solver::display(std::ostream& os, const int current) {
 		       << "]";
 		  }
 		}
-	      if(lit_activity)
-		os << lit_activity[2*i] << "/" << lit_activity[2*i+1] << ": " << var_activity[i] ;
+	   //   if(lit_activity)
+		//os << lit_activity[2*i] << "/" << lit_activity[2*i+1] << ": " << var_activity[i] ;
 	      os << "\n";
 
 	    } else {
@@ -5242,14 +5242,15 @@ unsigned int Mistral::Solver::generate_new_variable(DomainFaithfulnessConstraint
 
 	//Here we update activity vectors
 	if (activity_var_activity){
+		std::cout << "activity_var_activity::! " << std::endl;
+		exit(1);
 		if(activity_var_activity->capacity < variables.size){
 			activity_var_activity->extendStack();
-			var_activity = activity_var_activity->stack_;
+		//	var_activity = activity_var_activity->stack_;
 		}
-		//	if (activity_lit_activity)
 		if(activity_lit_activity->capacity < (2* variables.size)){
 			activity_lit_activity->extendStack();
-			lit_activity = activity_lit_activity->stack_;
+		//	lit_activity = activity_lit_activity->stack_;
 		}
 
 		activity_var_activity->fast_add(0.0);
@@ -5487,21 +5488,14 @@ void Mistral::Solver::treat_assignment_literal(Literal q, bool semantic, bool or
 	if(lvl > search_root ){
 		if( !visited.fast_contain(x) ) {
 
-			/*			if(lit_activity) {
-				//lit_activity[q] += 0.5 * parameters.activity_increment;
-				lit_activity[NOT(q)] += // 0.5 *
-						parameters.activity_increment;
-				var_activity[UNSIGNED(q)] += parameters.activity_increment;
-			}
-			 */
 
-			if(lit_activity) {
+	/*		if(lit_activity) {
 				//lit_activity[q] += 0.5 * parameters.activity_increment;
 				lit_activity[(2*x) + SIGN(q)] += // 0.5 *
 						parameters.activity_increment;
 				var_activity[x] += parameters.activity_increment;
 			}
-
+	*/
 			visited.fast_add(x);
 
 			////This tests passses only for some bound literals with semantic learning
@@ -6103,21 +6097,14 @@ void Mistral::Solver::generate_and_learn(complete_virtual_literal_informations i
 	if( !visited.fast_contain(tmp__id) ) {
 
 		//TODO undo this if it's already done with semantic and lazy learning
-		if(lit_activity) {
+	/*	if(lit_activity) {
 			//lit_activity[q] += 0.5 * parameters.activity_increment;
 			lit_activity[(2*tmp__id) + 1 - info.is_lb] += // 0.5 *
 					parameters.activity_increment;
 			var_activity[tmp__id] += parameters.activity_increment;
 		}
+*/
 
-		/*						Literal activity_tmp_literal = encode_boolean_variable_as_literal(tmp__id,is_lb);
-		if(lit_activity) {
-			//lit_activity[q] += 0.5 * parameters.activity_increment;
-			lit_activity[NOT(activity_tmp_literal)] += // 0.5 *
-					parameters.activity_increment;
-			var_activity[UNSIGNED(activity_tmp_literal)] += parameters.activity_increment;
-		}
-		 */
 		visited.fast_add(tmp__id);
 
 #ifdef 	_DEBUG_FD_NOGOOD
@@ -6218,20 +6205,13 @@ void Mistral::Solver::repace_with_disjunctions(int var, int val, int is_lb, Expl
 					if( !visited.fast_contain(x) ) {
 						//Sould be done later!
 
-						/*			if(lit_activity) {
-							//lit_activity[q] += 0.5 * parameters.activity_increment;
-							lit_activity[NOT(q)] += // 0.5 *
-									parameters.activity_increment;
-							var_activity[UNSIGNED(q)] += parameters.activity_increment;
-						}
-						 */
-
-						if(lit_activity) {
+/*						if(lit_activity) {
 							//lit_activity[q] += 0.5 * parameters.activity_increment;
 							lit_activity[(2*x) + SIGN(q)] += // 0.5 *
 									parameters.activity_increment;
 							var_activity[x] += parameters.activity_increment;
 						}
+						*/
 						visited.fast_add(x);
 						// q's level is below the current level, we are not expending it further
 						learnt_clause.add(q);
@@ -7085,6 +7065,8 @@ void Mistral::Solver::clean_fdlearn() {
 		}
 #endif
 	}
+	//std::cout << " END clean_fdlearn " << std::endl;
+
 }
 
 
@@ -7231,7 +7213,8 @@ void Mistral::Solver::forget() {
 	if(base)
 		base->static_forget();
 
-  if(base) statistics.size_learned -= base->forget(parameters.forgetfulness, var_activity, lit_activity);
+  if(base) statistics.size_learned -= base->forget(parameters.forgetfulness,NULL, NULL);
+//		  var_activity, lit_activity);
 
   //exit(1);
 

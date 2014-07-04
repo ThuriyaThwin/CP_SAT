@@ -503,8 +503,8 @@ namespace Mistral {
     int num_search_variables;
 
     ConstraintClauseBase *base;
-    // Vector< double > lit_activity;
-    // Vector< double > var_activity;
+    //Vector< double > lit_activity;
+    //Vector< double > var_activity;
     //double * lit_activity;
     //double * var_activity;
 
