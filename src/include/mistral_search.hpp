@@ -435,11 +435,15 @@ namespace Mistral {
       Constraint con = solver->culprit;
 
 
-     // std::cout << "failure on " << con << std::endl;
+      //std::cout << "failure on " << con << std::endl;
 
       if(!con.empty()) {
 
     	  if (solver->failure_scope.size) {
+
+    		  //std::cout << "failure_scope" << std::endl;
+    		  //std::cout << solver->failure_scope<< std::endl;
+    		  //exit(1);
     		  int idx;
     		  i = solver->failure_scope.size;
     		  while(i--) {
@@ -451,6 +455,9 @@ namespace Mistral {
     		  solver->failure_scope.clear();
     	  }
     	  else{
+
+    		  //std::cout << "No failure_scope" << std::endl;
+    		  //exit(1);
 	Variable *scope = con.get_scope();
 	int idx;
 	i = con.arity();

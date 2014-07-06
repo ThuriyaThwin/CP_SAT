@@ -271,7 +271,7 @@ const char* ParameterList::int_ident[ParameterList::nia] =
    "-fdlearning" , "-forgetall" , "-reduce" ,  "-orderedexploration" , "-lazygeneration" ,
    "-semantic" , "-simplelearn" , "-maxnogoodsize" , "-boundedbydecision" , "-forgetsize" ,
    "-forgetbackjump" , "-hardkeep", "-hardforget" ,"-keepwhensize" , "-keepwhenbjm" ,
-   "-keeplearning" , "-iterforget"
+   "-keeplearning" , "-iterforget" , "-nogoodweight"
   };
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
@@ -379,6 +379,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   keeplearning_in_bb = 0;
   iterforget=0;
 
+  nogood_based_weight = 1;
   FD_learning=0;
   reduce_clauses =0;
   forgetall=1;
@@ -461,6 +462,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[34] != NOVAL) keep_when_bjm  = int_param[34];
   if(int_param[35] != NOVAL) keeplearning_in_bb  = int_param[35];
   if(int_param[36] != NOVAL) iterforget  = int_param[36];
+  if(int_param[37] != NOVAL) nogood_based_weight  = int_param[37];
 
 
 
@@ -529,6 +531,7 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | keep_when_bjm" << ":" << std::right << std::setw(15) << keep_when_bjm << " |" << std::endl;
   os << std::left << std::setw(30) << " c | keeplearning_in_bb" << ":" << std::right << std::setw(15) <<   keeplearning_in_bb << " |" << std::endl;
   os << std::left << std::setw(30) << " c | iterforget" << ":" << std::right << std::setw(15) <<   iterforget << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | nogood_based_weight" << ":" << std::right << std::setw(15) <<   nogood_based_weight << " |" << std::endl;
   os << std::left << std::setw(30) << " c | reduce learnt clause " << ":" << std::right << std::setw(15) << (reduce_clauses? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | clause forgetfulness %" << ":" << std::right << std::setw(15) << Forgetfulness << " |" << std::endl;
   os << std::left << std::setw(30) << " c | backjump forgetfulness %" << ":" << std::right << std::setw(15) << Forgetfulness_retated_to_backjump << " |" << std::endl;
@@ -1956,7 +1959,7 @@ void SchedulingSolver::setup() {
 			  params->max_nogood_size, params->bounded_by_decision, params->Forgetfulness,
 			  params->forget_relatedto_nogood_size , params->forget_retatedto_backjump ,params->Forgetfulness_retated_to_backjump,
 			  params->hard_keep, params->hard_forget,params->keep_when_size,
-			  params->keep_when_bjm ,  params->keeplearning_in_bb, params->iterforget
+			  params->keep_when_bjm ,  params->keeplearning_in_bb, params->iterforget, params->nogood_based_weight
 	  );
   }
 
@@ -3780,8 +3783,12 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 
 	int old_fd_learning = params->FD_learning;
 	int old_keeplearning_in_bb = params->keeplearning_in_bb;
+	int old_nogood_based_weight = params->nogood_based_weight;
+
 	params->FD_learning = 0;
 	params->keeplearning_in_bb = 0;
+
+	params->nogood_based_weight = 0;
 
 	int lb = params->LBinit ;
 	int ub = params->UBinit ;
@@ -4021,6 +4028,8 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 
 	params->FD_learning = old_fd_learning;
 	params->keeplearning_in_bb = old_keeplearning_in_bb;
+	params->nogood_based_weight = old_nogood_based_weight;
+
 	if (! parameters.backjump){
 		std::cout << " !backjump " << std::endl;
 		exit(1);

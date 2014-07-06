@@ -172,6 +172,7 @@ void Mistral::SolverParameters::initialise() {
   keep_when_bjm =0;
   keeplearning_in_bb=0;
   iterforget=0;
+  nogood_based_weight = 0;
 
   prefix_comment = "c";
   prefix_statistics = "d";
@@ -6757,11 +6758,33 @@ bool Mistral::Solver::learn_virtual_literals(bool semantic, bool lazyGeneration)
 }
 
 
-void Mistral::Solver::update_failure_scope(Clause* c){
-	Clause & cl = *c ;
-	failure_scope.clear();
-	for (int size = (cl.size -1); size >=0; --size)
-		failure_scope.add(get_id_boolean_variable(cl[size]));
+void Mistral::Solver::update_failure_scope(){
+
+	if (parameters.nogood_based_weight){
+	//	std::cout << "?nogood_based_weight? " << std::endl;
+		//Clause & cl = learnt_clause ;
+		failure_scope.clear();
+		Literal q ;
+		for (int size = (learnt_clause.size -1); size >=0; --size){
+			q = learnt_clause[size];
+			if (!is_a_bound_literal(q))
+				failure_scope.add(get_id_boolean_variable(q));
+		}
+	}
+	else{
+
+		if (culprit.propagator==base){
+
+		//	std::cout << "culprit.propagator==base" << std::endl;
+
+			Clause & cl = *(base->conflict);
+			failure_scope.clear();
+			//We do not have to test if there are virtual literals because such clauses don't propagate anything
+			for (int size = (cl.size -1); size >=0; --size)
+				failure_scope.add(get_id_boolean_variable(cl[size]));
+
+		}
+	}
 }
 
 void Mistral::Solver::clean_fdlearn() {
@@ -7392,7 +7415,7 @@ Mistral::Outcome Mistral::Solver::branch_right() {
     	exit(1);
     }
 
-
+    update_failure_scope();
     notify_backtrack();
 
     restore(backtrack_level);  
@@ -9539,7 +9562,8 @@ void Mistral::Solver::set_fdlearning_on(
 	    int keep_when_size,
 	    int keep_when_bjm ,
 	    int keeplearning_in_bb,
-	    int _iterforget
+	    int _iterforget,
+	    int _nogood_based_weight
 	    ) {
 
 	//	parameters.jsp_backjump = true;
@@ -9567,6 +9591,8 @@ void Mistral::Solver::set_fdlearning_on(
 	parameters.keeplearning_in_bb = keeplearning_in_bb;
 	//Should be already set
 	parameters.iterforget = _iterforget;
+	parameters.nogood_based_weight = _nogood_based_weight;
+
 	std::cout << " c start_from : " << start_from << std::endl;
 	visitedUpperBounds.initialise(0, start_from  , BitSet::empt);
 	visitedLowerBounds.initialise(0,  start_from  ,BitSet::empt);

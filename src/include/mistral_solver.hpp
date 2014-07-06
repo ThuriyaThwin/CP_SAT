@@ -120,6 +120,8 @@ namespace Mistral {
 	int keeplearning_in_bb;
 	//Used with B&B
 	int iterforget;
+	//We use this to update the weight of the variables in the learnt_clause
+	int nogood_based_weight;
     /// whether solutions are checked
     // 0 -> not checked
     // 1 -> check constraints which variables are all assigned
@@ -905,7 +907,7 @@ namespace Mistral {
     //TODO Improve that by using a Failure Listener
     Vector<int> failure_scope;
 
-    void update_failure_scope(Clause *c);
+    void update_failure_scope();
 
     int start_from;
     int initial_variablesize;
@@ -969,7 +971,7 @@ namespace Mistral {
     		int max_nogood_size, int bounded_by_decision, double forgetfulness ,
     		int forget_relatedto_nogood_size , int static_forget_retatedto_backjump ,double Forgetfulness_retated_to_backjump,
     		int hard_keep, int hard_forget, int keep_when_size,
-    		int keep_when_bjm , int keeplearning_in_bb , int _iterforget
+    		int keep_when_bjm , int keeplearning_in_bb , int _iterforget, int _nogood_based_weight
     );
 
     void close_propagation();
