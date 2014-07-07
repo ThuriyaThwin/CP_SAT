@@ -822,7 +822,8 @@ namespace Mistral {
     Vector<double> *activity_lit_activity;
 
     //This method undo all the generated variables.
-    void start_over(bool changePolicyParameters);
+    //TODO Use the second parameter
+    void start_over(bool changePolicyParameters,bool init_heuristic = false);
     void init_lazy_generation();
     //However it needs all these variables
     //TODO remove useless variables..

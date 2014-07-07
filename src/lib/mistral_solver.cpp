@@ -9654,7 +9654,8 @@ void Mistral::Solver::init_lazy_generation(){
 	  init_booleans_slot_size = booleans.slots.size;
 }
 
-void Mistral::Solver::start_over(bool changePolicyParameters){
+//TODO Use the second parameter
+void Mistral::Solver::start_over(bool changePolicyParameters, bool init_heuristic){
 
 	if (parameters.backjump && base){
 		base->static_forget();
@@ -9709,7 +9710,8 @@ void Mistral::Solver::start_over(bool changePolicyParameters){
 		policy->bbinitialise(parameters.restart_limit);
 		//TODO Should be statistics.num_failures-1?
 		parameters.restart_limit=statistics.num_failures;
-		initialise_heuristic();
+		if (init_heuristic)
+			initialise_heuristic();
 	}
 
 	/*  std::cout << " \n \n \n  expression_store.size" << expression_store.size << std::endl;

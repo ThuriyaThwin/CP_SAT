@@ -3581,6 +3581,16 @@ stats->num_solutions++;
 			  (static_cast<VariableRangeWithLearning*> (variables[i].range_domain))->domainConstraint->start_over();
 	  }
 	  if (!parameters.keeplearning_in_bb){
+
+		  delete[] visitedUpperBoundvalues;
+		  delete[] visitedLowerBoundvalues;
+
+		  delete[] visitedLowerBoundExplanations;
+		  delete[] visitedUpperBoundExplanations;
+
+		  delete[] visitedLowerBoundlevels;
+		  delete[] visitedUpperBoundlevels;
+
 		  parameters.fd_learning = 0;
 		  parameters.backjump = 0;
 
@@ -3603,6 +3613,8 @@ stats->num_solutions++;
 
 //  std::cout << "\n \n After  : " << this << std::endl;
 
+  //TODO Check initial parameters when chanchiing policy
+
   if (policy)
 	  delete policy ;
   //RestartPolicy *pol ;
@@ -3614,10 +3626,18 @@ stats->num_solutions++;
 	  std::cout << " RestartPolicy not found " << std::endl;
 	  exit(1);
   }
-  //In order to simulate initialise_search() we need these two lines
-  parameters.restart_limit = policy->base;
-  parameters.limit = (policy->base > 0);
 
+  //In order to simulate initialise_search() we need these two lines
+  //parameters.restart_limit = policy->base;
+  parameters.limit = (policy->base > 0);
+  //TODO remove that and enable : parameters.restart_limit = policy->base; instead!
+  policy->initialise(parameters.restart_limit);
+
+/*  std::cout << "restart_limit " <<  parameters.restart_limit << std::endl;
+  std::cout << "num_failures " <<  statistics.num_failures << std::endl;
+  std::cout << "policy base " << policy->base << std::endl;
+  std::cout << "policy increment" << ((Geometric *) policy)->increment << std::endl;
+*/
 
 //  else {
 //	  std::cout << " RestartPolicy not found " << std::endl;
