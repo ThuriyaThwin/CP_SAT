@@ -1752,7 +1752,6 @@ std::ostream& SchedulingSolver::printStats(std::ostream& os) {
   return os;
 }
 
-
 void SchedulingSolver::setup() {
 
   int i,j,k, lb, ub, ti, tj, rki, rkj, hi, hj, aux;
@@ -2147,6 +2146,12 @@ void SchedulingSolver::setup() {
 				  (static_cast<VariableRangeWithLearning *> (variables[i].range_domain)) ->order = &assignment_rank;
 #endif
 
+}
+
+void SchedulingSolver::initialise_heuristic (){
+	  delete heuristic;
+	  heuristic= new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
+	  heuristic->initialise(sequence);
 }
 
 SchedulingSolver::~SchedulingSolver() {
@@ -3165,10 +3170,7 @@ void SchedulingSolver::dichotomic_search()
 	//  std::this_thread::sleep_for (std::chrono::seconds(10));
 	  //exit(1);
 
-	  delete heuristic;
-	  heuristic= new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
-	  heuristic->initialise(sequence);
-
+	  initialise_heuristic();
 
 	  ++iteration;
 
@@ -3633,9 +3635,12 @@ stats->num_solutions++;
 
   // heuristic->display(std::cout);
 
-  delete heuristic;
+  initialise_heuristic();
+
+/*  delete heuristic;
   heuristic= new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
   heuristic->initialise(sequence);
+*/
 
   //heuristic->display(std::cout);
 

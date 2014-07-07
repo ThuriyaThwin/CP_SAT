@@ -9709,6 +9709,7 @@ void Mistral::Solver::start_over(bool changePolicyParameters){
 		policy->bbinitialise(parameters.restart_limit);
 		//TODO Should be statistics.num_failures-1?
 		parameters.restart_limit=statistics.num_failures;
+		initialise_heuristic();
 	}
 
 	/*  std::cout << " \n \n \n  expression_store.size" << expression_store.size << std::endl;

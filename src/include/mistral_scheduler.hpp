@@ -495,6 +495,8 @@ namespace Mistral {
 
     virtual void setup();
 
+    virtual void initialise_heuristic();
+
     //virtual int virtual_iterative_dfs();
 
     // std::ostream& print_weights(std::ostream& os);

@@ -906,8 +906,8 @@ namespace Mistral {
     //each variable in the failure clause
     //TODO Improve that by using a Failure Listener
     Vector<int> failure_scope;
-
     void update_failure_scope();
+    virtual void initialise_heuristic(){}
 
     int start_from;
     int initial_variablesize;
