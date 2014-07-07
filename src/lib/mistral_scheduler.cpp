@@ -2150,13 +2150,30 @@ void SchedulingSolver::setup() {
 
 void SchedulingSolver::initialise_heuristic (){
 
-	  //std::cout << " SchedulingSolver::initialise_heuristic" << std::endl;
-	  delete heuristic;
-	  heuristic= new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
-	  heuristic->initialise(sequence);
+	//std::cout << " SchedulingSolver::initialise_heuristic" << std::endl;
+	delete heuristic;
+	heuristic= new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
+	heuristic->initialise(sequence);
+	FailureCountManager* failmngr = (FailureCountManager*)
+	    												(((SchedulingWeightedDegree< TaskDomOverBoolWeight, Guided< MinValue >, 2 >*) heuristic)->
+	    														//get_manager());
+	    														var.manager);
+
+	//  failmngr->display(std::cout , true);
+
+	for (int i=(_constraint_weight->size -1); i>= 0 ; --i){
+		failmngr->constraint_weight[i]= (*_constraint_weight)[i];
+	}
+
+	for (int i=(_variable_weight->size -1 ); i>= 0 ; --i){
+		failmngr->variable_weight[i]= (*_variable_weight)[i];
+	}
+
 }
 
 SchedulingSolver::~SchedulingSolver() {
+	delete _constraint_weight;
+	delete _variable_weight;
 	delete pool;
 }
 
@@ -2943,8 +2960,10 @@ void SchedulingSolver::dichotomic_search()
 
   BranchingHeuristic *heu = new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
 
+  //Used to maintain the heuristic latest configuration
+
   //TODO Check destroy activity vectors
-//  LearningActivityManager * activity_mngr = NULL;
+//LearningActivityManager * activity_mngr = NULL;
 
   //TODO relate it to VSIDS!
   if (parameters.fd_learning && parameters.forgetfulness)
@@ -2974,7 +2993,15 @@ void SchedulingSolver::dichotomic_search()
 
   initialise_search(disjuncts, heu, pol);
 
- // std::cout << " will propagate " << std::endl;
+  FailureCountManager* failmngr = (FailureCountManager*)
+    				(((SchedulingWeightedDegree< TaskDomOverBoolWeight, Guided< MinValue >, 2 >*) heu)->
+    						//get_manager());
+    						var.manager);
+  //_constraint_weight= (((SchedulingWeightedDegree< TaskDomOverBoolWeight, Guided< MinValue >, 2 >*) heu)
+  //		->get_manager_const());
+
+  _constraint_weight  = new Vector<double> (failmngr->constraint_weight);
+  _variable_weight = new Vector<double> (failmngr->variable_weight);
 
   //propagate the bounds, with respect to the initial upper bound
   Outcome result = (IS_OK(propagate()) ? UNKNOWN : UNSAT);
@@ -3072,6 +3099,15 @@ void SchedulingSolver::dichotomic_search()
 		  if (base)
 			  current_learnClauses_size=base->learnt.size;
 		  //pool->getBestSolution()->print(std::cout);
+
+		  //Update _constraint_weight/_variable_weight
+
+		  delete _constraint_weight;
+		  delete _variable_weight;
+
+		  _constraint_weight  = new Vector<double> (failmngr->constraint_weight);
+		  _variable_weight = new Vector<double> (failmngr->variable_weight);
+
 
 	  } else {
 		  //s    	std::cout << " c NOT SAT! " ;
@@ -3529,6 +3565,7 @@ stats->num_solutions++;
 
   statistics.start_time = get_run_time();
 
+  // heuristic->display(std::cout);
 
   //std::cout << "\n \n Before : " << this  << std::endl;
 
@@ -3657,6 +3694,7 @@ stats->num_solutions++;
   // heuristic->display(std::cout);
 
   initialise_heuristic();
+
 
 /*  delete heuristic;
   heuristic= new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);

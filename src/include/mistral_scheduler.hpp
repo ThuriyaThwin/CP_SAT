@@ -488,7 +488,11 @@ namespace Mistral {
     SolutionPool     *pool;
     //WeighterRestartGenNogood *nogoods;
 
-    SchedulingSolver() {}
+    SchedulingSolver() {
+    	_constraint_weight = NULL;
+    	_variable_weight = NULL;
+    }
+
     SchedulingSolver(Instance *pb, ParameterList *pr, StatisticList* st);
     virtual ~SchedulingSolver() ;
 
@@ -496,6 +500,10 @@ namespace Mistral {
     virtual void setup();
 
     virtual void initialise_heuristic();
+
+    //Used to maintain the heuristic latest configuration
+    Vector<double>* _constraint_weight;
+    Vector<double>* _variable_weight;
 
     //virtual int virtual_iterative_dfs();
 
