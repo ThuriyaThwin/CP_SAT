@@ -2151,9 +2151,9 @@ void SchedulingSolver::setup() {
 void SchedulingSolver::initialise_heuristic (){
 
 	//std::cout << " SchedulingSolver::initialise_heuristic" << std::endl;
-	delete heuristic;
-	heuristic= new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
-	heuristic->initialise(sequence);
+//	delete heuristic;
+//	heuristic= new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
+//	heuristic->initialise(sequence);
 	FailureCountManager* failmngr = (FailureCountManager*)
 	    												(((SchedulingWeightedDegree< TaskDomOverBoolWeight, Guided< MinValue >, 2 >*) heuristic)->
 	    														//get_manager());
