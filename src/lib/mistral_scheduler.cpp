@@ -3605,18 +3605,18 @@ stats->num_solutions++;
 
   if (policy)
 	  delete policy ;
-  RestartPolicy *pol ;
+  //RestartPolicy *pol ;
   if (params->BandBPolicyRestart==GEOMETRIC)
-	  pol = new Geometric(params->Base,params->Factor);
+	  policy = new Geometric(params->Base,params->Factor);
   else if (params->BandBPolicyRestart==LUBY)
-	  pol = new Luby();
+	  policy = new Luby();
   else {
 	  std::cout << " RestartPolicy not found " << std::endl;
 	  exit(1);
   }
   //In order to simulate initialise_search() we need these two lines
-  parameters.restart_limit = pol->base;
-  parameters.limit = (pol->base > 0);
+  parameters.restart_limit = policy->base;
+  parameters.limit = (policy->base > 0);
 
 
 //  else {
