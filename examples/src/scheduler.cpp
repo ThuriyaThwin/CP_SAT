@@ -90,6 +90,11 @@ int main( int argc, char** argv )
 	  if (solver->parameters.keeplearning_in_bb){
 		  solver->parameters.forgetfulness = params.BBforgetfulness;
 	  }
+	  else{
+
+	  }
+
+
 //	  else{
 //	  solver->parameters.backjump = false;
 //	  solver->parameters.fd_learning = 0;

@@ -379,7 +379,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   keeplearning_in_bb = 0;
   iterforget=0;
 
-  nogood_based_weight = 1;
+  nogood_based_weight = 0;
   FD_learning=0;
   reduce_clauses =0;
   forgetall=1;
@@ -2948,7 +2948,7 @@ void SchedulingSolver::dichotomic_search()
   if (params->PolicyRestart==GEOMETRIC)
 	  //TODO recheck that
 	  //In dichotomy we keep everything as default
-	  pol = new Geometric();
+	  pol = new Geometric(params->Base,params->Factor);
 	//  pol = new Geometric(256,params->Factor);
   else if (params->PolicyRestart==LUBY)
 	  pol = new Luby();
@@ -3525,6 +3525,9 @@ stats->num_solutions++;
 
   statistics.start_time = get_run_time();
 
+
+  //std::cout << "\n \n Before : " << this  << std::endl;
+
   //std::cout << (get_run_time() - statistics.start_time) << std::endl;
   //int old_learning = parameters.fd_learning;
   //Cancel learning : check this when alowing lazy generation
@@ -3576,20 +3579,32 @@ stats->num_solutions++;
 	  if (!parameters.keeplearning_in_bb){
 		  parameters.fd_learning = 0;
 		  parameters.backjump = 0;
+
+		  base->enforce_nfc1 = true;
+		  base->relax();
+		  if (parameters.lazy_generation){
+			  VariableRangeWithLearning* tmp_VariableRangeWithLearning;
+			  DomainFaithfulnessConstraint* dom_constraint ;
+			  for (int var = 0; var< start_from; ++var){
+				  tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
+				  dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
+				  dom_constraint->enforce_nfc1 = true;
+				  dom_constraint->enforce_nfc1 = true;
+				  dom_constraint->relax();
+			  }
+
+		  }
+
 	  }
   }
 
-//  if (params->PolicyRestart==GEOMETRIC)
-//	 policy = new Geometric();
-//  else if (params->PolicyRestart==LUBY)
+//  std::cout << "\n \n After  : " << this << std::endl;
 
-
-  //It looks like there is more stuff to do when changing the policy
   if (policy)
 	  delete policy ;
   RestartPolicy *pol ;
   if (params->BandBPolicyRestart==GEOMETRIC)
-	  pol = new Geometric(256,params->Factor);
+	  pol = new Geometric(params->Base,params->Factor);
   else if (params->BandBPolicyRestart==LUBY)
 	  pol = new Luby();
   else {
