@@ -9656,7 +9656,7 @@ void Mistral::Solver::init_lazy_generation(){
 
 void Mistral::Solver::start_over(bool changePolicyParameters){
 
-	if (base){
+	if (parameters.backjump && base){
 		base->static_forget();
 		unsigned int __size = base->learnt.size;
 #ifdef _RECOVER_GENERATED

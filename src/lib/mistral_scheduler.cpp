@@ -2149,6 +2149,8 @@ void SchedulingSolver::setup() {
 }
 
 void SchedulingSolver::initialise_heuristic (){
+
+	  //std::cout << " SchedulingSolver::initialise_heuristic" << std::endl;
 	  delete heuristic;
 	  heuristic= new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
 	  heuristic->initialise(sequence);
@@ -3594,9 +3596,8 @@ stats->num_solutions++;
 				  dom_constraint->enforce_nfc1 = true;
 				  dom_constraint->relax();
 			  }
-
+			  parameters.lazy_generation = 0;
 		  }
-
 	  }
   }
 
