@@ -908,7 +908,7 @@ namespace Mistral {
     //TODO Improve that by using a Failure Listener
     Vector<int> failure_scope;
     void update_failure_scope();
-    virtual void initialise_heuristic(){}
+    virtual void initialise_heuristic(int update_weights=0){}
 
     int start_from;
     int initial_variablesize;

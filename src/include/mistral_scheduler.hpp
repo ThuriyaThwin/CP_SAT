@@ -80,7 +80,7 @@ namespace Mistral {
     static const int RGUIDED =  3;
     static const int RAND    =  4;
 
-    static const int nia = 38;
+    static const int nia = 39;
     static const char* int_ident[nia];
     
     static const int nsa = 15;
@@ -140,6 +140,12 @@ namespace Mistral {
     //We use this to update the weight of the variables in the learnt_clause
     int nogood_based_weight;
 
+    //We use this parameter to use the history of the heuristic weights (i.e. variables and constraints) between dichotomy steps and before B&B
+    //Value  =0 : No history used
+    //Value  =1 : The history is updated for each SAT result in the dichotomy but used only to update the weights before starting B&B
+    //Value  =2 : The history is updated for each SAT result in the dichotomy but used only to update the weights before each dichotomy step
+    //Value  =3 : The history is updated for each SAT result in the dichotomy and used to update the weights before each dichotomy step and before starting B&B
+    unsigned int weight_history;
 
     double Factor;
     double Decay;
@@ -499,7 +505,7 @@ namespace Mistral {
 
     virtual void setup();
 
-    virtual void initialise_heuristic();
+    virtual void initialise_heuristic(int update_weights=0);
 
     //Used to maintain the heuristic latest configuration
     Vector<double>* _constraint_weight;

@@ -271,7 +271,7 @@ const char* ParameterList::int_ident[ParameterList::nia] =
    "-fdlearning" , "-forgetall" , "-reduce" ,  "-orderedexploration" , "-lazygeneration" ,
    "-semantic" , "-simplelearn" , "-maxnogoodsize" , "-boundedbydecision" , "-forgetsize" ,
    "-forgetbackjump" , "-hardkeep", "-hardforget" ,"-keepwhensize" , "-keepwhenbjm" ,
-   "-keeplearning" , "-iterforget" , "-nogoodweight"
+   "-keeplearning" , "-iterforget" , "-nogoodweight" , "-weighthistory"
   };
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
@@ -378,8 +378,9 @@ ParameterList::ParameterList(int length, char **commandline) {
   keep_when_bjm =0;
   keeplearning_in_bb = 0;
   iterforget=0;
-
   nogood_based_weight = 0;
+
+  weight_history=0;
   FD_learning=0;
   reduce_clauses =0;
   forgetall=1;
@@ -463,8 +464,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[35] != NOVAL) keeplearning_in_bb  = int_param[35];
   if(int_param[36] != NOVAL) iterforget  = int_param[36];
   if(int_param[37] != NOVAL) nogood_based_weight  = int_param[37];
-
-
+  if(int_param[38] != NOVAL) weight_history  = int_param[38];
 
   if (keep_when_bjm || keep_when_size)
 	  forgetall=0;
@@ -531,6 +531,7 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | keep_when_bjm" << ":" << std::right << std::setw(15) << keep_when_bjm << " |" << std::endl;
   os << std::left << std::setw(30) << " c | keeplearning_in_bb" << ":" << std::right << std::setw(15) <<   keeplearning_in_bb << " |" << std::endl;
   os << std::left << std::setw(30) << " c | iterforget" << ":" << std::right << std::setw(15) <<   iterforget << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | weight_history" << ":" << std::right << std::setw(15) <<   weight_history << " |" << std::endl;
   os << std::left << std::setw(30) << " c | nogood_based_weight" << ":" << std::right << std::setw(15) <<   nogood_based_weight << " |" << std::endl;
   os << std::left << std::setw(30) << " c | reduce learnt clause " << ":" << std::right << std::setw(15) << (reduce_clauses? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | clause forgetfulness %" << ":" << std::right << std::setw(15) << Forgetfulness << " |" << std::endl;
@@ -2148,27 +2149,29 @@ void SchedulingSolver::setup() {
 
 }
 
-void SchedulingSolver::initialise_heuristic (){
+void SchedulingSolver::initialise_heuristic (int update_weights){
 
-	//std::cout << " SchedulingSolver::initialise_heuristic" << std::endl;
-//	delete heuristic;
-//	heuristic= new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
-//	heuristic->initialise(sequence);
-	FailureCountManager* failmngr = (FailureCountManager*)
-	    												(((SchedulingWeightedDegree< TaskDomOverBoolWeight, Guided< MinValue >, 2 >*) heuristic)->
-	    														//get_manager());
-	    														var.manager);
+	//std::cout << " SchedulingSolver::initialise_heuristic" << update_weights << std::endl;
+	delete heuristic;
+	heuristic= new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
+	heuristic->initialise(sequence);
 
-	//  failmngr->display(std::cout , true);
+	if (update_weights){
 
-	for (int i=(_constraint_weight->size -1); i>= 0 ; --i){
-		failmngr->constraint_weight[i]= (*_constraint_weight)[i];
+		FailureCountManager* failmngr = (FailureCountManager*)
+	    														(((SchedulingWeightedDegree< TaskDomOverBoolWeight, Guided< MinValue >, 2 >*) heuristic)->
+	    																//get_manager());
+	    																var.manager);
+		//  failmngr->display(std::cout , true);
+
+		for (int i=(_constraint_weight->size -1); i>= 0 ; --i){
+			failmngr->constraint_weight[i]= (*_constraint_weight)[i];
+		}
+
+		for (int i=(_variable_weight->size -1 ); i>= 0 ; --i){
+			failmngr->variable_weight[i]= (*_variable_weight)[i];
+		}
 	}
-
-	for (int i=(_variable_weight->size -1 ); i>= 0 ; --i){
-		failmngr->variable_weight[i]= (*_variable_weight)[i];
-	}
-
 }
 
 SchedulingSolver::~SchedulingSolver() {
@@ -2960,20 +2963,14 @@ void SchedulingSolver::dichotomic_search()
 
   BranchingHeuristic *heu = new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
 
-  //Used to maintain the heuristic latest configuration
 
-  //TODO Check destroy activity vectors
-//LearningActivityManager * activity_mngr = NULL;
-
-  //TODO relate it to VSIDS!
+  //TODO relate that to VSIDS?
   if (parameters.fd_learning && parameters.forgetfulness)
 	  activity_mngr =  new LearningActivityManager(this);
 
   //BranchingHeuristic *heu = new GenericHeuristic < NoOrder, MinValue > (this);
   RestartPolicy *pol ;
   if (params->PolicyRestart==GEOMETRIC)
-	  //TODO recheck that
-	  //In dichotomy we keep everything as default
 	  pol = new Geometric(params->Base,params->Factor);
 	//  pol = new Geometric(256,params->Factor);
   else if (params->PolicyRestart==LUBY)
@@ -2997,8 +2994,6 @@ void SchedulingSolver::dichotomic_search()
     				(((SchedulingWeightedDegree< TaskDomOverBoolWeight, Guided< MinValue >, 2 >*) heu)->
     						//get_manager());
     						var.manager);
-  //_constraint_weight= (((SchedulingWeightedDegree< TaskDomOverBoolWeight, Guided< MinValue >, 2 >*) heu)
-  //		->get_manager_const());
 
   _constraint_weight  = new Vector<double> (failmngr->constraint_weight);
   _variable_weight = new Vector<double> (failmngr->variable_weight);
@@ -3094,17 +3089,14 @@ void SchedulingSolver::dichotomic_search()
 		  // 	  else stats->num_nogoods += nogoods->base->nogood.size;
 		  // 	}
 
-		  //std::cout << std::left << std::setw(30) << " c new upper bound" << ":" << std::right << std::setw(20) << new_objective << " |" << std::endl;
 		  std::cout << std::left << std::setw(30) << " c | new upper bound" << ":" << std::right << std::setw(15) << new_objective << " |" << std::endl;
 		  if (base)
 			  current_learnClauses_size=base->learnt.size;
 		  //pool->getBestSolution()->print(std::cout);
 
-		  //Update _constraint_weight/_variable_weight
-
+		  //Update _constraint_weight and _variable_weight
 		  delete _constraint_weight;
 		  delete _variable_weight;
-
 		  _constraint_weight  = new Vector<double> (failmngr->constraint_weight);
 		  _variable_weight = new Vector<double> (failmngr->variable_weight);
 
@@ -3208,7 +3200,7 @@ void SchedulingSolver::dichotomic_search()
 	//  std::this_thread::sleep_for (std::chrono::seconds(10));
 	  //exit(1);
 
-	  initialise_heuristic();
+	  initialise_heuristic(params->weight_history & 2);
 
 	  ++iteration;
 
@@ -3693,7 +3685,7 @@ stats->num_solutions++;
 
   // heuristic->display(std::cout);
 
-  initialise_heuristic();
+  initialise_heuristic(params->weight_history & 1);
 
 
 /*  delete heuristic;
