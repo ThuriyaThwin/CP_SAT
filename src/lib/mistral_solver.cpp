@@ -171,7 +171,7 @@ void Mistral::SolverParameters::initialise() {
   keep_when_size =0 ;
   keep_when_bjm =0;
   keeplearning_in_bb=0;
-  iterforget=0;
+  simulaterestart=0;
   nogood_based_weight = 0;
 
   prefix_comment = "c";
@@ -9562,7 +9562,7 @@ void Mistral::Solver::set_fdlearning_on(
 	    int keep_when_size,
 	    int keep_when_bjm ,
 	    int keeplearning_in_bb,
-	    int _iterforget,
+	    int _simulaterestart,
 	    int _nogood_based_weight
 	    ) {
 
@@ -9589,8 +9589,8 @@ void Mistral::Solver::set_fdlearning_on(
 	parameters.keep_when_size =  keep_when_size;
 	parameters.keep_when_bjm = keep_when_bjm;
 	parameters.keeplearning_in_bb = keeplearning_in_bb;
-	//Should be already set
-	parameters.iterforget = _iterforget;
+
+	parameters.simulaterestart = _simulaterestart;
 	parameters.nogood_based_weight = _nogood_based_weight;
 
 	std::cout << " c start_from : " << start_from << std::endl;

@@ -271,7 +271,7 @@ const char* ParameterList::int_ident[ParameterList::nia] =
    "-fdlearning" , "-forgetall" , "-reduce" ,  "-orderedexploration" , "-lazygeneration" ,
    "-semantic" , "-simplelearn" , "-maxnogoodsize" , "-boundedbydecision" , "-forgetsize" ,
    "-forgetbackjump" , "-hardkeep", "-hardforget" ,"-keepwhensize" , "-keepwhenbjm" ,
-   "-keeplearning" , "-iterforget" , "-nogoodweight" , "-weighthistory"
+   "-keeplearning" , "-simulaterestart" , "-nogoodweight" , "-weighthistory"
   };
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
@@ -377,7 +377,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   keep_when_size =0;
   keep_when_bjm =0;
   keeplearning_in_bb = 0;
-  iterforget=0;
+  simulaterestart=0;
   nogood_based_weight = 0;
 
   weight_history=0;
@@ -462,7 +462,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[33] != NOVAL) keep_when_size  = int_param[33];
   if(int_param[34] != NOVAL) keep_when_bjm  = int_param[34];
   if(int_param[35] != NOVAL) keeplearning_in_bb  = int_param[35];
-  if(int_param[36] != NOVAL) iterforget  = int_param[36];
+  if(int_param[36] != NOVAL) simulaterestart  = int_param[36];
   if(int_param[37] != NOVAL) nogood_based_weight  = int_param[37];
   if(int_param[38] != NOVAL) weight_history  = int_param[38];
 
@@ -530,7 +530,7 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | keep_when_size " << ":" << std::right << std::setw(15) << keep_when_size << " |" << std::endl;
   os << std::left << std::setw(30) << " c | keep_when_bjm" << ":" << std::right << std::setw(15) << keep_when_bjm << " |" << std::endl;
   os << std::left << std::setw(30) << " c | keeplearning_in_bb" << ":" << std::right << std::setw(15) <<   keeplearning_in_bb << " |" << std::endl;
-  os << std::left << std::setw(30) << " c | iterforget" << ":" << std::right << std::setw(15) <<   iterforget << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | simulaterestart" << ":" << std::right << std::setw(15) <<   simulaterestart << " |" << std::endl;
   os << std::left << std::setw(30) << " c | weight_history" << ":" << std::right << std::setw(15) <<   weight_history << " |" << std::endl;
   os << std::left << std::setw(30) << " c | nogood_based_weight" << ":" << std::right << std::setw(15) <<   nogood_based_weight << " |" << std::endl;
   os << std::left << std::setw(30) << " c | reduce learnt clause " << ":" << std::right << std::setw(15) << (reduce_clauses? "yes" : "no") << " |" << std::endl;
@@ -1948,7 +1948,7 @@ void SchedulingSolver::setup() {
   }
   start_from = tasks.size +1;
   initial_variablesize= variables.size;
-  parameters.iterforget= params->iterforget;
+  parameters.simulaterestart= params->simulaterestart;
 
 
   if (params->FD_learning)
@@ -1959,7 +1959,7 @@ void SchedulingSolver::setup() {
 			  params->max_nogood_size, params->bounded_by_decision, params->Forgetfulness,
 			  params->forget_relatedto_nogood_size , params->forget_retatedto_backjump ,params->Forgetfulness_retated_to_backjump,
 			  params->hard_keep, params->hard_forget,params->keep_when_size,
-			  params->keep_when_bjm ,  params->keeplearning_in_bb, params->iterforget, params->nogood_based_weight
+			  params->keep_when_bjm ,  params->keeplearning_in_bb, params->simulaterestart, params->nogood_based_weight
 	  );
   }
 
@@ -2151,17 +2151,17 @@ void SchedulingSolver::setup() {
 
 void SchedulingSolver::initialise_heuristic (int update_weights){
 
-	//std::cout << " SchedulingSolver::initialise_heuristic" << update_weights << std::endl;
+	//std::cout << " c SchedulingSolver::initialise_heuristic" << update_weights << std::endl;
 	delete heuristic;
 	heuristic= new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
 	heuristic->initialise(sequence);
 
 	if (update_weights){
-
+		//std::cout << "c updating weights... " << std::endl;
 		FailureCountManager* failmngr = (FailureCountManager*)
-	    														(((SchedulingWeightedDegree< TaskDomOverBoolWeight, Guided< MinValue >, 2 >*) heuristic)->
-	    																//get_manager());
-	    																var.manager);
+	              (((SchedulingWeightedDegree< TaskDomOverBoolWeight, Guided< MinValue >, 2 >*) heuristic)->
+	    																		//get_manager());
+	    																		var.manager);
 		//  failmngr->display(std::cout , true);
 
 		for (int i=(_constraint_weight->size -1); i>= 0 ; --i){
@@ -3097,6 +3097,12 @@ void SchedulingSolver::dichotomic_search()
 		  //Update _constraint_weight and _variable_weight
 		  delete _constraint_weight;
 		  delete _variable_weight;
+
+		  failmngr = (FailureCountManager*)
+		    								(((SchedulingWeightedDegree< TaskDomOverBoolWeight, Guided< MinValue >, 2 >*) heuristic)->
+		    										//get_manager());
+		    										var.manager);
+
 		  _constraint_weight  = new Vector<double> (failmngr->constraint_weight);
 		  _variable_weight = new Vector<double> (failmngr->variable_weight);
 

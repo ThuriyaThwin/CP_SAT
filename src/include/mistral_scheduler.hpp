@@ -136,7 +136,7 @@ namespace Mistral {
     //Whether we keep use learning in B&B after dichotomy or not
     int keeplearning_in_bb;
     //We use this to call forget whenever we find a new bound in B&B. Note that this simulates a normal linear exploration instead of dichotomy
-    int iterforget;
+    int simulaterestart;
     //We use this to update the weight of the variables in the learnt_clause
     int nogood_based_weight;
 
@@ -505,7 +505,7 @@ namespace Mistral {
 
     virtual void setup();
 
-    virtual void initialise_heuristic(int update_weights=0);
+    void initialise_heuristic(int update_weights=0);
 
     //Used to maintain the heuristic latest configuration
     Vector<double>* _constraint_weight;
