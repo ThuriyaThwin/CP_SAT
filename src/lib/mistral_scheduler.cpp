@@ -3629,6 +3629,8 @@ stats->num_solutions++;
 	  }
 	  if (!parameters.keeplearning_in_bb){
 
+		  parameters.fixedForget=0;
+		  parameters.nextforget=0;
 		  delete[] visitedUpperBoundvalues;
 		  delete[] visitedLowerBoundvalues;
 
@@ -3654,8 +3656,6 @@ stats->num_solutions++;
 				  dom_constraint->relax();
 			  }
 			  parameters.lazy_generation = 0;
-			  parameters.fixedForget=0;
-			  parameters.nextforget=0;
 		  }
 	  }
   }
