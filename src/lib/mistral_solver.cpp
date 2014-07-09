@@ -173,6 +173,8 @@ void Mistral::SolverParameters::initialise() {
   keeplearning_in_bb=0;
   simulaterestart=0;
   nogood_based_weight = 0;
+  fixedForget=0;
+  nextforget=0;
 
   prefix_comment = "c";
   prefix_statistics = "d";
@@ -2441,6 +2443,42 @@ void Mistral::Solver::restore() {
 
   }
 
+
+  if (base && parameters.fixedForget){
+	  int id , k=0;
+	  Clause * e;
+	  Vector<int> v;
+	  previous_level = trail_.pop();
+	  while( saved_vars.size > previous_level ) {
+
+	#ifdef _DEBUG_RESTORE
+	    std::cout << "  (v) " << variables[saved_vars.back()] << " in " << variables[saved_vars.back()].get_domain() << " -> ";
+	#endif
+	    id = saved_vars.pop();
+	    variables[id].restore();
+	    if (id>=start_from)
+	    	if (reason_for[id]==base)
+	    	v.add(id-start_from);
+	    	else{
+	    		e= dynamic_cast<Clause *>(reason_for[id]);
+	    		if (e){
+	    			++k;
+	    			e->locked=false;
+	    		}
+	    	}
+
+	#ifdef _DEBUG_RESTORE
+	    std::cout << "  (v) " << variables[saved_vars.back(0)] << " in " << variables[saved_vars.back(0)].get_domain() << std::endl;
+	#endif
+
+	  }
+
+	  if (v.size)
+		  base->unlock_atoms(v);
+	  base->unlocked_clauses +=k;
+
+}
+  else{
   previous_level = trail_.pop();
   while( saved_vars.size > previous_level ) {
 
@@ -2455,6 +2493,7 @@ void Mistral::Solver::restore() {
 #endif
 
   }
+}
 
   --level;
   ++statistics.num_backtracks;
@@ -7233,10 +7272,12 @@ void Mistral::Solver::forget() {
   //std::cout << lit_activity << " "  << lit_activity[0] << " "  << lit_activity[1] << std::endl;
 
 	//TODO update avg learnt size here ??
+	if (! parameters.fixedForget){
 	if(base)
 		base->static_forget();
 
   if(base) statistics.size_learned -= base->forget(parameters.forgetfulness,NULL, NULL);
+	}
 //		  var_activity, lit_activity);
 
   //exit(1);
@@ -7418,8 +7459,15 @@ Mistral::Outcome Mistral::Solver::branch_right() {
     update_failure_scope();
     notify_backtrack();
 
-    restore(backtrack_level);  
-    
+    restore(backtrack_level);
+
+    if (parameters.fixedForget
+    		&& (statistics.num_failures > parameters.nextforget)){
+    	base->fixed_forget();
+    	parameters.nextforget= statistics.num_failures+ parameters.fixedForget;
+    }
+
+
 #ifdef _DEBUG_SEARCH
     if(_DEBUG_SEARCH) {
       std::cout << parameters.prefix_comment;
@@ -9593,6 +9641,9 @@ void Mistral::Solver::set_fdlearning_on(
 	parameters.simulaterestart = _simulaterestart;
 	parameters.nogood_based_weight = _nogood_based_weight;
 
+	parameters.fixedForget=10000;
+	parameters.nextforget=10000;
+
 	std::cout << " c start_from : " << start_from << std::endl;
 	visitedUpperBounds.initialise(0, start_from  , BitSet::empt);
 	visitedLowerBounds.initialise(0,  start_from  ,BitSet::empt);
@@ -9658,6 +9709,7 @@ void Mistral::Solver::init_lazy_generation(){
 void Mistral::Solver::start_over(bool changePolicyParameters, bool init_heuristic){
 
 	if (parameters.backjump && base){
+		//base->unlocked_clauses=0;
 		base->static_forget();
 		unsigned int __size = base->learnt.size;
 #ifdef _RECOVER_GENERATED

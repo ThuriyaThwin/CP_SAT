@@ -122,6 +122,9 @@ namespace Mistral {
 	int simulaterestart;
 	//We use this to update the weight of the variables in the learnt_clause
 	int nogood_based_weight;
+	//A fixed limit used to call base-fixedForget();
+	int fixedForget;
+	int nextforget;
     /// whether solutions are checked
     // 0 -> not checked
     // 1 -> check constraints which variables are all assigned

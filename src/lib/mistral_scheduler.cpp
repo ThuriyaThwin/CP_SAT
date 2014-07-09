@@ -3069,6 +3069,8 @@ void SchedulingSolver::dichotomic_search()
 
 	  result = restart_search(level);
 
+	  if (base)
+			  base->static_forget();
 
 	  if( result == SAT ) {
 		  new_objective = get_objective();
@@ -3090,8 +3092,9 @@ void SchedulingSolver::dichotomic_search()
 		  // 	}
 
 		  std::cout << std::left << std::setw(30) << " c | new upper bound" << ":" << std::right << std::setw(15) << new_objective << " |" << std::endl;
-		  if (base)
+		  if (base){
 			  current_learnClauses_size=base->learnt.size;
+		  }
 		  //pool->getBestSolution()->print(std::cout);
 
 		  //Update _constraint_weight and _variable_weight
@@ -3153,9 +3156,14 @@ void SchedulingSolver::dichotomic_search()
 		   */
 		  if (params->forgetall)
 		  {
+			  /*std::cout << " c  base->learnt.size=" << base->learnt.size << std::endl;
+			  std::cout << " c  base->will_be_forgotten.size=" << base->will_be_forgotten.size << std::endl;
+			  std::cout << " c unlocked clause : " << base->unlocked_clauses << std::endl;
+			   */
 			  start_over(false);
 		  }
 		  else{
+
 			  int __size = base->learnt.size -current_learnClauses_size;
 			  int idx;
 
@@ -3177,6 +3185,8 @@ void SchedulingSolver::dichotomic_search()
 			  }
 		  }
 		  std::cout << " c keeping clauses between dicho steps ?:  base->learnt.size=" << base->learnt.size << std::endl;
+		  std::cout << " c unlocked clause : " << base->unlocked_clauses << std::endl;
+
 		  //  std::cout << " NEW  base->learnt " << base->learnt  << std::endl;
 		  //  exit(1);
 	  }
@@ -3207,6 +3217,7 @@ void SchedulingSolver::dichotomic_search()
 	  //exit(1);
 
 	  initialise_heuristic(params->weight_history & 2);
+	  parameters.nextforget=10000;
 
 	  ++iteration;
 
@@ -3575,6 +3586,7 @@ stats->num_solutions++;
 	  int __size = base->learnt.size;
 	  while (__size--)
 		  base->remove(__size);
+	  //base->unlocked_clauses=0;
 
 	  if (params->lazy_generation){
 
@@ -3642,6 +3654,8 @@ stats->num_solutions++;
 				  dom_constraint->relax();
 			  }
 			  parameters.lazy_generation = 0;
+			  parameters.fixedForget=0;
+			  parameters.nextforget=0;
 		  }
 	  }
   }

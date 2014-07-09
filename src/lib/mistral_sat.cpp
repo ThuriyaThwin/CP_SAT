@@ -410,9 +410,8 @@ Mistral::ConstraintClauseBase::ConstraintClauseBase(Vector< Variable >& scp, boo
   : GlobalConstraint(scp), fd_variables(__fd_variables), start_from(st_from) {
   conflict = NULL;
   priority = 1;
-
+  unlocked_clauses=0;
   init_var_size = scp.size;
-
 
 }
 
@@ -459,7 +458,7 @@ void Mistral::ConstraintClauseBase::initialise() {
   }
 
   will_be_kept.initialise(0,2000000,BitSet::empt);
-
+  locked_toforget.initialise(0,2000000,BitSet::empt);
   // for(unsigned int i=0; i<scope.size; ++i) {
   //   reason.add(NULL);
   // //   is_watched_by[i] = new Vector< Clause* >;
@@ -705,9 +704,20 @@ void Mistral::ConstraintClauseBase::add( Vector < Literal >& clause, double acti
  }
 }
 
+void ConstraintClauseBase::unlock_atoms(Vector<int> v){
+
+	int i = v.size;
+	while (i--){
+		reason_for[v[i]]->locked=false;
+		++unlocked_clauses;
+	}
+}
+
+
 void Mistral::ConstraintClauseBase::learn( Vector < Literal >& clause, double activity_increment, bool forget_immediately) {
  if(clause.size > 1) {
    Clause *cl = (Clause*)(Clause::Array_new(clause));
+   cl->locked=true;
    learnt.add( cl );
 
    //std::cout << " c LEARN " << forget_immediately  << std::endl;
@@ -723,6 +733,7 @@ void Mistral::ConstraintClauseBase::learn( Vector < Literal >& clause, double ac
    // }
    if (forget_immediately){
 	   will_be_forgotten.add(learnt.size -1);
+	   locked_toforget.fast_add(learnt.size -1);
    }
    else{
 	   is_watched_by[clause[0]].add(cl);
@@ -1210,7 +1221,16 @@ Mistral::Clause* Mistral::ConstraintClauseBase::update_watcher(const int cw,
 	  //reason[UNSIGNED(q)] = cl;
 	  //EXPL
 	  reason_for[UNSIGNED(q)] = cl;
-	  
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+	  if(clause.locked){
+		  std::cout << "  clause.locked=true!! "  << std::endl;
+		  exit(1);
+	  }
+#endif
+
+	  clause.locked=true;
+	  --unlocked_clauses;
 
 #ifdef _DEBUG_UNITPROP
 	  std::cout << "    -> " << v << " in " << v.get_domain() << std::endl;
@@ -1226,6 +1246,13 @@ Mistral::Clause* Mistral::ConstraintClauseBase::update_watcher(const int cw,
 	    std::cout << "    -> fail!" << std::endl;
 #endif
 	    po = FAILURE(UNSIGNED(q));
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+	    if(clause.locked){
+	    	std::cout << "  clause.locked=true!! "  << std::endl;
+	    	exit(1);
+	    }
+#endif
 
 	    return cl;
 	  }
@@ -1301,6 +1328,8 @@ void Mistral::ConstraintClauseBase::remove( const int cidx , bool static_forget)
 
   // print_clause(std::cout, clause);
   // std::cout << std::endl;
+  if (! clause->locked){
+	  --unlocked_clauses;
 
   if (!static_forget){
 	  is_watched_by[clause->data[0]].remove_elt( clause );
@@ -1327,6 +1356,16 @@ void Mistral::ConstraintClauseBase::remove( const int cidx , bool static_forget)
 	  will_be_kept.fast_add(cidx);
   }
 
+  if (locked_toforget.fast_contain(learnt.size -1)){
+	 // std::cout << "will_be_kept" << will_be_kept << std::endl;
+	  //std::cout << "will_be_kept fast_contain " << learnt.size -1 << std::endl;
+
+	  // here we update the index of learnt.size -1 since it will be kept!
+	  locked_toforget.fast_remove(learnt.size -1);
+	  locked_toforget.fast_add(cidx);
+  }
+
+
   //std::cout << "  \n WILL REMOVE  \n "  << std::endl;
   //std::cout << " "  << learnt[cidx] << std::endl;
 
@@ -1334,7 +1373,30 @@ void Mistral::ConstraintClauseBase::remove( const int cidx , bool static_forget)
 
   free(clause);
 }
+  else{
+		  std::cout << "will_be_kept" << will_be_kept << std::endl;
+		  exit(1);//
+  }
+}
 
+void Mistral::ConstraintClauseBase::fixed_forget(){
+	static_forget();
+	if( learnt.size> 14000)
+	{
+		for (int i = (learnt.size -1); i >=0 ; --i)
+			if(!learnt[i]->locked)
+				remove(i);
+
+		will_be_forgotten.clear();
+
+		int v = locked_toforget.min();
+		for (int i = locked_toforget.size() ; i>0; --i ){
+			will_be_forgotten.add(v);
+			v= locked_toforget.next(v);
+		}
+		std::cout << " c fixed_forget : new size  " << learnt.size  << std::endl;
+	}
+}
 
 void Mistral::ConstraintClauseBase::static_forget(){
 
@@ -1345,21 +1407,26 @@ void Mistral::ConstraintClauseBase::static_forget(){
 	std::cout << " c will_be_forgotten " << will_be_forgotten << std::endl;
 	std::cout << " c learnt " << learnt << std::endl;
 
-
 	std::cout << " static forget " ;*/
+
+	locked_toforget.clear();
 	for (int i = (will_be_forgotten.size -1); i >=0 ; --i){
-		remove(will_be_forgotten[i], true);
+		if(!learnt[will_be_forgotten[i]]->locked){
+			//++k;
+			remove(will_be_forgotten[i], true);
+		}
+		else
+			//v.add(will_be_forgotten[i]);
+			locked_toforget.fast_add(will_be_forgotten[i]);
 	}
+
 	will_be_forgotten.clear();
 
-	/*std::cout << " c will_be_forgotten " << will_be_forgotten << std::endl;
-	std::cout << " c learnt " << learnt << std::endl;
-	exit(1);
-	 */
-
-	//	std::cout << " c END hard_forget" << std::endl;
-	//	std::cout << " c will_be_forgotten size" << will_be_forgotten.size << std::endl;
-	//	std::cout << " c learnt size" << learnt.size << std::endl;
+	int v = locked_toforget.min();
+	for (int i = locked_toforget.size() ; i>0; --i ){
+		will_be_forgotten.add(v);
+		v= locked_toforget.next(v);
+	}
 
 }
 

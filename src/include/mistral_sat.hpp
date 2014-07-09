@@ -333,11 +333,17 @@ namespace Mistral {
 
     //New way of forgetting clauses (directly whithin learning)
     Vector<unsigned int> will_be_forgotten;
+
+    //the number on unlocked clauses.
+    int unlocked_clauses;
+    //Called after a restore in order to unlock clauses.
+    void unlock_atoms(Vector<int> v);
     //Clauses that will be kept between dichotomy
 	BitSet will_be_kept;
 
 //TODO Will not be used anymore! we handle this stuff with learn(..,..,true);
     void forget_last(){
+    	locked_toforget.fast_add(learnt.size -1);
     	will_be_forgotten.add(learnt.size -1);
     	Clause& clause = *(learnt[learnt.size -1]);
     	Literal a = clause[0];
@@ -359,7 +365,11 @@ namespace Mistral {
     	will_be_kept.fast_add(learnt.size -1);
     }
 
+    void fixed_forget();
     void static_forget();
+
+	BitSet locked_toforget;
+
     //void forget( const double forgetfulness, const Vector< double >& activity );
     // (returns the toal removed size)
     int forget( const double forgetfulness, const double * vactivity, const double * lactivity );

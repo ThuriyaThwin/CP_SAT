@@ -1457,6 +1457,11 @@ template < int N, class T >
     /*!@name Parameters*/
     //@{
     unsigned int size;
+
+    //This attribute is needed to know whether the clause already propagated something or not.
+    //Such information is needed when forgetting clause.
+    //Default value = true
+    bool locked;
     DATA_TYPE data[0];
     //@}
 
@@ -1465,6 +1470,8 @@ template < int N, class T >
       size = ps.size;
       for (unsigned int i=0; i<ps.size; ++i) 
 	data[i] = ps[i];
+
+      locked=true;
     }
 
     virtual ~Array() {}
