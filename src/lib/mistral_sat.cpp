@@ -1382,13 +1382,19 @@ void Mistral::ConstraintClauseBase::remove( const int cidx , bool static_forget)
 void Mistral::ConstraintClauseBase::fixed_forget(){
 	static_forget();
 	int size =learnt.size;
-	if( size> 14000)
+
+//	std::cout << " parameters.fixedlimitSize ? " << get_solver()->parameters.fixedlimitSize  << std::endl;
+//	std::cout << " parameters.fixedLearntSize ? " << get_solver()->parameters.fixedLearntSize  << std::endl;
+
+	if( size> get_solver()->parameters.fixedlimitSize)
 	{
 		int rest =size- unlocked_clauses;
 
 		//for (int i = (learnt.size -1); i >=0 ; --i)
 		//if (rest < 2000) {
-		while ((rest< 2000) && (size--))
+		int s_limit = get_solver()->parameters.fixedLearntSize;
+
+		while ((rest< s_limit) && (size--))
 			if(!learnt[size]->locked)
 				++rest;
 		//}

@@ -9611,7 +9611,10 @@ void Mistral::Solver::set_fdlearning_on(
 	    int keep_when_bjm ,
 	    int keeplearning_in_bb,
 	    int _simulaterestart,
-	    int _nogood_based_weight
+	    int _nogood_based_weight,
+	    int _fixedForget,
+        int _fixedlimitSize,
+        int _fixedLearntSize
 	    ) {
 
 	//	parameters.jsp_backjump = true;
@@ -9641,8 +9644,11 @@ void Mistral::Solver::set_fdlearning_on(
 	parameters.simulaterestart = _simulaterestart;
 	parameters.nogood_based_weight = _nogood_based_weight;
 
-	parameters.fixedForget=10000;
-	parameters.nextforget=10000;
+	parameters.fixedForget=_fixedForget;
+	parameters.nextforget=_fixedForget;
+
+	parameters.fixedlimitSize = _fixedlimitSize;
+	parameters.fixedLearntSize = _fixedLearntSize;
 
 	std::cout << " c start_from : " << start_from << std::endl;
 	visitedUpperBounds.initialise(0, start_from  , BitSet::empt);

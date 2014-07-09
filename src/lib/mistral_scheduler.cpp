@@ -271,7 +271,8 @@ const char* ParameterList::int_ident[ParameterList::nia] =
    "-fdlearning" , "-forgetall" , "-reduce" ,  "-orderedexploration" , "-lazygeneration" ,
    "-semantic" , "-simplelearn" , "-maxnogoodsize" , "-boundedbydecision" , "-forgetsize" ,
    "-forgetbackjump" , "-hardkeep", "-hardforget" ,"-keepwhensize" , "-keepwhenbjm" ,
-   "-keeplearning" , "-simulaterestart" , "-nogoodweight" , "-weighthistory"
+   "-keeplearning" , "-simulaterestart" , "-nogoodweight" , "-weighthistory" ,  "-fixedForget" ,
+   "-fixedlimitSize" , "-fixedLearntSize"
   };
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
@@ -385,6 +386,11 @@ ParameterList::ParameterList(int length, char **commandline) {
   reduce_clauses =0;
   forgetall=1;
 
+  fixedForget=10000;
+  //nextforget=10000;
+  fixedlimitSize = 14000;
+  fixedLearntSize = 2000;
+
   if(Type == "osp") {
     Objective = "makespan";
     if(Heuristic == "none")
@@ -465,6 +471,10 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[36] != NOVAL) simulaterestart  = int_param[36];
   if(int_param[37] != NOVAL) nogood_based_weight  = int_param[37];
   if(int_param[38] != NOVAL) weight_history  = int_param[38];
+  if(int_param[39] != NOVAL) fixedForget  = int_param[39];
+  if(int_param[40] != NOVAL) fixedlimitSize  = int_param[40];
+  if(int_param[41] != NOVAL) fixedLearntSize  = int_param[41];
+
 
   if (keep_when_bjm || keep_when_size)
 	  forgetall=0;
@@ -532,6 +542,9 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | keeplearning_in_bb" << ":" << std::right << std::setw(15) <<   keeplearning_in_bb << " |" << std::endl;
   os << std::left << std::setw(30) << " c | simulaterestart" << ":" << std::right << std::setw(15) <<   simulaterestart << " |" << std::endl;
   os << std::left << std::setw(30) << " c | weight_history" << ":" << std::right << std::setw(15) <<   weight_history << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | fixedForget" << ":" << std::right << std::setw(15) <<   fixedForget << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | fixedlimitSize" << ":" << std::right << std::setw(15) <<   fixedlimitSize << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | fixedLearntSize" << ":" << std::right << std::setw(15) <<   fixedLearntSize << " |" << std::endl;
   os << std::left << std::setw(30) << " c | nogood_based_weight" << ":" << std::right << std::setw(15) <<   nogood_based_weight << " |" << std::endl;
   os << std::left << std::setw(30) << " c | reduce learnt clause " << ":" << std::right << std::setw(15) << (reduce_clauses? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | clause forgetfulness %" << ":" << std::right << std::setw(15) << Forgetfulness << " |" << std::endl;
@@ -1959,7 +1972,9 @@ void SchedulingSolver::setup() {
 			  params->max_nogood_size, params->bounded_by_decision, params->Forgetfulness,
 			  params->forget_relatedto_nogood_size , params->forget_retatedto_backjump ,params->Forgetfulness_retated_to_backjump,
 			  params->hard_keep, params->hard_forget,params->keep_when_size,
-			  params->keep_when_bjm ,  params->keeplearning_in_bb, params->simulaterestart, params->nogood_based_weight
+			  params->keep_when_bjm ,  params->keeplearning_in_bb, params->simulaterestart,
+			  params->nogood_based_weight, params->fixedForget , params-> fixedlimitSize ,
+			  params-> fixedLearntSize
 	  );
   }
 
@@ -3217,7 +3232,7 @@ void SchedulingSolver::dichotomic_search()
 	  //exit(1);
 
 	  initialise_heuristic(params->weight_history & 2);
-	  parameters.nextforget=10000;
+	  parameters.nextforget=parameters.nextforget;
 
 	  ++iteration;
 
@@ -3630,7 +3645,7 @@ stats->num_solutions++;
 	  if (!parameters.keeplearning_in_bb){
 
 		  parameters.fixedForget=0;
-		  parameters.nextforget=0;
+		  //parameters.nextforget=0;
 		  delete[] visitedUpperBoundvalues;
 		  delete[] visitedLowerBoundvalues;
 

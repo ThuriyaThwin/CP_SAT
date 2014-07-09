@@ -125,6 +125,9 @@ namespace Mistral {
 	//A fixed limit used to call base-fixedForget();
 	int fixedForget;
 	int nextforget;
+
+	int fixedlimitSize;
+	int fixedLearntSize;
     /// whether solutions are checked
     // 0 -> not checked
     // 1 -> check constraints which variables are all assigned
@@ -975,7 +978,9 @@ namespace Mistral {
     		int max_nogood_size, int bounded_by_decision, double forgetfulness ,
     		int forget_relatedto_nogood_size , int static_forget_retatedto_backjump ,double Forgetfulness_retated_to_backjump,
     		int hard_keep, int hard_forget, int keep_when_size,
-    		int keep_when_bjm , int keeplearning_in_bb , int _simulaterestart, int _nogood_based_weight
+    		int keep_when_bjm , int keeplearning_in_bb , int _simulaterestart,
+    		int _nogood_based_weight , int fixedForget , int fixedlimitSize ,
+    		int fixedLearntSize
     );
 
     void close_propagation();
