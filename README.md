@@ -97,6 +97,20 @@ Several parameters can be used. These are probably the most important ones used 
 		
         Default value : "geom"
 
+
+* -fixedForget : [integer] a fixed number of failure to reach before calling the clause deletion routine.
+		
+        Default value : 10000
+
+* -fixedlimitSize : [integer] used to trigger clause deletion. If the size of the clause database is at least equal to this parameter then we start forgetting clauses. 
+		
+        Default value : 2000
+
+* -fixedLearntSize : [integer] A fixed size of the clause database after the reduction.
+		
+        Default value : 2000
+
+
 * -forgetfulness : [double] the % of forgetfulness of clauses.
 
         Default value : 0.0
