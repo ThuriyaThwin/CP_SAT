@@ -159,7 +159,7 @@ namespace Mistral {
     //The probability that a long clause will be forgotten
     int prob_forget;
     //To continue UP
-    int continue_propag;
+    int forgetdecsize;
 
     /// MISC
     std::string prefix_comment;
@@ -985,7 +985,7 @@ namespace Mistral {
     		int hard_keep, int hard_forget, int keep_when_size,
     		int keep_when_bjm , int keeplearning_in_bb , int _simulaterestart,
     		int _nogood_based_weight , int fixedForget , int fixedlimitSize ,
-    		int fixedLearntSize ,   int _prob_forget, int _continue_propag
+    		int fixedLearntSize ,   int _prob_forget, int _forgetdecsize
     );
 
     void close_propagation();

@@ -341,7 +341,7 @@ namespace Mistral {
     //Clauses that will be kept between dichotomy
 	BitSet will_be_kept;
 	//Improve UP?
-	bool continue_replacement;
+//	bool continue_replacement;
 
 
 //TODO Will not be used anymore! we handle this stuff with learn(..,..,true);

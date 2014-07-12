@@ -179,7 +179,7 @@ namespace Mistral {
     int fixedLearntSize ;
 
     int prob_forget;
-    int continue_propag;
+    int forgetdecsize;
 
 
     ParameterList(int length, char** commandline);

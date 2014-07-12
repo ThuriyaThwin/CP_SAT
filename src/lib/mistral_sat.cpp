@@ -467,7 +467,7 @@ void Mistral::ConstraintClauseBase::initialise() {
 
   //reason = solver->reason.stack_;
 
-  continue_replacement=get_solver()->parameters.continue_propag;
+  //continue_replacement=get_solver()->parameters.forgetdecsize;
 
 }
 
@@ -1131,7 +1131,7 @@ Mistral::Clause* Mistral::ConstraintClauseBase::update_watcher(const int cw,
   Clause *cl = is_watched_by[p][cw];
   Clause& clause = *cl;
   unsigned int j;
-  bool satisfied=false;
+  //bool satisfied=false;
   Literal q, r;
   Variable v, w;
   int vb, wb;
@@ -1194,7 +1194,7 @@ Mistral::Clause* Mistral::ConstraintClauseBase::update_watcher(const int cw,
 #ifdef _DEBUG_WATCH
 	std::cout << "    ok! (satisfied)" << std::endl;
 #endif
-	satisfied=true;
+	//satisfied=true;
 	clause[1] = r;
 	clause[j] = p;
 	is_watched_by[p].remove(cw);
@@ -1264,6 +1264,8 @@ Mistral::Clause* Mistral::ConstraintClauseBase::update_watcher(const int cw,
 	    return cl;
 	  }
       }
+
+    /* Well, we can continue propagation here!
     // We already find a replacement for the second literal, we will now check if there is a replacement for the second literal
     else if (continue_replacement && (!satisfied) && (vb != 3)){
     	++j;
@@ -1350,7 +1352,7 @@ Mistral::Clause* Mistral::ConstraintClauseBase::update_watcher(const int cw,
     		//}
     	}
     }
-
+*/
   }
 
   return NULL;
@@ -1506,11 +1508,12 @@ void Mistral::ConstraintClauseBase::fixed_forget(){
 		}
 
 		if( learnt.size> get_solver()->parameters.fixedlimitSize){
-			get_solver()->parameters.max_nogood_size-=3;
+			int _k = get_solver()->parameters.forgetdecsize;
+			get_solver()->parameters.max_nogood_size-=_k;
 			std::cout << " c database size is still large! recalling fixedForget with size bounded by " <<
 					get_solver()->parameters.max_nogood_size  << std::endl;
 			fixed_forget();
-			get_solver()->parameters.max_nogood_size+=3;
+			get_solver()->parameters.max_nogood_size+=_k;
 		}
 		std::cout << " c fixed_forget : new size  " << learnt.size  << std::endl;
 	}

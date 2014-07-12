@@ -177,7 +177,7 @@ void Mistral::SolverParameters::initialise() {
   nextforget=0;
 
   prob_forget = 100;
-  continue_propag = 0;
+  forgetdecsize = 3;
 
   prefix_comment = "c";
   prefix_statistics = "d";
@@ -9619,7 +9619,7 @@ void Mistral::Solver::set_fdlearning_on(
         int _fixedlimitSize,
         int _fixedLearntSize,
         int _prob_forget,
-        int _continue_propag
+        int _forgetdecsize
 	    ) {
 
 	//	parameters.jsp_backjump = true;
@@ -9656,7 +9656,7 @@ void Mistral::Solver::set_fdlearning_on(
 	parameters.fixedLearntSize = _fixedLearntSize;
 
 	parameters.prob_forget = _prob_forget;
-	parameters.continue_propag =_continue_propag;
+	parameters.forgetdecsize =_forgetdecsize;
 
 
 	std::cout << " c start_from : " << start_from << std::endl;
