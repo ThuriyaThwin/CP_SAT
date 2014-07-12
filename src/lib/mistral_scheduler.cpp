@@ -368,7 +368,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   semantic_learning = 0;
 
   simple_learn= 0;
-  max_nogood_size =0;
+  max_nogood_size =8;
   bounded_by_decision = 0;
   forget_relatedto_nogood_size = 0;
   forget_retatedto_backjump = 0;
@@ -458,8 +458,9 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[24] != NOVAL) lazy_generation  = int_param[24];
   if(int_param[25] != NOVAL) semantic_learning  = int_param[25];
   if(int_param[26] != NOVAL) simple_learn  = int_param[26];
-  if(int_param[27] != NOVAL) { std::cout <<" No longer used! " << std::endl; exit(1); //max_nogood_size  = int_param[27];
-  }
+//  if(int_param[27] != NOVAL) { std::cout <<" No longer used! " << std::endl; exit(1); //max_nogood_size  = int_param[27];
+  //}
+  if(int_param[27] != NOVAL) max_nogood_size  = int_param[27];
   if(int_param[28] != NOVAL) bounded_by_decision  = int_param[28];
   if(int_param[29] != NOVAL) forget_relatedto_nogood_size  = int_param[29];
   if(int_param[30] != NOVAL) forget_retatedto_backjump  = int_param[30];
@@ -532,7 +533,7 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | lazy_generation " << ":" << std::right << std::setw(15) << lazy_generation << " |" << std::endl;
   os << std::left << std::setw(30) << " c | semantic_learning " << ":" << std::right << std::setw(15) << semantic_learning << " |" << std::endl;
   os << std::left << std::setw(30) << " c | simple_learn " << ":" << std::right << std::setw(15) << simple_learn << " |" << std::endl;
-  //os << std::left << std::setw(30) << " c | max_nogood_size " << ":" << std::right << std::setw(15) << max_nogood_size << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | max_nogood_size " << ":" << std::right << std::setw(15) << max_nogood_size << " |" << std::endl;
   os << std::left << std::setw(30) << " c | bounded_by_decision " << ":" << std::right << std::setw(15) << bounded_by_decision << " |" << std::endl;
   os << std::left << std::setw(30) << " c | forget all clauses " << ":" << std::right << std::setw(15) << (forgetall? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | hard_keep " << ":" << std::right << std::setw(15) << (hard_keep? "yes" : "no") << " |" << std::endl;
