@@ -1399,8 +1399,9 @@ void Mistral::ConstraintClauseBase::fixed_forget(){
 			if(!learnt[size]->locked)
 				++rest;
 		//}
+
 		while (size--)
-			if((!learnt[size]->locked) && (learnt[size]->size >max_size))
+			if((!learnt[size]->locked) && (learnt[size]->size >max_size) && (randint(100) <80))
 				remove(size);
 
 		will_be_forgotten.clear();
