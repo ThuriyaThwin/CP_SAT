@@ -272,7 +272,7 @@ const char* ParameterList::int_ident[ParameterList::nia] =
    "-semantic" , "-simplelearn" , "-maxnogoodsize" , "-boundedbydecision" , "-forgetsize" ,
    "-forgetbackjump" , "-hardkeep", "-hardforget" ,"-keepwhensize" , "-keepwhenbjm" ,
    "-keeplearning" , "-simulaterestart" , "-nogoodweight" , "-weighthistory" ,  "-fixedForget" ,
-   "-fixedlimitSize" , "-fixedLearntSize"
+   "-fixedlimitSize" , "-fixedLearntSize" , "-probforget" ,"-continuepropag"
   };
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
@@ -391,6 +391,9 @@ ParameterList::ParameterList(int length, char **commandline) {
   fixedlimitSize = 14000;
   fixedLearntSize = 2000;
 
+  prob_forget=100;
+  continue_propag=false;
+
   if(Type == "osp") {
     Objective = "makespan";
     if(Heuristic == "none")
@@ -475,7 +478,8 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[39] != NOVAL) fixedForget  = int_param[39];
   if(int_param[40] != NOVAL) fixedlimitSize  = int_param[40];
   if(int_param[41] != NOVAL) fixedLearntSize  = int_param[41];
-
+  if(int_param[42] != NOVAL) prob_forget  = int_param[42];
+  if(int_param[43] != NOVAL) continue_propag  = int_param[43];
 
   if (keep_when_bjm || keep_when_size)
 	  forgetall=0;
@@ -546,6 +550,8 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | fixedForget" << ":" << std::right << std::setw(15) <<   fixedForget << " |" << std::endl;
   os << std::left << std::setw(30) << " c | fixedlimitSize" << ":" << std::right << std::setw(15) <<   fixedlimitSize << " |" << std::endl;
   os << std::left << std::setw(30) << " c | fixedLearntSize" << ":" << std::right << std::setw(15) <<   fixedLearntSize << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | prob_forget" << ":" << std::right << std::setw(15) <<   prob_forget << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | continue_propag" << ":" << std::right << std::setw(15) <<   continue_propag << " |" << std::endl;
   os << std::left << std::setw(30) << " c | nogood_based_weight" << ":" << std::right << std::setw(15) <<   nogood_based_weight << " |" << std::endl;
   os << std::left << std::setw(30) << " c | reduce learnt clause " << ":" << std::right << std::setw(15) << (reduce_clauses? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | clause forgetfulness %" << ":" << std::right << std::setw(15) << Forgetfulness << " |" << std::endl;
@@ -1975,7 +1981,7 @@ void SchedulingSolver::setup() {
 			  params->hard_keep, params->hard_forget,params->keep_when_size,
 			  params->keep_when_bjm ,  params->keeplearning_in_bb, params->simulaterestart,
 			  params->nogood_based_weight, params->fixedForget , params-> fixedlimitSize ,
-			  params-> fixedLearntSize
+			  params-> fixedLearntSize ,params-> prob_forget ,params-> continue_propag
 	  );
   }
 

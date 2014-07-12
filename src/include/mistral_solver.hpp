@@ -156,6 +156,11 @@ namespace Mistral {
     int max_nogood_size;
     int bounded_by_decision;
 
+    //The probability that a long clause will be forgotten
+    int prob_forget;
+    //To continue UP
+    int continue_propag;
+
     /// MISC
     std::string prefix_comment;
     std::string prefix_statistics;
@@ -980,7 +985,7 @@ namespace Mistral {
     		int hard_keep, int hard_forget, int keep_when_size,
     		int keep_when_bjm , int keeplearning_in_bb , int _simulaterestart,
     		int _nogood_based_weight , int fixedForget , int fixedlimitSize ,
-    		int fixedLearntSize
+    		int fixedLearntSize ,   int _prob_forget, int _continue_propag
     );
 
     void close_propagation();

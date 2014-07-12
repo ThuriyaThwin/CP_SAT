@@ -340,6 +340,9 @@ namespace Mistral {
     void unlock_atoms(Vector<int> v);
     //Clauses that will be kept between dichotomy
 	BitSet will_be_kept;
+	//Improve UP?
+	bool continue_replacement;
+
 
 //TODO Will not be used anymore! we handle this stuff with learn(..,..,true);
     void forget_last(){
@@ -395,18 +398,30 @@ namespace Mistral {
     		//TODO it should be
     		// return(a == NULL_ATOM ? conflict->get_reason_for(a, lvl, end) : reason_for[a-start_from]->get_reason_for(a, lvl, end));
     		//but this is not so important since we return the whole clause
+    	{
+    		std::cout << "No longer used! Use get_reason_for_literal instead" << std::endl;
+    		exit(1);
     		return(a == NULL_ATOM ? conflict->get_reason_for(a, lvl, end) : reason_for[a-start_from]->get_reason_for(a-start_from, lvl, end));
+    	}
     }
 
 
     virtual iterator get_reason_for_literal(const Literal a, iterator& end) {
-  		return(a == NULL_ATOM ? conflict->get_reason_for(NULL_ATOM, solver->level, end) : reason_for[a/2]->get_reason_for(a/2, solver->level, end));
+//  		return(a == NULL_ATOM ? conflict->get_reason_for(NULL_ATOM, solver->level, end) : reason_for[a/2]->get_reason_for(a/2, solver->level, end));
 
-/*    	if (is_a_bound_literal(a) || a== NULL_ATOM)
-    		get_reason_for (a, solver->level ,end);
-    	else
-    		get_reason_for (((Solver*) solver)->get_id_boolean_variable(a) , solver->level ,end);
-*/
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+    	if (a != NULL_ATOM){
+    		if ((*reason_for[a/2])[0]!=(a +1 -2*SIGN(a) )){
+    			std::cout << "reason_for[a/2][0]!=a" << std::endl;
+    			std::cout << "a" << a<<std::endl;
+    			std::cout << "reason_for[a/2]" << (*reason_for[a/2]) [0] <<std::endl;
+    			std::cout << "reason_for[a/2]" << (*reason_for[a/2]) [1] <<std::endl;
+    			exit(1);
+    		}
+    	}
+#endif
+
+    	return(a == NULL_ATOM ? conflict->get_reason_for(NULL_ATOM, solver->level, end) : reason_for[a/2]->explain(end));
     }
 
     void extend_scope(Variable x);

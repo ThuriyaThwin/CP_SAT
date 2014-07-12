@@ -467,6 +467,8 @@ void Mistral::ConstraintClauseBase::initialise() {
 
   //reason = solver->reason.stack_;
 
+  continue_replacement=get_solver()->parameters.continue_propag;
+
 }
 
 Mistral::ConstraintClauseBase::~ConstraintClauseBase() {
@@ -1129,7 +1131,7 @@ Mistral::Clause* Mistral::ConstraintClauseBase::update_watcher(const int cw,
   Clause *cl = is_watched_by[p][cw];
   Clause& clause = *cl;
   unsigned int j;
-
+  bool satisfied=false;
   Literal q, r;
   Variable v, w;
   int vb, wb;
@@ -1192,7 +1194,7 @@ Mistral::Clause* Mistral::ConstraintClauseBase::update_watcher(const int cw,
 #ifdef _DEBUG_WATCH
 	std::cout << "    ok! (satisfied)" << std::endl;
 #endif
-
+	satisfied=true;
 	clause[1] = r;
 	clause[j] = p;
 	is_watched_by[p].remove(cw);
@@ -1236,11 +1238,12 @@ Mistral::Clause* Mistral::ConstraintClauseBase::update_watcher(const int cw,
 	  std::cout << "    -> " << v << " in " << v.get_domain() << std::endl;
 #endif
 
-	} else 
+	} else
 	  // it is set to false already, we fail
 	  //if( v.get_min() != (int)SIGN(q) ) {
 		//To do : we do not need this test!
-	  if( vb>>1 != (int)SIGN(q) ) {
+	  //if( vb>>1 != (int)SIGN(q) )
+		{
 
 #ifdef _DEBUG_WATCH
 	    std::cout << "    -> fail!" << std::endl;
@@ -1252,11 +1255,102 @@ Mistral::Clause* Mistral::ConstraintClauseBase::update_watcher(const int cw,
 	    	std::cout << "  clause.locked=true!! "  << std::endl;
 	    	exit(1);
 	    }
+	    if( vb>>1 == (int)SIGN(q) ){
+	    	std::cout << " vb>>1 == (int)SIGN(q)!!! "  << std::endl;
+	    	exit(1);
+	    }
 #endif
 
 	    return cl;
 	  }
       }
+    // We already find a replacement for the second literal, we will now check if there is a replacement for the second literal
+    else if (continue_replacement && (!satisfied) && (vb != 3)){
+    	++j;
+    	for(; j<clause.size; ++j) {
+    		// for each literal r of the clause,
+    		r = clause[j];
+    		w = scope[UNSIGNED(r)];
+    		wb = *(w.bool_domain);
+
+#ifdef _DEBUG_WATCH
+    		std::cout << "    what about " << (SIGN(r) ? "" : "~") << UNSIGNED(r)
+    							<< " <-> " << w << " in " << w.get_domain() << std::endl;
+#endif
+
+    		if( wb == 3 ) { // this literal is not set
+    			//if( !w.is_ground() ) { // this literal is not set
+    			// then it is a good candidate to replace p
+
+//    			clause[0] = r;
+//    			clause[j] = q;
+//    			is_watched_by[q].remove(cw);
+//    			is_watched_by[r].add(cl);
+
+#ifdef _DEBUG_WATCH
+    			std::cout << "    ok!" // << clause << " " << (cl)
+    					<< std::endl;
+#endif
+
+    			break;
+    		}
+    		// if it is set true, then the clause is satisfied
+    		//else if( w.get_min() == (int)SIGN(r) ) {
+    		else if( wb>>1 == (int)SIGN(r) ) {
+
+#ifdef _DEBUG_WATCH
+    			std::cout << "    ok! (satisfied)" << std::endl;
+#endif
+
+//    			clause[0] = r;
+//    			clause[j] = q;
+//    			is_watched_by[q].remove(cw);
+//    			is_watched_by[r].add(cl);
+
+    			break;
+    		}
+    	}
+
+    	if( j == clause.size ) // no replacement could be found
+    	{
+    		//We have to propagate clause[1]
+#ifdef _DEBUG_WATCH
+    		std::cout << "  couldn't find a replacement!" << std::endl;
+#endif
+
+    		//if( !v.is_ground() ) {
+    		//if( vb == 3 ){
+
+    		//Not necessarly!
+    		q=clause[1];
+    		clause[1]=clause[0];
+    		clause[0]=q;
+    		v=scope[UNSIGNED(q)];
+
+    		changes.add(UNSIGNED(q));
+    		v.set_domain(SIGN(q));
+    		//reason[UNSIGNED(q)] = cl;
+    		//EXPL
+    		reason_for[UNSIGNED(q)] = cl;
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+    		if(clause.locked){
+    			std::cout << "  clause.locked=true!! "  << std::endl;
+    			exit(1);
+    		}
+#endif
+
+    		clause.locked=true;
+    		--unlocked_clauses;
+
+#ifdef _DEBUG_UNITPROP
+    		std::cout << "    -> " << v << " in " << v.get_domain() << std::endl;
+#endif
+
+    		//}
+    	}
+    }
+
   }
 
   return NULL;
@@ -1382,7 +1476,7 @@ void Mistral::ConstraintClauseBase::remove( const int cidx , bool static_forget)
 void Mistral::ConstraintClauseBase::fixed_forget(){
 	static_forget();
 	int size =learnt.size;
-
+	int prob_forget = get_solver()->parameters.prob_forget;
 	int max_size = get_solver()->parameters.max_nogood_size;
 //	std::cout << " parameters.fixedlimitSize ? " << get_solver()->parameters.fixedlimitSize  << std::endl;
 //	std::cout << " parameters.fixedLearntSize ? " << get_solver()->parameters.fixedLearntSize  << std::endl;
@@ -1401,7 +1495,7 @@ void Mistral::ConstraintClauseBase::fixed_forget(){
 		//}
 
 		while (size--)
-			if((!learnt[size]->locked) && (learnt[size]->size >max_size) && (randint(100) <80))
+			if((!learnt[size]->locked) && (learnt[size]->size >max_size) && (randint(100) <prob_forget))
 				remove(size);
 
 		will_be_forgotten.clear();

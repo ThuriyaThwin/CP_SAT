@@ -176,6 +176,9 @@ void Mistral::SolverParameters::initialise() {
   fixedForget=0;
   nextforget=0;
 
+  prob_forget = 100;
+  continue_propag = 0;
+
   prefix_comment = "c";
   prefix_statistics = "d";
   prefix_objective = "o";
@@ -9614,7 +9617,9 @@ void Mistral::Solver::set_fdlearning_on(
 	    int _nogood_based_weight,
 	    int _fixedForget,
         int _fixedlimitSize,
-        int _fixedLearntSize
+        int _fixedLearntSize,
+        int _prob_forget,
+        int _continue_propag
 	    ) {
 
 	//	parameters.jsp_backjump = true;
@@ -9649,6 +9654,10 @@ void Mistral::Solver::set_fdlearning_on(
 
 	parameters.fixedlimitSize = _fixedlimitSize;
 	parameters.fixedLearntSize = _fixedLearntSize;
+
+	parameters.prob_forget = _prob_forget;
+	parameters.continue_propag =_continue_propag;
+
 
 	std::cout << " c start_from : " << start_from << std::endl;
 	visitedUpperBounds.initialise(0, start_from  , BitSet::empt);
@@ -9695,6 +9704,10 @@ void Mistral::Solver::set_fdlearning_on(
 		//			base->init_jsp();
 		add(Constraint(base));
 		//add(base);
+	}
+	else{
+		std::cout << " base instanciated! " << std::endl;
+		exit(1);
 	}
 
 	if (reduce && !semantic_learning){

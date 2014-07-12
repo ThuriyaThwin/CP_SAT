@@ -1482,6 +1482,9 @@ template < int N, class T >
 
     //Note : get_reason_for is correct with fd_leanring as long as we keep Atom a irrelevant. Otherwise, one can have the case where a correspond to the id of the variable which is not necessarely equal to the correspondant Atom
     virtual iterator get_reason_for(const Atom a, const int lvl, iterator& end) { end = &(data[size]); return &(data[0]); }
+
+    //The difference between explain and get_reason_for is that we know that the firt literal was propagated, hence it shouldn't occur in its explanation
+    virtual iterator explain(iterator& end) { end = &(data[size]); return &(data[1]); }
     virtual iterator get_reason_for_literal(const Literal a, iterator& end) {
     	//std::cout << "Can't explain bound in Array " << std::endl;
     	//if (is_a_bound_literal(a) || a== NULL_ATOM)
