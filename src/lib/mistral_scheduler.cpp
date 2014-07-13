@@ -3600,41 +3600,43 @@ stats->num_solutions++;
   //Cancel learning : check this when alowing lazy generation
 
   start_over(false);
+  if (base){
+	  if (!parameters.keeplearning_in_bb){
 
-  if (base && !parameters.keeplearning_in_bb){
+		  parameters.fixedForget=0;
+		  parameters.fd_learning = 0;
+		  parameters.backjump = 0;
+		  delete[] visitedUpperBoundvalues;
+		  delete[] visitedLowerBoundvalues;
 
-	  parameters.fixedForget=0;
-	  parameters.fd_learning = 0;
-	  parameters.backjump = 0;
-	  delete[] visitedUpperBoundvalues;
-	  delete[] visitedLowerBoundvalues;
+		  delete[] visitedLowerBoundExplanations;
+		  delete[] visitedUpperBoundExplanations;
 
-	  delete[] visitedLowerBoundExplanations;
-	  delete[] visitedUpperBoundExplanations;
-
-	  delete[] visitedLowerBoundlevels;
-	  delete[] visitedUpperBoundlevels;
+		  delete[] visitedLowerBoundlevels;
+		  delete[] visitedUpperBoundlevels;
 
 
-	  base->enforce_nfc1 = true;
-	  base->relax();
-	  if (parameters.lazy_generation){
-		  VariableRangeWithLearning* tmp_VariableRangeWithLearning;
-		  DomainFaithfulnessConstraint* dom_constraint ;
-		  for (int var = 0; var< start_from; ++var){
-			  tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
-			  dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
-			  dom_constraint->enforce_nfc1 = true;
-			  dom_constraint->enforce_nfc1 = true;
-			  dom_constraint->relax();
+		  base->enforce_nfc1 = true;
+		  base->relax();
+		  if (parameters.lazy_generation){
+			  VariableRangeWithLearning* tmp_VariableRangeWithLearning;
+			  DomainFaithfulnessConstraint* dom_constraint ;
+			  for (int var = 0; var< start_from; ++var){
+				  tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
+				  dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
+				  dom_constraint->enforce_nfc1 = true;
+				  dom_constraint->enforce_nfc1 = true;
+				  dom_constraint->relax();
+			  }
+			  parameters.lazy_generation = 0;
 		  }
-		  parameters.lazy_generation = 0;
+	  }
+	  else{
+		  parameters.forgetfulness = params->BBforgetfulness;
+		  parameters.nextforget=parameters.fixedForget;
 	  }
   }
-  else{
-	  parameters.forgetfulness = params->BBforgetfulness;
-	  parameters.nextforget=parameters.fixedForget;
-  }
+
 
   if (policy)
 	  delete policy ;
