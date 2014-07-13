@@ -3601,7 +3601,7 @@ stats->num_solutions++;
 
   start_over(false);
 
-  if (!parameters.keeplearning_in_bb){
+  if (base && !parameters.keeplearning_in_bb){
 
 	  parameters.fixedForget=0;
 	  parameters.fd_learning = 0;
