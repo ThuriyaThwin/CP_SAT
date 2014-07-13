@@ -85,28 +85,14 @@ int main( int argc, char** argv )
   // stats.print(std::cout, "DS");
 
   if(!stats.solved()) {
-	  //TODO we should reload a new model without ExplainedConstraints
+	  //TODO we should reload a new model without ExplainedConstraints?
 
-	  if (solver->parameters.keeplearning_in_bb){
-		  solver->parameters.forgetfulness = params.BBforgetfulness;
-	  }
-	  else{
-
-	  }
-
-
-//	  else{
-//	  solver->parameters.backjump = false;
-//	  solver->parameters.fd_learning = 0;
-//	  }
     if(params.Algorithm == "bnb")
       solver->branch_and_bound();
     //else if(params.Algorithm == "lns")
     //solver.large_neighborhood_search();
   }
 
-  //solver->parameters.fd_learning = 1;
-  //solver->parameters.backjump = 1;
   stats.print(std::cout, "");  
 //  std::cout << "s " << (stats.num_solutions ? "SATISFIABLE" : "UNSATISFIABLE")
   //MOVE TO Optimality

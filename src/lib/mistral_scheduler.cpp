@@ -342,7 +342,7 @@ ParameterList::ParameterList(int length, char **commandline) {
 //  Policy    = "geom";
   Policy    = "geom";
   BandBPolicy    = "geom";
-  Factor    = 1.333;
+  Factor    = 1.3;
   Decay     = 0.0;
   Forgetfulness = 0.0;
   Forgetfulness_retated_to_backjump = 0.0;
@@ -387,7 +387,6 @@ ParameterList::ParameterList(int length, char **commandline) {
   forgetall=1;
 
   fixedForget=10000;
-  //nextforget=10000;
   fixedlimitSize = 14000;
   fixedLearntSize = 2000;
 
@@ -3047,8 +3046,8 @@ void SchedulingSolver::dichotomic_search()
 	 iteration<params->Dichotomy
   ) {
 
-	  //std::cout << "dicho heuristic  \n " << std::endl;
-	  //heuristic->display(std::cout);
+	  parameters.nextforget=parameters.fixedForget;
+	  pol->initialise(parameters.restart_limit);
 
 	  double remaining_time = params->Optimise - stats->get_total_time();
 
@@ -3214,7 +3213,8 @@ void SchedulingSolver::dichotomic_search()
 	  }
 
 	  statistics.initialise(this);
-	  pol->initialise(parameters.restart_limit);
+	 //Moved Up!
+	  //pol->initialise(parameters.restart_limit);
 
 	  // std::cout << std::left << std::setw(30) << " c current dichotomic range" << ":"
 	  // 	      << std::right << std::setw(6) << " " << std::setw(5) << minfsble
@@ -3239,7 +3239,6 @@ void SchedulingSolver::dichotomic_search()
 	  //exit(1);
 
 	  initialise_heuristic(params->weight_history & 2);
-	  parameters.nextforget=parameters.nextforget;
 
 	  ++iteration;
 
@@ -3596,99 +3595,50 @@ stats->num_solutions++;
 
   statistics.start_time = get_run_time();
 
-  // heuristic->display(std::cout);
-
-  //std::cout << "\n \n Before : " << this  << std::endl;
-
   //std::cout << (get_run_time() - statistics.start_time) << std::endl;
   //int old_learning = parameters.fd_learning;
   //Cancel learning : check this when alowing lazy generation
-  if(base)
-  {
-	  int __size = base->learnt.size;
-	  while (__size--)
-		  base->remove(__size);
-	  //base->unlocked_clauses=0;
 
-	  if (params->lazy_generation){
+  start_over(false);
 
-		  //TODO delete expression_store
-/*		  for( int i=init_expression_store_size; i<expression_store.size;++i) {
-			  delete expression_store[i];
+  if (!parameters.keeplearning_in_bb){
+
+	  parameters.fixedForget=0;
+	  parameters.fd_learning = 0;
+	  parameters.backjump = 0;
+	  delete[] visitedUpperBoundvalues;
+	  delete[] visitedLowerBoundvalues;
+
+	  delete[] visitedLowerBoundExplanations;
+	  delete[] visitedUpperBoundExplanations;
+
+	  delete[] visitedLowerBoundlevels;
+	  delete[] visitedUpperBoundlevels;
+
+
+	  base->enforce_nfc1 = true;
+	  base->relax();
+	  if (parameters.lazy_generation){
+		  VariableRangeWithLearning* tmp_VariableRangeWithLearning;
+		  DomainFaithfulnessConstraint* dom_constraint ;
+		  for (int var = 0; var< start_from; ++var){
+			  tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
+			  dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
+			  dom_constraint->enforce_nfc1 = true;
+			  dom_constraint->enforce_nfc1 = true;
+			  dom_constraint->relax();
 		  }
-
-		  expression_store.size =  init_expression_store_size;
-*/
-
-		  variables.size =initial_variablesize;
-		  assignment_level.size = initial_variablesize;
-		  assignment_order.size = initial_variablesize;
-		  reason_for.size = initial_variablesize;
-		  domain_types.size=initial_variablesize;
-		  last_solution_lb.size=initial_variablesize;
-		  last_solution_ub.size=initial_variablesize;
-		  constraint_graph.size=initial_variablesize;
-		  //variable_triggers.size = 1;
-
-		  //booleans.size.size = init_booleans_slot_size;
-
-		  //TODO delete booleans.slots
-
-	/*	  for (int i = init_booleans_last_size_size; i <1024; ++i )
-			  booleans.slots[init_booleans_slot_size-1][i]=3;
-
-		  for (int j = init_booleans_slot_size; j <booleans.slots.size; ++j )
-			  delete [] booleans.slots[j];
-
-		  booleans.size.size = init_booleans_slot_size;
-		  booleans.size[init_booleans_slot_size-1] = init_booleans_last_size_size;
-		  booleans.slots.size = init_booleans_slot_size;
-*/
-
-		  base->start_over();
-		  for (int i = 0; i < start_from; ++i)
-			  (static_cast<VariableRangeWithLearning*> (variables[i].range_domain))->domainConstraint->start_over();
-	  }
-	  if (!parameters.keeplearning_in_bb){
-
-		  parameters.fixedForget=0;
-		  //parameters.nextforget=0;
-		  delete[] visitedUpperBoundvalues;
-		  delete[] visitedLowerBoundvalues;
-
-		  delete[] visitedLowerBoundExplanations;
-		  delete[] visitedUpperBoundExplanations;
-
-		  delete[] visitedLowerBoundlevels;
-		  delete[] visitedUpperBoundlevels;
-
-		  parameters.fd_learning = 0;
-		  parameters.backjump = 0;
-
-		  base->enforce_nfc1 = true;
-		  base->relax();
-		  if (parameters.lazy_generation){
-			  VariableRangeWithLearning* tmp_VariableRangeWithLearning;
-			  DomainFaithfulnessConstraint* dom_constraint ;
-			  for (int var = 0; var< start_from; ++var){
-				  tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
-				  dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
-				  dom_constraint->enforce_nfc1 = true;
-				  dom_constraint->enforce_nfc1 = true;
-				  dom_constraint->relax();
-			  }
-			  parameters.lazy_generation = 0;
-		  }
+		  parameters.lazy_generation = 0;
 	  }
   }
-
-//  std::cout << "\n \n After  : " << this << std::endl;
-
-  //TODO Check initial parameters when chanchiing policy
+  else{
+	  parameters.forgetfulness = params->BBforgetfulness;
+	  parameters.nextforget=parameters.fixedForget;
+  }
 
   if (policy)
 	  delete policy ;
-  //RestartPolicy *pol ;
+
   if (params->BandBPolicyRestart==GEOMETRIC)
 	  policy = new Geometric(params->Base,params->Factor);
   else if (params->BandBPolicyRestart==LUBY)
@@ -3701,8 +3651,8 @@ stats->num_solutions++;
   //In order to simulate initialise_search() we need these two lines
   //parameters.restart_limit = policy->base;
   parameters.limit = (policy->base > 0);
-  //TODO remove that and enable : parameters.restart_limit = policy->base; instead!
   policy->initialise(parameters.restart_limit);
+
 
 /*  std::cout << "restart_limit " <<  parameters.restart_limit << std::endl;
   std::cout << "num_failures " <<  statistics.num_failures << std::endl;
@@ -3716,26 +3666,7 @@ stats->num_solutions++;
 //  }
 
 
-/*  delete heuristic;
-  BranchingHeuristic *heu = new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
-  initialise_search(disjuncts, heu, pol);
-*/
-
-
-  //Delete heuristic
-  //std::cout << "b&b heuristic  \n " << std::endl;
-
-  // heuristic->display(std::cout);
-
   initialise_heuristic(params->weight_history & 1);
-
-
-/*  delete heuristic;
-  heuristic= new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
-  heuristic->initialise(sequence);
-*/
-
-  //heuristic->display(std::cout);
 
   save();
   set_objective(stats->upper_bound-1);
@@ -3809,7 +3740,6 @@ stats->num_solutions++;
     std::cout << " c +==========[ end branch & bound ]===========+" << std::endl;
     
   }
-//  parameters.fd_learning = old_learning;
 }
 
 // void StoreStats::execute()
