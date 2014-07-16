@@ -3,7 +3,7 @@
 Description
 -----------
 
-This repository is a CDCL version of [Mistral-2.0] dedicated to resolve (Disjunctive) Scheduling Problems. So far, only the standard Job-Shop problem is being (experimentally) used with [Taillard instances]. 
+This repository is a CDCL version of [Mistral-2.0] dedicated to resolve (Disjunctive) Scheduling Problems. So far, only the standard Job-Shop problem is being (experimentally) tested. 
 
 Installation
 --------------
@@ -14,15 +14,24 @@ To use the Scheduler module, first compile the code using
 ```
 
 
-That's it! Now you can try it with 
+Tha's all! Try it out with 
 
 ```sh
-bin/scheduler data/scheduling/jsp/15x15txt/1.txt 
+bin/scheduler BENCHNAME
 ```
-The folder data/scheduling/jsp/15x15txt contains all the 15x15 instances. 
+
+Where BENCHNAME is the instance file. 
 
 Parameters
 ----------
+
+By default, a pure CP model is launched. If you want to enable Clause Learning, then a large numbre of parameters should be specified (although one is sufficient). So far, I'm using the following command line 
+
+```sh
+bin/scheduler BENCHNAME -type jla -fdlearning 2 -semantic 1 -keeplearning 1 -weighthistory 2 -maxnogoodsize 15 -fixedLearntSize 0 -probforget 70
+```
+
+where BENCHNAME is the instance location and "-type jla" indicates that the file being used in in the format on Lawrence (therefore should be ommited with Taillard instances). 
 
 
 Several parameters can be used. These are probably the most important ones used with Clause Learning (I'll update the list later) : 
@@ -109,6 +118,13 @@ Several parameters can be used. These are probably the most important ones used 
 * -fixedLearntSize : [integer] A fixed size of the clause database after the reduction.
 		
         Default value : 2000
+
+
+* -maxnogoodsize : [integer] Clauses that have a size at most equal to this parameters will be kept when performing forget. 
+
+
+* -probforget : [positive intege bounded by 100] The probability that a large clause (w.r.t maxnogoodsize) whill be forgotten. By default equal to 100. 
+
 
 
 * -forgetfulness : [double] the % of forgetfulness of clauses.
