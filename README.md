@@ -14,25 +14,23 @@ To use the Scheduler module, first compile the code using
 ```
 
 
-Tha's all! Try it out with 
+That's all! Try it out with 
 
 ```sh
-bin/scheduler BENCHNAME
+bin/scheduler BENCHNAME -type jla
 ```
 
-Where BENCHNAME is the instance file. 
+Where BENCHNAME is the instance file location and "-type jla" indicates that the file being used is in the format of Lawrence (the parameter should be omited with Taillard instances as the solver treats them by default). 
+ 
+By default, a pure CP model is launched. If you want to enable Clause Learning, then a large number of parameters should be specified (although one is sufficient). So far, I'm using the following command line 
+
+```sh
+bin/scheduler BENCHNAME -type jla -fdlearning 2 -semantic 1 -keeplearning 1 -weighthistory 3 -maxnogoodsize 15 -fixedLearntSize 0 -probforget 70
+```
+
 
 Parameters
 ----------
-
-By default, a pure CP model is launched. If you want to enable Clause Learning, then a large numbre of parameters should be specified (although one is sufficient). So far, I'm using the following command line 
-
-```sh
-bin/scheduler BENCHNAME -type jla -fdlearning 2 -semantic 1 -keeplearning 1 -weighthistory 2 -maxnogoodsize 15 -fixedLearntSize 0 -probforget 70
-```
-
-where BENCHNAME is the instance location and "-type jla" indicates that the file being used in in the format on Lawrence (therefore should be ommited with Taillard instances). 
-
 
 Several parameters can be used. These are probably the most important ones used with Clause Learning (I'll update the list later) : 
 
@@ -123,7 +121,7 @@ Several parameters can be used. These are probably the most important ones used 
 * -maxnogoodsize : [integer] Clauses that have a size at most equal to this parameters will be kept when performing forget. 
 
 
-* -probforget : [positive intege bounded by 100] The probability that a large clause (w.r.t maxnogoodsize) whill be forgotten. By default equal to 100. 
+* -probforget : [positive integer bounded by 100] The probability that a large clause (w.r.t maxnogoodsize) will be forgotten. By default equal to 100. 
 
 
 
@@ -132,7 +130,7 @@ Several parameters can be used. These are probably the most important ones used 
         Default value : 0.0
 
 
-* -bjmforgetfulness : [double] the % of backjump level forgetfulness of clauses. Very similar to -forgetbackjump, however, with pourcentage. 
+* -bjmforgetfulness : [double] the % of backjump level forgetfulness of clauses. Very similar to -forgetbackjump, however, with percentage. 
 		
         Default value : 0.0 (i.e. no check is performed)
 
