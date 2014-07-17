@@ -3205,8 +3205,8 @@ void SchedulingSolver::dichotomic_search()
 				  current_learnClauses_size=base->learnt.size;
 			  }
 		  }
-		  std::cout << " c keeping clauses between dicho steps ?:  base->learnt.size=" << base->learnt.size << std::endl;
-		  std::cout << " c unlocked clause : " << base->unlocked_clauses << std::endl;
+		  //std::cout << " c keeping clauses between dicho steps ?:  base->learnt.size=" << base->learnt.size << std::endl;
+		  //std::cout << " c unlocked clause : " << base->unlocked_clauses << std::endl;
 
 		  //  std::cout << " NEW  base->learnt " << base->learnt  << std::endl;
 		  //  exit(1);
