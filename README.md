@@ -63,7 +63,7 @@ Several parameters can be used. These are probably the most important ones used 
 		
         Default value : 0 (no check is performed)
 
-* -forgetbackjump [positive integer] Used to learn only the nogoods leading to a backtrack level at least equal to this parameter
+* -forgetbackjump [positive integer] Used to learn only the nogoods leading to a difference of backtrack levels at least equal to this parameter
 		
         Default value : 0 (no check is performed)
 
