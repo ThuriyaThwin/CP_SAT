@@ -399,8 +399,8 @@ namespace Mistral {
     		// return(a == NULL_ATOM ? conflict->get_reason_for(a, lvl, end) : reason_for[a-start_from]->get_reason_for(a, lvl, end));
     		//but this is not so important since we return the whole clause
     	{
-    		std::cout << "No longer used! Use get_reason_for_literal instead" << std::endl;
-    		exit(1);
+    	//	std::cout << "No longer used! Use get_reason_for_literal instead" << std::endl;
+    	//	exit(1);
     		return(a == NULL_ATOM ? conflict->get_reason_for(a, lvl, end) : reason_for[a-start_from]->get_reason_for(a-start_from, lvl, end));
     	}
     }

@@ -15550,15 +15550,18 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 			//	std::cout <<" \n \n is_a_bound_literal? "  << std::endl;
 
 			int val = get_value_from_literal(a);
+			//int __is_lb = is_lower_bound(a);
 
 			if (is_lower_bound(a))
+			//if(__is_lb)
 				--val;
 
 			int var = value_exist(val);
 			Explanation * e = get_solver()->reason_for[var];
 
-			//Note that we do not need the level here ! I should remove that later
+
 			return e->get_reason_for(var, lvl, end);
+			//return e->get_reason_for_literal(literal(var,1- __is_lb), end);
 
 			/*if (is_upper_bound(a)){
 				for (int i = 0; i<ub.size; ++i ){
