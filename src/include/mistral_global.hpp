@@ -223,7 +223,7 @@ namespace Mistral {
 #define SIZEOF_VARIABLES 16900
 #else
   // TODO Try fast implementation?
-#define SIZEOF_VARIABLES 100000
+#define SIZEOF_VARIABLES 550000
 #endif
 
 // MAX_GENERATED_VARIABLES is the limit we can tolorate of variables.
@@ -232,7 +232,7 @@ namespace Mistral {
 #define MAX_GENERATED_VARIABLES 14000
 #else
   // TODO Try fast implementation?
-#define MAX_GENERATED_VARIABLES 90000
+#define MAX_GENERATED_VARIABLES 420000
 #endif
 
 
