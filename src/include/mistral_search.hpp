@@ -438,6 +438,7 @@ namespace Mistral {
       //std::cout << "failure on " << con << std::endl;
 
       if(!con.empty()) {
+    	  double divide = 1.0;
 
     	  if (solver->failure_scope.size) {
 
@@ -446,10 +447,14 @@ namespace Mistral {
     		  //exit(1);
     		  int idx;
     		  i = solver->failure_scope.size;
+    		  if (i> 3)
+    			  divide= (double) i;
+
+
     		  while(i--) {
     			  idx = solver->failure_scope[i];
     			  if((idx>=0) && (idx < solver->initial_variablesize)) {
-    				  variable_weight[idx] += weight_unit;
+    				  variable_weight[idx] += (weight_unit /divide );
     			  }
     		  }
     		  solver->failure_scope.clear();
@@ -461,7 +466,10 @@ namespace Mistral {
 	Variable *scope = con.get_scope();
 	int idx;
 	i = con.arity();
-	if (i< 4)
+	if (i> 3)
+		divide= (double) i;
+
+	//if (i< 4)
 	{
 	++constraint_weight[con.id()];
 	if (solver->parameters.fd_learning )
@@ -469,7 +477,7 @@ namespace Mistral {
 			idx = scope[i].id();
 			if((idx>=0) && (idx < solver->initial_variablesize)) {
 				//std::cout << " ++x" << idx;
-				variable_weight[idx] += weight_unit;
+				variable_weight[idx] += (weight_unit/ divide);
 			}
 		}
 	else
@@ -477,12 +485,13 @@ namespace Mistral {
 			idx = scope[i].id();
 			if(idx>=0) {
 				//std::cout << " ++x" << idx;
-				variable_weight[idx] += weight_unit;
+				variable_weight[idx] += (weight_unit / divide) ;
 			}
 		}
 
       } 
-	else{
+	//else
+	{
 		//TODO add get_reason_for_failure instead of using the scope of the constraint
 	//	std::cout << " !! failure on " << con << std::endl;
 	//	exit(1);
