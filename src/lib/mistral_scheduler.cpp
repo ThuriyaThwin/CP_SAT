@@ -480,7 +480,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[41] != NOVAL) fixedLearntSize  = int_param[41];
   if(int_param[42] != NOVAL) prob_forget  = int_param[42];
   if(int_param[43] != NOVAL) forgetdecsize  = int_param[43];
-  if(int_param[43] != NOVAL) vsids  = int_param[44];
+  if(int_param[44] != NOVAL) vsids  = int_param[44];
 
   if (keep_when_bjm || keep_when_size)
 	  forgetall=0;
