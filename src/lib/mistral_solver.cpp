@@ -5540,6 +5540,7 @@ void Mistral::Solver::treat_assignment_literal(Literal q, bool semantic, bool or
 			}
 	*/
 			visited.fast_add(x);
+			visited_literals.add(NOT(q) + (2*start_from));
 
 			////This tests passses only for some bound literals with semantic learning
 			//if ( (x >= initial_variablesize) && parameters.semantic_learning){
@@ -6256,6 +6257,7 @@ void Mistral::Solver::repace_with_disjunctions(int var, int val, int is_lb, Expl
 						}
 						*/
 						visited.fast_add(x);
+						visited_literals.add(NOT(q) +(2*start_from));
 						// q's level is below the current level, we are not expending it further
 						learnt_clause.add(q);
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
@@ -6832,10 +6834,13 @@ void Mistral::Solver::update_failure_scope(){
 void Mistral::Solver::clean_fdlearn() {
 	//std::cout << " \n\n\n clean_fdlearn " << std::endl;
 
+
 	if (parameters.simple_learn &&  decisions.size < (unsigned int) parameters.simple_learn)
 		simple_fdlearn_nogood();
 	else
 	{
+
+		visited_literals.clear();
 		Literal q , a_literal;
 
 		a_literal = NULL_ATOM;

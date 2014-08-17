@@ -80,7 +80,7 @@ namespace Mistral {
     static const int RGUIDED =  3;
     static const int RAND    =  4;
 
-    static const int nia = 44;
+    static const int nia = 45;
     static const char* int_ident[nia];
     
     static const int nsa = 15;
@@ -146,6 +146,9 @@ namespace Mistral {
     //Value  =2 : The history is updated for each SAT result in the dichotomy but used only to update the weights before each dichotomy step
     //Value  =3 : The history is updated for each SAT result in the dichotomy and used to update the weights before each dichotomy step and before starting B&B
     unsigned int weight_history;
+
+    //boolean to indicate whether vsids is used or not
+    int vsids;
 
     double Factor;
     double Decay;

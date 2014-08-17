@@ -272,7 +272,7 @@ const char* ParameterList::int_ident[ParameterList::nia] =
    "-semantic" , "-simplelearn" , "-maxnogoodsize" , "-boundedbydecision" , "-forgetsize" ,
    "-forgetbackjump" , "-hardkeep", "-hardforget" ,"-keepwhensize" , "-keepwhenbjm" ,
    "-keeplearning" , "-simulaterestart" , "-nogoodweight" , "-weighthistory" ,  "-fixedForget" ,
-   "-fixedlimitSize" , "-fixedLearntSize" , "-probforget" ,"-forgetdecsize"
+   "-fixedlimitSize" , "-fixedLearntSize" , "-probforget" ,"-forgetdecsize" , "-vsids"
   };
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
@@ -392,6 +392,7 @@ ParameterList::ParameterList(int length, char **commandline) {
 
   prob_forget=100;
   forgetdecsize=3;
+  vsids=0;
 
   if(Type == "osp") {
     Objective = "makespan";
@@ -479,6 +480,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[41] != NOVAL) fixedLearntSize  = int_param[41];
   if(int_param[42] != NOVAL) prob_forget  = int_param[42];
   if(int_param[43] != NOVAL) forgetdecsize  = int_param[43];
+  if(int_param[43] != NOVAL) vsids  = int_param[44];
 
   if (keep_when_bjm || keep_when_size)
 	  forgetall=0;
@@ -551,6 +553,7 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | fixedLearntSize" << ":" << std::right << std::setw(15) <<   fixedLearntSize << " |" << std::endl;
   os << std::left << std::setw(30) << " c | prob_forget" << ":" << std::right << std::setw(15) <<   prob_forget << " |" << std::endl;
   os << std::left << std::setw(30) << " c | forgetdecsize" << ":" << std::right << std::setw(15) <<   forgetdecsize << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | vsids" << ":" << std::right << std::setw(15) <<   vsids << " |" << std::endl;
   os << std::left << std::setw(30) << " c | nogood_based_weight" << ":" << std::right << std::setw(15) <<   nogood_based_weight << " |" << std::endl;
   os << std::left << std::setw(30) << " c | reduce learnt clause " << ":" << std::right << std::setw(15) << (reduce_clauses? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | clause forgetfulness %" << ":" << std::right << std::setw(15) << Forgetfulness << " |" << std::endl;
@@ -2174,7 +2177,14 @@ void SchedulingSolver::initialise_heuristic (int update_weights){
 
 	//std::cout << " c SchedulingSolver::initialise_heuristic" << update_weights << std::endl;
 	delete heuristic;
+	if (params->vsids){
+	//(value_ordering == "minval+guided")
+	heuristic= new GenericHeuristic< VSIDS<2>, Guided< MinValue > >(this);
+	}
+	else{
 	heuristic= new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
+	}
+
 	heuristic->initialise(sequence);
 
 	if (update_weights){
@@ -2981,8 +2991,12 @@ void SchedulingSolver::dichotomic_search()
   //   GenericWeightedDVO < FailureCountManager, MinDomainOverWeight >,
   //   RandomMinMax 
   //   > (this); 
+  BranchingHeuristic *heu=NULL;
+  if (params->vsids)
+	  heu= new GenericHeuristic< VSIDS<2>, Guided< MinValue > >(this);
+  else
+	  heu = new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
 
-  BranchingHeuristic *heu = new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
 
 
   //TODO relate that to VSIDS?
@@ -3010,14 +3024,12 @@ void SchedulingSolver::dichotomic_search()
 
 
   initialise_search(disjuncts, heu, pol);
-
-  FailureCountManager* failmngr = (FailureCountManager*)
-    				(((SchedulingWeightedDegree< TaskDomOverBoolWeight, Guided< MinValue >, 2 >*) heu)->
-    						//get_manager());
-    						var.manager);
-
-  _constraint_weight  = new Vector<double> (failmngr->constraint_weight);
-  _variable_weight = new Vector<double> (failmngr->variable_weight);
+  FailureCountManager* failmngr=NULL;
+  if (!params->vsids){
+	  failmngr = (FailureCountManager*) (((SchedulingWeightedDegree< TaskDomOverBoolWeight, Guided< MinValue >, 2 >*) heu)-> var.manager);
+	  _constraint_weight  = new Vector<double> (failmngr->constraint_weight);
+	  _variable_weight = new Vector<double> (failmngr->variable_weight);
+  }
 
   //propagate the bounds, with respect to the initial upper bound
   Outcome result = (IS_OK(propagate()) ? UNKNOWN : UNSAT);
@@ -3119,17 +3131,14 @@ void SchedulingSolver::dichotomic_search()
 		  //pool->getBestSolution()->print(std::cout);
 
 		  //Update _constraint_weight and _variable_weight
-		  delete _constraint_weight;
-		  delete _variable_weight;
 
-		  failmngr = (FailureCountManager*)
-		    								(((SchedulingWeightedDegree< TaskDomOverBoolWeight, Guided< MinValue >, 2 >*) heuristic)->
-		    										//get_manager());
-		    										var.manager);
-
-		  _constraint_weight  = new Vector<double> (failmngr->constraint_weight);
-		  _variable_weight = new Vector<double> (failmngr->variable_weight);
-
+		  if (!params->vsids){
+			  delete _constraint_weight;
+			  delete _variable_weight;
+			  failmngr = (FailureCountManager*)  (((SchedulingWeightedDegree< TaskDomOverBoolWeight, Guided< MinValue >, 2 >*) heuristic)->var.manager);
+			  _constraint_weight  = new Vector<double> (failmngr->constraint_weight);
+			  _variable_weight = new Vector<double> (failmngr->variable_weight);
+		  }
 
 	  } else {
 		  //s    	std::cout << " c NOT SAT! " ;
