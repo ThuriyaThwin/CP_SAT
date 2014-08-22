@@ -3027,6 +3027,8 @@ void SchedulingSolver::dichotomic_search()
 
   initialise_search(disjuncts, heu, pol);
   FailureCountManager* failmngr=NULL;
+  _constraint_weight = NULL;
+  _variable_weight = NULL;
   if (!params->vsids){
 	  failmngr = (FailureCountManager*) (((SchedulingWeightedDegree< TaskDomOverBoolWeight, Guided< MinValue >, 2 >*) heu)-> var.manager);
 	  _constraint_weight  = new Vector<double> (failmngr->constraint_weight);
@@ -3202,51 +3204,16 @@ void SchedulingSolver::dichotomic_search()
 		   * If the flag forgetAll is set to 1 then forget all clauses betweeen all dichotomy iterations
 		   * Otehrwise, forget the newly learnt clauses iff. the result of the current dichotomy is UNSAT
 		   */
-		  if (params->forgetall)
+		  start_over(false);
+		  if (!params->forgetall)
 		  {
-			  /*std::cout << " c  base->learnt.size=" << base->learnt.size << std::endl;
-			  std::cout << " c  base->will_be_forgotten.size=" << base->will_be_forgotten.size << std::endl;
-			  std::cout << " c unlocked clause : " << base->unlocked_clauses << std::endl;
-			   */
-			  start_over(false);
-		  }
-		  else{
-
-			  start_over(false);
-
 			  for (int i = (clauses_kept_between_dicho_steps.size-1) ; i>= 0; --i){
 				  base->learn(clauses_kept_between_dicho_steps[i], (parameters.init_activity ? parameters.activity_increment : 0.0));
 				  base->learnt.back()->locked = false;
 			  }
 			  base->unlocked_clauses+= clauses_kept_between_dicho_steps.size;
-
-/*			  int __size = base->learnt.size -current_learnClauses_size;
-			  int idx;
-
-			  while (__size--){
-				  idx = __size+current_learnClauses_size;
-				  //if (base->will_be_kept.fast_contain(idx))
-				  //  base->will_be_kept.fast_remove(idx);
-				  base->remove(idx);
-			  }
-			  */
-			  /*if (base->will_be_kept.size()){
-				  __size = base->learnt.size;
-				  while (__size--){
-					  if (! base->will_be_kept.fast_contain(__size))
-						  base->remove(__size);
-				  }
-
-			  }*/
-			  //??
-			  //current_learnClauses_size=base->learnt.size;
 		  }
-		  //std::cout << " c keeping clauses between dicho steps ?:  base->learnt.size=" << base->learnt.size << std::endl;
-		  //std::cout << " c current_learnClauses_size ?:  =" << current_learnClauses_size<< std::endl;
-		  //std::cout << " c unlocked clause : " << base->unlocked_clauses << std::endl;
-
-//		    std::cout << " NEW  base->learnt " << base->learnt  << std::endl;
-		  //  exit(1);
+		  std::cout << " c forget all clauses between dicho steps ?: " << (params->forgetall? "yes" : "no") << " i.e. the database size is now " << base->learnt.size << std::endl;
 	  }
 
 	  statistics.initialise(this);
@@ -3713,6 +3680,13 @@ stats->num_solutions++;
 
 
   initialise_heuristic(params->weight_history & 1);
+
+  if (_constraint_weight)
+	  delete _constraint_weight;
+
+  if (_variable_weight)
+	  delete _variable_weight;
+
 
   save();
   set_objective(stats->upper_bound-1);
