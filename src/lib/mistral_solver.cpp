@@ -5266,7 +5266,7 @@ void Mistral::Solver::simple_fdlearn_nogood(bool will_be_forgotten) {
 					base->forget_last();
 				}
 			}*/
-			try_to_keep_or_forget();
+			//try_to_keep_or_forget();
 		taboo_constraint = (ConstraintImplementation*)(base->learnt.back());
 		//reason_for[UNSIGNED(p)].store_reason_for_change(VALUE_EVENT, base->learnt.back());
 	} else {
@@ -5423,28 +5423,14 @@ void Mistral::Solver::generate_variables(){
 	}
 }
 
-
+/*
 void Mistral::Solver::try_to_keep_or_forget() {
 	if (parameters.hard_keep)  {
 		if (	(parameters.keep_when_bjm) && ((level - backtrack_level) >= parameters.keep_when_bjm) &&
 				(parameters.keep_when_size) && (learnt_clause.size <= parameters.keep_when_size) ) {
 			base->keep_last();
 		//	std::cout << "  \n Should keep \n "  << learnt_clause  << std::endl ;
-		/*			std::cout << "  \n hard_keep Should keep \n "  << learnt_clause  << std::endl;
-					print_clause(std::cout , base->learnt.back());
-					std::cout << " i.e. "  << learnt_clause  << std::endl;
-					std::cout << " level  "  << level   << std::endl;
-					std::cout << " decisions  "  << decisions   << std::endl;
 
-					std::cout << " index   "  << base->learnt.size-1   << std::endl;
-
-					std::cout << "  \n assignments \n "  << std::endl;
-
-					for (int i = 0 ; i <  learnt_clause.size ; ++i){
-						std::cout << " "  << learnt_clause[i]/2 << " : " <<std::endl;
-						std::cout << " "  << assignment_level[get_id_boolean_variable(learnt_clause[i]) ]<< std::endl;
-					}
-					*/
 		}
 	}
 	else if ((parameters.keep_when_bjm) && ((level - backtrack_level) >= parameters.keep_when_bjm)) {
@@ -5481,7 +5467,7 @@ void Mistral::Solver::try_to_keep_or_forget() {
 		}
 	}
 }
-
+*/
 
 void Mistral::Solver::add_Orderedliteral_tobe_explored(Literal l, int assignment_odr, Explanation* e){
 //	if (parameters.orderedExploration)

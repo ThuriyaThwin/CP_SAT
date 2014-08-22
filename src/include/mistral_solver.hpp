@@ -854,7 +854,7 @@ namespace Mistral {
     bool visited_virtual_literal(Literal q);
 
     //TODO Should probably be deleted
-    void try_to_keep_or_forget();
+    //void try_to_keep_or_forget();
 
 
     unsigned int remainPathC;

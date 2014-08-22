@@ -457,7 +457,7 @@ void Mistral::ConstraintClauseBase::initialise() {
 	  enforce_nfc1 = false;
   }
 
-  will_be_kept.initialise(0,2000000,BitSet::empt);
+  //will_be_kept.initialise(0,2000000,BitSet::empt);
   locked_toforget.initialise(0,2000000,BitSet::empt);
   // for(unsigned int i=0; i<scope.size; ++i) {
   //   reason.add(NULL);
@@ -1422,8 +1422,8 @@ void Mistral::ConstraintClauseBase::remove( const int cidx , bool static_forget)
 {
   Clause *clause = learnt[cidx];
 
-  // print_clause(std::cout, clause);
-  // std::cout << std::endl;
+   //print_clause(std::cout, clause);
+   //std::cout << std::endl;
   if (! clause->locked){
 	  --unlocked_clauses;
 
@@ -1442,7 +1442,7 @@ void Mistral::ConstraintClauseBase::remove( const int cidx , bool static_forget)
 
   //We suppose that we never remove a clause that will_be_kept!
 
-  if (will_be_kept.fast_contain(learnt.size -1)){
+/*  if (will_be_kept.fast_contain(learnt.size -1)){
 	 // std::cout << "will_be_kept" << will_be_kept << std::endl;
 	  //std::cout << "will_be_kept fast_contain " << learnt.size -1 << std::endl;
 
@@ -1451,7 +1451,7 @@ void Mistral::ConstraintClauseBase::remove( const int cidx , bool static_forget)
 	  will_be_kept.fast_remove(learnt.size -1);
 	  will_be_kept.fast_add(cidx);
   }
-
+*/
   if (locked_toforget.fast_contain(learnt.size -1)){
 	 // std::cout << "will_be_kept" << will_be_kept << std::endl;
 	  //std::cout << "will_be_kept fast_contain " << learnt.size -1 << std::endl;
@@ -1470,7 +1470,7 @@ void Mistral::ConstraintClauseBase::remove( const int cidx , bool static_forget)
   free(clause);
 }
   else{
-		  std::cout << "will_be_kept" << will_be_kept << std::endl;
+		  std::cout << "ERROR remove a locked clause? " << std::endl;
 		  exit(1);//
   }
 }

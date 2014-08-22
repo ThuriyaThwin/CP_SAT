@@ -339,7 +339,7 @@ namespace Mistral {
     //Called after a restore in order to unlock clauses.
     void unlock_atoms(Vector<int> v);
     //Clauses that will be kept between dichotomy
-	BitSet will_be_kept;
+	//BitSet will_be_kept;
 	//Improve UP?
 //	bool continue_replacement;
 
@@ -364,10 +364,10 @@ namespace Mistral {
 #endif
     }
 
-    void keep_last(){
+/*    void keep_last(){
     	will_be_kept.fast_add(learnt.size -1);
     }
-
+*/
     void fixed_forget();
     void static_forget();
 

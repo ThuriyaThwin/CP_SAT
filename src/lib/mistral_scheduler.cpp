@@ -2955,10 +2955,12 @@ void SchedulingSolver::dichotomic_search()
   //   //   }
   //   // }
 
+	Vector< Vector< Literal > > clauses_kept_between_dicho_steps;
+
 
   stats->lower_bound = get_lb();
   stats->upper_bound = get_ub();
-  int current_learnClauses_size = 0;
+//  int current_learnClauses_size = 0;
   int iteration = 1;
   
   int minfsble = stats->lower_bound;
@@ -3125,9 +3127,25 @@ void SchedulingSolver::dichotomic_search()
 		  // 	}
 
 		  std::cout << std::left << std::setw(30) << " c | new upper bound" << ":" << std::right << std::setw(15) << new_objective << " |" << std::endl;
-		  if (base){
-			  current_learnClauses_size=base->learnt.size;
+		  if (base && (!params->forgetall) ){
+
+			  clauses_kept_between_dicho_steps.clear();
+			  Vector< Literal > tmp;
+			  int __size = base->learnt.size ;
+
+			  while (__size--){
+				  tmp.clear();
+				  Clause & a = *base->learnt[__size];
+				  for (int i = (a.size -1); i >= 0; --i)
+					  tmp.add(a[i]);
+				  clauses_kept_between_dicho_steps.add(tmp);
+			  }
 		  }
+
+		  //std::cout << " \n c clauses_kept_between_dicho_steps size" << clauses_kept_between_dicho_steps.size << std::endl;
+		  //std::cout << "  c base->learnt.size" << base->learnt.size << std::endl;
+
+
 		  //pool->getBestSolution()->print(std::cout);
 
 		  //Update _constraint_weight and _variable_weight
@@ -3194,30 +3212,40 @@ void SchedulingSolver::dichotomic_search()
 		  }
 		  else{
 
-			  int __size = base->learnt.size -current_learnClauses_size;
+			  start_over(false);
+
+			  for (int i = (clauses_kept_between_dicho_steps.size-1) ; i>= 0; --i){
+				  base->learn(clauses_kept_between_dicho_steps[i], (parameters.init_activity ? parameters.activity_increment : 0.0));
+				  base->learnt.back()->locked = false;
+			  }
+			  base->unlocked_clauses+= clauses_kept_between_dicho_steps.size;
+
+/*			  int __size = base->learnt.size -current_learnClauses_size;
 			  int idx;
 
 			  while (__size--){
 				  idx = __size+current_learnClauses_size;
-				  if (base->will_be_kept.fast_contain(idx))
-					  base->will_be_kept.fast_remove(idx);
-
+				  //if (base->will_be_kept.fast_contain(idx))
+				  //  base->will_be_kept.fast_remove(idx);
 				  base->remove(idx);
 			  }
-
-			  if (base->will_be_kept.size()){
+			  */
+			  /*if (base->will_be_kept.size()){
 				  __size = base->learnt.size;
 				  while (__size--){
 					  if (! base->will_be_kept.fast_contain(__size))
 						  base->remove(__size);
 				  }
-				  current_learnClauses_size=base->learnt.size;
-			  }
+
+			  }*/
+			  //??
+			  //current_learnClauses_size=base->learnt.size;
 		  }
 		  //std::cout << " c keeping clauses between dicho steps ?:  base->learnt.size=" << base->learnt.size << std::endl;
+		  //std::cout << " c current_learnClauses_size ?:  =" << current_learnClauses_size<< std::endl;
 		  //std::cout << " c unlocked clause : " << base->unlocked_clauses << std::endl;
 
-		  //  std::cout << " NEW  base->learnt " << base->learnt  << std::endl;
+//		    std::cout << " NEW  base->learnt " << base->learnt  << std::endl;
 		  //  exit(1);
 	  }
 
@@ -3608,10 +3636,10 @@ stats->num_solutions++;
   //int old_learning = parameters.fd_learning;
   //Cancel learning : check this when alowing lazy generation
 
-  start_over(false);
+
   if (base){
 	  if (!parameters.keeplearning_in_bb){
-
+		  start_over(false);
 		  parameters.fixedForget=0;
 		  parameters.fd_learning = 0;
 		  parameters.backjump = 0;
@@ -3623,7 +3651,6 @@ stats->num_solutions++;
 
 		  delete[] visitedLowerBoundlevels;
 		  delete[] visitedUpperBoundlevels;
-
 
 		  base->enforce_nfc1 = true;
 		  base->relax();
@@ -3641,6 +3668,14 @@ stats->num_solutions++;
 		  }
 	  }
 	  else{
+		  if (params->forgetall)
+		  {
+			  /*std::cout << " c  base->learnt.size=" << base->learnt.size << std::endl;
+				  std::cout << " c  base->will_be_forgotten.size=" << base->will_be_forgotten.size << std::endl;
+				  std::cout << " c unlocked clause : " << base->unlocked_clauses << std::endl;
+			   */
+			  start_over(false);
+		  }
 		  parameters.forgetfulness = params->BBforgetfulness;
 		  parameters.nextforget=parameters.fixedForget;
 	  }
@@ -3683,6 +3718,9 @@ stats->num_solutions++;
   set_objective(stats->upper_bound-1);
   addObjective();
 
+  std::cout << " c BB base->learnt.size=" << base->learnt.size << std::endl;
+  std::cout << " c base->will_be_forgotten.size=" << base->will_be_forgotten.size << std::endl;
+  std::cout << " c unlocked clause : " << base->unlocked_clauses << std::endl;
 
   //std::cout << (get_run_time() - statistics.start_time) << std::endl;
 
