@@ -3045,6 +3045,12 @@ void SchedulingSolver::dichotomic_search()
 
   if (params->lazy_generation)
   if (base){
+	  if (!params->forgetall){
+
+		  std::cout << " !forgetall & lazy_generation are not implemented yet! " << std::endl;
+		  exit(1);
+	  }
+
 	  init_lazy_generation();
 	  base->extend_vectors(10000);
 	  for (int i = 0; i < start_from; ++i)
