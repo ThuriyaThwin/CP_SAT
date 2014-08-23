@@ -1478,13 +1478,30 @@ void Mistral::ConstraintClauseBase::remove( const int cidx , bool static_forget)
 void Mistral::ConstraintClauseBase::fixed_forget(){
 	static_forget();
 	int size =learnt.size;
-	int prob_forget = get_solver()->parameters.prob_forget;
-	int max_size = get_solver()->parameters.max_nogood_size;
+
 //	std::cout << " parameters.fixedlimitSize ? " << get_solver()->parameters.fixedlimitSize  << std::endl;
 //	std::cout << " parameters.fixedLearntSize ? " << get_solver()->parameters.fixedLearntSize  << std::endl;
 
+
 	if( size> get_solver()->parameters.fixedlimitSize)
 	{
+		if (get_solver()->parameters.forgetfulness){
+			//std::cout << " c fixed_forget : init size  " << learnt.size  << std::endl;
+
+			//forget(0.5,NULL , NULL);
+
+			forget(get_solver()->parameters.forgetfulness,get_solver()->var_activity, get_solver()->lit_activity);
+			will_be_forgotten.clear();
+			int v = locked_toforget.min();
+			for (int i = locked_toforget.size() ; i>0; --i ){
+				will_be_forgotten.add(v);
+				v= locked_toforget.next(v);
+			}
+			//std::cout << " c fixed_forget : new size  " << learnt.size  << std::endl;
+		}
+		else {
+			int prob_forget = get_solver()->parameters.prob_forget;
+			int max_size = get_solver()->parameters.max_nogood_size;
 		int rest =size- unlocked_clauses;
 
 		//for (int i = (learnt.size -1); i >=0 ; --i)
@@ -1515,7 +1532,8 @@ void Mistral::ConstraintClauseBase::fixed_forget(){
 			fixed_forget();
 			get_solver()->parameters.max_nogood_size+=_k;
 		}
-		//std::cout << " c fixed_forget : new size  " << learnt.size  << std::endl;
+		//std::cout << " c  & fixed_forget : new size  " << learnt.size  << std::endl;
+	}
 	}
 }
 
@@ -1563,10 +1581,10 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
 {
 
 	//std::cout << "\n \n c start forget with " << learnt.size << std::endl;
+
 	//TODO update remove with static forget
   int removed = 0;
   int * solution = get_solver()->last_solution_lb.stack_;
-
 
   int nlearnt = learnt.size;
   int keep=1;
@@ -1583,10 +1601,13 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
     for(i=0; i<nlearnt; ++i)
       {
 	order[i] = i;
+
 	if(lit_activity) {
+
 	  sa[i] = 0.0;
 	  Clause& clause = *(learnt[i]);
 	  real_size = j = clause.size;
+	  if (!learnt[i]->locked)
 	  while(j--) // THE ACTIVITY OF A LITERAL IS A MEASURE OF HOW MUCH IT IS "WANTED" BY THE FORMULA - SHORT CLAUSE WITH UNWANTED LITERALS ARE THEREFORE GOOD
 	    {
 	      a = UNSIGNED(clause[j]) + start_from;
@@ -1594,8 +1615,17 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
 	      // For correcteness, we need to not forget any clause that currently explains a literal.
 	      // It seems like a good idea to keep clauses with small real size anyway (they matter the most right now)
 	      //if(scope[UNSIGNED(clause[j])].is_ground()) --real_size;
-	      if(solution[a] != -INFTY && solution[a] != (int)(SIGN(clause[j]))) --real_size;
+	      //Do we need this???!
+//	      if(solution[a] != -INFTY && solution[a] != (int)(SIGN(clause[j]))) --real_size;
+
 	      //else 
+	      if (is_a_bound_literal((clause[j]))){
+	    	  std ::cout << " Virtual Literal here??" << std::endl;
+	    	  std ::cout << "(learnt[i]->locked)" << (learnt[i]->locked) << std::endl;
+	    	  std ::cout << "(learnt[i]->locked)" << learnt[i] << std::endl;
+
+	    	  exit(1);
+	      }
 	      sa[i] += (var_activity[a] + lit_activity[NOT(clause[j]) + (2*start_from)]);
 	    }
 	  // if(real_size) {
@@ -1609,6 +1639,7 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
 	  sa[i] /= (double)((real_size+1) *clause.size *clause.size);
 	  //sa[i] /= (double)(clause.size *clause.size *clause.size);
 	} else {
+
 	  sa[i] = 1.0/(double)(learnt[i]->size);
 	}
       }
@@ -1664,11 +1695,14 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
 
 
     for(i=nlearnt; i>keep && sa[order[i-1]] != INFTY;) {
-      removed += learnt[i-1]->size;
-      remove( --i );
+    	--i;
+    	if (!learnt[i]->locked){
+    		removed += learnt[i]->size;
+    		remove( i );
+    	}
     }
 
-    
+
     // /// PIECE OF CODE THAT I CAN'T UNDERSTAND!!!!
     // while(i>1 && sa[order[i-1]] != INFTY) {
     //   --i;
@@ -1702,7 +1736,7 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
 
   //TODO improve static forget with parameters
   //Static forget
-  nlearnt = learnt.size;
+  /*nlearnt = learnt.size;
   if (nlearnt>12000){
 	  std::cout << " c size limit in learntClauses : " << learnt.size << std::endl;
 	  //removed= 0;
@@ -1712,7 +1746,7 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
 		  remove( --i );
 	  }
   }
-
+	*/
   //  std::cout << " c end forget with " << learnt.size << std::endl;
   //  std::cout << " c learnt" << learnt << std::endl;
 

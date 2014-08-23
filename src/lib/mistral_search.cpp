@@ -650,6 +650,9 @@ Mistral::LearningActivityManager::LearningActivityManager(Solver *s) : solver(s)
 
   solver->add((BacktrackListener*)this);
 
+  solver->lit_activity = lit_activity.stack_;
+  solver->var_activity = var_activity.stack_;
+
 }
 
 Mistral::LearningActivityManager::~LearningActivityManager() {

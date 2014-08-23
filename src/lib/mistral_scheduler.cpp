@@ -3649,7 +3649,7 @@ stats->num_solutions++;
 			   */
 			  start_over(false);
 		  }
-		  parameters.forgetfulness = params->BBforgetfulness;
+		  //parameters.forgetfulness = params->BBforgetfulness;
 		  parameters.nextforget=parameters.fixedForget;
 	  }
   }
@@ -3699,7 +3699,7 @@ stats->num_solutions++;
   addObjective();
 
   std::cout << " c BB base->learnt.size=" << base->learnt.size << std::endl;
-  std::cout << " c base->will_be_forgotten.size=" << base->will_be_forgotten.size << std::endl;
+//  std::cout << " c base->will_be_forgotten.size=" << base->will_be_forgotten.size << std::endl;
   std::cout << " c unlocked clause : " << base->unlocked_clauses << std::endl;
 
   //std::cout << (get_run_time() - statistics.start_time) << std::endl;

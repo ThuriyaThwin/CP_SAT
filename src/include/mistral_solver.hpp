@@ -518,8 +518,8 @@ namespace Mistral {
     ConstraintClauseBase *base;
     //Vector< double > lit_activity;
     //Vector< double > var_activity;
-    //double * lit_activity;
-    //double * var_activity;
+    double * lit_activity;
+    double * var_activity;
 
     /// Variable selection and branching
     BranchingHeuristic *heuristic;
@@ -806,7 +806,7 @@ namespace Mistral {
     // //@}
 
     //FD Learning
-    void simple_fdlearn_nogood(bool will_be_forgotten = false);
+    void simple_fdlearn_nogood();
 
     struct complete_virtual_literal_informations
     {

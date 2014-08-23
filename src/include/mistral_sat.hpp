@@ -344,30 +344,6 @@ namespace Mistral {
 //	bool continue_replacement;
 
 
-//TODO Will not be used anymore! we handle this stuff with learn(..,..,true);
-    void forget_last(){
-    	locked_toforget.fast_add(learnt.size -1);
-    	will_be_forgotten.add(learnt.size -1);
-    	Clause& clause = *(learnt[learnt.size -1]);
-    	Literal a = clause[0];
-    	Literal b =clause[1];
-    	is_watched_by[a].pop();
-    	is_watched_by[b].pop();
-#ifdef _IMPROVE_UP
-    	std::cout << " NOT YET" << std::endl;
-    	exit(1);
-      /*  unsigned int _index=clauses_of_literal[];
-         while(j && stack_[--j] != elt);
-         stack_[j] = stack_[--size];
-    	int  = ;
-*/
-#endif
-    }
-
-/*    void keep_last(){
-    	will_be_kept.fast_add(learnt.size -1);
-    }
-*/
     void fixed_forget();
     void static_forget();
 
