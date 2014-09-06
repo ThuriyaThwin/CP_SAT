@@ -25,7 +25,7 @@ Where BENCHNAME is the instance file location and "-type jla" indicates that the
 By default, a pure CP model is launched. If you want to enable Clause Learning, then a large number of parameters should be specified (although one is sufficient). So far, I'm using the following command line 
 
 ```sh
-bin/scheduler BENCHNAME -type jla -fdlearning 2 -semantic 1 -keeplearning 1 -weighthistory 3 -maxnogoodsize 15 -fixedLearntSize 0 -probforget 70
+bin/scheduler BENCHNAME -type jla -fdlearning 2 -semantic 1 -keeplearning 1 -maxnogoodsize 12 -fixedLearntSize 1000  -fixedForget  5000  -fixedlimitSize   50000 -probforget 90 -vsids 1 -forgetdecsize  8
 ```
 
 
