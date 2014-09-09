@@ -5426,7 +5426,7 @@ void Mistral::Solver::add_Orderedliteral_tobe_explored(Literal l, int assignment
 
 }
 
-void Mistral::Solver::treat_assignment_literal(Literal q, bool semantic, bool orderedExploration){
+void Mistral::Solver::treat_real_literal(Literal q, bool semantic, bool orderedExploration){
 
 	unsigned int x = get_id_boolean_variable(q);
 	int lvl = assignment_level[x];
@@ -5642,7 +5642,7 @@ void Mistral::Solver::treat_assignment_literal(Literal q, bool semantic, bool or
 
 }
 
-void Mistral::Solver::treat_bound_literal(Literal q,bool semantic, bool orderedExploration){
+void Mistral::Solver::treat_virtual_literal(Literal q,bool semantic, bool orderedExploration){
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 	if ((is_lower_bound(q)))
@@ -5693,7 +5693,7 @@ void Mistral::Solver::treat_bound_literal(Literal q,bool semantic, bool orderedE
 
 #ifdef _VISITED_VL
 	bool __visited;
-	Explanation * e = tmp_VariableRangeWithLearning->get_informations_of(val,is_lb, lvl, odr, __visited ) ;
+	Explanation * e = tmp_VariableRangeWithLearning->get_informations_of(val,is_lb, lvl, odr, __visited, true ) ;
 
 /*	if (__visited){
 		std::cout << "visited !! " << val << " " << is_lb<< " " << lvl<< " " << odr<< " " << __visited << " " <<std::endl;
@@ -6023,10 +6023,10 @@ void Mistral::Solver::treat_explanation(Explanation::iterator start,Explanation:
 		//		std::cout << " *start: "<< *start << std::endl;
 		if (is_a_bound_literal(*start))
 		{
-			treat_bound_literal(*start, semantic, orderedExploration);
+			treat_virtual_literal(*start, semantic, orderedExploration);
 		}
 		else{
-			treat_assignment_literal(*start, semantic, orderedExploration);
+			treat_real_literal(*start, semantic, orderedExploration);
 		}
 		++start;
 	}
@@ -6168,7 +6168,7 @@ void Mistral::Solver::repace_with_disjunctions(int var, int val, int is_lb, Expl
 			//		std::cout << " *start: "<< *start << std::endl;
 			if (is_a_bound_literal(q))
 			{
-				//			treat_bound_literal(*start);
+				//			treat_virtual_literal(*start);
 				__is_lb = is_lower_bound(q);
 				__val = get_value_from_literal(q);
 				__var = get_variable_from_literal(q);
@@ -6176,7 +6176,7 @@ void Mistral::Solver::repace_with_disjunctions(int var, int val, int is_lb, Expl
 						<VariableRangeWithLearning*>(variables[__var].range_domain);
 #ifdef _VISITED_VL
 				//bool __visited;
-				_e = tmp_VariableRangeWithLearning->get_informations_of(__val,__is_lb,__lvl, __odr,__visited);
+				_e = tmp_VariableRangeWithLearning->get_informations_of(__val,__is_lb,__lvl, __odr,__visited, true);
 				if (!__visited){
 #else
 				_e = tmp_VariableRangeWithLearning->get_informations_of(__val,__is_lb,__lvl, __odr);
@@ -6549,7 +6549,8 @@ bool Mistral::Solver::learn_virtual_literals(bool semantic, bool lazyGeneration)
 
 	int __reduce = parameters.reduce_learnt_clause;
 	if (__reduce){
-		reduce_bounds();
+		//TODO reduce_bounds NOT working!!!
+		//reduce_bounds();
 		reduce_clause(true);
 	}
 
@@ -7120,9 +7121,12 @@ bool Mistral::Solver::visited_virtual_literal(Literal q){
 	int lvl, odr;
 #ifdef _VISITED_VL
 	bool __visited;
-	tmp_VariableRangeWithLearning->get_informations_of(val,is_lb, lvl,odr,__visited);
-	std::cout << "c reduced Not working with visited yet" << std::endl;
-	exit(1);
+	tmp_VariableRangeWithLearning->get_informations_of(val,is_lb, lvl,odr,__visited,false);
+	if (__visited)
+		return true;
+
+	//std::cout << "c reduced Not working with visited yet" << std::endl;
+	//exit(1);
 #else
 	tmp_VariableRangeWithLearning->get_informations_of(val,is_lb, lvl,odr);
 #endif
@@ -7391,16 +7395,16 @@ Mistral::Outcome Mistral::Solver::branch_right() {
 #endif
 
     Mistral::Decision deduction;
-
-    if(parameters.fd_learning && !culprit.empty()) {
+    int __fd_learning = parameters.fd_learning;
+    if(__fd_learning && !culprit.empty()) {
 
 #ifdef _OLD_
 
 #else
-    	if(parameters.fd_learning==1)
-    		simple_fdlearn_nogood();
-    	else if(parameters.fd_learning==2)
+    	if(__fd_learning==2)
     		clean_fdlearn();
+    	else if(__fd_learning==1)
+    		simple_fdlearn_nogood();
     	else {
     		std::cout << " c Model not implemented" << std::endl;
     		exit(1);

@@ -887,8 +887,8 @@ namespace Mistral {
     void generate_variables();
     void add_Orderedliteral_tobe_explored(Literal l, int assignment_odr, Explanation* e);
     Explanation * get_next_to_explore(Literal & a) ;
-    void treat_assignment_literal(Literal q,bool semantic, bool orderedExploration);
-    void treat_bound_literal(Literal q, bool semantic, bool orderedExploration);
+    void treat_real_literal(Literal q,bool semantic, bool orderedExploration);
+    void treat_virtual_literal(Literal q, bool semantic, bool orderedExploration);
     //    void repace_with_disjunctions(Literal q);
     void repace_with_disjunctions(int var, int val, int is_lb, Explanation * current_explanation);
     void generate_and_learn(complete_virtual_literal_informations info);

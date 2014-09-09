@@ -1579,7 +1579,7 @@ namespace Mistral {
 #endif
 
 #ifdef _VISITED_VL
-	  Explanation* get_informations_of(int val , int lb, int & lvl, int & assign_order, bool& visited);
+	  Explanation* get_informations_of(int val , int lb, int & lvl, int & assign_order, bool& visited, bool update_visited);
 #else
 	  Explanation* get_informations_of(int val , int lb, int & lvl, int & assign_order);
 #endif
