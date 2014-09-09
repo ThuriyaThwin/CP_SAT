@@ -1533,19 +1533,20 @@ namespace Mistral {
 
   public:
 	  VariableRangeWithLearning(const int lb, const int ub) : VariableRange(lb,ub) {
-		  lowerbounds.clear();
-		  upperbounds.clear();
-		  lower_bound_reasons.clear();
-		  upper_bound_reasons.clear();
-		  lower_bound_levels.clear();
-		  upper_bound_levels.clear();
+		  //initilise the vector with a capacity 10000
+		  lowerbounds.initialise(10000);
+		  upperbounds.initialise(10000);
+		  lower_bound_reasons.initialise(10000);
+		  upper_bound_reasons.initialise(10000);
+		  lower_bound_levels.initialise(10000);
+		  upper_bound_levels.initialise(10000);
 #ifdef _ASSIGNMENT_ORDER
-		  lower_bound_orders.clear();
-		  upper_bound_orders.clear();
+		  lower_bound_orders.initialise(10000);
+		  upper_bound_orders.initialise(10000);
 #endif
 #ifdef _VISITED_VL
-		  visited_upper_bounds.clear();
-		  visited_lower_bounds.clear();
+		  visited_upper_bounds.initialise(10000);
+		  visited_lower_bounds.initialise(10000);
 #endif
 		  lowerbounds.add(lb);
 		  upperbounds.add(ub);
@@ -1792,8 +1793,11 @@ namespace Mistral {
 
 #ifdef _VISITED_VL
 	  void clean_visited(){
-		//todo rewrite this..
-		  int __s = visited_upper_bounds.size;
+
+		  //init starting from stack +1 because the first one should be true.
+		  std::fill(visited_upper_bounds.stack_ +1, visited_upper_bounds.stack_+visited_upper_bounds.size, false);
+		  std::fill(visited_lower_bounds.stack_ +1, visited_lower_bounds.stack_+visited_lower_bounds.size, false);
+		  /*int __s = visited_upper_bounds.size;
 		  for (int i =1; i < __s; ++i){
 			  if (visited_upper_bounds[i])
 				  visited_upper_bounds[i]=false;
@@ -1803,6 +1807,7 @@ namespace Mistral {
 			  if (visited_lower_bounds[i])
 				  visited_lower_bounds[i]=false;
 		  }
+		  */
 
 	  }
 #endif
