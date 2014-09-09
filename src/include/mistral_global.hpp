@@ -156,6 +156,7 @@ namespace Mistral {
 #define _RECOVER_GENERATED true
 //#define _BOUND_EQUIVALENCE true
 #define _ASSIGNMENT_ORDER true
+#define _VISITED_VL true
 
   //#define   _DEBUG_FAIL true
 

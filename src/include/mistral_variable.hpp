@@ -1543,6 +1543,10 @@ namespace Mistral {
 		  lower_bound_orders.clear();
 		  upper_bound_orders.clear();
 #endif
+#ifdef _VISITED_VL
+		  visited_upper_bounds.clear();
+		  visited_lower_bounds.clear();
+#endif
 		  lowerbounds.add(lb);
 		  upperbounds.add(ub);
 		  lower_bound_reasons.add(NULL);
@@ -1553,6 +1557,10 @@ namespace Mistral {
 #ifdef _ASSIGNMENT_ORDER
 		  lower_bound_orders.add(0);
 		  upper_bound_orders.add(0);
+#endif
+#ifdef _VISITED_VL
+		  visited_upper_bounds.add(true);
+		  visited_lower_bounds.add(true);
 #endif
 		  domainConstraint = NULL;
 #ifdef _ASSIGNMENT_ORDER
@@ -1569,7 +1577,12 @@ namespace Mistral {
 	  int level_of(int val, bool lb) ;
 #endif
 
+#ifdef _VISITED_VL
+	  Explanation* get_informations_of(int val , int lb, int & lvl, int & assign_order, bool& visited);
+#else
 	  Explanation* get_informations_of(int val , int lb, int & lvl, int & assign_order);
+#endif
+
 
 	  /// Remove all values strictly lower than l
 	  inline Event set_min(const int lo,  Explanation * C) {
@@ -1587,6 +1600,9 @@ namespace Mistral {
 #ifdef _ASSIGNMENT_ORDER
 			  lower_bound_orders.add(*order);
 			  ++ (*order);
+#endif
+#ifdef _VISITED_VL
+		  visited_lower_bounds.add(false);
 #endif
 
 		  if(min == max) lower_bound |= VALUE_EVENT;
@@ -1612,6 +1628,9 @@ namespace Mistral {
 #ifdef _ASSIGNMENT_ORDER
 			  upper_bound_orders.add(*order);
 			  ++ (*order);
+#endif
+#ifdef _VISITED_VL
+		  visited_upper_bounds.add(false);
 #endif
 
 		  //HERE : How to backtrack ?
@@ -1738,6 +1757,9 @@ namespace Mistral {
 #ifdef _ASSIGNMENT_ORDER
 					  lower_bound_orders.pop();
 #endif
+#ifdef _VISITED_VL
+		  visited_lower_bounds.pop();
+#endif
 				  }
 				  else
 				  {
@@ -1755,6 +1777,9 @@ namespace Mistral {
 #ifdef _ASSIGNMENT_ORDER
 					  upper_bound_orders.pop();
 #endif
+#ifdef _VISITED_VL
+		  visited_upper_bounds.pop();
+#endif
 				  }
 				  else
 				  {
@@ -1765,6 +1790,23 @@ namespace Mistral {
 	  }
 
 
+#ifdef _VISITED_VL
+	  void clean_visited(){
+		//todo rewrite this..
+		  int __s = visited_upper_bounds.size;
+		  for (int i =1; i < __s; ++i){
+			  if (visited_upper_bounds[i])
+				  visited_upper_bounds[i]=false;
+		  }
+		   __s = visited_lower_bounds.size;
+		  for (int i =1; i <  __s; ++i){
+			  if (visited_lower_bounds[i])
+				  visited_lower_bounds[i]=false;
+		  }
+
+	  }
+#endif
+
 	  Vector<int> lowerbounds;
 	  Vector<int> upperbounds;
 
@@ -1774,6 +1816,12 @@ namespace Mistral {
 	  Vector<Explanation*> upper_bound_reasons;
 	  Vector<int> lower_bound_levels;
 	  Vector<int> upper_bound_levels;
+
+#ifdef _VISITED_VL
+	  Vector<bool> visited_upper_bounds;
+	  Vector<bool> visited_lower_bounds;
+#endif
+
 #ifdef _ASSIGNMENT_ORDER
 	  Vector<int> lower_bound_orders;
 	  Vector<int> upper_bound_orders;

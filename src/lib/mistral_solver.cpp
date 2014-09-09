@@ -5690,7 +5690,20 @@ void Mistral::Solver::treat_bound_literal(Literal q,bool semantic, bool orderedE
 	VariableRangeWithLearning* tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>
 	(variables[var].range_domain);
 	int lvl, odr;
+
+#ifdef _VISITED_VL
+	bool __visited;
+	Explanation * e = tmp_VariableRangeWithLearning->get_informations_of(val,is_lb, lvl, odr, __visited ) ;
+
+/*	if (__visited){
+		std::cout << "visited !! " << val << " " << is_lb<< " " << lvl<< " " << odr<< " " << __visited << " " <<std::endl;
+	}
+*/
+
+	if (!__visited ){
+#else
 	Explanation * e = tmp_VariableRangeWithLearning->get_informations_of(val,is_lb, lvl, odr ) ;
+#endif
 
 #ifdef 	_DEBUG_FD_NOGOOD
 	if(_DEBUG_FD_NOGOOD){
@@ -5875,7 +5888,9 @@ void Mistral::Solver::treat_bound_literal(Literal q,bool semantic, bool orderedE
 		}
 	}
 }
-
+#ifdef _VISITED_VL
+}
+#endif
 
 Explanation * Mistral::Solver::get_next_to_explore(Literal & lit) {
 
@@ -6139,6 +6154,9 @@ void Mistral::Solver::repace_with_disjunctions(int var, int val, int is_lb, Expl
 		int __is_lb, __val , __var ,__lvl, __odr;
 		VariableRangeWithLearning* tmp_VariableRangeWithLearning ;
 		unsigned int x ;
+#ifdef _VISITED_VL
+				bool __visited;
+#endif
 		while(start < end) {
 			q = *start;
 			//++start;
@@ -6156,8 +6174,13 @@ void Mistral::Solver::repace_with_disjunctions(int var, int val, int is_lb, Expl
 				__var = get_variable_from_literal(q);
 				tmp_VariableRangeWithLearning =static_cast
 						<VariableRangeWithLearning*>(variables[__var].range_domain);
+#ifdef _VISITED_VL
+				//bool __visited;
+				_e = tmp_VariableRangeWithLearning->get_informations_of(__val,__is_lb,__lvl, __odr,__visited);
+				if (!__visited){
+#else
 				_e = tmp_VariableRangeWithLearning->get_informations_of(__val,__is_lb,__lvl, __odr);
-
+#endif
 #ifdef 	_DEBUG_FD_NOGOOD
 				if(_DEBUG_FD_NOGOOD){
 					std::cout << " its level :  " << lvl << std::endl;
@@ -6170,6 +6193,9 @@ void Mistral::Solver::repace_with_disjunctions(int var, int val, int is_lb, Expl
 							complete_virtual_literal_informations(q, __lvl, _e, __var, __val, __is_lb)
 					);
 				}
+#ifdef _VISITED_VL
+				}
+#endif
 			}
 			else{
 
@@ -6825,6 +6851,10 @@ void Mistral::Solver::clean_fdlearn() {
 				orderedExploration= parameters.orderedExploration,
 				lazyGeneration = parameters.lazy_generation;
 
+#ifdef _VISITED_VL
+		for (int i = 0; i< start_from; ++i)
+			(static_cast<VariableRangeWithLearning *> (variables[i].range_domain))->clean_visited();
+#endif
 
 		do {
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
@@ -7088,8 +7118,14 @@ bool Mistral::Solver::visited_virtual_literal(Literal q){
 	VariableRangeWithLearning* tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
 
 	int lvl, odr;
+#ifdef _VISITED_VL
+	bool __visited;
+	tmp_VariableRangeWithLearning->get_informations_of(val,is_lb, lvl,odr,__visited);
+	std::cout << "c reduced Not working with visited yet" << std::endl;
+	exit(1);
+#else
 	tmp_VariableRangeWithLearning->get_informations_of(val,is_lb, lvl,odr);
-
+#endif
 
 	if (lvl<=search_root)
 		return true;

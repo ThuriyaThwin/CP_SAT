@@ -1964,8 +1964,11 @@ int Mistral::VariableImplementation::assigned_at_last_level() const {
   return ((Solver*)solver)->assignment_level[id] == solver->level;
 }
 
-
+#ifdef _VISITED_VL
+Mistral::Explanation* Mistral::VariableRangeWithLearning::get_informations_of(int val , int lb, int & lvl, int & assign_order, bool& visited){
+#else
 Mistral::Explanation* Mistral::VariableRangeWithLearning::get_informations_of(int val , int lb, int & lvl, int & assign_order){
+#endif
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 	if (lowerbounds.size != lower_bound_levels.size){
@@ -1986,6 +1989,10 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::get_informations_of(in
 			{
 				lvl =  lower_bound_levels[size];
 				assign_order = lower_bound_orders[size];
+#ifdef _VISITED_VL
+				visited= visited_lower_bounds[size];
+				visited_lower_bounds[size]= true;
+#endif
 				return lower_bound_reasons[size];
 			}
 	}
@@ -1997,6 +2004,10 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::get_informations_of(in
 			{
 				lvl =  upper_bound_levels[size];
 				assign_order =upper_bound_orders[size];
+#ifdef _VISITED_VL
+				visited= visited_upper_bounds[size];
+				visited_upper_bounds[size]= true;
+#endif
 				return upper_bound_reasons[size];
 			}
 	}
