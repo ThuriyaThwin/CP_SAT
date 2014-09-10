@@ -1547,6 +1547,8 @@ namespace Mistral {
 #ifdef _VISITED_VL
 		  visited_upper_bounds.initialise(10000);
 		  visited_lower_bounds.initialise(10000);
+		  lb_var_visited=0;
+		  ub_var_visited=0;
 #endif
 		  lowerbounds.add(lb);
 		  upperbounds.add(ub);
@@ -1794,20 +1796,29 @@ namespace Mistral {
 #ifdef _VISITED_VL
 	  void clean_visited(){
 
+		  if (lb_var_visited ||  ub_var_visited){
 		  //init starting from stack +1 because the first one should be true.
-		  std::fill(visited_upper_bounds.stack_ +1, visited_upper_bounds.stack_+visited_upper_bounds.size, false);
-		  std::fill(visited_lower_bounds.stack_ +1, visited_lower_bounds.stack_+visited_lower_bounds.size, false);
-		  /*int __s = visited_upper_bounds.size;
-		  for (int i =1; i < __s; ++i){
-			  if (visited_upper_bounds[i])
+		  //std::fill(visited_upper_bounds.stack_ +1, visited_upper_bounds.stack_+visited_upper_bounds.size, false);
+		  //std::fill(visited_lower_bounds.stack_ +1, visited_lower_bounds.stack_+visited_lower_bounds.size, false);
+
+		  int __s = visited_upper_bounds.size;
+		  for (int i =1; (i < __s) && ub_var_visited; ++i){
+			  if (visited_upper_bounds[i]){
 				  visited_upper_bounds[i]=false;
+				  --ub_var_visited;
+			  }
 		  }
 		   __s = visited_lower_bounds.size;
-		  for (int i =1; i <  __s; ++i){
-			  if (visited_lower_bounds[i])
+		  for (int i =1; (i <  __s)  && lb_var_visited; ++i){
+			  if (visited_lower_bounds[i]){
 				  visited_lower_bounds[i]=false;
+				  --lb_var_visited;
+			  }
 		  }
-		  */
+
+		  lb_var_visited = 0;
+		  ub_var_visited = 0;
+		  }
 
 	  }
 #endif
@@ -1825,6 +1836,10 @@ namespace Mistral {
 #ifdef _VISITED_VL
 	  Vector<bool> visited_upper_bounds;
 	  Vector<bool> visited_lower_bounds;
+	  //counts how many times UB literals are visited
+	  int ub_var_visited ;
+	  //counts how many times LB literals are visited
+	  int lb_var_visited ;
 #endif
 
 #ifdef _ASSIGNMENT_ORDER

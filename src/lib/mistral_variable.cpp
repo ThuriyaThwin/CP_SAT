@@ -1991,8 +1991,12 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::get_informations_of(in
 				assign_order = lower_bound_orders[size];
 #ifdef _VISITED_VL
 				visited= visited_lower_bounds[size];
-				if (update_visited)
+				if (update_visited && (!visited)){
 					visited_lower_bounds[size]= true;
+					//if (!var_visited)
+					//	var_visited=true;
+					++lb_var_visited;
+				}
 #endif
 				return lower_bound_reasons[size];
 			}
@@ -2007,8 +2011,12 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::get_informations_of(in
 				assign_order =upper_bound_orders[size];
 #ifdef _VISITED_VL
 				visited= visited_upper_bounds[size];
-				if (update_visited)
+				if (update_visited && (!visited)){
 					visited_upper_bounds[size]= true;
+					//if (!var_visited)
+					//	var_visited=true;
+					++ub_var_visited;
+				}
 #endif
 				return upper_bound_reasons[size];
 			}
