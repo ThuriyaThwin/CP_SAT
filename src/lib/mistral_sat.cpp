@@ -1475,22 +1475,26 @@ void Mistral::ConstraintClauseBase::remove( const int cidx , bool static_forget)
   }
 }
 
-void Mistral::ConstraintClauseBase::fixed_forget(){
+void Mistral::ConstraintClauseBase::fixed_forget(double _forgetfulness, int _fixedlimitSize,
+		int _prob_forget, int _max_nogood_size, int _fixedLearntSize, int _forgetdecsize ){
 	static_forget();
 	int size =learnt.size;
 
 //	std::cout << " parameters.fixedlimitSize ? " << get_solver()->parameters.fixedlimitSize  << std::endl;
 //	std::cout << " parameters.fixedLearntSize ? " << get_solver()->parameters.fixedLearntSize  << std::endl;
+	//std::cout << " call with _fixedlimitSize  " << _fixedlimitSize  << std::endl;
+	//std::cout << " size " << size  << std::endl;
+	//std::cout << " unlocked_clauses  " << unlocked_clauses  << std::endl;
 
 
-	if( size> get_solver()->parameters.fixedlimitSize)
+	if( size> _fixedlimitSize)
 	{
-		if (get_solver()->parameters.forgetfulness){
+		if (_forgetfulness){
 			//std::cout << " c fixed_forget : init size  " << learnt.size  << std::endl;
 
 			//forget(0.5,NULL , NULL);
 
-			forget(get_solver()->parameters.forgetfulness,get_solver()->var_activity, get_solver()->lit_activity);
+			forget(_forgetfulness,get_solver()->var_activity, get_solver()->lit_activity);
 			will_be_forgotten.clear();
 			int v = locked_toforget.min();
 			for (int i = locked_toforget.size() ; i>0; --i ){
@@ -1500,21 +1504,21 @@ void Mistral::ConstraintClauseBase::fixed_forget(){
 			//std::cout << " c fixed_forget : new size  " << learnt.size  << std::endl;
 		}
 		else {
-			int prob_forget = get_solver()->parameters.prob_forget;
-			int max_size = get_solver()->parameters.max_nogood_size;
-		int rest =size- unlocked_clauses;
+			//int prob_forget = _prob_forget;
+			//int max_size = _max_nogood_size;
+		int rest =((int) size)- unlocked_clauses;
 
 		//for (int i = (learnt.size -1); i >=0 ; --i)
 		//if (rest < 2000) {
-		int s_limit = get_solver()->parameters.fixedLearntSize;
+		//int s_limit = _fixedLearntSize;
 
-		while ((rest< s_limit) && (size--))
+		while ((rest< _fixedLearntSize) && (size--))
 			if(!learnt[size]->locked)
 				++rest;
 		//}
 
 		while (size--)
-			if((!learnt[size]->locked) && (learnt[size]->size >max_size) && (randint(100) <prob_forget))
+			if((!learnt[size]->locked) && (((int)learnt[size]->size) >_max_nogood_size) && (randint(100) <_prob_forget))
 				remove(size);
 
 		will_be_forgotten.clear();
@@ -1524,14 +1528,18 @@ void Mistral::ConstraintClauseBase::fixed_forget(){
 			v= locked_toforget.next(v);
 		}
 
-		if( learnt.size> get_solver()->parameters.fixedlimitSize){
-			int _k = get_solver()->parameters.forgetdecsize;
-			get_solver()->parameters.max_nogood_size-=_k;
-			//std::cout << " c database size is still large! recalling fixedForget with size bounded by " <<
-			//		get_solver()->parameters.max_nogood_size  << std::endl;
-			fixed_forget();
-			get_solver()->parameters.max_nogood_size+=_k;
-		}
+		//replace _fixedlimitSize with newlimit
+		//int newlimit = _fixedlimitSize*0.8;
+		//if (newlimit>(_fixedLearntSize + learnt.size -unlocked_clauses ))
+			if( learnt.size > _fixedLearntSize){
+				//int _k = _forgetdecsize;
+				//get_solver()->parameters.max_nogood_size-=_k;
+				//std::cout << " c database size is still large! recalling fixedForget with size bounded by " <<
+				//		_max_nogood_size - _forgetdecsize << std::endl;
+				fixed_forget(_forgetfulness, _fixedlimitSize ,
+						_prob_forget, (_max_nogood_size - _forgetdecsize), _fixedLearntSize, _forgetdecsize );
+				//get_solver()->parameters.max_nogood_size+=_k;
+			}
 		//std::cout << " c  & fixed_forget : new size  " << learnt.size  << std::endl;
 	}
 	}
@@ -1548,25 +1556,26 @@ void Mistral::ConstraintClauseBase::static_forget(){
 
 	std::cout << " static forget " ;*/
 
-	locked_toforget.clear();
-	for (int i = (will_be_forgotten.size -1); i >=0 ; --i){
-		if(!learnt[will_be_forgotten[i]]->locked){
-			//++k;
-			remove(will_be_forgotten[i], true);
+	if (will_be_forgotten.size){
+		locked_toforget.clear();
+		for (int i = (will_be_forgotten.size -1); i >=0 ; --i){
+			if(!learnt[will_be_forgotten[i]]->locked){
+				//++k;
+				remove(will_be_forgotten[i], true);
+			}
+			else
+				//v.add(will_be_forgotten[i]);
+				locked_toforget.fast_add(will_be_forgotten[i]);
 		}
-		else
-			//v.add(will_be_forgotten[i]);
-			locked_toforget.fast_add(will_be_forgotten[i]);
+
+		will_be_forgotten.clear();
+
+		int v = locked_toforget.min();
+		for (int i = locked_toforget.size() ; i>0; --i ){
+			will_be_forgotten.add(v);
+			v= locked_toforget.next(v);
+		}
 	}
-
-	will_be_forgotten.clear();
-
-	int v = locked_toforget.min();
-	for (int i = locked_toforget.size() ; i>0; --i ){
-		will_be_forgotten.add(v);
-		v= locked_toforget.next(v);
-	}
-
 }
 
 

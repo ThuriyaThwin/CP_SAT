@@ -7451,7 +7451,8 @@ Mistral::Outcome Mistral::Solver::branch_right() {
 
     if (parameters.fixedForget
     		&& (statistics.num_failures > parameters.nextforget)){
-    	base->fixed_forget();
+    	base->fixed_forget(parameters.forgetfulness, parameters.fixedlimitSize,
+    			parameters.prob_forget, parameters.max_nogood_size, parameters.fixedLearntSize, parameters.forgetdecsize);
 
     	//statistics.size_learned -= base->forget(0.5,NULL, NULL);
 

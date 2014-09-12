@@ -344,7 +344,8 @@ namespace Mistral {
 //	bool continue_replacement;
 
 
-    void fixed_forget();
+    void fixed_forget(double _forgetfulness, int _fixedlimitSize,
+    		int _prob_forget, int _max_nogood_size, int _fixedLearntSize, int _forgetdecsize );
     void static_forget();
 
 	BitSet locked_toforget;
