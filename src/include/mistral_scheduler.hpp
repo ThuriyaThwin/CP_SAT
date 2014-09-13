@@ -80,7 +80,7 @@ namespace Mistral {
     static const int RGUIDED =  3;
     static const int RAND    =  4;
 
-    static const int nia = 46;
+    static const int nia = 48;
     static const char* int_ident[nia];
     
     static const int nsa = 15;
@@ -151,6 +151,9 @@ namespace Mistral {
     int vsids;
     //To enable instance-based clause database size.
     int autoconfig;
+    //limits used with autoconf
+    int autoconfigublimit;
+    int autoconfiglblimit;
 
     double Factor;
     double Decay;

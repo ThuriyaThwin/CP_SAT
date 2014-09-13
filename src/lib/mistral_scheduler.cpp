@@ -272,7 +272,8 @@ const char* ParameterList::int_ident[ParameterList::nia] =
    "-semantic" , "-simplelearn" , "-maxnogoodsize" , "-boundedbydecision" , "-forgetsize" ,
    "-forgetbackjump" , "-hardkeep", "-hardforget" ,"-keepwhensize" , "-keepwhenbjm" ,
    "-keeplearning" , "-simulaterestart" , "-nogoodweight" , "-weighthistory" ,  "-fixedForget" ,
-   "-fixedlimitSize" , "-fixedLearntSize" , "-probforget" ,"-forgetdecsize" , "-vsids", "-autoconfig"
+   "-fixedlimitSize" , "-fixedLearntSize" , "-probforget" ,"-forgetdecsize" , "-vsids",
+   "-autoconfig" , "-autoconfigublimit" , "-autoconfiglblimit"
   };
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
@@ -395,6 +396,8 @@ ParameterList::ParameterList(int length, char **commandline) {
   vsids=0;
 
   autoconfig =0;
+  autoconfigublimit=150000;
+  autoconfiglblimit=10000;
 
   if(Type == "osp") {
     Objective = "makespan";
@@ -484,6 +487,8 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[43] != NOVAL) forgetdecsize  = int_param[43];
   if(int_param[44] != NOVAL) vsids  = int_param[44];
   if(int_param[45] != NOVAL) autoconfig  = int_param[45];
+  if(int_param[46] != NOVAL) autoconfigublimit  = int_param[46];
+  if(int_param[47] != NOVAL) autoconfiglblimit  = int_param[47];
 
 
   if (keep_when_bjm || keep_when_size)
@@ -559,6 +564,8 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | forgetdecsize" << ":" << std::right << std::setw(15) <<   forgetdecsize << " |" << std::endl;
   os << std::left << std::setw(30) << " c | vsids" << ":" << std::right << std::setw(15) <<   vsids << " |" << std::endl;
   os << std::left << std::setw(30) << " c | autoconfig" << ":" << std::right << std::setw(15) <<   autoconfig << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | autoconfigublimit" << ":" << std::right << std::setw(15) <<   autoconfigublimit << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | autoconfiglblimit" << ":" << std::right << std::setw(15) <<   autoconfiglblimit << " |" << std::endl;
   os << std::left << std::setw(30) << " c | nogood_based_weight" << ":" << std::right << std::setw(15) <<   nogood_based_weight << " |" << std::endl;
   os << std::left << std::setw(30) << " c | reduce learnt clause " << ":" << std::right << std::setw(15) << (reduce_clauses? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | clause forgetfulness %" << ":" << std::right << std::setw(15) << Forgetfulness << " |" << std::endl;
@@ -2185,11 +2192,11 @@ void SchedulingSolver::setup() {
 		  else
 			  parameters. fixedlimitSize=  data->nDisjuncts() * params->autoconfig ;
 
-		  if (parameters. fixedlimitSize > 150000)
-			  parameters. fixedlimitSize=150000;
+		  if (parameters. fixedlimitSize > params->autoconfigublimit)
+			  parameters. fixedlimitSize=params->autoconfigublimit;
 		  else
-			  if (parameters. fixedlimitSize < 10000)
-				  parameters. fixedlimitSize = 10000 ;
+			  if (parameters. fixedlimitSize < params->autoconfiglblimit)
+				  parameters. fixedlimitSize = params->autoconfiglblimit ;
 
 		  parameters.fixedLearntSize = (parameters.fixedlimitSize /3);
 		  params->fixedLearntSize =   parameters.fixedLearntSize ;
