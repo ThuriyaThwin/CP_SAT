@@ -848,9 +848,12 @@ namespace Mistral {
     //int graph_size;
 
     //Reduce clause
-    void reduce_clause(bool semantic_reduction=false);
-    int reduce_bounds();
-    bool visited_explanation(Literal q, bool semantic_reduction);
+//    void reduce_clause(bool semantic_reduction=false);
+    void reduce_clause();
+    int simple_bound_reduction();
+    void reduce_bounds();
+//    bool visited_explanation(Literal q, bool semantic_reduction);
+    bool visited_explanation(Literal q);
     bool visited_virtual_literal(Literal q);
 
     //TODO Should probably be deleted

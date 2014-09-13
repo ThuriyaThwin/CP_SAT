@@ -6260,7 +6260,10 @@ bool Mistral::Solver::should_forget() {
 	return result;
 }
 
-int Mistral::Solver::reduce_bounds(){
+
+
+
+int Mistral::Solver::simple_bound_reduction(){
 
 	int reduced = 0;
 	bool remove ;
@@ -6281,7 +6284,165 @@ int Mistral::Solver::reduce_bounds(){
 		visited_val = visitedLowerBoundvalues[visited_var] ;
 		explanation =  visitedLowerBoundExplanations[visited_var] ;
 
-		visitedLowerBounds.fast_remove(visited_var);
+		tmp_literal=encode_bound_literal(visited_var, visited_val,0);
+
+
+		VariableRangeWithLearning* tmp_VariableRangeWithLearning =
+				static_cast<VariableRangeWithLearning*>(variables[visited_var].range_domain);
+
+		if (lazygeneration){
+			dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
+			id_bool = -1;
+			id_bool = dom_constraint->value_exist( visited_val-1 ) ;
+
+
+			if (id_bool>0){
+
+				if (explanation == reason_for[id_bool])
+					start_tmp_iterator = explanation->get_reason_for_literal(encode_boolean_variable_as_literal(id_bool, 1), end_tmp_iterator);
+				else
+					start_tmp_iterator = explanation->get_reason_for_literal(tmp_literal, end_tmp_iterator);
+
+			}
+			else{
+				start_tmp_iterator = explanation->get_reason_for_literal(tmp_literal, end_tmp_iterator);
+			}
+		}
+		else{
+			start_tmp_iterator = explanation->get_reason_for_literal(tmp_literal, end_tmp_iterator);
+		}
+		//		std::cout << "tmp_literal" << tmp_literal <<std::endl;
+
+		remove=true;
+
+		if (!explanation) {
+			std::cout << " NULL explanation of a virtual literal when reducing the nogood" << std::endl;
+			exit(1);
+		}
+
+		while(remove && (start_tmp_iterator < end_tmp_iterator)) {
+			tmp = *start_tmp_iterator;
+			++start_tmp_iterator;
+
+			if (is_a_bound_literal(tmp))
+			{
+				if (!visited_virtual_literal(tmp))
+					remove = false;
+			}
+			else{
+				int id_tmp = get_id_boolean_variable(tmp);
+				if (assignment_level[id_tmp]>search_root){
+					if ( !visited.fast_contain(id_tmp))
+						remove = false;
+
+				}
+			}
+		}
+
+		if (remove){
+			visitedLowerBounds.fast_remove(visited_var);
+			++reduced;
+		}
+
+		visited_var= visitedLowerBounds.next(visited_var);
+	}
+
+	size_bitset =visitedUpperBounds.size();
+
+	visited_var = visitedUpperBounds.min();
+
+	for (int i = size_bitset ; i>0; --i ){
+		visited_val = visitedUpperBoundvalues[visited_var] ;
+		explanation =  visitedUpperBoundExplanations[visited_var] ;
+
+		//visitedUpperBounds.fast_remove(visited_var);
+		tmp_literal=encode_bound_literal(visited_var, visited_val,1);
+
+		VariableRangeWithLearning* tmp_VariableRangeWithLearning =
+				static_cast<VariableRangeWithLearning*>(variables[visited_var].range_domain);
+
+
+		if (lazygeneration){
+			dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
+			id_bool = -1;
+
+			id_bool = dom_constraint->value_exist( visited_val ) ;
+			if (id_bool>0){
+				if (explanation == reason_for[id_bool])
+					start_tmp_iterator = explanation->get_reason_for_literal(encode_boolean_variable_as_literal(id_bool, 0), end_tmp_iterator);
+				else
+					start_tmp_iterator = explanation->get_reason_for_literal(tmp_literal, end_tmp_iterator);
+			}
+			else{
+				start_tmp_iterator = explanation->get_reason_for_literal(tmp_literal, end_tmp_iterator);
+			}
+		}
+		else{
+			start_tmp_iterator = explanation->get_reason_for_literal(tmp_literal, end_tmp_iterator);
+		}
+
+		remove=true;
+
+		if (!explanation) {
+			std::cout << " NULL explanation of a virtual literal when reducing the nogood" << std::endl;
+			exit(1);
+		}
+		while(remove && (start_tmp_iterator < end_tmp_iterator)) {
+
+			tmp = *start_tmp_iterator;
+			++start_tmp_iterator;
+			//	std::cout << " tmp : "<< tmp << std::endl;
+			if (is_a_bound_literal(tmp))
+			{
+				if (!visited_virtual_literal(tmp))
+					remove = false;
+			}
+			else{
+				int id_tmp = get_id_boolean_variable(tmp);
+				if (assignment_level[id_tmp] > search_root){
+					if ( !visited.fast_contain(id_tmp))
+						remove = false;
+
+				}
+			}
+		}
+		if (remove ){
+			visitedUpperBounds.fast_remove(visited_var);
+			++reduced;
+		}
+		visited_var= visitedUpperBounds.next(visited_var);
+	}
+
+	//if (reduced)
+	//	std::cout << " \n c removed bounds  "<< reduced << std::endl;
+
+	return reduced;
+}
+
+
+
+void Mistral::Solver::reduce_bounds(){
+
+	//int reduced = 0;
+	bool remove ;
+	bool lazygeneration = parameters.lazy_generation;
+
+
+	int visited_var = visitedLowerBounds.min();
+	unsigned int size_bitset =visitedLowerBounds.size();
+	Explanation * explanation;
+	Explanation::iterator start_tmp_iterator, end_tmp_iterator;
+
+	int visited_val , id_bool;
+	Literal tmp_literal, tmp;
+	VariableRangeWithLearning* __x;
+	DomainFaithfulnessConstraint * dom_constraint;
+
+	for (int i = size_bitset; i>0; --i ){
+		visited_val = visitedLowerBoundvalues[visited_var] ;
+		explanation =  visitedLowerBoundExplanations[visited_var] ;
+
+		//visitedLowerBounds.fast_remove(visited_var);
 		tmp_literal=encode_bound_literal(visited_var, visited_val,0);
 
 
@@ -6356,12 +6517,12 @@ int Mistral::Solver::reduce_bounds(){
 				//					return false;
 				int id_tmp = get_id_boolean_variable(tmp);
 				if (assignment_level[id_tmp]>search_root){
-				if (id_tmp < initial_variablesize){
+				//if (id_tmp < initial_variablesize){
 					if ( !visited.fast_contain(id_tmp))
 						//explored = false;
 						remove = false;
-				}
-				else {
+				//}
+			/*	else {
 					int var = varsIds_lazy[id_tmp - initial_variablesize];
 					//bool already_explored = false ;
 					bool already_explored = false ;
@@ -6395,18 +6556,23 @@ int Mistral::Solver::reduce_bounds(){
 						//explored = false;
 						remove = false;
 				}
+					*/
 			}
 			}
 		}
 
 
-		if(!remove)
+		/*if(!remove)
 			visitedLowerBounds.fast_add(visited_var);
 		else{
 			++reduced;
 		//	std::cout << "removed X" << visited_var << " >= " << visited_val+1 << std::endl;
 		}
+	*/
 
+	/*	if (remove)
+			++reduced;
+	*/
 		visited_var= visitedLowerBounds.next(visited_var);
 	}
 
@@ -6487,12 +6653,12 @@ int Mistral::Solver::reduce_bounds(){
 				//					return false;
 				int id_tmp = get_id_boolean_variable(tmp);
 				if (assignment_level[id_tmp] > search_root){
-				if (id_tmp < initial_variablesize){
+			//	if (id_tmp < initial_variablesize){
 					if ( !visited.fast_contain(id_tmp))
 						//explored = false;
 						remove = false;
-				}
-				else {
+			//	}
+				/*else {
 					int var = varsIds_lazy[id_tmp - initial_variablesize];
 					//bool already_explored = false ;
 					bool already_explored = false ;
@@ -6526,23 +6692,29 @@ int Mistral::Solver::reduce_bounds(){
 						//explored = false;
 						remove = false;
 				}
+				*/
 			}
 			}
 		}
 
-		if(!remove)
+		/*
+		 * if(!remove)
 			visitedUpperBounds.fast_add(visited_var);
 		else{
 			++reduced;
 	//		std::cout << "removed X" << visited_var << " <= " << visited_val << std::endl;
 		}
-
+		*/
+/*		if (remove)
+			++reduced;
+*/
 		visited_var= visitedUpperBounds.next(visited_var);
 	}
+	//return reduced;
 
-	return reduced;
+	}
 
-}
+
 
 
 bool Mistral::Solver::learn_virtual_literals(bool semantic, bool lazyGeneration) {
@@ -6551,7 +6723,8 @@ bool Mistral::Solver::learn_virtual_literals(bool semantic, bool lazyGeneration)
 	if (__reduce){
 		//TODO reduce_bounds NOT working!!!
 		//reduce_bounds();
-		reduce_clause(true);
+		simple_bound_reduction();
+		//reduce_clause(true);
 	}
 
 	if (should_forget()){
@@ -6695,8 +6868,12 @@ bool Mistral::Solver::learn_virtual_literals(bool semantic, bool lazyGeneration)
 		return true;
 	}
 	else{
-		if (lazyGeneration && semantic)
+		if (lazyGeneration && semantic){
+
+			if (__reduce)
+				reduce_clause();
 			generate_variables();
+		}
 		else
 		{
 			//	bool old_semantic= parameters.semantic_learning ;
@@ -6735,6 +6912,11 @@ bool Mistral::Solver::learn_virtual_literals(bool semantic, bool lazyGeneration)
 			}
 			//else
 			if (lazyGeneration ) {
+				//if (__reduce>1)
+				//	reduce_clause(false);
+				if (__reduce)
+					reduce_clause();
+
 				while (bound_literals_to_explore.size)
 				{
 					generate_and_learn(bound_literals_to_explore.pop());
@@ -6751,8 +6933,11 @@ bool Mistral::Solver::learn_virtual_literals(bool semantic, bool lazyGeneration)
 					repace_with_disjunctions( __tmp.var,  __tmp.val,  __tmp.is_lb, __tmp.explanation);
 				}
 
-				if (__reduce>1)
-					reduce_clause(false);
+//				if (__reduce>1)
+//					reduce_clause(false);
+				if (__reduce)
+					reduce_clause();
+
 
 				//We add this test to handle the particular case where the new size of the clause is bigger than the authorized limit.
 				//This can happen only without lazy generation and without learning.
@@ -6858,12 +7043,19 @@ void Mistral::Solver::clean_fdlearn() {
 #endif
 
 		do {
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+//#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 			if(current_explanation == NULL) {
 				std::cout << "?? current_explanation == NULL "  << std::endl;
-				exit (1);
+				std::cout << "a_literal "  << a_literal << std::endl;
+				std::cout << "variable "  << a_literal/2 + start_from << std::endl;
+				std::cout << "remainPathC "  << remainPathC << std::endl;
+				std::cout << "remainPathC "  << currentLVL_literals_to_explore.size << std::endl;
+
+				std::cout << "decisions "  << decisions << std::endl;
+
+					exit (1);
 			}
-#endif
+//#endif
 			start = current_explanation->get_reason_for_literal(a_literal, end);
 			//	++graph_size;
 
@@ -7122,15 +7314,19 @@ bool Mistral::Solver::visited_virtual_literal(Literal q){
 #ifdef _VISITED_VL
 	bool __visited;
 	tmp_VariableRangeWithLearning->get_informations_of(val,is_lb, lvl,odr,__visited,false);
-	if (__visited)
-		return true;
-
+	//if (__visited)
+	//	return true;
+	if (lvl<=search_root)
+			return true;
+	else return __visited;
 	//std::cout << "c reduced Not working with visited yet" << std::endl;
 	//exit(1);
 #else
 	tmp_VariableRangeWithLearning->get_informations_of(val,is_lb, lvl,odr);
+	std::cout << "c _enable VISITED_VL" << std::endl;
+	exit(1);
 #endif
-
+/*
 	if (lvl<=search_root)
 		return true;
 
@@ -7149,10 +7345,12 @@ bool Mistral::Solver::visited_virtual_literal(Literal q){
 		}
 
 	return already_explored;
+	*/
 }
 
-
-bool Mistral::Solver::visited_explanation(Literal q, bool semantic_reduction){
+//Simple Resolution proceduce. No semantic learning here
+//bool Mistral::Solver::visited_explanation(Literal q, bool semantic_reduction){
+bool Mistral::Solver::visited_explanation(Literal q){
 
 	//bool is_real = ! is_a_bound_literal(q);
 
@@ -7163,7 +7361,7 @@ bool Mistral::Solver::visited_explanation(Literal q, bool semantic_reduction){
 	Explanation* explanation;
 	Literal tmp;
 	bool explored = true;
-
+	int id_tmp ;
 	id = get_id_boolean_variable(q);
 	explanation = reason_for[id];
 
@@ -7177,27 +7375,26 @@ bool Mistral::Solver::visited_explanation(Literal q, bool semantic_reduction){
 			//	std::cout << "  "<< tmp << std::endl;
 			if (is_a_bound_literal(tmp))
 			{
-				if (!semantic_reduction)
-					return false;
-				else
+		//		if (!semantic_reduction)
+		//			return false;
+		//		else
 					if (!visited_virtual_literal(tmp))
 						//explored = false;
 						return false;
 			}
 			else{
-				int id_tmp = get_id_boolean_variable(tmp);
+				id_tmp = get_id_boolean_variable(tmp);
 
-
-				int lvl_bool = assignment_level[id_tmp];
-				if (lvl_bool>search_root){
+				//int lvl_bool = assignment_level[id_tmp];
+				if (assignment_level[id_tmp]>search_root){
 					//	if ( !visited.fast_contain(id_tmp))
-					if (id_tmp< initial_variablesize)
+					//if (id_tmp< initial_variablesize)
 						//explored = false;
-					{
+					//{
 						if ( !visited.fast_contain(id_tmp))
 							return false;
-					}
-					else
+					//}
+					/*else
 						//if (id_tmp>= initial_variablesize)
 					{
 
@@ -7231,6 +7428,7 @@ bool Mistral::Solver::visited_explanation(Literal q, bool semantic_reduction){
 							//explored = false;
 							return false;
 					}
+					*/
 				}
 			}
 		}
@@ -7241,18 +7439,26 @@ bool Mistral::Solver::visited_explanation(Literal q, bool semantic_reduction){
 
 	//We have to do that otherwise we can have cycles in the conflict graph.
 	//Try for instance  bin/scheduler data/scheduling/jsp/15x15/7 -fdlearning 8  -reduce 1 -semantic 1 Without this test.
-	if (semantic_reduction && (!parameters.lazy_generation))
-		visited.fast_remove(id);
+	//if (semantic_reduction && (!parameters.lazy_generation))
+	//	visited.fast_remove(id);
 
 	return true;
 }
 
-void Mistral::Solver::reduce_clause(bool semantic_reduction){
+//void Mistral::Solver::reduce_clause(bool semantic_reduction){
+void Mistral::Solver::reduce_clause(){
 //	std::cout << " \n \n \n \n start reduction " << std::endl;
+	//int old = learnt_clause.size;
+//	std::cout << " \n start reduction " << learnt_clause.size<< std::endl;
 	for (unsigned int i = (learnt_clause.size -1); i>0; --i){
-		if (visited_explanation(learnt_clause[i], semantic_reduction))
+		//if (visited_explanation(learnt_clause[i], semantic_reduction))
+		if (visited_explanation(learnt_clause[i]))
 			learnt_clause.remove(i);
 	}
+
+//	if (((old - (int) learnt_clause.size)) )
+//		std::cout << " c reduction of" << old - ((int) learnt_clause.size)<< " s.t. old size was " << old << std::endl;
+
 }
 
 void Mistral::Solver::forget() {

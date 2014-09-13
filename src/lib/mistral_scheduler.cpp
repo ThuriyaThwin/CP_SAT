@@ -272,7 +272,7 @@ const char* ParameterList::int_ident[ParameterList::nia] =
    "-semantic" , "-simplelearn" , "-maxnogoodsize" , "-boundedbydecision" , "-forgetsize" ,
    "-forgetbackjump" , "-hardkeep", "-hardforget" ,"-keepwhensize" , "-keepwhenbjm" ,
    "-keeplearning" , "-simulaterestart" , "-nogoodweight" , "-weighthistory" ,  "-fixedForget" ,
-   "-fixedlimitSize" , "-fixedLearntSize" , "-probforget" ,"-forgetdecsize" , "-vsids"
+   "-fixedlimitSize" , "-fixedLearntSize" , "-probforget" ,"-forgetdecsize" , "-vsids", "-autoconfig"
   };
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
@@ -368,7 +368,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   semantic_learning = 0;
 
   simple_learn= 0;
-  max_nogood_size =8;
+  max_nogood_size =12;
   bounded_by_decision = 0;
   forget_relatedto_nogood_size = 0;
   forget_retatedto_backjump = 0;
@@ -386,13 +386,15 @@ ParameterList::ParameterList(int length, char **commandline) {
   reduce_clauses =0;
   forgetall=1;
 
-  fixedForget=10000;
+  fixedForget=5000;
   fixedlimitSize = 14000;
   fixedLearntSize = 2000;
 
-  prob_forget=100;
-  forgetdecsize=3;
+  prob_forget=90;
+  forgetdecsize=8;
   vsids=0;
+
+  autoconfig =0;
 
   if(Type == "osp") {
     Objective = "makespan";
@@ -481,6 +483,8 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[42] != NOVAL) prob_forget  = int_param[42];
   if(int_param[43] != NOVAL) forgetdecsize  = int_param[43];
   if(int_param[44] != NOVAL) vsids  = int_param[44];
+  if(int_param[45] != NOVAL) autoconfig  = int_param[45];
+
 
   if (keep_when_bjm || keep_when_size)
 	  forgetall=0;
@@ -554,6 +558,7 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | prob_forget" << ":" << std::right << std::setw(15) <<   prob_forget << " |" << std::endl;
   os << std::left << std::setw(30) << " c | forgetdecsize" << ":" << std::right << std::setw(15) <<   forgetdecsize << " |" << std::endl;
   os << std::left << std::setw(30) << " c | vsids" << ":" << std::right << std::setw(15) <<   vsids << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | autoconfig" << ":" << std::right << std::setw(15) <<   autoconfig << " |" << std::endl;
   os << std::left << std::setw(30) << " c | nogood_based_weight" << ":" << std::right << std::setw(15) <<   nogood_based_weight << " |" << std::endl;
   os << std::left << std::setw(30) << " c | reduce learnt clause " << ":" << std::right << std::setw(15) << (reduce_clauses? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | clause forgetfulness %" << ":" << std::right << std::setw(15) << Forgetfulness << " |" << std::endl;
@@ -2170,6 +2175,30 @@ void SchedulingSolver::setup() {
 			  for (int i = 0; i< start_from; ++i)
 				  (static_cast<VariableRangeWithLearning *> (variables[i].range_domain)) ->order = &assignment_rank;
 #endif
+
+
+  if (params->FD_learning)
+	  if (params->autoconfig){
+		  //		  std::cout << " c autoconfig"  << std::endl;
+		  if (params->autoconfig==1)
+			  parameters. fixedlimitSize=  data->nDisjuncts() * 6.5 ;
+		  else
+			  parameters. fixedlimitSize=  data->nDisjuncts() * params->autoconfig ;
+
+		  if (parameters. fixedlimitSize > 150000)
+			  parameters. fixedlimitSize=150000;
+		  else
+			  if (parameters. fixedlimitSize < 10000)
+				  parameters. fixedlimitSize = 10000 ;
+
+		  parameters.fixedLearntSize = (parameters.fixedlimitSize /3);
+		  params->fixedLearntSize =   parameters.fixedLearntSize ;
+		  params->fixedlimitSize =   parameters.fixedlimitSize ;
+
+		  //		  std::cout << " c parameters.fixedlimitSize =" << parameters.fixedlimitSize << std::endl;
+		  //		  std::cout << " c parameters.fixedLearntSize" << parameters.fixedLearntSize << std::endl;
+
+	  }
 
 }
 
