@@ -178,6 +178,7 @@ void Mistral::SolverParameters::initialise() {
 
   prob_forget = 100;
   forgetdecsize = 3;
+  limitresetpolicy=0;
 
   prefix_comment = "c";
   prefix_statistics = "d";
@@ -1988,6 +1989,9 @@ Mistral::Outcome Mistral::Solver::restart_search(const int root, const bool _res
 
   // std::cout << "[" << std::right << std::setw(33) << "]";
   // std::cout.flush();
+  int count_restarts =1;
+  int limit_reset_policy = parameters.limitresetpolicy;
+
 
   while(satisfiability == UNKNOWN) {
 
@@ -2057,8 +2061,18 @@ Mistral::Outcome Mistral::Solver::restart_search(const int root, const bool _res
 
     if(satisfiability == LIMITOUT) {
 
+    	if (limit_reset_policy && ( parameters.restart_limit > limit_reset_policy)){
+
+    		++count_restarts;
+    		limit_reset_policy*=count_restarts;
+
+    		policy->bbinitialise(parameters.restart_limit);
+    		//TODO Should be statistics.num_failures-1?
+    		parameters.restart_limit=statistics.num_failures;
+    	}
+    	else
       policy->reset(parameters.restart_limit);
-    
+
       if(!limits_expired()) {
 	satisfiability = UNKNOWN;
       }
@@ -9814,7 +9828,8 @@ void Mistral::Solver::set_fdlearning_on(
         int _fixedlimitSize,
         int _fixedLearntSize,
         int _prob_forget,
-        int _forgetdecsize
+        int _forgetdecsize,
+        int _limitresetpolicy
 	    ) {
 
 	//	parameters.jsp_backjump = true;
@@ -9852,7 +9867,7 @@ void Mistral::Solver::set_fdlearning_on(
 
 	parameters.prob_forget = _prob_forget;
 	parameters.forgetdecsize =_forgetdecsize;
-
+	parameters.limitresetpolicy =  _limitresetpolicy;
 
 	std::cout << " c start_from : " << start_from << std::endl;
 	visitedUpperBounds.initialise(0, start_from  , BitSet::empt);

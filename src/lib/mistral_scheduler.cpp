@@ -273,7 +273,7 @@ const char* ParameterList::int_ident[ParameterList::nia] =
    "-forgetbackjump" , "-hardkeep", "-hardforget" ,"-keepwhensize" , "-keepwhenbjm" ,
    "-keeplearning" , "-simulaterestart" , "-nogoodweight" , "-weighthistory" ,  "-fixedForget" ,
    "-fixedlimitSize" , "-fixedLearntSize" , "-probforget" ,"-forgetdecsize" , "-vsids",
-   "-autoconfig" , "-autoconfigublimit" , "-autoconfiglblimit"
+   "-autoconfig" , "-autoconfigublimit" , "-autoconfiglblimit", "-limitresetpolicy"
   };
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
@@ -398,6 +398,8 @@ ParameterList::ParameterList(int length, char **commandline) {
   autoconfig =0;
   autoconfigublimit=150000;
   autoconfiglblimit=10000;
+  limitresetpolicy=0;
+
 
   if(Type == "osp") {
     Objective = "makespan";
@@ -489,6 +491,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[45] != NOVAL) autoconfig  = int_param[45];
   if(int_param[46] != NOVAL) autoconfigublimit  = int_param[46];
   if(int_param[47] != NOVAL) autoconfiglblimit  = int_param[47];
+  if(int_param[48] != NOVAL) limitresetpolicy  = int_param[48];
 
 
   if (keep_when_bjm || keep_when_size)
@@ -566,6 +569,7 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | autoconfig" << ":" << std::right << std::setw(15) <<   autoconfig << " |" << std::endl;
   os << std::left << std::setw(30) << " c | autoconfigublimit" << ":" << std::right << std::setw(15) <<   autoconfigublimit << " |" << std::endl;
   os << std::left << std::setw(30) << " c | autoconfiglblimit" << ":" << std::right << std::setw(15) <<   autoconfiglblimit << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | limitresetpolicy" << ":" << std::right << std::setw(15) <<   limitresetpolicy << " |" << std::endl;
   os << std::left << std::setw(30) << " c | nogood_based_weight" << ":" << std::right << std::setw(15) <<   nogood_based_weight << " |" << std::endl;
   os << std::left << std::setw(30) << " c | reduce learnt clause " << ":" << std::right << std::setw(15) << (reduce_clauses? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | clause forgetfulness %" << ":" << std::right << std::setw(15) << Forgetfulness << " |" << std::endl;
@@ -1995,7 +1999,8 @@ void SchedulingSolver::setup() {
 			  params->hard_keep, params->hard_forget,params->keep_when_size,
 			  params->keep_when_bjm ,  params->keeplearning_in_bb, params->simulaterestart,
 			  params->nogood_based_weight, params->fixedForget , params-> fixedlimitSize ,
-			  params-> fixedLearntSize ,params-> prob_forget ,params-> forgetdecsize
+			  params-> fixedLearntSize ,params-> prob_forget ,params-> forgetdecsize ,
+			  params-> limitresetpolicy
 	  );
   }
 

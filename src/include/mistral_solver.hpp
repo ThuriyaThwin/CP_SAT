@@ -160,6 +160,8 @@ namespace Mistral {
     int prob_forget;
     //To continue UP
     int forgetdecsize;
+    //To reset the policy (see the scheduler module for more details)
+    int limitresetpolicy;
 
     /// MISC
     std::string prefix_comment;
@@ -988,7 +990,8 @@ namespace Mistral {
     		int hard_keep, int hard_forget, int keep_when_size,
     		int keep_when_bjm , int keeplearning_in_bb , int _simulaterestart,
     		int _nogood_based_weight , int fixedForget , int fixedlimitSize ,
-    		int fixedLearntSize ,   int _prob_forget, int _forgetdecsize
+    		int fixedLearntSize ,   int _prob_forget, int _forgetdecsize,
+    		int limitresetpolicy
     );
 
     void close_propagation();
