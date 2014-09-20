@@ -1989,7 +1989,7 @@ Mistral::Outcome Mistral::Solver::restart_search(const int root, const bool _res
 
   // std::cout << "[" << std::right << std::setw(33) << "]";
   // std::cout.flush();
-  int count_restarts =1;
+  //int count_restarts =1;
   int limit_reset_policy = parameters.limitresetpolicy;
 
 
@@ -2063,8 +2063,8 @@ Mistral::Outcome Mistral::Solver::restart_search(const int root, const bool _res
 
     	if (limit_reset_policy && ( parameters.restart_limit > limit_reset_policy)){
     		std::cout << " c will reset policy because we reached " << parameters.restart_limit << " failures" << std::endl;
-    		++count_restarts;
-    		limit_reset_policy*=count_restarts;
+    		//++count_restarts;
+    		limit_reset_policy=parameters.restart_limit + parameters.limitresetpolicy;
 
     		policy->bbinitialise(parameters.restart_limit);
     		//TODO Should be statistics.num_failures-1?
