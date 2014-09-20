@@ -2062,7 +2062,7 @@ Mistral::Outcome Mistral::Solver::restart_search(const int root, const bool _res
     if(satisfiability == LIMITOUT) {
 
     	if (limit_reset_policy && ( parameters.restart_limit > limit_reset_policy)){
-
+    		std::cout << " c will reset policy because we reached " << parameters.restart_limit << " failures" << std::endl;
     		++count_restarts;
     		limit_reset_policy*=count_restarts;
 
