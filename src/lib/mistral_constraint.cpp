@@ -14683,7 +14683,7 @@ std::ostream& Mistral::ConstraintCliqueNotEqual::display(std::ostream& os) const
 /**********************************************
  * DomainFaithfulnessConstraint
  **********************************************/
-
+//#define _DEBUG_INCREMENTAL_DOMAINFAITHFULNESS true
 
 Mistral::DomainFaithfulnessConstraint::DomainFaithfulnessConstraint(Vector< Variable >& scp)
 : GlobalConstraint(scp) { //priority = 2;
@@ -14702,6 +14702,9 @@ Mistral::DomainFaithfulnessConstraint::DomainFaithfulnessConstraint(Vector< Vari
 
 void Mistral::DomainFaithfulnessConstraint::start_over() {
 
+	lower.size = 1;
+	greater.size = 1;
+	cache_value.size=1;
 	ub.size = 0;
 	scope.size = 1;
 	_scope.size = 1;
@@ -14738,6 +14741,9 @@ void Mistral::DomainFaithfulnessConstraint::initialise() {
 	eager_explanations.clear();
 	eager_explanations.add(NULL_ATOM);
 	enforce_nfc1 = false;
+	lower.add(0);
+	greater.add(0);
+	cache_value.add(0);
 }
 
 // if a variable alreagy exist then return its id, otherwise return false
@@ -14846,8 +14852,63 @@ int Mistral::DomainFaithfulnessConstraint::value_exist(int value){
 
 void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value , bool isub, int level){
 
-	ub.fast_sorted_add(__boundLiteral(value, scope.size));
+	//ub.fast_sorted_add(__boundLiteral(value, scope.size));
 
+	__boundLiteral bound_l(value, scope.size);
+	if (ub.size){
+		int __iterator = ub.size -1;
+		ub.add(bound_l);
+		while (ub.stack_[__iterator]> bound_l)
+		{
+			ub.stack_[__iterator+1] = ub.stack_[__iterator];
+			ub.stack_[__iterator] = bound_l;
+			//if (__iterator)
+				--__iterator;
+			if (__iterator<0)
+				break;
+		}
+#ifdef _DEBUG_INCREMENTAL_DOMAINFAITHFULNESS
+		//We are sure that bound_l inserted at __iterator+1.
+		//Test
+		if ((ub[__iterator+1]>bound_l) ||  (ub[__iterator+1]<bound_l)){
+		std::cout << " c bound_l " << bound_l << std::endl;
+		std::cout << " c __iterator " << __iterator << std::endl;
+		std::cout << " c inserted at ?  " << ub.stack_[__iterator+1]  << std::endl;
+		exit(1);
+		}
+#endif
+		if (__iterator<0){
+			lower.add(0);
+		}
+		else{
+			lower.add(ub[__iterator].idx);
+			greater[ub[__iterator].idx]= bound_l.idx;
+		}
+
+
+		if (__iterator==(ub.size -2)){
+			greater.add(0);
+		}
+		else{
+			greater.add(ub[__iterator+2].idx);
+			lower[ub[__iterator+2].idx]= bound_l.idx;
+		}
+
+	}
+	else{
+		lower.add(0);
+		greater.add(0);
+
+		ub.add(bound_l);
+	}
+
+/*
+	std::cout << " \n ub  " << ub  << std::endl;
+	std::cout << " scope  " << scope  << std::endl;
+	std::cout << " lower  " << lower  << std::endl;
+	std::cout << " greater  " << greater  << std::endl;
+*/
+	cache_value.add(value);
 	scope.add(x);
 
 	Literal virtual_literal ;
@@ -14914,7 +14975,266 @@ Mistral::DomainFaithfulnessConstraint::~DomainFaithfulnessConstraint(){
 }
 
 
+Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::incremental_propagate(){
+	if (scope.size==1)
+		return CONSISTENT;
+	//if (changes.size>4){
+	/*std::cout << "\n c incremental_propagate incremental_propagate " << std::endl;
+	std::cout << "c changes " << changes << std::endl;
+	std::cout << "c ub.size " << ub.size << std::endl;
+	std::cout << scope[0] <<" :  " << scope[0].get_domain() << std::endl;
+	for (int i = 0; i< ub.size; ++i)
+		std::cout << ub[i].value  <<" :  " << scope[ub[i].idx].get_domain() << std::endl;
+*/
+	PropagationOutcome wiped = CONSISTENT;
+	int idx;
+
+	int needed_to_change=0;
+	int last_lb_idx=ub[0].idx;
+	int last_ub_idx=ub.back().idx;
+
+	while( (wiped==CONSISTENT) && !changes.empty() ) {
+		idx = changes.pop();
+
+	//	std::cout << "X Dom:  " << scope[0].get_domain() <<std::endl;
+	//	std::cout << "idx " <<  idx << " domain : " << scope[idx].get_domain() <<std::endl;
+		if (idx){
+	//		std::cout << " value " <<  cache_value[idx] <<std::endl;
+			wiped=update_closest(idx, last_lb_idx,last_ub_idx,needed_to_change);
+		}
+		else if (!needed_to_change){
+			needed_to_change|=4;
+		}
+	}
+
+
+	if (wiped==CONSISTENT && (needed_to_change))
+		update_Range( last_lb_idx,last_ub_idx,needed_to_change);
+
+#ifdef _DEBUG_INCREMENTAL_DOMAINFAITHFULNESS
+	if (wiped==CONSISTENT){
+		//ub.size
+		bool ok = true;
+		int _lb = _x->get_min();
+		int _ub = _x->get_max();
+		for (int i = 0; i <ub.size ; ++i){
+			if ((ub[i].value >= _ub) && ((!scope[ub[i].idx].is_ground()) || (!scope[ub[i].idx].get_min()))) {
+				ok = false;
+				break;
+			}
+			else
+				if ((ub[i].value < _lb) && ((!scope[ub[i].idx].is_ground()) || (scope[ub[i].idx].get_min()))) {
+					ok = false;
+					break;
+				}
+				else
+					if ((ub[i].value >= _lb) && (ub[i].value < _ub) && scope[ub[i].idx].is_ground()){
+						ok = false;
+						break;
+					}
+		}
+
+		if (!ok){
+			std::cout << "\n DOMAINFAITHFULNESS CHECK Propag" << std::endl;
+			if (wiped!=CONSISTENT){
+				std::cout << "\n FAIL!!!!!!" << std::endl;
+			}
+			std::cout << scope[0] <<" :  " << scope[0].get_domain() << std::endl;
+
+			//	std::cout << "ub" << std::endl;
+			//std::cout << " \n \n variables domains : \n " << std::endl;
+			for (int i = 0; i< ub.size; ++i)
+				std::cout << ub[i].value  <<" :  " << scope[ub[i].idx].get_domain() << std::endl;
+			exit(1);
+		}
+	}
+#endif
+
+	return wiped;
+	//}
+}
+
+Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::update_closest(int idx, int& lb_idx, int& ub_idx, int& needed_to_change){
+
+#ifdef _DEBUG_INCREMENTAL_DOMAINFAITHFULNESS
+	if (!scope[idx].is_ground()){
+
+		std::cout << "ERROR !scope[idx].is_ground()" << std::endl;
+		exit(1);
+	}
+#endif
+
+	if (scope[idx].get_min() ){
+	//	std::cout << "UB" << std::endl;
+
+		int bound = _x->get_max();
+		int val = cache_value[idx];
+		if(_x->set_max(val ,this ) == FAIL_EVENT) {
+			explanation[0]=encode_bound_literal(scope[0].id() , _x->get_min(), 0);
+			explanation[1] = (((Solver *) solver)->encode_boolean_variable_as_literal(scope[idx].id() ,0));
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+			( (Solver*) solver) ->__failure = this;
+#ifdef _DEBUG_FAIL
+			std::cout << " fail : " << *this << std::endl;
+#endif
+#endif
+			return FAILURE(0);
+		}
+
+		int next = greater[idx];
+
+		if (cache_value[lower[idx]]<cache_value[lb_idx])
+			ub_idx=lower[idx];
+
+		if (next){
+			if (bound>val){
+				needed_to_change|=2;
+				//ub_idx=lower[idx];
+			}
+			if (!scope[next].is_ground()){
+				scope[next].set_min(1);
+				eager_explanations[next]= ((Solver *) solver)->encode_boolean_variable_as_literal( scope[idx].id(),0);
+				changes.add(next);
+			}
+			else
+				if(!scope[next].get_min()){
+					explanation[0] = ((Solver *) solver)->encode_boolean_variable_as_literal( scope[idx].id(),0);
+					explanation[1] = ((Solver *) solver)->encode_boolean_variable_as_literal( scope[next].id(),1);
+					return FAILURE(next);
+				}
+		}
+	//	else
+	//		ub_idx=0;
+	}
+	else{
+//		std::cout << "LB" << std::endl;
+
+		int previous = lower[idx];
+		int bound = _x->get_min();
+		int val= cache_value[idx] +1;
+//		std::cout << "val  " << val <<  std::endl;
+
+		if(_x->set_min( val ,this ) == FAIL_EVENT) {
+
+			explanation[0]= encode_bound_literal(scope[0].id() , _x->get_max(),1);
+			explanation[1] = (((Solver *) solver)->encode_boolean_variable_as_literal(scope[idx].id() ,1));
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+			( (Solver*) solver) ->__failure = this;
+#ifdef _DEBUG_FAIL
+			std::cout << " fail : " << *this << std::endl;
+#endif
+#endif
+			return FAILURE(0);
+		}
+
+		if (cache_value[greater[idx]]>cache_value[lb_idx])
+			lb_idx=greater[idx];
+
+		if (previous){
+			if (bound<val){
+				needed_to_change|=1;
+		//
+			}
+			if (!scope[previous].is_ground()){
+				scope[previous].set_max(0);
+				eager_explanations[previous]= ((Solver *) solver)->encode_boolean_variable_as_literal( scope[idx].id(),1);
+				changes.add(previous);
+			}
+			else
+				if(scope[previous].get_min()){
+					explanation[0] = ((Solver *) solver)->encode_boolean_variable_as_literal( scope[idx].id(),1);
+					explanation[1] = ((Solver *) solver)->encode_boolean_variable_as_literal( scope[previous].id(),0);
+					//return wiped;
+					return FAILURE(previous);
+				}
+		}
+	//	else
+	//		lb_idx=0;
+	}
+	return CONSISTENT;
+}
+
+
+void Mistral::DomainFaithfulnessConstraint::update_Range(int lb_idx, int ub_idx, int needed_to_change){
+
+	/*std::cout << "update_Range with  " <<needed_to_change <<std::endl ;
+	std::cout << "&& 2 " <<(needed_to_change& 2) <<std::endl ;
+	std::cout << "&& 1 " <<(needed_to_change& 1) <<std::endl ;
+*/
+	int __id = scope[0].id();
+	int next = ub_idx;
+	int bound = _x->get_max();
+	if (! (needed_to_change&2)){
+		//std::cout << "update ub " <<std::endl ;
+		while (next!=0){
+
+			//std::cout << "cache_value[next]" << cache_value[next] <<std::endl ;
+			if (cache_value[next]>= bound){
+				if (!scope[next].is_ground()){
+					scope[next].set_min(1);
+					eager_explanations[next]= encode_bound_literal(__id , bound, 1);
+					//changes.add(next);
+				}
+
+#ifdef _DEBUG_INCREMENTAL_DOMAINFAITHFULNESS
+				else {
+					//Test
+					if(!scope[next].get_min()){
+						//explanation[0] = ((Solver *) solver)->encode_boolean_variable_as_literal( scope[idx].id(),0);
+						//explanation[1] = ((Solver *) solver)->encode_boolean_variable_as_literal( scope[next].id(),1);
+						//return FAILURE(next);
+						std::cout << "IMPOSSIBLE! UB" <<std::endl ;
+						exit(1);
+					}
+				}
+#endif
+				next=lower[next];
+			}
+			else
+				next =0;
+		}
+	}
+
+	next = lb_idx;
+	bound = _x->get_min();
+	if (! (needed_to_change&1)){
+		//std::cout << "update lb " <<std::endl ;
+
+		while (next!=0){
+			//std::cout << "cache_value[next]" << cache_value[next] <<std::endl ;
+
+			if (cache_value[next]< bound){
+				if (!scope[next].is_ground()){
+					scope[next].set_max(0);
+					//	eager_explanations[next]= ((Solver *) solver)->encode_boolean_variable_as_literal( scope[idx].id(),0);
+					//	changes.add(next);
+					eager_explanations[next]= encode_bound_literal(__id ,bound, 0);
+				}
+#ifdef _DEBUG_INCREMENTAL_DOMAINFAITHFULNESS
+				else {
+					//Test
+					if(scope[next].get_min()){
+						//explanation[0] = ((Solver *) solver)->encode_boolean_variable_as_literal( scope[idx].id(),0);
+						//explanation[1] = ((Solver *) solver)->encode_boolean_variable_as_literal( scope[next].id(),1);
+						//return FAILURE(next);
+						std::cout << "IMPOSSIBLE! LB" <<std::endl ;
+						exit(1);
+					}
+				}
+#endif
+				next=greater[next];
+			}
+			else
+				next =0;
+		}
+	}
+}
+
 Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::propagate(){
+	return incremental_propagate();
+
 	if (scope.size==1)
 		return CONSISTENT;
 	PropagationOutcome wiped = CONSISTENT;

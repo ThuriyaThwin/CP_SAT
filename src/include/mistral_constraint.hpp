@@ -5121,6 +5121,7 @@ if (enforce_nfc1)
   {
 	  int value;
 	  //Variable x;
+	  //idx is the index of the boolean variable in the scope.
 	  unsigned int idx;
 
 	  __boundLiteral(int k, unsigned int _idx) : value(k), idx(_idx) {}
@@ -5147,6 +5148,11 @@ if (enforce_nfc1)
 
 
 	  // Vector<__boundLiteral> lb;
+
+	  Vector<int> lower;
+	  Vector<int> greater;
+
+	  Vector<int> cache_value;
 
 	  Vector<__boundLiteral> ub;
 	  VariableRangeWithLearning * _x;
@@ -5175,6 +5181,9 @@ if (enforce_nfc1)
 	  //@{
 	  virtual int check( const int* sol ) const ;
 	  virtual PropagationOutcome propagate();
+	  PropagationOutcome incremental_propagate();
+	  PropagationOutcome update_closest(int idx, int& lb_idx, int& ub_idx,int& needed_to_change);
+	  void update_Range(int lb_idx, int ub_idx, int needed_to_change );
 	  //virtual PropagationOutcome propagate(const int changed_idx, const Event evt);
 	  //virtual RewritingOutcome rewrite();
 	  //@}
