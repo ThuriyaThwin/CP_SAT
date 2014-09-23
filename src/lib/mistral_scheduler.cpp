@@ -2247,9 +2247,14 @@ void SchedulingSolver::initialise_heuristic (int update_weights){
 }
 
 SchedulingSolver::~SchedulingSolver() {
-	delete _constraint_weight;
-	delete _variable_weight;
-	delete pool;
+
+	if (_constraint_weight)
+		delete _constraint_weight;
+	if (_variable_weight)
+		delete _variable_weight;
+	if (pool)
+		delete pool;
+
 }
 
 
@@ -3993,8 +3998,10 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 			int val_range =	get_value_from_literal(c[j]);
 			bool isub =is_upper_bound(c[j]);
 			VariableRangeWithLearning* tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[id_range].range_domain);
-			int lvl = tmp_VariableRangeWithLearning->level_of(val_range,!isub) ;
-
+			//int lvl = tmp_VariableRangeWithLearning->level_of(val_range,!isub) ;
+			int lvl , ass_lvl;
+			 bool __t;
+			tmp_VariableRangeWithLearning->get_informations_of( val_range , !isub, lvl, ass_lvl, __t, false);
 
 			if (bts < lvl){
 				bts = lvl;
@@ -4124,7 +4131,7 @@ void SchedulingSolver::check_nogood(Vector<Literal> & c){
 		std::cout << "Solver level " << level ;
 		std::cout << "clause size " << c.size ;
 		std::cout << "clause " << c ;
-		std::cout << "and bounds to explore " << literals_to_explore ;
+		//std::cout << "and bounds to explore " << literals_to_explore ;
 				std::cout << std::endl;
 
 		//		std::cout << " Lower Bound  " << __stats.lower_bound ;

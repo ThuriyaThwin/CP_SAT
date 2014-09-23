@@ -14683,7 +14683,7 @@ std::ostream& Mistral::ConstraintCliqueNotEqual::display(std::ostream& os) const
 /**********************************************
  * DomainFaithfulnessConstraint
  **********************************************/
-//#define _DEBUG_INCREMENTAL_DOMAINFAITHFULNESS true
+#define _DEBUG_INCREMENTAL_DOMAINFAITHFULNESS true
 
 Mistral::DomainFaithfulnessConstraint::DomainFaithfulnessConstraint(Vector< Variable >& scp)
 : GlobalConstraint(scp) { //priority = 2;
