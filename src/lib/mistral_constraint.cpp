@@ -14683,7 +14683,7 @@ std::ostream& Mistral::ConstraintCliqueNotEqual::display(std::ostream& os) const
 /**********************************************
  * DomainFaithfulnessConstraint
  **********************************************/
-#define _DEBUG_INCREMENTAL_DOMAINFAITHFULNESS true
+//#define _DEBUG_INCREMENTAL_DOMAINFAITHFULNESS true
 
 Mistral::DomainFaithfulnessConstraint::DomainFaithfulnessConstraint(Vector< Variable >& scp)
 : GlobalConstraint(scp) { //priority = 2;
@@ -14746,7 +14746,7 @@ void Mistral::DomainFaithfulnessConstraint::initialise() {
 	cache_value.add(0);
 }
 
-// if a variable alreagy exist then return its id, otherwise return false
+// if a variable alreagy exists then return its id, otherwise return false
 
 
 int Mistral::DomainFaithfulnessConstraint::value_exist(int value){
