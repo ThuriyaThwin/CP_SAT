@@ -6030,7 +6030,7 @@ Explanation * Mistral::Solver::get_next_to_explore(Literal & lit) {
 
 #endif
 
-		Explanation * __e = get_next_to_explore(lit);
+//		Explanation * __e = get_next_to_explore(lit);
 
 		/*if (lit==207){
 			if (__e)
@@ -6040,8 +6040,8 @@ Explanation * Mistral::Solver::get_next_to_explore(Literal & lit) {
 		}
 		std::cout << "OK 4 ?" << std::endl;
 		*/
-		return  __e;
-		//return get_next_to_explore(lit)	;
+	//	return  __e;
+		return get_next_to_explore(lit)	;
 	}
 	}
 	else {
@@ -7414,10 +7414,6 @@ void Mistral::Solver::clean_fdlearn() {
 #endif
 	}
 	//std::cout << " END clean_fdlearn " << std::endl;
-#ifdef _VISITED_VL
-		for (int i = 0; i< start_from; ++i)
-			(static_cast<VariableRangeWithLearning *> (variables[i].range_domain))->clean_visited();
-#endif
 }
 
 
