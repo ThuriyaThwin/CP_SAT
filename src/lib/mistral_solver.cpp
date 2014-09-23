@@ -40,6 +40,7 @@
 //#define _DEBUG_SEARCH true
 //#define _DEBUG_FD_NOGOOD (level==95) //((variables.size== 2433) && (level==40)) //true // ((variables.size == 221)) //&& (solver->level == 22))//true
 //#define _DEBUG_SHOW_LEARNT_BOUNDS true
+//#define _CLEAN_DEBUG_FD_NOGOOD true
 
 //#define _TRACKING_ATOM 368
 //((statistics.num_filterings == 48212) || (statistics.num_filterings == 46738) || (statistics.num_filterings == 44368) || (statistics.num_filterings == 43659))
@@ -5462,12 +5463,8 @@ void Mistral::Solver::treat_real_literal(Literal q, bool semantic, bool orderedE
 		std::cout << " \n not assigned error!!  boolean literal s.t. its variable is" << variables[x] << " ;  its domain is " << variables[x].get_domain() << " and its assignment_level : " << assignment_level[x] << std::endl;
 		exit(1);
 	}
-
-	if (variables[x].get_min()== SIGN(q))
-	{
-		//		std::cout << " \n (x.get_min()== SIGN(q))" << variables[x] << "  ; its domain is " << variables[x].get_domain() << " ; its assignment_level : " << assignment_level[x] << " ; while the literal q = " << q << std::endl;
-		//		exit(1);
-	}
+	//if (reason_for[x]!=base)
+	//if ((variables[x].get_min()== SIGN(q)) && ! (dynamic_cast<Array<Literal> *>(reason_for[x])))
 
 
 	if (lvl == search_root){
@@ -5478,6 +5475,14 @@ void Mistral::Solver::treat_real_literal(Literal q, bool semantic, bool orderedE
 
 	if(lvl > search_root ){
 		if( !visited.fast_contain(x) ) {
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+			if (variables[x].get_min()== SIGN(q))
+			{
+				std::cout << " \n (x.get_min()== SIGN(q))" << variables[x] << "  ; its domain is " << variables[x].get_domain() << " ; its assignment_level : " << assignment_level[x] << " ; while the literal q = " << q << std::endl;
+				exit(1);
+			}
+#endif
 
 
 	/*		if(lit_activity) {
@@ -5619,6 +5624,16 @@ void Mistral::Solver::treat_real_literal(Literal q, bool semantic, bool orderedE
 					else
 						add_Orderedliteral_tobe_explored(q,-1, reason_for[x]);
 
+/*					if (q==207){
+						std::cout << "adding literal here!!" << std::endl;
+						int __tmp = get_id_boolean_variable(q);
+						if (variables[__tmp].get_min()== SIGN(q))
+						{
+							std::cout << " \n (x.get_min()== SIGN(q))" << variables[x] << "  ; its domain is " << variables[x].get_domain() << " ; its assignment_level : " << assignment_level[x] << " ; while the literal q = " << q << std::endl;
+							exit(1);
+						}
+					}
+*/
 					++remainPathC;
 				} else {
 					// q's level is below the current level, we are not expending it further
@@ -5919,8 +5934,17 @@ Explanation * Mistral::Solver::get_next_to_explore(Literal & lit) {
 	currentLVL_literal o_l = currentLVL_literals_to_explore.pop();
 	lit = o_l.l;
 
-	if ((!currentLVL_literals_to_explore.size && is_a_bound_literal(lit)))
+
+//	if ((!currentLVL_literals_to_explore.size && is_a_bound_literal(lit)))
+	if ((!currentLVL_literals_to_explore.size))
 	{
+		bool is_virtual= is_a_bound_literal(lit);
+		/*if ((!is_vistual) && get_id_boolean_variable(lit)>=initial_variablesize){
+			std::cout << "get_id_boolean_variable(lit)>=initial_variablesize  "  << std::endl;
+			exit(1);
+		}*/
+		 if (is_virtual || get_id_boolean_variable(lit)>=initial_variablesize)
+		{
 		--remainPathC;
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 		if(o_l.explanation == NULL) {
@@ -5931,7 +5955,14 @@ Explanation * Mistral::Solver::get_next_to_explore(Literal & lit) {
 #endif
 			//	start = current_explanation->get_reason_for(a, (a != NULL_ATOM ? assignment_level[a] : level), end);
 			Explanation::iterator start, end;
+			/*if (lit==207){
+				if (o_l.explanation)
+				std::cout << "o_l.explanation  " << *o_l.explanation << std::endl;
+				else
+					std::cout << "NULL" << std::endl;
+			}*/
 			start = o_l.explanation->get_reason_for_literal(lit, end);
+			//std::cout << "OK" << std::endl;
 			//++graph_size;
 #ifdef 	_DEBUG_FD_NOGOOD
 			if(_DEBUG_FD_NOGOOD){
@@ -5988,24 +6019,37 @@ Explanation * Mistral::Solver::get_next_to_explore(Literal & lit) {
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 		}
-		if ((!parameters.orderedExploration) &&  literals_to_explore.size != remainPathC){
+		if ((!parameters.orderedExploration) &&  currentLVL_literals_to_explore.size != remainPathC){
 			std::cout << " literals_to_explore.size != remainPathC " << std::endl;
 			exit(1);
 		}
-		if ((parameters.orderedExploration) &&  ordered_literals_to_explore.size != remainPathC){
+		if ((parameters.orderedExploration) &&  currentLVL_literals_to_explore.size != remainPathC){
 			std::cout << " ordered_literals_to_explore.size != remainPathC " << std::endl;
 			exit(1);
 		}
 
 #endif
-		return  get_next_to_explore(lit);
+
+		Explanation * __e = get_next_to_explore(lit);
+
+		/*if (lit==207){
+			if (__e)
+			std::cout << "__e  " << *__e << std::endl;
+			else
+				std::cout << "NULL" << std::endl;
+		}
+		std::cout << "OK 4 ?" << std::endl;
+		*/
+		return  __e;
+		//return get_next_to_explore(lit)	;
+	}
 	}
 	else {
 		if (o_l.explanation == NULL)
 		{
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-			if (parameters.orderedExploration && ordered_literals_to_explore.size ){
+			if (parameters.orderedExploration && currentLVL_literals_to_explore.size ){
 				std::cout << " parameters.orderedExploration && ordered_literals_to_explore.size " << std::endl;
 				exit(1);
 			}
@@ -6014,17 +6058,33 @@ Explanation * Mistral::Solver::get_next_to_explore(Literal & lit) {
 				currentLVL_literal o_l2 = currentLVL_literals_to_explore[0];
 				lit = o_l2.l;
 				currentLVL_literals_to_explore[0] = o_l;
+				/*if (lit==207){
+						if (o_l2.explanation)
+						std::cout << "o_l2.explanation  " << * (o_l2.explanation) << std::endl;
+						else
+							std::cout << "NULL" << std::endl;
+					}
+				std::cout << "OK2" << std::endl;
+				*/
 				return o_l2.explanation;
 			}
 		}
+		/*if (lit==207){
+			if (o_l.explanation)
+			std::cout << "o_l.explanation  " << * (o_l.explanation) << std::endl;
+			else
+				std::cout << "NULL" << std::endl;
+		}
+		std::cout << "OK3" << std::endl;
+		*/
 		return o_l.explanation;
 	}
 }
 
 void Mistral::Solver::treat_explanation(Explanation::iterator start,Explanation::iterator end, bool semantic, bool orderedExploration){
 	//Literal q;
-#ifdef 	_DEBUG_FD_NOGOOD
-	if(_DEBUG_FD_NOGOOD){
+#ifdef 	_CLEAN_DEBUG_FD_NOGOOD
+	if(_CLEAN_DEBUG_FD_NOGOOD){
 		Explanation::iterator t = start;
 		while(t < end) {
 			std::cout << " "<< *t << std::endl;
@@ -6070,6 +6130,8 @@ void Mistral::Solver::generate_and_learn(complete_virtual_literal_informations i
 	}
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+	int lvl = info.lvl;
+	bool is_lb = info.is_lb;
 	if (tmp__id>0)
 		if ( assignment_level[ tmp__id ] != lvl)
 		{
@@ -6077,7 +6139,7 @@ void Mistral::Solver::generate_and_learn(complete_virtual_literal_informations i
 			std::cout << " lvl " <<  lvl << std::endl;
 			std::cout << " \n \n VVV tmp__ Domain " << variables[tmp__id].get_domain() << std::endl;
 			std::cout << " tmp__.id() " << tmp__id << std::endl;
-			std::cout << " var  " << var<< std::endl;
+			//std::cout << " var  " << var<< std::endl;
 			std::cout << " reason_for[var] " << reason_for[ tmp__id ] << std::endl;
 			std::cout << " assignment_level[var] " <<  assignment_level[ tmp__id] << std::endl;
 			std::cout << " lvl " <<  lvl << std::endl;
@@ -6216,7 +6278,7 @@ void Mistral::Solver::repace_with_disjunctions(int var, int val, int is_lb, Expl
 				x = get_id_boolean_variable(q);
 				__lvl = assignment_level[x];
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-				if (lvl == search_root){
+				if (__lvl == search_root){
 
 					all_reasons_before_search_root = false;
 				}
@@ -6283,7 +6345,6 @@ int Mistral::Solver::simple_bound_reduction(){
 	bool remove ;
 	bool lazygeneration = parameters.lazy_generation;
 
-
 	int visited_var = visitedLowerBounds.min();
 	unsigned int size_bitset =visitedLowerBounds.size();
 	Explanation * explanation;
@@ -6293,6 +6354,8 @@ int Mistral::Solver::simple_bound_reduction(){
 	Literal tmp_literal, tmp;
 	VariableRangeWithLearning* __x;
 	DomainFaithfulnessConstraint * dom_constraint;
+
+	//std::cout << " visitedLowerBounds " << visitedLowerBounds << std::endl;
 
 	for (int i = size_bitset; i>0; --i ){
 		visited_val = visitedLowerBoundvalues[visited_var] ;
@@ -6311,6 +6374,9 @@ int Mistral::Solver::simple_bound_reduction(){
 
 
 			if (id_bool>0){
+
+	//			std::cout << " id_bool " << id_bool << std::endl;
+	//			std::cout << " level  " << assignment_level[id_bool] << std::endl;
 
 				if (explanation == reason_for[id_bool])
 					start_tmp_iterator = explanation->get_reason_for_literal(encode_boolean_variable_as_literal(id_bool, 1), end_tmp_iterator);
@@ -6334,10 +6400,20 @@ int Mistral::Solver::simple_bound_reduction(){
 			exit(1);
 		}
 
+	//	std::cout << "\n start explanation of bound " << tmp_literal << std::endl;
+
 		while(remove && (start_tmp_iterator < end_tmp_iterator)) {
+
 			tmp = *start_tmp_iterator;
 			++start_tmp_iterator;
-
+		//	std::cout << " tmp  " << tmp << std::endl;
+			//Todo recheck that! enable the exit(1) and try to understand why we return the same bound!
+			if (tmp_literal==tmp ){
+				remove=false;
+		//		std::cout << " explanation" <<* explanation  <<std::endl;
+		//		exit(1);
+			}
+			else{
 			if (is_a_bound_literal(tmp))
 			{
 				if (!visited_virtual_literal(tmp))
@@ -6348,12 +6424,16 @@ int Mistral::Solver::simple_bound_reduction(){
 				if (assignment_level[id_tmp]>search_root){
 					if ( !visited.fast_contain(id_tmp))
 						remove = false;
-
 				}
+			}
 			}
 		}
 
 		if (remove){
+			/*std::cout << "lb remove bound " <<std::endl;
+			std::cout << "visited_var " <<visited_var <<std::endl;
+			std::cout << "visited_val " <<visited_val <<std::endl;
+			*/
 			visitedLowerBounds.fast_remove(visited_var);
 			++reduced;
 		}
@@ -6405,6 +6485,13 @@ int Mistral::Solver::simple_bound_reduction(){
 
 			tmp = *start_tmp_iterator;
 			++start_tmp_iterator;
+			//Todo recheck that! enable the exit(1) and try to understand why we return the same bound!
+			if (tmp_literal==tmp ){
+				remove=false;
+//				std::cout << " explanation" <<*explanation  <<std::endl;
+//				exit(1);
+			}
+			else{
 			//	std::cout << " tmp : "<< tmp << std::endl;
 			if (is_a_bound_literal(tmp))
 			{
@@ -6416,11 +6503,16 @@ int Mistral::Solver::simple_bound_reduction(){
 				if (assignment_level[id_tmp] > search_root){
 					if ( !visited.fast_contain(id_tmp))
 						remove = false;
-
 				}
+			}
 			}
 		}
 		if (remove ){
+
+		/*	std::cout << "ub remove bound " <<std::endl;
+			std::cout << "visited_var " <<visited_var <<std::endl;
+			std::cout << "visited_val " <<visited_val <<std::endl;
+*/
 			visitedUpperBounds.fast_remove(visited_var);
 			++reduced;
 		}
@@ -6735,9 +6827,13 @@ bool Mistral::Solver::learn_virtual_literals(bool semantic, bool lazyGeneration)
 
 	int __reduce = parameters.reduce_learnt_clause;
 	if (__reduce){
-		//TODO reduce_bounds NOT working!!!
+		//TODO semantic reduce_bounds NOT working!!!
 		//reduce_bounds();
+		//std::cout << " \n simple_bound_reduction " << std::endl;
+		//std::cout << " 1 clause.size() " << learnt_clause.size << std::endl;
 		simple_bound_reduction();
+		//std::cout << " \n END simple_bound_reduction " << std::endl;
+
 		//reduce_clause(true);
 	}
 
@@ -6763,7 +6859,8 @@ bool Mistral::Solver::learn_virtual_literals(bool semantic, bool lazyGeneration)
 
 					if ( tmp_id< 0){
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-						__x->get_informations_of(val,1, lvl,odr);
+						bool __a=false, __b=false;
+						__x->get_informations_of(val,1, lvl,odr,__a,__b);
 #endif
 						tmp_literal=encode_bound_literal(var, val,0);
 					}
@@ -6799,7 +6896,8 @@ bool Mistral::Solver::learn_virtual_literals(bool semantic, bool lazyGeneration)
 					if ( tmp_id< 0)
 					{
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-						__x->get_informations_of(val,0, lvl,odr);
+						bool __a =false, __b = false;
+						__x->get_informations_of(val,0, lvl,odr, __a, __b);
 #endif
 						tmp_literal=encode_bound_literal(var, val,1);
 					}
@@ -6883,7 +6981,7 @@ bool Mistral::Solver::learn_virtual_literals(bool semantic, bool lazyGeneration)
 	}
 	else{
 		if (lazyGeneration && semantic){
-
+			//std::cout << " 2 clause.size() " << learnt_clause.size << std::endl;
 			if (__reduce)
 				reduce_clause();
 			generate_variables();
@@ -7073,17 +7171,16 @@ void Mistral::Solver::clean_fdlearn() {
 			start = current_explanation->get_reason_for_literal(a_literal, end);
 			//	++graph_size;
 
-#ifdef 	_DEBUG_FD_NOGOOD
-			if(_DEBUG_FD_NOGOOD){
+#ifdef 	_CLEAN_DEBUG_FD_NOGOOD
+			if(_CLEAN_DEBUG_FD_NOGOOD){
 				if (a_literal==NULL_ATOM)
-					std::cout << " \n \n c New failure! \n c Explaining a failure " << std::endl;
+					std::cout << " \n \n\n \n \n c New failure! \n c Explaining a failure " << std::endl;
 				else
 				{
 					std::cout << " \n Explain the literal " << a_literal << std::endl;
 				}
 				std::cout << " its explanation comes from : "<< current_explanation << std::endl;
 			}
-
 #endif
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 			if(start >= end)
@@ -7120,11 +7217,11 @@ void Mistral::Solver::clean_fdlearn() {
 			treat_explanation(start, end, semantic, orderedExploration);
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-			if ((!parameters.orderedExploration) &&  literals_to_explore.size != remainPathC){
+			if ((!parameters.orderedExploration) &&  currentLVL_literals_to_explore.size != remainPathC){
 				std::cout << " literals_to_explore.size != remainPathC " << std::endl;
 				exit(1);
 			}
-			if ((parameters.orderedExploration) &&  ordered_literals_to_explore.size != remainPathC){
+			if ((parameters.orderedExploration) &&  currentLVL_literals_to_explore.size != remainPathC){
 				std::cout << " ordered_literals_to_explore.size != remainPathC " << std::endl;
 				exit(1);
 			}
@@ -7219,7 +7316,7 @@ void Mistral::Solver::clean_fdlearn() {
 		}
 		else{
 #ifdef _CHECK_NOGOOD
-			((SchedulingSolver *) this)->	check_nogood(learnt_clause);
+		//	((SchedulingSolver *) this)->	check_nogood(learnt_clause);
 			//	store_nogood(learnt_clause);
 #endif
 #ifdef _DEBUG_FD_NOGOOD
@@ -7236,6 +7333,10 @@ void Mistral::Solver::clean_fdlearn() {
 				//   }
 				// }
 
+			/*	std::cout << " Final learnt_clause.size" << learnt_clause.size << std::endl;
+				std::cout << "assignment_level[get_id_boolean_variable(learnt_clause[1])]" << assignment_level[get_id_boolean_variable(learnt_clause[1])] << std::endl;
+				std::cout << "backtrack_level" <<backtrack_level<< std::endl;
+*/
 				if (assignment_level[get_id_boolean_variable(learnt_clause[1])]!=backtrack_level){
 					unsigned int ___size= learnt_clause.size;
 					Literal __q = learnt_clause[1];
@@ -7246,8 +7347,8 @@ void Mistral::Solver::clean_fdlearn() {
 							break;
 						}
 					}
-
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+					//std::cout << " ___size" <<  ___size << std::endl;
 					if (___size<2){
 						std::cout << " ___size<2 " << std::endl;
 						exit(1);
@@ -7313,7 +7414,10 @@ void Mistral::Solver::clean_fdlearn() {
 #endif
 	}
 	//std::cout << " END clean_fdlearn " << std::endl;
-
+#ifdef _VISITED_VL
+		for (int i = 0; i< start_from; ++i)
+			(static_cast<VariableRangeWithLearning *> (variables[i].range_domain))->clean_visited();
+#endif
 }
 
 
@@ -7330,6 +7434,9 @@ bool Mistral::Solver::visited_virtual_literal(Literal q){
 	tmp_VariableRangeWithLearning->get_informations_of(val,is_lb, lvl,odr,__visited,false);
 	//if (__visited)
 	//	return true;
+	//std::cout << "lvl of " << q << " is " << lvl << std::endl;
+	//std::cout << "val " << val << "var  " << var << "is_lb  " << is_lb << std::endl;
+
 	if (lvl<=search_root)
 			return true;
 	else return __visited;
@@ -7369,6 +7476,7 @@ bool Mistral::Solver::visited_explanation(Literal q){
 	//bool is_real = ! is_a_bound_literal(q);
 
 	//TODO : add level control !! (i.e. literal s.t. at search_root)
+	//std::cout << " \n reduce q?  "<< q << std::endl;
 
 	int id ;
 	Explanation::iterator start_tmp_iterator, end_tmp_iterator;
@@ -7380,8 +7488,11 @@ bool Mistral::Solver::visited_explanation(Literal q){
 	explanation = reason_for[id];
 
 	if (explanation){
+
+		//std::cout << " \n new Explanation :  : "<< *explanation << std::endl;
 		start_tmp_iterator = explanation->get_reason_for_literal(q, end_tmp_iterator);
-		//				std::cout << " \n new Explanation :  : "<< *explanation << std::endl;
+
+//		std::cout << " \n new Explanation :  : "<< *explanation << std::endl;
 		while(start_tmp_iterator < end_tmp_iterator) {
 
 			tmp = *start_tmp_iterator;
@@ -7461,9 +7572,11 @@ bool Mistral::Solver::visited_explanation(Literal q){
 
 //void Mistral::Solver::reduce_clause(bool semantic_reduction){
 void Mistral::Solver::reduce_clause(){
-//	std::cout << " \n \n \n \n start reduction " << std::endl;
-	//int old = learnt_clause.size;
+	//std::cout << " \n \n \n \n start reduction " << std::endl;
+	int old = learnt_clause.size;
 //	std::cout << " \n start reduction " << learnt_clause.size<< std::endl;
+
+//	std::cout << " current clause  " << learnt_clause<< std::endl;
 	for (unsigned int i = (learnt_clause.size -1); i>0; --i){
 		//if (visited_explanation(learnt_clause[i], semantic_reduction))
 		if (visited_explanation(learnt_clause[i]))

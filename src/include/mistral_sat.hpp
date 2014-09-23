@@ -383,22 +383,27 @@ namespace Mistral {
     }
 
 
-    virtual iterator get_reason_for_literal(const Literal a, iterator& end) {
+    virtual iterator get_reason_for_literal(const Literal p, iterator& end) {
 //  		return(a == NULL_ATOM ? conflict->get_reason_for(NULL_ATOM, solver->level, end) : reason_for[a/2]->get_reason_for(a/2, solver->level, end));
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-    	if (a != NULL_ATOM){
-    		if ((*reason_for[a/2])[0]!=(a +1 -2*SIGN(a) )){
-    			std::cout << "reason_for[a/2][0]!=a" << std::endl;
-    			std::cout << "a" << a<<std::endl;
-    			std::cout << "reason_for[a/2]" << (*reason_for[a/2]) [0] <<std::endl;
-    			std::cout << "reason_for[a/2]" << (*reason_for[a/2]) [1] <<std::endl;
+    	//if (false)
+    /*	if (p != NULL_ATOM){
+//    		if ((*reason_for[p/2])[0]!=(p +1 -SIGN(p) )){
+    		if ((*reason_for[p/2])[0]!=p +1 -SIGN(p)){
+    			std::cout << "reason_for[p/2][0]!=p" << std::endl;
+
+    			std::cout << "p" << p<<std::endl;
+    			std::cout << "p" << p<<std::endl;
+    			    			std::cout << "reason_for[p/2]" << (*reason_for[p/2]) [0] <<std::endl;
+    			std::cout << "reason_for[p/2]" << (*reason_for[p/2]) [1] <<std::endl;
     			exit(1);
     		}
     	}
+    	*/
 #endif
 
-    	return(a == NULL_ATOM ? conflict->get_reason_for(NULL_ATOM, solver->level, end) : reason_for[a/2]->explain(end));
+    	return(p == NULL_ATOM ? conflict->get_reason_for(NULL_ATOM, solver->level, end) : reason_for[p/2]->explain(end));
     }
 
     void extend_scope(Variable x);

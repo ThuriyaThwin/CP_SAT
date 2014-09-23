@@ -2247,13 +2247,15 @@ void SchedulingSolver::initialise_heuristic (int update_weights){
 }
 
 SchedulingSolver::~SchedulingSolver() {
-
+#ifdef _CHECK_NOGOOD
+#else
 	if (_constraint_weight)
 		delete _constraint_weight;
 	if (_variable_weight)
 		delete _variable_weight;
 	if (pool)
 		delete pool;
+#endif
 
 }
 

@@ -15813,6 +15813,7 @@ std::ostream& Mistral::DomainFaithfulnessConstraint::display(std::ostream& os) c
 
 
 Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason_for_literal(const Literal a, iterator& end){
+	//TODO remove solver->level from the call!!
 	if (is_a_bound_literal(a) || a== NULL_ATOM)
 		get_reason_for (a, solver->level ,end);
 	else
@@ -15871,16 +15872,26 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 
 			int val = get_value_from_literal(a);
 			//int __is_lb = is_lower_bound(a);
-
-			if (is_lower_bound(a))
-			//if(__is_lb)
+			Literal tmp;
+			if (is_lower_bound(a)){
+				//if(__is_lb)
 				--val;
+				int var = value_exist(val);
+				tmp= get_solver()->encode_boolean_variable_as_literal(var, 1);
+			}
+			else{
+				int var = value_exist(val);
+				tmp= get_solver()->encode_boolean_variable_as_literal(var, 0);
+			}
+			explanation[0]= tmp ;
+			end= &(explanation[0])+1;
+			return &explanation[0];
 
-			int var = value_exist(val);
-			Explanation * e = get_solver()->reason_for[var];
+//			int var = value_exist(val);
+//			Explanation * e = get_solver()->reason_for[var];
 
 
-			return e->get_reason_for(var, lvl, end);
+//			return e->get_reason_for(var, lvl, end);
 			//return e->get_reason_for_literal(literal(var,1- __is_lb), end);
 
 			/*if (is_upper_bound(a)){

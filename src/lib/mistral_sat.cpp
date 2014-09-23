@@ -1223,7 +1223,13 @@ Mistral::Clause* Mistral::ConstraintClauseBase::update_watcher(const int cw,
 	  //reason[UNSIGNED(q)] = cl;
 	  //EXPL
 	  reason_for[UNSIGNED(q)] = cl;
+/*	  if (clause[0]==464){
+		  std::cout << " cl" <<cl << std::endl;
+		  std::cout << " clause[0]" <<clause[0] << std::endl;
+		  std::cout << " clause[1]" <<clause[1] << std::endl;
 
+		  exit(1);
+	  } */
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 	  if(clause.locked){
 		  std::cout << "  clause.locked=true!! "  << std::endl;

@@ -1666,21 +1666,14 @@ namespace Mistral {
 		  //level of previous max !
 		  //  int __level = level_of(trail_.back(2),0);
 		  //int __level = level_of(max,0);
-		  int __level,b ;
+/*		  int __level,b ;
 		  get_informations_of(max,0, __level,b);
 
 		  bool max_will_be_restored =1, min_will_be_restored =1;
 		  if (__level !=  solver->level)
 		  {
 			  max_will_be_restored=0;
-			  /*
-			  std::cout << " ERROR : (__level !=  solver->level) in VariableRangeWithLearning restore max" << std::endl;
-			  std::cout << " solver->level " << solver->level << std::endl;
-			  std::cout << " max " << max << std::endl;
-			  std::cout << "  level_of(max,0) :  " <<  level_of(max,0) << std::endl;
-			  std::cout << " upperbounds " << upperbounds << std::endl;
-			  std::cout << " upper_bound_level " << upper_bound_levels << std::endl;
-			  exit(1);*/
+
 		  }
 		//  __level = level_of(min,1);
 
@@ -1689,14 +1682,7 @@ namespace Mistral {
 		  if (__level  !=   solver->level)
 		  {
 			  min_will_be_restored =0;
-			  /*
-			  std::cout << " ERROR : (__level !=  solver->level) in VariableRangeWithLearning restore min" << std::endl;
-			  std::cout << " solver->level " << solver->level << std::endl;
-			  std::cout << " min " << min << std::endl;
-			  std::cout << "  level_of(min,1) :  " <<  __level << std::endl;
-			  std::cout << " lowerbounds " << lowerbounds << std::endl;
-			  std::cout << " lower_bound_levels " << lower_bound_levels << std::endl;
-			  exit(1);*/
+
 		  }
 
 		  if ((!max_will_be_restored) && (!min_will_be_restored))
@@ -1741,7 +1727,7 @@ namespace Mistral {
 				  exit(1);
 			  }
 		  }
-
+*/
 		  //	  solver->level;
 #endif
 
