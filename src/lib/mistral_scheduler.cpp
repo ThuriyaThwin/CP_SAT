@@ -3673,6 +3673,9 @@ stats->num_solutions++;
 		  delete[] visitedLowerBoundlevels;
 		  delete[] visitedUpperBoundlevels;
 
+		  delete[] visitedLowerBoundorders;
+		  delete[] visitedUpperBoundorders;
+
 		  base->enforce_nfc1 = true;
 		  base->relax();
 		  if (parameters.lazy_generation){

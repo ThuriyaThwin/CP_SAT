@@ -2314,7 +2314,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 		int level2 = scope1->level_of(value2,0) ;
 
 
-		if (level1> lvl){
+		/*if (level1> lvl){
 			std::cout << " lvl ERROR in explaning failure on ExplainedConstraintLess" << std::endl;
 			exit(1);
 		}
@@ -2329,7 +2329,7 @@ Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for(
 			std::cout << " lvl ERROR in explaning failure on ExplainedConstraintLess" << std::endl;
 			exit(1);
 		}
-
+*/
 		if ((value1+offset) <= value2 ){
 			std::cout << " semantic ERROR in explaning failure on ExplainedConstraintLess" << std::endl;
 			exit(1);
@@ -14684,7 +14684,7 @@ std::ostream& Mistral::ConstraintCliqueNotEqual::display(std::ostream& os) const
 /**********************************************
  * DomainFaithfulnessConstraint
  **********************************************/
-//#define _DEBUG_INCREMENTAL_DOMAINFAITHFULNESS true
+#define _DEBUG_INCREMENTAL_DOMAINFAITHFULNESS true
 
 Mistral::DomainFaithfulnessConstraint::DomainFaithfulnessConstraint(Vector< Variable >& scp)
 : GlobalConstraint(scp) { //priority = 2;
@@ -15084,9 +15084,14 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::update_closes
 		}
 
 		int next = greater[idx];
-
-		if (cache_value[lower[idx]]<cache_value[lb_idx])
-			ub_idx=lower[idx];
+		//update ub_idx
+		if (ub_idx){
+			if (!lower[idx])
+				ub_idx=0;
+			else
+				if (cache_value[lower[idx]]<cache_value[ub_idx])
+					ub_idx=lower[idx];
+		}
 
 		if (next){
 			if (bound>val){
@@ -15102,6 +15107,13 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::update_closes
 				if(!scope[next].get_min()){
 					explanation[0] = ((Solver *) solver)->encode_boolean_variable_as_literal( scope[idx].id(),0);
 					explanation[1] = ((Solver *) solver)->encode_boolean_variable_as_literal( scope[next].id(),1);
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+			( (Solver*) solver) ->__failure = this;
+#ifdef _DEBUG_FAIL
+			std::cout << " fail : " << *this << std::endl;
+#endif
+#endif
 					return FAILURE(next);
 				}
 		}
@@ -15130,8 +15142,13 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::update_closes
 			return FAILURE(0);
 		}
 
-		if (cache_value[greater[idx]]>cache_value[lb_idx])
-			lb_idx=greater[idx];
+		if (lb_idx){
+			if (!greater[idx])
+				lb_idx=0;
+			else
+				if (cache_value[greater[idx]]>cache_value[lb_idx])
+					lb_idx=greater[idx];
+		}
 
 		if (previous){
 			if (bound<val){
@@ -15148,6 +15165,13 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::update_closes
 					explanation[0] = ((Solver *) solver)->encode_boolean_variable_as_literal( scope[idx].id(),1);
 					explanation[1] = ((Solver *) solver)->encode_boolean_variable_as_literal( scope[previous].id(),0);
 					//return wiped;
+
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+			( (Solver*) solver) ->__failure = this;
+#ifdef _DEBUG_FAIL
+			std::cout << " fail : " << *this << std::endl;
+#endif
+#endif
 					return FAILURE(previous);
 				}
 		}

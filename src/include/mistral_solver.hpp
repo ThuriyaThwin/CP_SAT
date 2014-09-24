@@ -853,7 +853,7 @@ namespace Mistral {
 //    void reduce_clause(bool semantic_reduction=false);
     void reduce_clause();
     int simple_bound_reduction();
-    void reduce_bounds();
+    //void reduce_bounds();
 //    bool visited_explanation(Literal q, bool semantic_reduction);
     bool visited_explanation(Literal q);
     bool visited_virtual_literal(Literal q);
@@ -918,6 +918,9 @@ namespace Mistral {
     int * visitedLowerBoundlevels;
     Explanation** visitedLowerBoundExplanations;
     Explanation** visitedUpperBoundExplanations;
+    int * visitedUpperBoundorders;
+    int * visitedLowerBoundorders;
+
 
     //Used when updating the weight in FailureCountManager. This vector contain the id of
     //each variable in the failure clause
