@@ -14868,7 +14868,7 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 			if (__iterator<0)
 				break;
 		}
-#ifdef _DEBUG_INCREMENTAL_DOMAINFAITHFULNESS
+//#ifdef _DEBUG_INCREMENTAL_DOMAINFAITHFULNESS
 		//We are sure that bound_l inserted at __iterator+1.
 		//Test
 		if ((ub[__iterator+1]>bound_l) ||  (ub[__iterator+1]<bound_l)){
