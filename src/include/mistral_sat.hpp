@@ -403,7 +403,7 @@ namespace Mistral {
     	*/
 #endif
 
-    	return(p == NULL_ATOM ? conflict->get_reason_for(NULL_ATOM, solver->level, end) : reason_for[p/2]->explain(end));
+    	return(p == NULL_ATOM ? conflict->get_reason_for(NULL_ATOM, 0, end) : reason_for[p/2]->explain(end));
     }
 
     void extend_scope(Variable x);

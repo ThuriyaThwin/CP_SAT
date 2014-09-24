@@ -2168,10 +2168,11 @@ Mistral::PropagationOutcome Mistral::ExplainedConstraintLess::propagate(const in
 
 Mistral::Explanation::iterator Mistral::ExplainedConstraintLess::get_reason_for_literal(const Literal a, iterator& end){
 //	get_reason_for (a, solver->lvl ,end);
+	//solver->level is totally irrelevant!
 	if (is_a_bound_literal(a) || a== NULL_ATOM)
-		get_reason_for (a, solver->level ,end);
+		get_reason_for (a, 0 ,end);
 	else
-		get_reason_for (((Solver*) solver)->get_id_boolean_variable(a) , solver->level ,end);
+		get_reason_for (((Solver*) solver)->get_id_boolean_variable(a) , 0 ,end);
 
 }
 
@@ -2462,9 +2463,9 @@ Mistral::ExplainedConstraintReifiedDisjunctive::ExplainedConstraintReifiedDisjun
 
 Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::get_reason_for_literal(const Literal a, iterator& end){
 	if (is_a_bound_literal(a) || a== NULL_ATOM)
-		get_reason_for (a, solver->level ,end);
+		get_reason_for (a, 0 ,end);
 	else
-		get_reason_for (((Solver*) solver)->get_id_boolean_variable(a) , solver->level ,end);
+		get_reason_for (((Solver*) solver)->get_id_boolean_variable(a) , 0 ,end);
 
 }
 Mistral::Explanation::iterator Mistral::ExplainedConstraintReifiedDisjunctive::get_reason_for(const Atom a, const int lvl, iterator& end){
@@ -15815,10 +15816,9 @@ std::ostream& Mistral::DomainFaithfulnessConstraint::display(std::ostream& os) c
 Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason_for_literal(const Literal a, iterator& end){
 	//TODO remove solver->level from the call!!
 	if (is_a_bound_literal(a) || a== NULL_ATOM)
-		get_reason_for (a, solver->level ,end);
+		get_reason_for (a, 0 ,end);
 	else
-		get_reason_for (((Solver*) solver)->get_id_boolean_variable(a) , solver->level ,end);
-
+		get_reason_for (((Solver*) solver)->get_id_boolean_variable(a),0 ,end);
 }
 
 Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason_for(const Atom a, const int lvl, iterator& end){
