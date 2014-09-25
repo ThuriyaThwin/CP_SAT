@@ -5539,8 +5539,8 @@ void Mistral::Solver::treat_real_literal(Literal q, bool semantic, bool orderedE
 							already_explored = true;
 							if (visitedUpperBoundvalues[var] == val){
 								//We remove it to avoid crcular explanation when reducing the nogood
-								//TODO check when to not remove it!
-								visited.fast_remove(x);
+								//TODO check when to not remove
+								//visited.fast_remove(x);
 								int __o = assignment_order[x];
 								if (visitedUpperBoundorders[var]>__o){
 									visitedUpperBoundorders[var]=__o;
@@ -5556,7 +5556,7 @@ void Mistral::Solver::treat_real_literal(Literal q, bool semantic, bool orderedE
 						if (visitedLowerBoundvalues[var] >= (val+1)){
 							already_explored = true;
 							if (visitedLowerBoundvalues[var] == (val+1)){
-								visited.fast_remove(x);
+								//visited.fast_remove(x);
 							int __o = assignment_order[x];
 							if (visitedLowerBoundorders[var]>__o){
 								visitedLowerBoundorders[var]=__o;
@@ -5599,7 +5599,7 @@ void Mistral::Solver::treat_real_literal(Literal q, bool semantic, bool orderedE
 
 						}
 #endif
-						visited.fast_remove(x);
+						//visited.fast_remove(x);
 						if (var_visited){
 							if (isub){
 								visitedUpperBoundvalues[var]= val;
@@ -6605,7 +6605,7 @@ int Mistral::Solver::simple_bound_reduction(){
 bool Mistral::Solver::learn_virtual_literals(bool semantic, bool lazyGeneration) {
 
 	int __reduce = parameters.reduce_learnt_clause;
-	if (__reduce){
+	if (__reduce && (!lazyGeneration)){
 		//TODO semantic reduce_bounds NOT working!!!
 		//reduce_bounds();
 //		std::cout << " \n simple_bound_reduction " << std::endl;
