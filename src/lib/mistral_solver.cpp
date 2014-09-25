@@ -5538,6 +5538,9 @@ void Mistral::Solver::treat_real_literal(Literal q, bool semantic, bool orderedE
 						if (visitedUpperBoundvalues[var] <= val){
 							already_explored = true;
 							if (visitedUpperBoundvalues[var] == val){
+								//We remove it to avoid crcular explanation when reducing the nogood
+								//TODO check when to not remove it!
+								visited.fast_remove(x);
 								int __o = assignment_order[x];
 								if (visitedUpperBoundorders[var]>__o){
 									visitedUpperBoundorders[var]=__o;
@@ -5553,6 +5556,7 @@ void Mistral::Solver::treat_real_literal(Literal q, bool semantic, bool orderedE
 						if (visitedLowerBoundvalues[var] >= (val+1)){
 							already_explored = true;
 							if (visitedLowerBoundvalues[var] == (val+1)){
+								visited.fast_remove(x);
 							int __o = assignment_order[x];
 							if (visitedLowerBoundorders[var]>__o){
 								visitedLowerBoundorders[var]=__o;
@@ -5595,7 +5599,7 @@ void Mistral::Solver::treat_real_literal(Literal q, bool semantic, bool orderedE
 
 						}
 #endif
-
+						visited.fast_remove(x);
 						if (var_visited){
 							if (isub){
 								visitedUpperBoundvalues[var]= val;
@@ -7362,7 +7366,7 @@ void Mistral::Solver::reduce_clause(){
 //	std::cout << " \n start reduction " << learnt_clause.size<< std::endl;
 
 //	std::cout << " current clause  " << learnt_clause<< std::endl;
-	for (unsigned int i = (learnt_clause.size -1); i>0; --i){
+	for (int i = (learnt_clause.size -1); i>0; --i){
 		//if (visited_explanation(learnt_clause[i], semantic_reduction))
 		if (visited_explanation(learnt_clause[i]))
 			learnt_clause.remove(i);
