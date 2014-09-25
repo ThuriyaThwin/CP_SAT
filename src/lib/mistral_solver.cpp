@@ -5315,7 +5315,7 @@ unsigned int Mistral::Solver::generate_new_variable(DomainFaithfulnessConstraint
 	int tmp__id = tmp__.id();
 	assignment_level[tmp__id] = lvl;
 	reason_for[tmp__id] = dom_constraint;
-	if (order==-2){
+	if (order==(-2)){
 	//should take the same order of the decision of level lvl +1, i.e. decisions[lvl-search_root]
 	assignment_order[tmp__id] = assignment_order[decisions[lvl-search_root].var.id()];
 	/*std::cout << "  level" << level << std::endl;
