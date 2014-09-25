@@ -5532,7 +5532,7 @@ void Mistral::Solver::treat_real_literal(Literal q, bool semantic, bool orderedE
 						if (visitedUpperBoundvalues[var] <= val){
 							already_explored = true;
 							if (visitedUpperBoundvalues[var] == val){
-								int __o = assignment_level[x];
+								int __o = assignment_order[x];
 								if (visitedUpperBoundorders[var]>__o){
 									visitedUpperBoundorders[var]=__o;
 									visitedUpperBoundExplanations[var] = reason_for[x];
@@ -5547,7 +5547,7 @@ void Mistral::Solver::treat_real_literal(Literal q, bool semantic, bool orderedE
 						if (visitedLowerBoundvalues[var] >= (val+1)){
 							already_explored = true;
 							if (visitedLowerBoundvalues[var] == (val+1)){
-							int __o = assignment_level[x];
+							int __o = assignment_order[x];
 							if (visitedLowerBoundorders[var]>__o){
 								visitedLowerBoundorders[var]=__o;
 								visitedLowerBoundExplanations[var] = reason_for[x];
