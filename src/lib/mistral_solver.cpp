@@ -5404,7 +5404,7 @@ void Mistral::Solver::generate_variables(){
 		tmp_id = __x->domainConstraint->value_exist( val-1 ) ;
 
 		if ( tmp_id< 0){
-			tmp_id= generate_new_variable(__x->domainConstraint, val, true, lvl, var,odr);
+			tmp_id= generate_new_variable(__x->domainConstraint, val, true, lvl, var,odr+1);
 		}
 		//TODO delete this
 		else
@@ -5433,7 +5433,7 @@ void Mistral::Solver::generate_variables(){
 		tmp_id = __x->domainConstraint->value_exist( val) ;
 		if ( tmp_id< 0)
 		{
-			tmp_id= generate_new_variable(__x->domainConstraint, val, false, lvl, var,odr);
+			tmp_id= generate_new_variable(__x->domainConstraint, val, false, lvl, var,odr+1);
 		}
 
 //		else
