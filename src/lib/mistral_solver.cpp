@@ -6408,6 +6408,7 @@ int Mistral::Solver::simple_bound_reduction(){
 	VariableRangeWithLearning* __x;
 	DomainFaithfulnessConstraint * dom_constraint;
 
+	//std::cout << " \n \n \n \n \n \n Start Reduction "  << std::endl;
 	//std::cout << " visitedLowerBounds " << visitedLowerBounds << std::endl;
 
 	for (int i = size_bitset; i>0; --i ){
@@ -6454,10 +6455,11 @@ int Mistral::Solver::simple_bound_reduction(){
 		}
 
 		/*std::cout << "\n start explanation of LBbound " << tmp_literal << std::endl;
-		std::cout << "\n var " << visited_var << std::endl;
-		std::cout << "\n val " << visited_val << std::endl;
+		std::cout << " var " << visited_var << std::endl;
+		std::cout << " val " << visited_val << std::endl;
 		std::cout << " explanation " << *explanation << std::endl;
-	*/
+		*/
+
 		while(remove && (start_tmp_iterator < end_tmp_iterator)) {
 
 			tmp = *start_tmp_iterator;
@@ -6542,9 +6544,11 @@ int Mistral::Solver::simple_bound_reduction(){
 			exit(1);
 		}
 
-		//std::cout << "\n start explanation of UBbound " << tmp_literal << std::endl;
-		//std::cout << " explanation " << *explanation << std::endl;
-
+		/*std::cout << "\n start explanation of UBbound " << tmp_literal << std::endl;
+		std::cout << " var " << visited_var << std::endl;
+		std::cout << " val " << visited_val << std::endl;
+		std::cout << " explanation " << *explanation << std::endl;
+		*/
 		while(remove && (start_tmp_iterator < end_tmp_iterator)) {
 
 			tmp = *start_tmp_iterator;
@@ -7197,6 +7201,12 @@ bool Mistral::Solver::visited_virtual_literal(Literal q){
 	bool is_lb = is_lower_bound(q);
 	int val = get_value_from_literal(q);
 	int var = get_variable_from_literal(q);
+	/*if (a!=NULL_ATOM){
+		__var = varsIds_lazy[a  - initial_variablesize];
+		if ((__var==var) && is_lb!=variables[a].get_min() )
+			return false;
+	}
+	*/
 	VariableRangeWithLearning* tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
 
 	int lvl, odr;
@@ -7206,7 +7216,7 @@ bool Mistral::Solver::visited_virtual_literal(Literal q){
 	//if (__visited)
 	//	return true;
 	//std::cout << "lvl of " << q << " is " << lvl << std::endl;
-	//std::cout << "val " << val << "var  " << var << "is_lb  " << is_lb << std::endl;
+	//std::cout << "   var " << var << "val  " << val << "is_lb  " << is_lb << "lvl " << lvl  << std::endl;
 
 	if (lvl<=search_root)
 			return true;
@@ -7249,13 +7259,17 @@ bool Mistral::Solver::visited_explanation(Literal q){
 	//TODO : add level control !! (i.e. literal s.t. at search_root)
 	//std::cout << " \n reduce q?  "<< q << std::endl;
 
-	int id ;
+	int id =get_id_boolean_variable(q);
+
+	if (id>=initial_variablesize)
+		return false;
+
 	Explanation::iterator start_tmp_iterator, end_tmp_iterator;
 	Explanation* explanation;
 	Literal tmp;
 	bool explored = true;
 	int id_tmp ;
-	id = get_id_boolean_variable(q);
+
 	explanation = reason_for[id];
 
 	if (explanation){
