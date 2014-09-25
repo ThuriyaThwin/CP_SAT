@@ -888,7 +888,7 @@ namespace Mistral {
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
     bool all_reasons_before_search_root;
 #endif
-    unsigned int generate_new_variable(DomainFaithfulnessConstraint * dom_constraint, int val, bool is_lb, int lvl , int range_id);
+    unsigned int generate_new_variable(DomainFaithfulnessConstraint * dom_constraint, int val, bool is_lb, int lvl , int range_id, int order);
     void generate_variables();
     void add_Orderedliteral_tobe_explored(Literal l, int assignment_odr, Explanation* e);
     Explanation * get_next_to_explore(Literal & a) ;

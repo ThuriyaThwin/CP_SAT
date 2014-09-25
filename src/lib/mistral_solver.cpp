@@ -5286,7 +5286,7 @@ void Mistral::Solver::simple_fdlearn_nogood() {
 }
 
 
-unsigned int Mistral::Solver::generate_new_variable(DomainFaithfulnessConstraint*dom_constraint, int val, bool is_lb, int lvl, int range_id ){
+unsigned int Mistral::Solver::generate_new_variable(DomainFaithfulnessConstraint*dom_constraint, int val, bool is_lb, int lvl, int range_id , int order){
 
 	Variable tmp__(0,1);
 	tmp__.lazy_initialise(this);
@@ -5315,6 +5315,7 @@ unsigned int Mistral::Solver::generate_new_variable(DomainFaithfulnessConstraint
 	int tmp__id = tmp__.id();
 	assignment_level[tmp__id] = lvl;
 	reason_for[tmp__id] = dom_constraint;
+	if (order==-2){
 	//should take the same order of the decision of level lvl +1, i.e. decisions[lvl-search_root]
 	assignment_order[tmp__id] = assignment_order[decisions[lvl-search_root].var.id()];
 	/*std::cout << "  level" << level << std::endl;
@@ -5325,6 +5326,9 @@ unsigned int Mistral::Solver::generate_new_variable(DomainFaithfulnessConstraint
 	std::cout << "  decisions[lvl-search_root]" <<decisions[lvl-search_root] << std::endl;
 	std::cout << "  assignment_order[tmp__id] " <<assignment_order[tmp__id] << std::endl;
 */
+	}
+	else
+		assignment_order[tmp__id]= order;
 	//assignment_order
 
 	//	tmp__.set_domain(!is_lb);
@@ -5393,13 +5397,14 @@ void Mistral::Solver::generate_variables(){
 	for (int i = visitedLowerBounds.size() ; i>0; --i ){
 		val = visitedLowerBoundvalues[var] ;
 		lvl = visitedLowerBoundlevels[var];
+		odr = visitedLowerBoundorders[var];
 		__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
 
 
 		tmp_id = __x->domainConstraint->value_exist( val-1 ) ;
 
 		if ( tmp_id< 0){
-			tmp_id= generate_new_variable(__x->domainConstraint, val, true, lvl, var);
+			tmp_id= generate_new_variable(__x->domainConstraint, val, true, lvl, var,odr);
 		}
 		//TODO delete this
 		else
@@ -5421,13 +5426,14 @@ void Mistral::Solver::generate_variables(){
 	for (int i = visitedUpperBounds.size() ; i>0; --i ){
 		val = visitedUpperBoundvalues[var] ;
 		lvl = visitedUpperBoundlevels[var] ;
+		odr = visitedUpperBoundorders[var] ;
 
 		__x= static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
 
 		tmp_id = __x->domainConstraint->value_exist( val) ;
 		if ( tmp_id< 0)
 		{
-			tmp_id= generate_new_variable(__x->domainConstraint, val, false, lvl, var);
+			tmp_id= generate_new_variable(__x->domainConstraint, val, false, lvl, var,odr);
 		}
 
 //		else
@@ -6172,7 +6178,8 @@ void Mistral::Solver::generate_and_learn(complete_virtual_literal_informations i
 		tmp__id = dom_constraint->value_exist( info.val-1 ) ;
 
 	if ( tmp__id< 0){
-		tmp__id= generate_new_variable(dom_constraint, info.val, info.is_lb, info.lvl, info.var);
+		//todo change the order with info.odr?
+		tmp__id= generate_new_variable(dom_constraint, info.val, info.is_lb, info.lvl, info.var, -2);
 	}
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
@@ -6484,7 +6491,7 @@ int Mistral::Solver::simple_bound_reduction(){
 			/*std::cout << "lb remove bound " <<std::endl;
 			std::cout << "visited_var " <<visited_var <<std::endl;
 			std::cout << "visited_val " <<visited_val <<std::endl;
-			 */
+			*/
 			visitedLowerBounds.fast_remove(visited_var);
 			++reduced;
 		}
@@ -6571,7 +6578,7 @@ int Mistral::Solver::simple_bound_reduction(){
 			/*std::cout << "ub remove bound " <<std::endl;
 			std::cout << "visited_var " <<visited_var <<std::endl;
 			std::cout << "visited_val " <<visited_val <<std::endl;
-			 */
+			*/
 			visitedUpperBounds.fast_remove(visited_var);
 			++reduced;
 		}
