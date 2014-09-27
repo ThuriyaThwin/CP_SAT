@@ -273,7 +273,7 @@ const char* ParameterList::int_ident[ParameterList::nia] =
    "-forgetbackjump" , "-hardkeep", "-hardforget" ,"-keepwhensize" , "-keepwhenbjm" ,
    "-keeplearning" , "-simulaterestart" , "-nogoodweight" , "-weighthistory" ,  "-fixedForget" ,
    "-fixedlimitSize" , "-fixedLearntSize" , "-probforget" ,"-forgetdecsize" , "-vsids",
-   "-autoconfig" , "-autoconfigublimit" , "-autoconfiglblimit", "-limitresetpolicy"
+   "-autoconfig" , "-autoconfigublimit" , "-autoconfiglblimit", "-limitresetpolicy" , "-taskweight"
   };
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
@@ -400,6 +400,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   autoconfiglblimit=10000;
   limitresetpolicy=0;
 
+  taskweight=0;
 
   if(Type == "osp") {
     Objective = "makespan";
@@ -492,6 +493,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[46] != NOVAL) autoconfigublimit  = int_param[46];
   if(int_param[47] != NOVAL) autoconfiglblimit  = int_param[47];
   if(int_param[48] != NOVAL) limitresetpolicy  = int_param[48];
+  if(int_param[49] != NOVAL) taskweight  = int_param[49];
 
 
   if (keep_when_bjm || keep_when_size)
@@ -570,6 +572,7 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | autoconfigublimit" << ":" << std::right << std::setw(15) <<   autoconfigublimit << " |" << std::endl;
   os << std::left << std::setw(30) << " c | autoconfiglblimit" << ":" << std::right << std::setw(15) <<   autoconfiglblimit << " |" << std::endl;
   os << std::left << std::setw(30) << " c | limitresetpolicy" << ":" << std::right << std::setw(15) <<   limitresetpolicy << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | taskweight" << ":" << std::right << std::setw(15) <<   taskweight << " |" << std::endl;
   os << std::left << std::setw(30) << " c | nogood_based_weight" << ":" << std::right << std::setw(15) <<   nogood_based_weight << " |" << std::endl;
   os << std::left << std::setw(30) << " c | reduce learnt clause " << ":" << std::right << std::setw(15) << (reduce_clauses? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | clause forgetfulness %" << ":" << std::right << std::setw(15) << Forgetfulness << " |" << std::endl;
@@ -2000,7 +2003,7 @@ void SchedulingSolver::setup() {
 			  params->keep_when_bjm ,  params->keeplearning_in_bb, params->simulaterestart,
 			  params->nogood_based_weight, params->fixedForget , params-> fixedlimitSize ,
 			  params-> fixedLearntSize ,params-> prob_forget ,params-> forgetdecsize ,
-			  params-> limitresetpolicy
+			  params-> limitresetpolicy , params-> taskweight
 	  );
   }
 
@@ -2223,17 +2226,25 @@ void SchedulingSolver::initialise_heuristic (int update_weights){
 	heuristic= new GenericHeuristic< VSIDS<2>, Guided< MinValue > >(this);
 	}
 	else{
-	heuristic= new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
+		if (params->taskweight)
+			heuristic= new SchedulingWeightedDegree < TaskDomOverTaskWeight, Guided< MinValue >, 2 > (this, disjunct_map);
+		else
+			heuristic= new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
 	}
 
 	heuristic->initialise(sequence);
 
 	if (update_weights){
-		//std::cout << "c updating weights... " << std::endl;
-		FailureCountManager* failmngr = (FailureCountManager*)
-	              (((SchedulingWeightedDegree< TaskDomOverBoolWeight, Guided< MinValue >, 2 >*) heuristic)->
-	    																		//get_manager());
-	    																		var.manager);
+		//std::cout << "error updating weights is not yet supported with  TaskDomOverTaskWeight" << std::endl;
+		//exit(1);
+		FailureCountManager* failmngr ;
+		if (params->taskweight)
+			failmngr = (FailureCountManager*)
+			(((SchedulingWeightedDegree< TaskDomOverTaskWeight, Guided< MinValue >, 2 >*) heuristic)->var.manager);
+		else
+		failmngr = (FailureCountManager*)
+	            		  (((SchedulingWeightedDegree< TaskDomOverBoolWeight, Guided< MinValue >, 2 >*) heuristic)->var.manager);
+
 		//  failmngr->display(std::cout , true);
 
 		for (int i=(_constraint_weight->size -1); i>= 0 ; --i){
@@ -3045,7 +3056,10 @@ void SchedulingSolver::dichotomic_search()
   if (params->vsids)
 	  heu= new GenericHeuristic< VSIDS<2>, Guided< MinValue > >(this);
   else
-	  heu = new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
+	  if (params->taskweight)
+	  heu = new SchedulingWeightedDegree < TaskDomOverTaskWeight, Guided< MinValue >, 2 > (this, disjunct_map);
+	  else
+		  heu = new SchedulingWeightedDegree < TaskDomOverBoolWeight, Guided< MinValue >, 2 > (this, disjunct_map);
 
 
 
@@ -3071,16 +3085,25 @@ void SchedulingSolver::dichotomic_search()
 
  // std::cout << std::endl << sequence << std::endl;
 
-
+  if (params->taskweight && params->vsids){
+	  std::cout << "Error params->taskweight && params->vsids "  << std::endl;
+	  exit(1);
+  }
 
   initialise_search(disjuncts, heu, pol);
   FailureCountManager* failmngr=NULL;
   _constraint_weight = NULL;
   _variable_weight = NULL;
   if (!params->vsids){
-	  failmngr = (FailureCountManager*) (((SchedulingWeightedDegree< TaskDomOverBoolWeight, Guided< MinValue >, 2 >*) heu)-> var.manager);
+	  if (params->weight_history){
+	  if (params->taskweight)
+		  failmngr = (FailureCountManager*) (((SchedulingWeightedDegree< TaskDomOverTaskWeight, Guided< MinValue >, 2 >*) heu)-> var.manager);
+	  else
+		  failmngr = (FailureCountManager*) (((SchedulingWeightedDegree< TaskDomOverBoolWeight, Guided< MinValue >, 2 >*) heu)-> var.manager);
+
 	  _constraint_weight  = new Vector<double> (failmngr->constraint_weight);
 	  _variable_weight = new Vector<double> (failmngr->variable_weight);
+	  }
   }
 
   //propagate the bounds, with respect to the initial upper bound
@@ -3209,9 +3232,16 @@ void SchedulingSolver::dichotomic_search()
 		  if (!params->vsids){
 			  delete _constraint_weight;
 			  delete _variable_weight;
-			  failmngr = (FailureCountManager*)  (((SchedulingWeightedDegree< TaskDomOverBoolWeight, Guided< MinValue >, 2 >*) heuristic)->var.manager);
+			  if (params->weight_history){
+//			  failmngr = (FailureCountManager*)  (((SchedulingWeightedDegree< TaskDomOverBoolWeight, Guided< MinValue >, 2 >*) heuristic)->var.manager);
+			  if (parameters.taskweight)
+				  failmngr = (FailureCountManager*) (((SchedulingWeightedDegree< TaskDomOverTaskWeight, Guided< MinValue >, 2 >*) heu)-> var.manager);
+			  else
+				  failmngr = (FailureCountManager*) (((SchedulingWeightedDegree< TaskDomOverBoolWeight, Guided< MinValue >, 2 >*) heu)-> var.manager);
+
 			  _constraint_weight  = new Vector<double> (failmngr->constraint_weight);
 			  _variable_weight = new Vector<double> (failmngr->variable_weight);
+		  }
 		  }
 
 	  } else {

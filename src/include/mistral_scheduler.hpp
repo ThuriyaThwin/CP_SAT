@@ -80,7 +80,7 @@ namespace Mistral {
     static const int RGUIDED =  3;
     static const int RAND    =  4;
 
-    static const int nia = 49;
+    static const int nia = 50;
     static const char* int_ident[nia];
     
     static const int nsa = 15;
@@ -156,6 +156,9 @@ namespace Mistral {
     int autoconfiglblimit;
     //if >0, we reset the policy once we hit  $limitresetpolicy failures.
     int limitresetpolicy;
+    //used with task weight
+    int taskweight;
+
 
     double Factor;
     double Decay;

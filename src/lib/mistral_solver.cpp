@@ -180,6 +180,7 @@ void Mistral::SolverParameters::initialise() {
   prob_forget = 100;
   forgetdecsize = 3;
   limitresetpolicy=0;
+  taskweight=0;
 
   prefix_comment = "c";
   prefix_statistics = "d";
@@ -6852,10 +6853,18 @@ void Mistral::Solver::update_failure_scope(){
 		//Clause & cl = learnt_clause ;
 		failure_scope.clear();
 		Literal q ;
+		int __w = parameters.taskweight;
+		int __lazy = parameters.lazy_generation;
+		int __id;
 		for (int size = (learnt_clause.size -1); size >=0; --size){
 			q = learnt_clause[size];
 			if (!is_a_bound_literal(q))
-				failure_scope.add(get_id_boolean_variable(q));
+			{
+				__id = get_id_boolean_variable(q);
+				if (__w && __lazy && (__id>=initial_variablesize))
+					__id= varsIds_lazy[__id-initial_variablesize];
+				failure_scope.add(__id);
+			}
 		}
 	}
 	else{
@@ -6863,12 +6872,19 @@ void Mistral::Solver::update_failure_scope(){
 		if (culprit.propagator==base){
 
 		//	std::cout << "culprit.propagator==base" << std::endl;
+			int __w = parameters.taskweight;
+				int __lazy = parameters.lazy_generation;
+				int __id;
 
 			Clause & cl = *(base->conflict);
 			failure_scope.clear();
 			//We do not have to test if there are virtual literals because such clauses don't propagate anything
-			for (int size = (cl.size -1); size >=0; --size)
-				failure_scope.add(get_id_boolean_variable(cl[size]));
+			for (int size = (cl.size -1); size >=0; --size){
+				__id = get_id_boolean_variable(cl[size]);
+				if (__w && __lazy && (__id>=initial_variablesize))
+					__id= varsIds_lazy[__id-initial_variablesize];
+				failure_scope.add(__id);
+			}
 
 		}
 	}
@@ -9731,7 +9747,8 @@ void Mistral::Solver::set_fdlearning_on(
         int _fixedLearntSize,
         int _prob_forget,
         int _forgetdecsize,
-        int _limitresetpolicy
+        int _limitresetpolicy,
+        int _taskweight
 	    ) {
 
 	//	parameters.jsp_backjump = true;
@@ -9770,6 +9787,7 @@ void Mistral::Solver::set_fdlearning_on(
 	parameters.prob_forget = _prob_forget;
 	parameters.forgetdecsize =_forgetdecsize;
 	parameters.limitresetpolicy =  _limitresetpolicy;
+	parameters.taskweight = _taskweight;
 
 	std::cout << " c start_from : " << start_from << std::endl;
 	visitedUpperBounds.initialise(0, start_from  , BitSet::empt);
