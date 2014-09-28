@@ -6848,12 +6848,13 @@ bool Mistral::Solver::learn_virtual_literals(bool semantic, bool lazyGeneration)
 
 void Mistral::Solver::update_failure_scope(){
 
+	int __w = parameters.taskweight;
 	if (parameters.nogood_based_weight){
 	//	std::cout << "?nogood_based_weight? " << std::endl;
 		//Clause & cl = learnt_clause ;
 		failure_scope.clear();
 		Literal q ;
-		int __w = parameters.taskweight;
+	//	int __w = parameters.taskweight;
 		int __lazy = parameters.lazy_generation;
 		int __id;
 		for (int size = (learnt_clause.size -1); size >=0; --size){
@@ -6872,7 +6873,7 @@ void Mistral::Solver::update_failure_scope(){
 		if (culprit.propagator==base){
 
 		//	std::cout << "culprit.propagator==base" << std::endl;
-			int __w = parameters.taskweight;
+		//	int __w = parameters.taskweight;
 				int __lazy = parameters.lazy_generation;
 				int __id;
 
@@ -6888,6 +6889,47 @@ void Mistral::Solver::update_failure_scope(){
 
 		}
 	}
+
+
+	//when set to 2, we
+	if (__w==2){
+		Vector<int> copy_failure_scope= failure_scope ;
+		Variable* tmp_scope;
+		failure_scope.clear();
+		int __id , __scope_size;
+		for (int size = (copy_failure_scope.size -1); size >=0; --size){
+			__id = copy_failure_scope[size];
+			if ((__id<initial_variablesize) && (__id>=start_from) ){
+				//__id= varsIds_lazy[__id-initial_variablesize];
+				//std::cout << "\n  replacing " << __id  << " based on the Constraint Graph " << constraint_graph[__id] << std::endl;
+
+				for(Event trig = 0; trig<3; ++trig)
+					for(int cons = constraint_graph[__id].on[trig].size; --cons>=0;) {
+						//Constraint should be enough but I'll use a pointer
+						Constraint* __c = &constraint_graph[__id].on[trig][cons];
+						if (__c->propagator != base){
+							//std::cout << "Ok" <<constraint_graph[__id].on[trig][cons] << std::endl;
+							__scope_size= __c->arity();
+							tmp_scope=__c->get_scope();
+							for (int i =0; i<__scope_size;++i){
+								if (tmp_scope[i].id()!= __id){
+									failure_scope.add(tmp_scope[i].id());
+					//				std::cout << "Neighbor" << tmp_scope[i].id() << std::endl;
+								}
+							}
+						}
+					}
+			}
+			else{
+				failure_scope.add(__id);
+			}
+		}
+
+		//std::cout << "\n Final failure_scope" << failure_scope << "\n because the culprit is " << culprit.propagator <<  std::endl;
+
+	}
+
+
 }
 
 void Mistral::Solver::clean_fdlearn() {
