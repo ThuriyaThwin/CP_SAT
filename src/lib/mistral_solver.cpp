@@ -181,6 +181,7 @@ void Mistral::SolverParameters::initialise() {
   forgetdecsize = 3;
   limitresetpolicy=0;
   taskweight=0;
+  updatefailurescope=0;
 
   prefix_comment = "c";
   prefix_statistics = "d";
@@ -7624,7 +7625,9 @@ Mistral::Outcome Mistral::Solver::branch_right() {
     	exit(1);
     }
 
-    update_failure_scope();
+    if(parameters.updatefailurescope)
+    	update_failure_scope();
+
     notify_backtrack();
 
     restore(backtrack_level);

@@ -126,6 +126,8 @@ namespace Mistral {
 	int fixedForget;
 	int nextforget;
 
+    int updatefailurescope;
+
 	int fixedlimitSize;
 	int fixedLearntSize;
     /// whether solutions are checked

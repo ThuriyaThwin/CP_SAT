@@ -2005,6 +2005,9 @@ void SchedulingSolver::setup() {
 			  params-> fixedLearntSize ,params-> prob_forget ,params-> forgetdecsize ,
 			  params-> limitresetpolicy , params-> taskweight
 	  );
+
+	  if (!params->vsids)
+		  parameters.updatefailurescope=1;
   }
 
 #ifdef _MONITOR
