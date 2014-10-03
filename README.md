@@ -3,7 +3,7 @@
 Description
 -----------
 
-This repository is a CDCL version of [Mistral-2.0] dedicated to resolve (Disjunctive) Scheduling Problems. So far, only the standard Job-Shop problem is being (experimentally) tested. 
+This repository is a CDCL version of [Mistral-2.0] dedicated to resolve (Disjunctive) Scheduling Problems. So far, only the classical Job Shop and Open Shop problems are experimentally tested with academic benchmarks. 
 
 Installation
 --------------
@@ -16,16 +16,28 @@ To use the Scheduler module, first compile the code using
 
 That's all! Try it out with 
 
+
 ```sh
-bin/scheduler BENCHNAME -type jla
+bin/scheduler data/scheduling/jsp/taillard/tai01.txt -type jsp
 ```
 
-Where BENCHNAME is the instance file location and "-type jla" indicates that the file being used is in the format of Lawrence (the parameter should be omited with Taillard instances as the solver treats them by default). 
- 
-By default, a pure CP model is launched. If you want to enable Clause Learning, then a large number of parameters should be specified (although one is sufficient). So far, I'm using the following command line 
+The general syntax of the command is the following 
 
 ```sh
-bin/scheduler BENCHNAME -type jla -fdlearning 2 -semantic 1 -keeplearning 1 -vsids 1  -orderedexploration 1 -lazygeneration 1 -reduce 1  -autoconfig 1
+bin/scheduler BENCHNAME -type [jla|jsp|osp] [-options]
+```
+
+Where BENCHNAME is the instance file location and "-type [jla|jsp|osp]" indicates its type. The instances are available in:
+        * data/scheduling/jsp/taillard/ for JSP Taillard instances. The option -type should have the value jsp (default value)
+        * data/scheduling/jla/Lawrence/ for JSP Lawrence instances. The option -type should have the value jla 
+        * data/scheduling/osp/gueret-prins/ for OSP Gueret&Prins instances. The option -type should have the value osp 
+        * data/scheduling/osp/taillard/ for OSP Taillard instances. The option -type should have the value osp 
+        * data/scheduling/osp/hurley for OSP Brucker et.al instances. The option -type should have the value osp 
+
+By default, a pure CP model is launched. To enable Clause Learning, the option "-fdlearning 2" should be specified. A large number of parameters can be used alongside "-fdlearning". I'm using mainly the following command line 
+
+```sh
+bin/scheduler BENCHNAME  -fdlearning 2 -semantic 1 -keeplearning 1   -orderedexploration 1 -reduce 1 -forgetall 0   -vsids 1
 ```
 
 
@@ -46,6 +58,10 @@ Several parameters can be used. These are probably the most important ones used 
  
 		Default value : 0
 
+* -vsids : [binary 1/0] enable VSIDS
+ 
+		Default value : 0
+
 * -lazygeneration : [binary 1/0] lazily generate bound literals needed in the learnt clause 
         
         Default value : 0
@@ -55,7 +71,7 @@ Several parameters can be used. These are probably the most important ones used 
 
         Default value : 0
 
-* -reduce : reduce the Learnt Clause. Possible values {0,1,2}
+* -reduce : reduce the Learnt Clause. Possible values {0,1}
 		
         Default value : 0
 
