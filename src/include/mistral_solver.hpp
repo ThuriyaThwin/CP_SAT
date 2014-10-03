@@ -130,6 +130,10 @@ namespace Mistral {
 
 	int fixedlimitSize;
 	int fixedLearntSize;
+
+	//used to initialise the capacity of vectors within VariableRangeWithLearning
+	int capacityinVarRangeWithLearning;
+
     /// whether solutions are checked
     // 0 -> not checked
     // 1 -> check constraints which variables are all assigned

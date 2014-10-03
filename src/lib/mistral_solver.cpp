@@ -183,6 +183,8 @@ void Mistral::SolverParameters::initialise() {
   taskweight=0;
   updatefailurescope=0;
 
+  capacityinVarRangeWithLearning=0;
+
   prefix_comment = "c";
   prefix_statistics = "d";
   prefix_objective = "o";
@@ -5458,7 +5460,7 @@ void Mistral::Solver::generate_variables(){
 void Mistral::Solver::add_Orderedliteral_tobe_explored(Literal l, int assignment_odr, Explanation* e){
 //	if (parameters.orderedExploration)
 	if (assignment_odr>=0)
-		currentLVL_literals_to_explore.fast_sorted_add(currentLVL_literal(l,assignment_odr,e));
+		currentLVL_literals_to_explore.linear_sorted_add(currentLVL_literal(l,assignment_odr,e));
 	else
 		currentLVL_literals_to_explore.add(currentLVL_literal(l,e));
 
@@ -9852,11 +9854,16 @@ void Mistral::Solver::set_fdlearning_on(
 
 
 	//init structures
-	visited.extend(SIZEOF_VARIABLES);
+	std::cout << "visited  pos : " << visited.pos_words  << std::endl;
+	std::cout << "visited  neg  : " << visited.neg_words  << std::endl;
+	if (parameters.lazy_generation)
+		visited.extend(SIZEOF_VARIABLES);
+
 	//literals_to_explore.initialise(SIZEOF_VARIABLES);
 	//orderedliterals.initialise(SIZEOF_VARIABLES);
-	bound_literals_to_explore.initialise(1000000);
-	currentLVL_literals_to_explore.initialise(1000000);
+	bound_literals_to_explore.initialise(1000);
+	currentLVL_literals_to_explore.initialise(1000);
+	//exit(1);
 	//visited.extend(54000);
 	//bounds_under_exploration.initialise(0,  start_from +1 , BitSet::empt);
 	//boundvalues_under_exploration = new unsigned int [start_from +1 ];

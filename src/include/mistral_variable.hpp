@@ -1532,21 +1532,22 @@ namespace Mistral {
   class VariableRangeWithLearning : public VariableRange {
 
   public:
-	  VariableRangeWithLearning(const int lb, const int ub) : VariableRange(lb,ub) {
+	  VariableRangeWithLearning(const int lb, const int ub, int capacity) : VariableRange(lb,ub) {
 		  //initilise the vector with a capacity 10000
-		  lowerbounds.initialise(10000);
-		  upperbounds.initialise(10000);
-		  lower_bound_reasons.initialise(10000);
-		  upper_bound_reasons.initialise(10000);
-		  lower_bound_levels.initialise(10000);
-		  upper_bound_levels.initialise(10000);
+		  //int capacity=100;
+		  lowerbounds.initialise(capacity);
+		  upperbounds.initialise(capacity);
+		  lower_bound_reasons.initialise(capacity);
+		  upper_bound_reasons.initialise(capacity);
+		  lower_bound_levels.initialise(capacity);
+		  upper_bound_levels.initialise(capacity);
 #ifdef _ASSIGNMENT_ORDER
-		  lower_bound_orders.initialise(10000);
-		  upper_bound_orders.initialise(10000);
+		  lower_bound_orders.initialise(capacity);
+		  upper_bound_orders.initialise(capacity);
 #endif
 #ifdef _VISITED_VL
-		  visited_upper_bounds.initialise(10000);
-		  visited_lower_bounds.initialise(10000);
+		  visited_upper_bounds.initialise(capacity);
+		  visited_lower_bounds.initialise(capacity);
 		  lb_var_visited=0;
 		  ub_var_visited=0;
 #endif

@@ -649,7 +649,7 @@ const int NOVAL = (int)((~(unsigned int)0)/2);
      * we want to insert a new element x
      * All elements, inclusing x, are distinct
      */
-    inline void fast_sorted_add(DATA_TYPE x)
+    inline void linear_sorted_add(DATA_TYPE x)
     {
     	if (size){
     		unsigned int __iterator = size -1;

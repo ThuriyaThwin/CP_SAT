@@ -1819,7 +1819,23 @@ void SchedulingSolver::setup() {
   lb_L_sum = data->getEarlinessTardinessLowerBound(ub_C_max);
   ub_L_sum = data->getEarlinessTardinessUpperBound(ub_C_max);
 
+  if (data->nTasks() > 2500){
+	  parameters.capacityinVarRangeWithLearning=10;
+  }
+  if (data->nTasks() > 1500){
+	  parameters.capacityinVarRangeWithLearning=300;
+  }
+  else
+	  if (data->nTasks() > 500){
+		  parameters.capacityinVarRangeWithLearning=750;
+	  }
+	  else
+		  //if (data->nTasks() > 500)
+	  {
+		  parameters.capacityinVarRangeWithLearning=3000;
+	  }
 
+  //parameters.capacityinVarRangeWithLearning=0;
   // create one variable per task
   for(i=0; i<data->nTasks(); ++i) {
     lb = data->getReleaseDate(i);
