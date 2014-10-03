@@ -3,7 +3,7 @@
 Description
 -----------
 
-This repository is a CDCL version of [Mistral-2.0] dedicated to resolve (Disjunctive) Scheduling Problems. So far, only the classical Job Shop and Open Shop problems are experimentally tested with academic benchmarks. 
+This repository is a CDCL version of [Mistral-2.0] dedicated to resolve (Disjunctive) Scheduling Problems using novel learning mechanisms. So far, only the classical Job Shop and Open Shop Problems (JSP and OSP) are experimentally tested with academic benchmarks. 
 
 Installation
 --------------
