@@ -1822,18 +1822,17 @@ void SchedulingSolver::setup() {
   if (data->nTasks() > 2500){
 	  parameters.capacityinVarRangeWithLearning=10;
   }
-  if (data->nTasks() > 1500){
+  else if (data->nTasks() > 1500){
 	  parameters.capacityinVarRangeWithLearning=300;
   }
+  else if (data->nTasks() > 500){
+	  parameters.capacityinVarRangeWithLearning=750;
+  }
   else
-	  if (data->nTasks() > 500){
-		  parameters.capacityinVarRangeWithLearning=750;
-	  }
-	  else
-		  //if (data->nTasks() > 500)
-	  {
-		  parameters.capacityinVarRangeWithLearning=3000;
-	  }
+	  //if (data->nTasks() > 500)
+  {
+	  parameters.capacityinVarRangeWithLearning=3000;
+  }
 
   //parameters.capacityinVarRangeWithLearning=0;
   // create one variable per task

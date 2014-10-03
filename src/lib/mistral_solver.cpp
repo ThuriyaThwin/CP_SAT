@@ -9854,8 +9854,8 @@ void Mistral::Solver::set_fdlearning_on(
 
 
 	//init structures
-	std::cout << "visited  pos : " << visited.pos_words  << std::endl;
-	std::cout << "visited  neg  : " << visited.neg_words  << std::endl;
+	//std::cout << "visited  pos : " << visited.pos_words  << std::endl;
+	//std::cout << "visited  neg  : " << visited.neg_words  << std::endl;
 	if (parameters.lazy_generation)
 		visited.extend(SIZEOF_VARIABLES);
 
