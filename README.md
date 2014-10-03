@@ -28,6 +28,8 @@ bin/scheduler BENCHNAME -type [jla|jsp|osp] [-options]
 ```
 
 Where BENCHNAME is the instance file location and "-type [jla|jsp|osp]" indicates its type. The instances are available in:
+
+
         * data/scheduling/jsp/taillard/ for JSP Taillard instances. The option -type should have the value jsp (default value)
         * data/scheduling/jla/Lawrence/ for JSP Lawrence instances. The option -type should have the value jla 
         * data/scheduling/osp/gueret-prins/ for OSP Gueret&Prins instances. The option -type should have the value osp 
