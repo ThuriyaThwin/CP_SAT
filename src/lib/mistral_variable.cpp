@@ -132,7 +132,7 @@ void Mistral::Variable::initialise_domain(const int lo, const int up, const int 
 #endif 
   if (type==RANGE_VAR_WITHLEARNING) {
      domain_type = RANGE_VAR;
-     range_domain = new VariableRangeWithLearning(lo, up, get_solver()->parameters.capacityinVarRangeWithLearning);
+     range_domain = new VariableRangeWithLearning(lo, up);
    } else
 	if(lo == up) {
     domain_type = CONST_VAR;

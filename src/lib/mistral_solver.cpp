@@ -183,7 +183,7 @@ void Mistral::SolverParameters::initialise() {
   taskweight=0;
   updatefailurescope=0;
 
-  capacityinVarRangeWithLearning=0;
+  //capacityinVarRangeWithLearning=0;
 
   prefix_comment = "c";
   prefix_statistics = "d";

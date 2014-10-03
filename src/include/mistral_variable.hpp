@@ -1532,8 +1532,21 @@ namespace Mistral {
   class VariableRangeWithLearning : public VariableRange {
 
   public:
-	  VariableRangeWithLearning(const int lb, const int ub, int capacity) : VariableRange(lb,ub) {
+	  VariableRangeWithLearning(const int lb, const int ub) : VariableRange(lb,ub) {
+
+#ifdef _VISITED_VL
+		  lb_var_visited=0;
+		  ub_var_visited=0;
+#endif
+		  domainConstraint = NULL;
+#ifdef _ASSIGNMENT_ORDER
+		  order=NULL;
+#endif
+	  };
+
+	  void init(int capacity) {
 		  //initilise the vector with a capacity 10000
+
 		  //int capacity=100;
 		  lowerbounds.initialise(capacity);
 		  upperbounds.initialise(capacity);
@@ -1548,11 +1561,9 @@ namespace Mistral {
 #ifdef _VISITED_VL
 		  visited_upper_bounds.initialise(capacity);
 		  visited_lower_bounds.initialise(capacity);
-		  lb_var_visited=0;
-		  ub_var_visited=0;
 #endif
-		  lowerbounds.add(lb);
-		  upperbounds.add(ub);
+		  lowerbounds.add(min);
+		  upperbounds.add(max);
 		  lower_bound_reasons.add(NULL);
 		  upper_bound_reasons.add(NULL);
 		  lower_bound_levels.add(-1);
@@ -1566,11 +1577,7 @@ namespace Mistral {
 		  visited_upper_bounds.add(true);
 		  visited_lower_bounds.add(true);
 #endif
-		  domainConstraint = NULL;
-#ifdef _ASSIGNMENT_ORDER
-		  order=NULL;
-#endif
-	  };
+	  }
 
 #ifdef _ASSIGNMENT_ORDER
 	  ReversibleNum<int> *order;

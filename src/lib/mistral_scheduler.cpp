@@ -1818,22 +1818,17 @@ void SchedulingSolver::setup() {
 
   lb_L_sum = data->getEarlinessTardinessLowerBound(ub_C_max);
   ub_L_sum = data->getEarlinessTardinessUpperBound(ub_C_max);
-
+  int __capacity = 3000;
   if (data->nTasks() > 2500){
-	  parameters.capacityinVarRangeWithLearning=10;
+	  __capacity =10;
   }
   else if (data->nTasks() > 1500){
-	  parameters.capacityinVarRangeWithLearning=300;
+	  __capacity =300;
   }
   else if (data->nTasks() > 500){
-	  parameters.capacityinVarRangeWithLearning=750;
+	  __capacity =1000;
   }
-  else
-	  //if (data->nTasks() > 500)
-  {
-	  parameters.capacityinVarRangeWithLearning=3000;
-  }
-
+  //__capacity=0;
   //parameters.capacityinVarRangeWithLearning=0;
   // create one variable per task
   for(i=0; i<data->nTasks(); ++i) {
@@ -1849,6 +1844,8 @@ void SchedulingSolver::setup() {
 
     	//Variable t(lb, ub);
     	Variable t(lb, ub,RANGE_VAR_WITHLEARNING);
+    	static_cast<VariableRangeWithLearning*>(t.range_domain)->init( __capacity );
+
     	tasks.add(t);
     	if (params->lazy_generation)
     		add(DomainFaithfulness(t));
@@ -1866,6 +1863,8 @@ void SchedulingSolver::setup() {
   if (params->FD_learning)
   {
 	  Variable x_cmax(lb_C_max, ub_C_max, RANGE_VAR_WITHLEARNING);
+	  static_cast<VariableRangeWithLearning*>(x_cmax.range_domain)->init( __capacity);
+
 	  C_max = x_cmax;
 
 	  if (params->lazy_generation)
