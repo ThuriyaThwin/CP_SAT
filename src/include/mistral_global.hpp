@@ -227,15 +227,16 @@ namespace Mistral {
 #define SIZEOF_VARIABLES 550000
 #endif
 
-// MAX_GENERATED_VARIABLES is the limit we can tolorate of variables.
-//Wheneve we reach this limit we undo lazy generation
-#ifndef _64BITS_LITERALS
-#define MAX_GENERATED_VARIABLES 14000
-#else
-  // TODO Try fast implementation?
-#define MAX_GENERATED_VARIABLES 420000
-#endif
+//// MAX_GENERATED_VARIABLES is the limit we can tolorate of variables.
+////Wheneve we reach this limit we undo lazy generation
+//#ifndef _64BITS_LITERALS
+//#define MAX_GENERATED_VARIABLES 14000
+//#else
+  // // TODO Try fast implementation?
+//#define MAX_GENERATED_VARIABLES 25000
+//#endif
 
+//#define MAX_PER_VARIABLE 700
 
   static const int size_byte[8] = {0,1,1,2,1,2,2,3};
 

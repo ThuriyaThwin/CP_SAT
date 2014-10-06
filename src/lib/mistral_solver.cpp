@@ -1997,11 +1997,41 @@ Mistral::Outcome Mistral::Solver::restart_search(const int root, const bool _res
   //int count_restarts =1;
   int limit_reset_policy = parameters.limitresetpolicy;
 
+  int max_per_variable=600;
+  int max_avg=40000;
 
   while(satisfiability == UNKNOWN) {
 
 	  //We need this to control the maximum possible number of generated variables
-	  if (variables.size >MAX_GENERATED_VARIABLES){
+
+	  /*std::cout << "\n restart \n the nb of variables is" << variables.size <<  std::endl;
+	  std::cout << " max_per_variable" <<max_per_variable<<  std::endl;
+	  std::cout << " max_avg" <<max_avg<<  std::endl;
+	   */
+	  //int max =0;
+	  bool __remove_generated = ((variables.size -initial_variablesize) >max_avg) ;
+	  //#ifdef MAX_PER_VARIABLE
+	  if ((!__remove_generated) && parameters.lazy_generation){
+		  VariableRangeWithLearning* tmp_VariableRangeWithLearning;
+		  DomainFaithfulnessConstraint* dom_constraint ;
+		  for (int var = 0; var< start_from; ++var){
+			  tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
+			  dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
+			  //	  if (max< dom_constraint->ub.size )
+			  //		  max = dom_constraint->ub.size ;
+			  //if (dom_constraint->ub.size > MAX_PER_VARIABLE){
+			  if (dom_constraint->ub.size > max_per_variable){
+				  //	  std::cout << " c ub.size is big" << dom_constraint->ub.size  << " while the nb of variables is" << variables.size <<  std::endl;
+				  __remove_generated=true;
+				  break;
+			  }
+		  }
+		  //std::cout << " \n max is " << max <<  std::endl;
+
+	  }
+	  //#endif
+
+	  if (__remove_generated){
 		  std::cout << " c MAX_GENERATED_VARIABLES reached" << std::endl;
 		  start_over(false);
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING

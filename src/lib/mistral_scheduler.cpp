@@ -3731,7 +3731,7 @@ stats->num_solutions++;
 			  for (int var = 0; var< start_from; ++var){
 				  tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
 				  dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
-				  dom_constraint->enforce_nfc1 = true;
+				  //dom_constraint->enforce_nfc1 = true;
 				  dom_constraint->enforce_nfc1 = true;
 				  dom_constraint->relax();
 			  }
