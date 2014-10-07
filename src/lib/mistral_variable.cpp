@@ -1832,6 +1832,7 @@ Mistral::Event Mistral::Variable::restore() {
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 
 	  //std::cout << "restore boolean" << std::endl;
+	  //TODO add this test without ..
 	  if (get_solver()->parameters.fd_learning &&  get_solver()->assignment_level[id()] != get_solver()->level)
 	  {
 		  std::cout << "ERROR in restore boolean" << std::endl;

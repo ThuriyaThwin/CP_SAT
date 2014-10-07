@@ -5346,11 +5346,11 @@ void  Mistral::Solver::repost_generated_variable(unsigned int tmp__id, DomainFai
 		exit(1);
 		if(activity_var_activity->capacity < variables.size){
 			activity_var_activity->extendStack();
-		//	var_activity = activity_var_activity->stack_;
+			//	var_activity = activity_var_activity->stack_;
 		}
 		if(activity_lit_activity->capacity < (2* variables.size)){
 			activity_lit_activity->extendStack();
-		//	lit_activity = activity_lit_activity->stack_;
+			//	lit_activity = activity_lit_activity->stack_;
 		}
 
 		activity_var_activity->fast_add(0.0);
@@ -5362,16 +5362,16 @@ void  Mistral::Solver::repost_generated_variable(unsigned int tmp__id, DomainFai
 	assignment_level[tmp__id] = lvl;
 	reason_for[tmp__id] = dom_constraint;
 	if (order==(-2)){
-	//should take the same order of the decision of level lvl +1, i.e. decisions[lvl-search_root]
-	assignment_order[tmp__id] = assignment_order[decisions[lvl-search_root].var.id()];
-	/*std::cout << "  level" << level << std::endl;
+		//should take the same order of the decision of level lvl +1, i.e. decisions[lvl-search_root]
+		assignment_order[tmp__id] = assignment_order[decisions[lvl-search_root].var.id()];
+		/*std::cout << "  level" << level << std::endl;
 	std::cout << "  lvl" << lvl << std::endl;
 	std::cout << "  search_root" << search_root << std::endl;
 	std::cout << "  decisions.size" <<decisions.size << std::endl;
 	std::cout << "  decisions" <<decisions << std::endl;
 	std::cout << "  decisions[lvl-search_root]" <<decisions[lvl-search_root] << std::endl;
 	std::cout << "  assignment_order[tmp__id] " <<assignment_order[tmp__id] << std::endl;
-*/
+		 */
 	}
 	else
 		assignment_order[tmp__id]= order;
@@ -5402,14 +5402,14 @@ void  Mistral::Solver::repost_generated_variable(unsigned int tmp__id, DomainFai
 	std::cout << " \n\n\n 7708 trail_ after reposting " << trail_ << std::endl;
 	std::cout << "7708 saved_vars after reposting " << saved_vars << std::endl;
 	}
-	*/
-/*
+	 */
+	/*
 	if (variables.size > (SIZEOF_VARIABLES -50) ){
 			std::cout << " \n\n\n Limit of variablessize reached" << variables.size << std::endl;
 			std::cout << " \n\n\n start_from " << start_from << std::endl;
 			exit(1);
 	}*/
-/*
+	/*
 #ifndef _64BITS_LITERALS
 	if ((variables.size - start_from) > 16383 ){
 		std::cout << " \n\n\n variablessize " << variables.size << std::endl;
@@ -5428,8 +5428,8 @@ void  Mistral::Solver::repost_generated_variable(unsigned int tmp__id, DomainFai
 		exit(1);
 	}
 #endif
-*/
-/*
+	 */
+	/*
 #ifdef _RECOVER_GENERATED
 	varsIds_lazy.add(range_id);
 	if (!is_lb)
@@ -5439,7 +5439,7 @@ void  Mistral::Solver::repost_generated_variable(unsigned int tmp__id, DomainFai
 #endif
 
 	return tmp__id;
-*/
+	 */
 }
 
 unsigned int Mistral::Solver::generate_new_variable(DomainFaithfulnessConstraint*dom_constraint, int val, bool is_lb, int lvl, int range_id , int order){
@@ -5571,14 +5571,7 @@ void Mistral::Solver::generate_variables(){
 		//else
 		//	lvl =assignment_level[tmp_id];
 		else if (!was_locked){
-			//repost_generated_variable(unsigned int tmp__id, DomainFaithfulnessConstraint * dom_constraint, bool is_lb, int lvl , int order){
-//			(unsigned int tmp__id, DomainFaithfulnessConstraint * dom_constraint, int val, bool is_lb, int lvl , int order, unsigned int _index_){
 			repost_generated_variable(tmp_id, __x->domainConstraint, val, true, lvl, odr+1, _index_);
-
-/*			variables[tmp_id].set_domain(0);
-			assignment_level[tmp_id] = lvl;
-			assignment_order[tmp_id] = odr+1;
-			*/
 		}
 
 		learnt_clause.add(encode_boolean_variable_as_literal(tmp_id, 1));
@@ -5611,10 +5604,6 @@ void Mistral::Solver::generate_variables(){
 //		else
 //			lvl =assignment_level[tmp_id];
 		else if (!was_locked){
-			/*variables[tmp_id].set_domain(1);
-			assignment_level[tmp_id] = lvl;
-			assignment_order[tmp_id] = odr+1;
-			*/
 			repost_generated_variable(tmp_id, __x->domainConstraint, val, false, lvl,odr+1, _index_);
 		}
 
@@ -7812,7 +7801,8 @@ Mistral::Outcome Mistral::Solver::branch_right() {
     	//		  std::cout << " relaxing generated variables " << std::endl;
        	if (__old_size>(base->learnt.size + 1000)){
        		//unsigned int relaxed = 0;
-       		for (int __i = (base->nb_clauses.size -1) ; (__i+start_from)>=initial_variablesize; --__i){
+       		int init_index =(initial_variablesize -start_from);
+       		for (int __i = (base->nb_clauses.size -1) ; __i>= init_index; --__i){
        			if (base->nb_clauses[__i]< 0){
        				std::cout << "nb_clauses negative  " << __i << std::endl;
        				exit(1);
@@ -7850,16 +7840,12 @@ Mistral::Outcome Mistral::Solver::branch_right() {
        			}
        		}
 
-      	  std::cout << "we relaxed  " << statistics.generated_then_relaxed << " variables"<< std::endl;
+      	 // std::cout << "we relaxed  " << statistics.generated_then_relaxed << " variables"<< std::endl;
 
 
        	}
 
 
-
-//    	if (__old_size>base->learnt.size){
-//relax  variables
-//    	}
     	//statistics.size_learned -= base->forget(0.5,NULL, NULL);
 
     	parameters.nextforget= statistics.num_failures+ parameters.fixedForget;

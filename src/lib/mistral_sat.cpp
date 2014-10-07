@@ -1471,7 +1471,7 @@ void Mistral::ConstraintClauseBase::remove( const int cidx , bool static_forget)
 	  is_watched_by[clause->data[1]].remove_elt( clause );
 
 	  if (nb_clauses.size){
-		  unsigned _size = clause->size;
+		  unsigned int _size = clause->size;
 		  Clause& c = *clause;
 		  int __id ;
 		  for (unsigned int i = 0; i< _size; ++i){
@@ -1484,7 +1484,7 @@ void Mistral::ConstraintClauseBase::remove( const int cidx , bool static_forget)
 
 
 #ifdef _IMPROVE_UP
-	  unsigned _size = clause->size;
+	  unsigned int _size = clause->size;
 	  Clause& c = *clause;
 	  for (unsigned int i = 0; i< _size; ++i){
 		  clauses_of_literal[c[i]].remove_elt(clause);

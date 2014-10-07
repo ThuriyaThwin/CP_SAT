@@ -5162,7 +5162,7 @@ if (enforce_nfc1)
 		  else
 			  return get_lower(l);
 
-		  return lower[idx];
+		 // return lower[idx];
 	  }
 	  unsigned int get_greater(unsigned int idx){
 		  unsigned int l = greater[idx];
@@ -5173,7 +5173,7 @@ if (enforce_nfc1)
 		  else
 			  return get_greater(l);
 
-		  return greater[idx];
+		//  return greater[idx];
 	  }
 	  unsigned int set_lower(unsigned int idx, unsigned int v){
 

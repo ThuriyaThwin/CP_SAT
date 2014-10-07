@@ -15974,7 +15974,7 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 			if (is_lower_bound(a)){
 				//if(__is_lb)
 				--val;
-				bool _b;
+				//bool _b;
 				int var = value_exist(val);
 				if (var < 0) {
 					std::cout <<" var < 1"  << std::endl;
@@ -15983,7 +15983,7 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 				tmp= get_solver()->encode_boolean_variable_as_literal(var, 1);
 			}
 			else{
-				bool _b;
+				//bool _b;
 				int var = value_exist(val);
 				if (var < 0) {
 					std::cout <<" var < 1"  << std::endl;
