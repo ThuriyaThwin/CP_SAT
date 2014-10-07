@@ -450,11 +450,12 @@ void Mistral::ConstraintClauseBase::initialise() {
   //reason_for = new Explanation*[scope.size];
 
   reason_for.initialise(0,scope.size);
-  
+
   //Only when not lazy generation
   if (fd_variables && get_solver()->parameters.lazy_generation ){
 	  std::cout << " c will enforce_nfc1 to false" << std::endl;
 	  enforce_nfc1 = false;
+	  nb_clauses.initialise(scope.size,scope.size,0);
   }
 
   //will_be_kept.initialise(0,2000000,BitSet::empt);
@@ -541,6 +542,16 @@ void Mistral::ConstraintClauseBase::extend_scope(Variable x){
 		while(reason_for.capacity <= idx)
 			reason_for.extendStack();
 		reason_for[idx] = NULL;
+
+		while(nb_clauses.capacity <= idx)
+			nb_clauses.extendStack();
+
+		if (nb_clauses.size!= idx){
+			std::cout << "nb_clauses.size!= idx " << std::endl;
+			exit(1);
+		}
+		nb_clauses.add(0);
+
 
 	} else {
 		//if(idx > scope.size) {
@@ -722,6 +733,22 @@ void Mistral::ConstraintClauseBase::learn( Vector < Literal >& clause, double ac
    cl->locked=true;
    learnt.add( cl );
 
+   if (get_solver()->parameters.lazy_generation ){
+	 //  Clause& __clause = *cl;
+
+	  // std::cout << " init_var_size  " <<init_var_size << std::endl;
+		  // std::cout << " learn clause  " <<clause << std::endl;
+	   for (int i =(clause.size-1); i >=0; --i){
+		   int __id = clause[i]/2;
+		   if (__id >= init_var_size){
+			   ++nb_clauses[__id] ;
+			   //std::cout << "  " << __id << " : " << nb_clauses[__id] << std::endl;
+		   }
+	   }
+
+	  // std::cout << " nb_clauses " << nb_clauses << std::endl;
+   }
+
    //std::cout << " c LEARN " << forget_immediately  << std::endl;
    // // should we split the increment?
    // activity_increment /= clause.size;
@@ -818,6 +845,7 @@ void Mistral::ConstraintClauseBase::start_over() {
 
 	on.size = init_var_size;
 	reason_for.size =init_var_size ;
+	nb_clauses.size =init_var_size ;
 
 	//is_watched_by.
 	for (int i =  init_var_size*2 ; i < ((2* scope.size) -1) ; ++i)
@@ -1233,7 +1261,10 @@ Mistral::Clause* Mistral::ConstraintClauseBase::update_watcher(const int cw,
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 	  if(clause.locked){
 		  std::cout << "  clause.locked=true!! "  << std::endl;
+		  std::cout << "   "  << clause << std::endl;
+		  std::cout << "   "  << (clause[0]/2) + start_from << std::endl;
 		  exit(1);
+
 	  }
 #endif
 
@@ -1259,6 +1290,8 @@ Mistral::Clause* Mistral::ConstraintClauseBase::update_watcher(const int cw,
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 	    if(clause.locked){
 	    	std::cout << "  clause.locked=true!! "  << std::endl;
+	    	std::cout << "   "  << clause << std::endl;
+			  std::cout << "   "  << (clause[0]/2) + start_from << std::endl;
 	    	exit(1);
 	    }
 	    if( vb>>1 == (int)SIGN(q) ){
@@ -1437,6 +1470,19 @@ void Mistral::ConstraintClauseBase::remove( const int cidx , bool static_forget)
 	  is_watched_by[clause->data[0]].remove_elt( clause );
 	  is_watched_by[clause->data[1]].remove_elt( clause );
 
+	  if (nb_clauses.size){
+		  unsigned _size = clause->size;
+		  Clause& c = *clause;
+		  int __id ;
+		  for (unsigned int i = 0; i< _size; ++i){
+			  __id = c[i]/2;
+			  if (__id >= init_var_size){
+				  --nb_clauses[__id];
+			  }
+		  }
+	  }
+
+
 #ifdef _IMPROVE_UP
 	  unsigned _size = clause->size;
 	  Clause& c = *clause;
@@ -1563,6 +1609,9 @@ void Mistral::ConstraintClauseBase::static_forget(){
 	std::cout << " static forget " ;*/
 
 	if (will_be_forgotten.size){
+
+		std::cout << " static forget & nb_clauses are not supported yet" << std::endl;
+		exit(1);
 		locked_toforget.clear();
 		for (int i = (will_be_forgotten.size -1); i >=0 ; --i){
 			if(!learnt[will_be_forgotten[i]]->locked){

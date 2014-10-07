@@ -1841,8 +1841,11 @@ Mistral::Event Mistral::Variable::restore() {
 		  std::cout << " get_solver()->constraint_graph : " <<get_solver()->constraint_graph[id()]<< std::endl;
 		  std::cout << " get_solver()->reason_for : " <<get_solver()->reason_for[id()]<< std::endl;
 		  std::cout << " get_solver()->decisions : " <<get_solver()->decisions << std::endl;
-		  std::cout << " domain" << get_domain() << std::endl;
+		  std::cout << " \n get_solver()->saved vars : " <<get_solver()->saved_vars << std::endl;
+		  std::cout << " \n domain" << get_domain() << std::endl;
 		  std::cout << " get_solver()->assignment_level[id()]" <<get_solver()->assignment_level[id()]<< std::endl;
+		  std::cout << "  get_solver()->level" << get_solver()->level<< std::endl;
+
 		  exit(1);
 	  }
 #endif

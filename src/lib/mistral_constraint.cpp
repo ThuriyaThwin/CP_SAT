@@ -14701,8 +14701,22 @@ Mistral::DomainFaithfulnessConstraint::DomainFaithfulnessConstraint(Vector< Vari
 	//lb.clear();
 }
 
-void Mistral::DomainFaithfulnessConstraint::start_over() {
+void Mistral::DomainFaithfulnessConstraint::unlock(int __id) {
 
+	for (int i = (scope.size -1); i>0; --i ){
+		if (scope[i].id()== __id){
+			locked[i]=false;
+		//	std::cout << "unlocked! " << std::endl;
+			return;
+		}
+	}
+	std::cout << "__id  " << __id << std::endl;
+	std::cout << "DomainFaithfulnessConstraint  " << scope << std::endl;
+	std::cout << " not found!! " << std::endl;
+	exit(1);
+}
+void Mistral::DomainFaithfulnessConstraint::start_over() {
+	locked.size=1;
 	lower.size = 1;
 	greater.size = 1;
 	cache_value.size=1;
@@ -14744,13 +14758,31 @@ void Mistral::DomainFaithfulnessConstraint::initialise() {
 	enforce_nfc1 = false;
 	lower.add(0);
 	greater.add(0);
+	locked.add(true);
 	cache_value.add(0);
 }
 
-// if a variable alreagy exists then return its id, otherwise return false
+// if a variable alreagy exists then return its id, otherwise return -1
 
+//To inform the caller that this atom was relaxed
+int Mistral::DomainFaithfulnessConstraint::value_exist(int value, bool& was_locked, unsigned int& _index_){
+
+	int id=  value_exist(value,_index_);
+	if (id > 0){
+		was_locked=locked[_index_];
+		locked[_index_]=true;
+	}
+//	else
+//		was_locked= true;
+	return id;
+}
 
 int Mistral::DomainFaithfulnessConstraint::value_exist(int value){
+	unsigned int idx;
+	return value_exist(value, idx);
+}
+
+int Mistral::DomainFaithfulnessConstraint::value_exist(int value, unsigned int & __index_){
 
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 	int expected = -1;
@@ -14845,11 +14877,36 @@ int Mistral::DomainFaithfulnessConstraint::value_exist(int value){
 	}
 #endif
 
-	return scope[ub[idx].idx].id();
+	__index_= ub[idx].idx;
+/*
+	if (update_locked){
+		was_locked=locked[__index_];
+		locked[__index_]=true;
+		//To inform the caller that this atom was relaxed
+		//update_locked=false;
+
+	}*/
+	//return scope[ub[idx].idx].id();
+	return scope[__index_].id();
 
 }
 
 
+void Mistral::DomainFaithfulnessConstraint::repost_variable(unsigned int idx, int value , bool isub){
+
+
+	locked[idx]=true;
+
+	Literal virtual_literal ;
+
+	if (isub)
+		virtual_literal = encode_bound_literal(scope[0].id(), value, 1);
+	else
+		virtual_literal = encode_bound_literal(scope[0].id(), value +1, 0);
+
+	eager_explanations[idx]= virtual_literal;
+
+}
 
 void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value , bool isub, int level){
 
@@ -14883,7 +14940,8 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 		}
 		else{
 			lower.add(ub[__iterator].idx);
-			greater[ub[__iterator].idx]= bound_l.idx;
+			//greater[ub[__iterator].idx]= bound_l.idx;
+			set_greater(ub[__iterator].idx, bound_l.idx);
 		}
 
 
@@ -14892,14 +14950,14 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 		}
 		else{
 			greater.add(ub[__iterator+2].idx);
-			lower[ub[__iterator+2].idx]= bound_l.idx;
+			//lower[ub[__iterator+2].idx]= bound_l.idx;
+			set_lower(ub[__iterator+2].idx, bound_l.idx);
 		}
 
 	}
 	else{
 		lower.add(0);
 		greater.add(0);
-
 		ub.add(bound_l);
 	}
 
@@ -14910,6 +14968,7 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 	std::cout << " greater  " << greater  << std::endl;
 */
 	cache_value.add(value);
+	locked.add(true);
 	scope.add(x);
 
 	Literal virtual_literal ;
@@ -15083,14 +15142,18 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::update_closes
 			return FAILURE(0);
 		}
 
-		int next = greater[idx];
+		//int next = greater[idx];
+		int next = get_greater(idx);
 		//update ub_idx
 		if (ub_idx){
-			if (!lower[idx])
+			//if (!lower[idx])
+			if (!get_lower(idx))
 				ub_idx=0;
 			else
-				if (cache_value[lower[idx]]<cache_value[ub_idx])
-					ub_idx=lower[idx];
+				//if (cache_value[lower[idx]]<cache_value[ub_idx])
+				if (cache_value[get_lower(idx)]<cache_value[ub_idx])
+					//ub_idx=lower[idx];
+					ub_idx=get_lower(idx);
 		}
 
 		if (next){
@@ -15123,7 +15186,8 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::update_closes
 	else{
 //		std::cout << "LB" << std::endl;
 
-		int previous = lower[idx];
+		//int previous = lower[idx];
+		int previous = get_lower(idx);
 		int bound = _x->get_min();
 		int val= cache_value[idx] +1;
 //		std::cout << "val  " << val <<  std::endl;
@@ -15143,11 +15207,14 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::update_closes
 		}
 
 		if (lb_idx){
-			if (!greater[idx])
+			//if (!greater[idx])
+			if (!get_greater(idx))
 				lb_idx=0;
 			else
-				if (cache_value[greater[idx]]>cache_value[lb_idx])
-					lb_idx=greater[idx];
+				//if (cache_value[greater[idx]]>cache_value[lb_idx])
+				if (cache_value[get_greater(idx)]>cache_value[lb_idx])
+					//lb_idx=greater[idx];
+					lb_idx=get_greater(idx);
 		}
 
 		if (previous){
@@ -15215,7 +15282,8 @@ void Mistral::DomainFaithfulnessConstraint::update_Range(int lb_idx, int ub_idx,
 					}
 				}
 #endif
-				next=lower[next];
+				//next=lower[next];
+				next=get_lower(next);
 			}
 			else
 				next =0;
@@ -15249,7 +15317,8 @@ void Mistral::DomainFaithfulnessConstraint::update_Range(int lb_idx, int ub_idx,
 					}
 				}
 #endif
-				next=greater[next];
+				//next=greater[next];
+				next=get_greater(next);
 			}
 			else
 				next =0;
@@ -15809,9 +15878,14 @@ int Mistral::DomainFaithfulnessConstraint::check( const int* s ) const {
 
 	int v = s[0];
 	int value;
-
-	for (int i = 1 ; i < scope.size ; ++i)
-		for (int j = 0; j < ub.size; ++j)
+	unsigned int __size = scope.size;
+	if (ub.size!= ( __size-1)){
+		std::cout << " \n \n error ub.size!= ( __size-1 " << std::endl;
+				exit(1);
+	}
+	for (int i = 1 ; i < __size ; ++i){
+		if (locked[i])
+		for (int j = 0; j < (__size-1); ++j)
 //			if (ub[j].x.id() == scope [i].id()){
 			if (scope[ub[j].idx].id() == scope [i].id()){
 				value = ub[j].value;
@@ -15821,7 +15895,7 @@ int Mistral::DomainFaithfulnessConstraint::check( const int* s ) const {
 					return 1 ;
 				break;
 			}
-
+	}
 	return 0;
 }
 
@@ -15900,11 +15974,22 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 			if (is_lower_bound(a)){
 				//if(__is_lb)
 				--val;
+				bool _b;
 				int var = value_exist(val);
+				if (var < 0) {
+					std::cout <<" var < 1"  << std::endl;
+					exit(1);
+				}
 				tmp= get_solver()->encode_boolean_variable_as_literal(var, 1);
 			}
 			else{
+				bool _b;
 				int var = value_exist(val);
+				if (var < 0) {
+					std::cout <<" var < 1"  << std::endl;
+					exit(1);
+				}
+
 				tmp= get_solver()->encode_boolean_variable_as_literal(var, 0);
 			}
 			explanation[0]= tmp ;
@@ -16132,23 +16217,7 @@ Mistral::Explanation::iterator Mistral::DomainFaithfulnessConstraint::get_reason
 
 #endif
 
-#ifdef _BOUND_EQUIVALENCE
-					int v__ ;
-					Literal q = eager_explanations[i];
-					if (is_a_bound_literal(q)) {
-						v__ = get_value_from_literal(q);
-						Explanation *current_explanation= _x->reason_for(q) ;
-						if(current_explanation)
-						{
-							//start = current_explanation->get_reason_for_literal(q, end);
-							return  current_explanation->get_reason_for_literal(q, end);
-						}
-						else{
-							end = &(explanation[0]);
-							return &(explanation[0]);
-						}
-					}
-#endif
+
 
 					explanation[0] = eager_explanations[i];
 					end = &(explanation[0])+1;

@@ -297,6 +297,8 @@ namespace Mistral {
     //EXPL
     //Explanation** reason_for;
     Vector< Clause* > reason_for;
+    Vector< int > nb_clauses;
+
     // Vector< double > lit_activity;
     // Vector< double > var_activity;
     // list of clauses

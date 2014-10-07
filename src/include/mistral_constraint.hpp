@@ -5149,8 +5149,43 @@ if (enforce_nfc1)
 
 	  // Vector<__boundLiteral> lb;
 
-	  Vector<int> lower;
-	  Vector<int> greater;
+	  Vector<unsigned int> lower;
+	  Vector<unsigned int> greater;
+	  unsigned int get_lower(unsigned int idx){
+
+
+		  unsigned int l = lower[idx];
+
+		  if (locked[l]){
+			  return l;
+		  }
+		  else
+			  return get_lower(l);
+
+		  return lower[idx];
+	  }
+	  unsigned int get_greater(unsigned int idx){
+		  unsigned int l = greater[idx];
+
+		  if (locked[l]){
+			  return l;
+		  }
+		  else
+			  return get_greater(l);
+
+		  return greater[idx];
+	  }
+	  unsigned int set_lower(unsigned int idx, unsigned int v){
+
+		  lower[idx]=v;
+	  }
+	  unsigned int set_greater(unsigned int idx, unsigned int v){
+
+		  greater[idx]=v;
+	  }
+
+
+	  Vector<bool> locked;
 
 	  Vector<int> cache_value;
 
@@ -5167,7 +5202,13 @@ if (enforce_nfc1)
 	  }
 
 	  void extend_scope(Variable & x, int value, bool isub, int level);
+	  void repost_variable(unsigned int idx, int value , bool isub);
 	  int value_exist(int value);
+	  int value_exist(int value, bool& was_locked, unsigned int& _index_);
+	  int value_exist(int value, unsigned int & __index_);
+	 //int value_exist(int value);
+	  //__id is the id of the variable to unlock
+	  void unlock(int __id);
 	  virtual Constraint clone() { return Constraint(new DomainFaithfulnessConstraint(scope)); }
 	  virtual void initialise();
 	  virtual void mark_domain();

@@ -237,7 +237,10 @@ namespace Mistral {
     unsigned long int avg_amsc_expl_size;
     /// 
     unsigned long int num_amsc_explanations;
-
+    /// lazily generated variables then (virtually) relaxed
+    unsigned int generated_then_relaxed;
+    /// lazily generated variables, (virtually) relaxed then (virtually) reposted
+    unsigned int reposted_generated;
     
     /// timestamp
     double creation_time;
@@ -897,6 +900,7 @@ namespace Mistral {
     bool all_reasons_before_search_root;
 #endif
     unsigned int generate_new_variable(DomainFaithfulnessConstraint * dom_constraint, int val, bool is_lb, int lvl , int range_id, int order);
+    void repost_generated_variable(unsigned int tmp__id,DomainFaithfulnessConstraint * dom_constraint,  int val, bool is_lb, int lvl , int order, unsigned int _index);
     void generate_variables();
     void add_Orderedliteral_tobe_explored(Literal l, int assignment_odr, Explanation* e);
     Explanation * get_next_to_explore(Literal & a) ;

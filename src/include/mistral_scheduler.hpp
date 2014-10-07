@@ -51,6 +51,8 @@ namespace Mistral {
     std::vector<double>            soltime;
     std::vector<int>               outcome;
     std::vector<int>               types;
+    std::vector<unsigned int>      var_relaxed;
+    std::vector<unsigned int>      var_reposted;
 
     StatisticList();
     virtual ~StatisticList();

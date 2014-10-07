@@ -85,6 +85,8 @@ void StatisticList::add_info(const int objective, int tp) {
   backtracks.push_back(solver->statistics.num_backtracks);
   fails.push_back(solver->statistics.num_failures);
   propags.push_back(solver->statistics.num_propagations);
+  var_relaxed.push_back(solver->statistics.generated_then_relaxed);
+  var_reposted.push_back(solver->statistics.reposted_generated);
   types.push_back(tp);
 
   //std::cout << outcome2str(solver->statistics.outcome) << std::endl;
@@ -146,6 +148,8 @@ std::ostream& StatisticList::print(std::ostream& os,
   long unsigned int total_backtracks    = 0;
   long unsigned int total_fails         = 0;
   long unsigned int total_propags       = 0;
+  unsigned int total_var__relaxed         = 0;
+  unsigned int total_var__reposted       = 0;
   
   int nb_unknown = 0;
   for(k=i; k<j; ++k) {
@@ -168,7 +172,8 @@ std::ostream& StatisticList::print(std::ostream& os,
     total_backtracks   += backtracks[k];
     total_fails        += fails[k];
     total_propags      += propags[k];
-
+    total_var__relaxed       += var_relaxed[k];
+    total_var__reposted       += var_reposted[k];
     if(types[k]==DICHO && outcome[k] == UNKNOWN)
       {
 	++nb_unknown;
@@ -218,6 +223,8 @@ std::ostream& StatisticList::print(std::ostream& os,
      << " d " << prefix << std::left << std::setw(25-plength)  << " BACKTRACKS "    << std::right << std::setw(19) << total_backtracks << std::endl
      << " d " << prefix << std::left << std::setw(25-plength)  << " FAILS "         << std::right << std::setw(19) << total_fails << std::endl
      << " d " << prefix << std::left << std::setw(25-plength)  << " PROPAGS "       << std::right << std::setw(19) << total_propags << std::endl
+     << " d " << prefix << std::left << std::setw(25-plength)  << " RELAXED "       << std::right << std::setw(19) << total_var__relaxed << std::endl
+     << " d " << prefix << std::left << std::setw(25-plength)  << " REPOSTED "       << std::right << std::setw(19) <<  total_var__reposted << std::endl
      << " d " << prefix << std::left << std::setw(25-plength)  << " NOGOODS "       << std::right << std::setw(19) << num_nogoods << std::endl;
   if(num_nogoods)
 	    std::cout << " d " << prefix << std::left << std::setw(25-plength)  << " NOGOODSIZE "    << std::right << std::setw(19) << avg_nogood_size/(double)num_nogoods << std::endl;
@@ -2129,77 +2136,6 @@ void SchedulingSolver::setup() {
   //add(variables[161]  >=  852);
 */
 
-//Test Memory
-/*
-			 std::cout << " Test Memory  " << std::endl;
-
-  for (int var = 0; var< start_from; ++var){
-
-	  VariableRangeWithLearning* tmp_VariableRangeWithLearning =static_cast<VariableRangeWithLearning*>(variables[var].range_domain);
-	  DomainFaithfulnessConstraint* dom_constraint = tmp_VariableRangeWithLearning->domainConstraint;
-
-
-	  for (int val =variables[var].get_min(); val<= variables[var].get_max(); ++val){
-
-		  //	lvl = tmp_VariableRangeWithLearning->level_of(val,is_lb) ;
-#ifdef 	_DEBUG_FD_NOGOOD
-		  if(_DEBUG_FD_NOGOOD){
-			  //		std::cout << " its level :  " << lvl << std::endl;
-		  }
-#endif
-
-
-		  //if (lvl>0 Search root?
-		  //if (lvl>0){
-		  //	if(tmp_VariableRangeWithLearning->should_be_learnt(to_be_explored) )
-		  //	{
-
-		  //std::cout << " \n \n sequence before  " << sequence << std::endl;
-		  //std::cout << " \n \n sequence size before  " << sequence.size << std::endl;
-		  //std::cout << " \n \n sequence capacity before  " << sequence.capacity << std::endl;
-
-
-		  Variable tmp__(0,1);
-	  //add(tmp__);
-		  tmp__.lazy_initialise(this);
-		  //								dom_constraint->extend_scope(tmp__ , val,!is_lb, lvl);
-
-		  dom_constraint->extend_scope(tmp__ , val ,1, 2);
-		  base->extend_scope(tmp__);
-		  //	tmp__.set_domain(!is_lb);
-		  assignment_level[tmp__.id()] = 5;
-		  reason_for[tmp__.id()] = dom_constraint;
-
-
-		  *(tmp__.expression->get_self().bool_domain)  = 2;
-
-#ifndef _64BITS_LITERALS
-		  if ((variables.size - start_from) > 16383 ){
-			  std::cout << " \n\n\n variablessize " << variables.size << std::endl;
-			  std::cout << " \n\n\n start_from " << start_from << std::endl;
-			  std::cout << "  ERRPR variables.size - start_from) > 16383! " << std::endl;
-
-			  exit(1);
-		  }
-
-#else
-		  // 524288;
-		  if ((variables.size - start_from) > 52000 ){
-			  std::cout << " \n\n\n variablessize " << variables.size << std::endl;
-			  std::cout << " \n\n\n start_from " << start_from << std::endl;
-			  std::cout << "  ERRPR variables.size - start_from) > 52000! " << std::endl;
-
-			  exit(1);
-		  }
-
-#endif
-
-	  }
-
-  }
-	 std::cout << " end Test Memory?  " << std::endl;
-	 exit(1);
-*/
 
 			// std::cout << " end setup with :  " << this << std::endl;
 #ifdef _ASSIGNMENT_ORDER
@@ -3200,6 +3136,10 @@ void SchedulingSolver::dichotomic_search()
 
 	  result = restart_search(level);
 
+	 // std::cout << " nb_clauses size " << base->nb_clauses.size << std::endl;
+	 // std::cout << " nb_clauses " << base->nb_clauses << std::endl;
+	 // std::cout << " learnt " << base->learnt << std::endl;
+	 // exit(1);
 	  if (base)
 			  base->static_forget();
 
@@ -3305,6 +3245,7 @@ void SchedulingSolver::dichotomic_search()
 		   * If the flag forgetAll is set to 1 then forget all clauses betweeen all dichotomy iterations
 		   * Otehrwise, forget the newly learnt clauses iff. the result of the current dichotomy is UNSAT
 		   */
+
 		  start_over(false);
 		  if (!params->forgetall)
 		  {
