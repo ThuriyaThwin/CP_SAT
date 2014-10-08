@@ -8148,7 +8148,7 @@ Mistral::Outcome Mistral::Goal::notify_solution(Solver *solver) {
     	  //solver->forget();
     	  //TODO update statistics like avg learnt nogood size... (take this from solver->forget!!)
     	  //This call simulates a linear exploration instead of binary search
-    	  solver->start_over(true, solver->parameters.simulaterestart>1);
+    	  solver->start_over(true, solver->parameters.simulaterestart>1, false);
       }
 
       Decision deduction(objective, Decision::UPPERBOUND, upper_bound-1);

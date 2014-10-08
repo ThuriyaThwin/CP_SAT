@@ -847,8 +847,9 @@ namespace Mistral {
 
     //This method undo all the generated variables.
     //TODO Use the second parameter
-    void start_over(bool changePolicyParameters,bool init_heuristic = false);
+    void start_over(bool changePolicyParameters,bool init_heuristic, bool undo_lazygeneration);
     void init_lazy_generation();
+    void relax_generated_variables();
     //However it needs all these variables
     //TODO remove useless variables..
     LearningActivityManager * activity_mngr;
@@ -860,6 +861,7 @@ namespace Mistral {
 
     //int graph_size;
 
+    bool limit_generated;
     //Reduce clause
 //    void reduce_clause(bool semantic_reduction=false);
     void reduce_clause();

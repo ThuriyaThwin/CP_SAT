@@ -3143,6 +3143,10 @@ void SchedulingSolver::dichotomic_search()
 	  if (base)
 			  base->static_forget();
 
+	  //Never happened in my tests but we should do that
+	  if (limit_generated)
+		  params->forgetall=1;
+
 	  if( result == SAT ) {
 		  new_objective = get_objective();
 		  //   std::cout << " c SAT! " << std::endl;
@@ -3246,7 +3250,7 @@ void SchedulingSolver::dichotomic_search()
 		   * Otehrwise, forget the newly learnt clauses iff. the result of the current dichotomy is UNSAT
 		   */
 
-		  start_over(false);
+		  start_over(false, false, params->forgetall);
 		  if (!params->forgetall)
 		  {
 			  for (int i = (clauses_kept_between_dicho_steps.size-1) ; i>= 0; --i){
@@ -3254,6 +3258,8 @@ void SchedulingSolver::dichotomic_search()
 				  base->learnt.back()->locked = false;
 			  }
 			  base->unlocked_clauses+= clauses_kept_between_dicho_steps.size;
+			 //if (parameters.lazy_generation)
+			  // relax_generated_variables();
 		  }
 		  std::cout << " c forget all clauses between dicho steps ?: " << (params->forgetall? "yes" : "no") << " i.e. the database size is now " << base->learnt.size << std::endl;
 	  }
@@ -3648,7 +3654,7 @@ stats->num_solutions++;
 
   if (base){
 	  if (!parameters.keeplearning_in_bb){
-		  start_over(false);
+		  start_over(false ,false, true);
 		  parameters.fixedForget=0;
 		  parameters.fd_learning = 0;
 		  parameters.backjump = 0;
@@ -3686,7 +3692,7 @@ stats->num_solutions++;
 				  std::cout << " c  base->will_be_forgotten.size=" << base->will_be_forgotten.size << std::endl;
 				  std::cout << " c unlocked clause : " << base->unlocked_clauses << std::endl;
 			   */
-			  start_over(false);
+			  start_over(false,  false, true);
 		  }
 		  //parameters.forgetfulness = params->BBforgetfulness;
 		  parameters.nextforget=parameters.fixedForget;

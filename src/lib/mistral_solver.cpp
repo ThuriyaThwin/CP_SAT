@@ -1035,6 +1035,7 @@ Mistral::Solver::Solver()
   init_booleans_last_size_size= 0;
   init_constraint_graph_size= 0;
   init_expression_store_size= 0;
+  limit_generated=false;
 
   save();
 }
@@ -2039,8 +2040,9 @@ Mistral::Outcome Mistral::Solver::restart_search(const int root, const bool _res
 	  //#endif
 	*/
 	  if (__remove_generated){
+		  limit_generated=true;
 		  std::cout << " c MAX_GENERATED_VARIABLES reached" << std::endl;
-		  start_over(false);
+		  start_over(false, false, true);
 #ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
 		  if (!parameters.lazy_generation){
 			  std::cout << " ERROR start_over without LazyGeneration" << std::endl;
@@ -7792,57 +7794,16 @@ Mistral::Outcome Mistral::Solver::branch_right() {
     			parameters.prob_forget, parameters.max_nogood_size, parameters.fixedLearntSize, parameters.forgetdecsize);
 
     	//test nb_clause
-    	if (parameters.lazy_generation &&  (base->nb_clauses.size) != (variables.size -start_from)){
-    		std::cout << "(base->nb_clauses.size) != variables.size  " << base->nb_clauses.size << " " << variables.size << std::endl;
-    		exit(1);
-    	}
+    	//if (parameters.lazy_generation &&  (base->nb_clauses.size) != (variables.size -start_from)){
+    	//	std::cout << "(base->nb_clauses.size) != variables.size  " << base->nb_clauses.size << " " << variables.size << std::endl;
+    	//	exit(1);
+    	//}
 
 
     	//		  std::cout << " relaxing generated variables " << std::endl;
-       	if (__old_size>(base->learnt.size + 1000)){
-       		//unsigned int relaxed = 0;
-       		int init_index =(initial_variablesize -start_from);
-       		for (int __i = (base->nb_clauses.size -1) ; __i>= init_index; --__i){
-       			if (base->nb_clauses[__i]< 0){
-       				std::cout << "nb_clauses negative  " << __i << std::endl;
-       				exit(1);
-       			}
-       			if (!base->nb_clauses[__i]){
-       				//				  std::cout << "relax" << __i+start_from << std::endl;
-
-       				int id_range = 	varsIds_lazy[__i+start_from - initial_variablesize];
-       				(static_cast<VariableRangeWithLearning*>
-       				(variables[id_range].range_domain)) -> domainConstraint->unlock(__i+start_from);
-       				++statistics.generated_then_relaxed;
-       				//exit(1);
-       				//To DEBUG
-       				/*if (__i == 40923){
-    					  for (int i = (base->nb_clauses.size -1) ; i>=initial_variablesize; --i){
-    						  int s = 0;
-    						  for (int k = (base->learnt.size -1) ; k>=0; --k){
-    							  Clause& a = *base->learnt[k];
-    							  for (int j = (a.size -1) ; j>=0; --j)
-    								  if ((a[j]/2)==__i)
-    									  ++s;
-    						  }
-
-    						  if (s!=base-> nb_clauses[__i]){
-
-    							  std::cout << "s!= nb_clauses[i] " <<std::endl;
-    							  exit(1);
-
-    						  }
-    					  }
-    					  std::cout << "\n \n \n passed!  " << __i << std::endl;
-    					  }
-       				 */
-
-       			}
-       		}
-
-      	 // std::cout << "we relaxed  " << statistics.generated_then_relaxed << " variables"<< std::endl;
-
-
+       //	if (__old_size>(base->learnt.size + 1000)){
+    	if (parameters.lazy_generation &&  (__old_size>(base->learnt.size) )){
+    		relax_generated_variables();
        	}
 
 
@@ -10109,6 +10070,50 @@ void Mistral::Solver::set_fdlearning_on(
 
 }
 
+void Mistral::Solver::relax_generated_variables(){
+
+	//unsigned int relaxed = 0;
+	int init_index =(initial_variablesize -start_from);
+	for (int __i = (base->nb_clauses.size -1) ; __i>= init_index; --__i){
+		if (base->nb_clauses[__i]< 0){
+			std::cout << "nb_clauses negative  " << __i << std::endl;
+			exit(1);
+		}
+		if (!base->nb_clauses[__i]){
+			//				  std::cout << "relax" << __i+start_from << std::endl;
+
+			int id_range = 	varsIds_lazy[__i+start_from - initial_variablesize];
+			(static_cast<VariableRangeWithLearning*>
+			(variables[id_range].range_domain)) -> domainConstraint->unlock(__i+start_from);
+			++statistics.generated_then_relaxed;
+			//exit(1);
+			//To DEBUG
+			/*if (__i == 40923){
+					  for (int i = (base->nb_clauses.size -1) ; i>=initial_variablesize; --i){
+						  int s = 0;
+						  for (int k = (base->learnt.size -1) ; k>=0; --k){
+							  Clause& a = *base->learnt[k];
+							  for (int j = (a.size -1) ; j>=0; --j)
+								  if ((a[j]/2)==__i)
+									  ++s;
+						  }
+
+						  if (s!=base-> nb_clauses[__i]){
+
+							  std::cout << "s!= nb_clauses[i] " <<std::endl;
+							  exit(1);
+
+						  }
+					  }
+					  std::cout << "\n \n \n passed!  " << __i << std::endl;
+					  }
+			 */
+
+		}
+	}
+
+	// std::cout << "we relaxed  " << statistics.generated_then_relaxed << " variables"<< std::endl;
+}
 void Mistral::Solver::init_lazy_generation(){
 	  init_expression_store_size = expression_store.size;
 	  init_constraint_graph_size = constraint_graph.size;
@@ -10117,20 +10122,23 @@ void Mistral::Solver::init_lazy_generation(){
 }
 
 //TODO Use the second parameter
-void Mistral::Solver::start_over(bool changePolicyParameters, bool init_heuristic){
+void Mistral::Solver::start_over(bool changePolicyParameters, bool init_heuristic, bool undo_lazygeneration){
 
 	if (parameters.backjump && base){
 		//base->unlocked_clauses=0;
 		base->static_forget();
 		unsigned int __size = base->learnt.size;
-#ifdef _RECOVER_GENERATED
-		varsIds_lazy.clear();
-		value_lazy.clear();
-#endif
+
 		while (__size--)
 			base->remove(__size);
 
-		if (parameters.lazy_generation){
+		if(undo_lazygeneration){
+		#ifdef _RECOVER_GENERATED
+				varsIds_lazy.clear();
+				value_lazy.clear();
+		#endif
+		if (parameters.lazy_generation)
+		{
 			std::cout << " c undo lazy generation" << std::endl;
 
 			for( int i=init_expression_store_size; i<expression_store.size;++i) {
@@ -10167,6 +10175,7 @@ void Mistral::Solver::start_over(bool changePolicyParameters, bool init_heuristi
 			//}
 			//TODO
 			//variables[i].free_object();?
+		}
 		}
 	}
 	if (changePolicyParameters){
