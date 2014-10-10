@@ -53,6 +53,7 @@ namespace Mistral {
     std::vector<int>               types;
     std::vector<unsigned int>      var_relaxed;
     std::vector<unsigned int>      var_reposted;
+    Vector<double>      avg_clauses_size;
 
     StatisticList();
     virtual ~StatisticList();

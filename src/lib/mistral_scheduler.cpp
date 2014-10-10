@@ -87,6 +87,7 @@ void StatisticList::add_info(const int objective, int tp) {
   propags.push_back(solver->statistics.num_propagations);
   var_relaxed.push_back(solver->statistics.generated_then_relaxed);
   var_reposted.push_back(solver->statistics.reposted_generated);
+  avg_clauses_size.push_back(solver->statistics.avg_learned_size);
   types.push_back(tp);
 
   //std::cout << outcome2str(solver->statistics.outcome) << std::endl;
@@ -150,6 +151,7 @@ std::ostream& StatisticList::print(std::ostream& os,
   long unsigned int total_propags       = 0;
   unsigned int total_var__relaxed         = 0;
   unsigned int total_var__reposted       = 0;
+  long unsigned int  total_clauses_size       = 0;
   
   int nb_unknown = 0;
   for(k=i; k<j; ++k) {
@@ -174,6 +176,7 @@ std::ostream& StatisticList::print(std::ostream& os,
     total_propags      += propags[k];
     total_var__relaxed       += var_relaxed[k];
     total_var__reposted       += var_reposted[k];
+    total_clauses_size += (fails[k] *avg_clauses_size[k]) ;
     if(types[k]==DICHO && outcome[k] == UNKNOWN)
       {
 	++nb_unknown;
@@ -226,9 +229,10 @@ std::ostream& StatisticList::print(std::ostream& os,
      << " d " << prefix << std::left << std::setw(25-plength)  << " RELAXED "       << std::right << std::setw(19) << total_var__relaxed << std::endl
      << " d " << prefix << std::left << std::setw(25-plength)  << " REPOSTED "       << std::right << std::setw(19) <<  total_var__reposted << std::endl
      << " d " << prefix << std::left << std::setw(25-plength)  << " NOGOODS "       << std::right << std::setw(19) << num_nogoods << std::endl;
+  //No longer used
   if(num_nogoods)
 	    std::cout << " d " << prefix << std::left << std::setw(25-plength)  << " NOGOODSIZE "    << std::right << std::setw(19) << avg_nogood_size/(double)num_nogoods << std::endl;
-  std::cout << " d " << prefix << std::left << std::setw(25-plength)  << " NOGOODSIZE "    << std::right << std::setw(19) << solver->statistics.avg_learned_size << std::endl;
+  std::cout << " d " << prefix << std::left << std::setw(25-plength)  << " NOGOODSIZE "    << std::right << std::setw(19) << total_clauses_size / total_fails << std::endl;
 
   std::cout << " d " << prefix << std::left << std::setw(25-plength)  << " NODES/s "       << std::right << std::setw(19) ;
   if(total_time > 0)
@@ -3805,14 +3809,16 @@ stats->num_solutions++;
       // 	else stats->num_nogoods += nogoods->base->nogood.size;
       // }
     }
-
+    //std::cout << " avg_learned_size " << statistics.avg_learned_size <<  std::endl;
+    //std::cout << " avg_clauses_size  " << stats->avg_clauses_size <<  std::endl;
     stats->add_info(objective->upper_bound, BNB);
-    
+
+    //std::cout << " avg_clauses_size  " << stats->avg_clauses_size<<  std::endl;
     //printStatistics(std::cout, ((params->Verbose ? RUNTIME : 0) + (params->Verbose ? BTS + PPGS : 0) + OUTCOME) );
-    
+
     //reset(true);
     std::cout << " c +==========[ end branch & bound ]===========+" << std::endl;
-    
+
   }
 }
 
