@@ -978,6 +978,8 @@ Mistral::Solver::Solver()
   assignment_rank.initialise(this, 0);
   assigned.initialise(0,128);
   visited.initialise(0,1023);
+  relaxed_variables.initialise(0,1023);
+  relaxed_variables.extend(SIZEOF_VARIABLES);
   //reason.initialise(0,128);
   //EXPL
   reason_for.initialise(0,128);
@@ -5339,6 +5341,14 @@ void  Mistral::Solver::repost_generated_variable(unsigned int tmp__id, DomainFai
 	//dom_constraint->extend_scope(tmp__ , val,!is_lb, lvl);
 	//std::cout << " reposte " <<tmp__id<< " at level " << lvl << std::endl;
 	//tmp__ , val - is_lb,!is_lb, lvl
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+	if (!relaxed_variables.fast_contain(tmp__id)){
+		std::cout << "relaxed_variables.fast_contain(tmp__id) ::! " << std::endl;
+		exit(1);
+	}
+#endif
+
+	relaxed_variables.fast_remove(tmp__id);
 	dom_constraint->repost_variable(_index_,  val - is_lb ,!is_lb);
 	//base->extend_scope(tmp__);
 
@@ -5391,12 +5401,12 @@ void  Mistral::Solver::repost_generated_variable(unsigned int tmp__id, DomainFai
 	while(index___0 < index___){
 		saved_vars_size_at_level = trail_[trail_size - (5*index___0)];
 		saved_vars[saved_vars_size_at_level] = saved_vars[trail_[trail_size - (5*(index___0+1))]];
-		trail_[trail_size - (5*index___0)]++;
+		++trail_[trail_size - (5*index___0)];
 		++index___0;
 	}
 	saved_vars_size_at_level = trail_[trail_size - (5*index___0)];
 	saved_vars[saved_vars_size_at_level] =  tmp__id;
-	trail_[trail_size - (5*index___0)]++;
+	++trail_[trail_size - (5*index___0)];
 
 	++statistics.reposted_generated;
 
@@ -5470,7 +5480,7 @@ unsigned int Mistral::Solver::generate_new_variable(DomainFaithfulnessConstraint
 		activity_lit_activity->fast_add(0.0);
 	}
 	//Here we update all the properties related to a boolean varaible
-	int tmp__id = tmp__.id();
+	unsigned int tmp__id = tmp__.id();
 	assignment_level[tmp__id] = lvl;
 	reason_for[tmp__id] = dom_constraint;
 	if (order==(-2)){
@@ -5500,12 +5510,12 @@ unsigned int Mistral::Solver::generate_new_variable(DomainFaithfulnessConstraint
 	while(index___0 < index___){
 		saved_vars_size_at_level = trail_[trail_size - (5*index___0)];
 		saved_vars[saved_vars_size_at_level] = saved_vars[trail_[trail_size - (5*(index___0+1))]];
-		trail_[trail_size - (5*index___0)]++;
+		++trail_[trail_size - (5*index___0)];
 		++index___0;
 	}
 	saved_vars_size_at_level = trail_[trail_size - (5*index___0)];
 	saved_vars[saved_vars_size_at_level] =  tmp__id;
-	trail_[trail_size - (5*index___0)]++;
+	++trail_[trail_size - (5*index___0)];
 	//index___ = level - lvl;
 
 //	std::cout << " \n\n\n trail_ after generating " << trail_ << std::endl;
@@ -10074,17 +10084,23 @@ void Mistral::Solver::relax_generated_variables(){
 
 	//unsigned int relaxed = 0;
 	int init_index =(initial_variablesize -start_from);
+	unsigned int id_generated;
+	int _nb_clauses;
 	for (int __i = (base->nb_clauses.size -1) ; __i>= init_index; --__i){
-		if (base->nb_clauses[__i]< 0){
+		_nb_clauses = base->nb_clauses[__i];
+		if (_nb_clauses< 0){
 			std::cout << "nb_clauses negative  " << __i << std::endl;
 			exit(1);
 		}
-		if (!base->nb_clauses[__i]){
+		id_generated = __i+start_from;
+		if ((!_nb_clauses) && (!relaxed_variables.fast_contain(id_generated))){
 			//				  std::cout << "relax" << __i+start_from << std::endl;
 
-			int id_range = 	varsIds_lazy[__i+start_from - initial_variablesize];
+			int id_range = 	varsIds_lazy[id_generated - initial_variablesize];
 			(static_cast<VariableRangeWithLearning*>
-			(variables[id_range].range_domain)) -> domainConstraint->unlock(__i+start_from);
+			(variables[id_range].range_domain)) -> domainConstraint->unlock(id_generated);
+			relaxed_variables.fast_add(id_generated);
+
 			++statistics.generated_then_relaxed;
 			//exit(1);
 			//To DEBUG
@@ -10133,6 +10149,9 @@ void Mistral::Solver::start_over(bool changePolicyParameters, bool init_heuristi
 			base->remove(__size);
 
 		if(undo_lazygeneration){
+			//Should be before this this if we keep clauses between dicho steps?
+			relaxed_variables.clear();
+
 		#ifdef _RECOVER_GENERATED
 				varsIds_lazy.clear();
 				value_lazy.clear();

@@ -112,13 +112,12 @@ void Mistral::IntStack::extend_list()
 //extend both lists!
 void Mistral::IntStack::extend_lists()
 {
-	int  old_size = size;
+	unsigned int  old_size = size;
 	unsigned int increment = ((list_capacity+1) << 1);
 	list_capacity += increment;
 
 	int* old_list = new int[list_capacity];
 	memcpy(old_list, list_, (list_capacity-increment)*sizeof(int));
-
 
 	increment = ((index_capacity+1) << 1);
 	index_capacity += increment;

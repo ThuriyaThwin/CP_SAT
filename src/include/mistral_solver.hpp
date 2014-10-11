@@ -849,6 +849,8 @@ namespace Mistral {
     //TODO Use the second parameter
     void start_over(bool changePolicyParameters,bool init_heuristic, bool undo_lazygeneration);
     void init_lazy_generation();
+    //This bitset is used only to cache the generated variables that are already relaxed (so we souldn't relax them again)
+    BitSet relaxed_variables;
     void relax_generated_variables();
     //However it needs all these variables
     //TODO remove useless variables..

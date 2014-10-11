@@ -14705,8 +14705,14 @@ void Mistral::DomainFaithfulnessConstraint::unlock(int __id) {
 
 	for (int i = (scope.size -1); i>0; --i ){
 		if (scope[i].id()== __id){
+			if (locked[i]){
 			locked[i]=false;
-		//	std::cout << "unlocked! " << std::endl;
+			--nb_locked;
+			}
+			else{
+			std::cout << "already unlocked!! " << std::endl;
+			exit(1);
+			}
 			return;
 		}
 	}
@@ -14716,6 +14722,7 @@ void Mistral::DomainFaithfulnessConstraint::unlock(int __id) {
 	exit(1);
 }
 void Mistral::DomainFaithfulnessConstraint::start_over() {
+	nb_locked=0;
 	locked.size=1;
 	lower.size = 1;
 	greater.size = 1;
@@ -14759,7 +14766,9 @@ void Mistral::DomainFaithfulnessConstraint::initialise() {
 	lower.add(0);
 	greater.add(0);
 	locked.add(true);
+	//nb_locked;
 	cache_value.add(0);
+	nb_locked=0;
 }
 
 // if a variable alreagy exists then return its id, otherwise return -1
@@ -14770,7 +14779,7 @@ int Mistral::DomainFaithfulnessConstraint::value_exist(int value, bool& was_lock
 	int id=  value_exist(value,_index_);
 	if (id > 0){
 		was_locked=locked[_index_];
-		locked[_index_]=true;
+		//locked[_index_]=true;
 	}
 //	else
 //		was_locked= true;
@@ -14896,6 +14905,7 @@ void Mistral::DomainFaithfulnessConstraint::repost_variable(unsigned int idx, in
 
 
 	locked[idx]=true;
+	++nb_locked;
 
 	Literal virtual_literal ;
 
@@ -14969,6 +14979,7 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 */
 	cache_value.add(value);
 	locked.add(true);
+	++nb_locked;
 	scope.add(x);
 
 	Literal virtual_literal ;
@@ -14987,21 +14998,22 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 		extend_vectors();
 	}
 
-	event_type[scope.size-1] = NO_EVENT;
-	solution [scope.size-1]  = 0;
 
-
-	if ((changes.list_capacity < scope.size) || (changes.index_capacity < scope.size)){
+	unsigned int _last = scope.size -1;
+	event_type[_last] = NO_EVENT;
+	solution [_last]  = 0;
+	++_last;
+	//last is now equal to scope.size
+	if ((changes.list_capacity < _last) || (changes.index_capacity <_last)){
 		changes.extend_lists();
-
 //	events.size = changes.size;
 	events.index_capacity = changes.index_capacity;
 	events.list_capacity = changes.list_capacity;
 	events.list_ = changes.list_;
 	events.index_ = changes.index_;
-
 	//	events.start_ = changes.start_;
 }
+	--_last;
 /*
 	if (events.start_){
 		std::cout << "start_ " << events.start_ << std::endl;
@@ -15011,12 +15023,11 @@ void Mistral::DomainFaithfulnessConstraint::extend_scope(Variable& x, int value 
 	}
 */
 
-	int i = scope.size -1;
-	self[i] = Constraint(this, i|type);
-	trigger_on(_VALUE_, scope[scope.size -1]);
-	index[i] = on[i]->post(self[i]);
+	self[_last] = Constraint(this, _last|type);
+	trigger_on(_VALUE_, scope[_last]);
+	index[_last] = on[_last]->post(self[_last]);
 	//backtrackable??? add lvl!
-	consolidate_var(scope.size -1);
+	consolidate_var(_last);
 }
 
 
@@ -15036,82 +15047,84 @@ Mistral::DomainFaithfulnessConstraint::~DomainFaithfulnessConstraint(){
 
 
 Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::incremental_propagate(){
-	if (scope.size==1)
-		return CONSISTENT;
-	//if (changes.size>4){
-	/*std::cout << "\n c incremental_propagate incremental_propagate " << std::endl;
-	std::cout << "c changes " << changes << std::endl;
-	std::cout << "c ub.size " << ub.size << std::endl;
-	std::cout << scope[0] <<" :  " << scope[0].get_domain() << std::endl;
-	for (int i = 0; i< ub.size; ++i)
-		std::cout << ub[i].value  <<" :  " << scope[ub[i].idx].get_domain() << std::endl;
-*/
+	//if (scope.size==1)
+	//	return CONSISTENT;
 	PropagationOutcome wiped = CONSISTENT;
-	int idx;
+	if ((scope.size >1) && nb_locked){
+		int idx;
+		int needed_to_change=0;
+		int last_lb_idx=ub[0].idx;
+		int last_ub_idx=ub.back().idx;
 
-	int needed_to_change=0;
-	int last_lb_idx=ub[0].idx;
-	int last_ub_idx=ub.back().idx;
+		while( (wiped==CONSISTENT) && !changes.empty() ) {
+			idx = changes.pop();
 
-	while( (wiped==CONSISTENT) && !changes.empty() ) {
-		idx = changes.pop();
-
-	//	std::cout << "X Dom:  " << scope[0].get_domain() <<std::endl;
-	//	std::cout << "idx " <<  idx << " domain : " << scope[idx].get_domain() <<std::endl;
-		if (idx){
-	//		std::cout << " value " <<  cache_value[idx] <<std::endl;
-			wiped=update_closest(idx, last_lb_idx,last_ub_idx,needed_to_change);
+			//	std::cout << "X Dom:  " << scope[0].get_domain() <<std::endl;
+			//	std::cout << "idx " <<  idx << " domain : " << scope[idx].get_domain() <<std::endl;
+			if (idx){
+				//		std::cout << " value " <<  cache_value[idx] <<std::endl;
+				wiped=update_closest(idx, last_lb_idx,last_ub_idx,needed_to_change);
+			}
+			else if (!needed_to_change){
+				needed_to_change|=4;
+			}
 		}
-		else if (!needed_to_change){
-			needed_to_change|=4;
+
+		if (nb_locked <0 )
+		{
+			std::cout << " nb_locked <0" <<nb_locked << std::endl;
+			std::cout << " size of locked" <<locked.size << std::endl;
+			std::cout << " locked " <<locked << std::endl;
+			exit(1);
 		}
-	}
 
-
-	if (wiped==CONSISTENT && (needed_to_change))
-		update_Range( last_lb_idx,last_ub_idx,needed_to_change);
+		/*if (!nb_locked)
+	{
+		std::cout << "nb_locked=0  " <<nb_locked << std::endl;
+	//	exit(1);
+	}*/
+		if ((wiped==CONSISTENT) && (needed_to_change))
+			update_Range( last_lb_idx,last_ub_idx,needed_to_change);
 
 #ifdef _DEBUG_INCREMENTAL_DOMAINFAITHFULNESS
-	if (wiped==CONSISTENT){
-		//ub.size
-		bool ok = true;
-		int _lb = _x->get_min();
-		int _ub = _x->get_max();
-		for (int i = 0; i <ub.size ; ++i){
-			if ((ub[i].value >= _ub) && ((!scope[ub[i].idx].is_ground()) || (!scope[ub[i].idx].get_min()))) {
-				ok = false;
-				break;
-			}
-			else
-				if ((ub[i].value < _lb) && ((!scope[ub[i].idx].is_ground()) || (scope[ub[i].idx].get_min()))) {
+		if (wiped==CONSISTENT){
+			//ub.size
+			bool ok = true;
+			int _lb = _x->get_min();
+			int _ub = _x->get_max();
+			for (int i = 0; i <ub.size ; ++i){
+				if ((ub[i].value >= _ub) && ((!scope[ub[i].idx].is_ground()) || (!scope[ub[i].idx].get_min()))) {
 					ok = false;
 					break;
 				}
 				else
-					if ((ub[i].value >= _lb) && (ub[i].value < _ub) && scope[ub[i].idx].is_ground()){
+					if ((ub[i].value < _lb) && ((!scope[ub[i].idx].is_ground()) || (scope[ub[i].idx].get_min()))) {
 						ok = false;
 						break;
 					}
-		}
-
-		if (!ok){
-			std::cout << "\n DOMAINFAITHFULNESS CHECK Propag" << std::endl;
-			if (wiped!=CONSISTENT){
-				std::cout << "\n FAIL!!!!!!" << std::endl;
+					else
+						if ((ub[i].value >= _lb) && (ub[i].value < _ub) && scope[ub[i].idx].is_ground()){
+							ok = false;
+							break;
+						}
 			}
-			std::cout << scope[0] <<" :  " << scope[0].get_domain() << std::endl;
 
-			//	std::cout << "ub" << std::endl;
-			//std::cout << " \n \n variables domains : \n " << std::endl;
-			for (int i = 0; i< ub.size; ++i)
-				std::cout << ub[i].value  <<" :  " << scope[ub[i].idx].get_domain() << std::endl;
-			exit(1);
+			if (!ok){
+				std::cout << "\n DOMAINFAITHFULNESS CHECK Propag" << std::endl;
+				if (wiped!=CONSISTENT){
+					std::cout << "\n FAIL!!!!!!" << std::endl;
+				}
+				std::cout << scope[0] <<" :  " << scope[0].get_domain() << std::endl;
+
+				for (int i = 0; i< ub.size; ++i)
+					std::cout << ub[i].value  <<" :  " << scope[ub[i].idx].get_domain() << std::endl;
+				exit(1);
+			}
 		}
-	}
 #endif
+	}
 
 	return wiped;
-	//}
 }
 
 Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::update_closest(int idx, int& lb_idx, int& ub_idx, int& needed_to_change){
@@ -15248,7 +15261,7 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::update_closes
 	return CONSISTENT;
 }
 
-
+//Update the atoms based on th ecurrent satte of the range variable.
 void Mistral::DomainFaithfulnessConstraint::update_Range(int lb_idx, int ub_idx, int needed_to_change){
 
 	/*std::cout << "update_Range with  " <<needed_to_change <<std::endl ;

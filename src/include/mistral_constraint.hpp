@@ -5187,6 +5187,7 @@ if (enforce_nfc1)
 
 	  Vector<bool> locked;
 
+	  int nb_locked;
 	  Vector<int> cache_value;
 
 	  Vector<__boundLiteral> ub;
