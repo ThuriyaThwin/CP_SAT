@@ -3073,11 +3073,11 @@ void SchedulingSolver::dichotomic_search()
 
   if (params->lazy_generation)
   if (base){
-	  if (!params->forgetall){
+	/*  if (!params->forgetall){
 
 		  std::cout << " !forgetall & lazy_generation are not implemented yet! " << std::endl;
 		  exit(1);
-	  }
+	  }*/
 
 	  init_lazy_generation();
 	  base->extend_vectors(10000);
@@ -3257,11 +3257,17 @@ void SchedulingSolver::dichotomic_search()
 		  start_over(false, false, params->forgetall);
 		  if (!params->forgetall)
 		  {
+			  if (parameters.lazy_generation){
+				  relaxed_variables.clear();
+				  for (int i = 0; i < start_from; ++i)
+					  (static_cast<VariableRangeWithLearning*> (variables[i].range_domain))->domainConstraint->reset_locked();
+			  }
 			  for (int i = (clauses_kept_between_dicho_steps.size-1) ; i>= 0; --i){
 				  base->learn(clauses_kept_between_dicho_steps[i], (parameters.init_activity ? parameters.activity_increment : 0.0));
 				  base->learnt.back()->locked = false;
 			  }
 			  base->unlocked_clauses+= clauses_kept_between_dicho_steps.size;
+			  relax_generated_variables();
 			 //if (parameters.lazy_generation)
 			  // relax_generated_variables();
 		  }

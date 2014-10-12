@@ -10094,7 +10094,7 @@ void Mistral::Solver::relax_generated_variables(){
 		}
 		id_generated = __i+start_from;
 		if ((!_nb_clauses) && (!relaxed_variables.fast_contain(id_generated))){
-			//				  std::cout << "relax" << __i+start_from << std::endl;
+			//std::cout << "relax" << __i+start_from << std::endl;
 
 			int id_range = 	varsIds_lazy[id_generated - initial_variablesize];
 			(static_cast<VariableRangeWithLearning*>

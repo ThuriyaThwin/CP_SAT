@@ -5186,7 +5186,15 @@ if (enforce_nfc1)
 
 
 	  Vector<bool> locked;
-
+	  void reset_locked(){
+		  int __s = locked.size -1;
+			  for (int i =1; (i <= __s) && (nb_locked<__s); ++i){
+				  if (!locked[i]){
+					  locked[i]=true;
+					  ++nb_locked;
+				  }
+			  }
+	  }
 	  int nb_locked;
 	  Vector<int> cache_value;
 
