@@ -232,7 +232,10 @@ std::ostream& StatisticList::print(std::ostream& os,
   //No longer used
   if(num_nogoods)
 	    std::cout << " d " << prefix << std::left << std::setw(25-plength)  << " NOGOODSIZE "    << std::right << std::setw(19) << avg_nogood_size/(double)num_nogoods << std::endl;
+  if (total_fails)
   std::cout << " d " << prefix << std::left << std::setw(25-plength)  << " NOGOODSIZE "    << std::right << std::setw(19) << total_clauses_size / total_fails << std::endl;
+  else
+	  std::cout << " d " << prefix << std::left << std::setw(25-plength)  << " NOGOODSIZE "    << std::right << std::setw(19) << 0 << std::endl;
 
   std::cout << " d " << prefix << std::left << std::setw(25-plength)  << " NODES/s "       << std::right << std::setw(19) ;
   if(total_time > 0)

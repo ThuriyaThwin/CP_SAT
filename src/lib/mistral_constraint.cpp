@@ -15055,7 +15055,10 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::incremental_p
 		int needed_to_change=0;
 		int last_lb_idx=ub[0].idx;
 		int last_ub_idx=ub.back().idx;
-
+		if (!locked[last_lb_idx])
+			last_lb_idx= get_greater(last_lb_idx);
+		if (!locked[last_ub_idx])
+			last_ub_idx= get_lower(last_ub_idx);
 		while( (wiped==CONSISTENT) && !changes.empty() ) {
 			idx = changes.pop();
 
