@@ -2007,7 +2007,7 @@ Mistral::Outcome Mistral::Solver::restart_search(const int root, const bool _res
   int limit_reset_policy = parameters.limitresetpolicy;
 
 //  int max_per_variable=1000;
-  int max_avg=250000;
+  int max_avg=100000;
 
   while(satisfiability == UNKNOWN) {
 
