@@ -65,6 +65,7 @@ namespace Mistral {
     void add_info(const int obj, const int tp);
     //void add_info(const int lb, const int ub);
 
+    int get_avgsizeofclauses();
     std::ostream& print(std::ostream& os, 
 			const char* prefix=" ",
 			const int start=0, 
@@ -83,7 +84,7 @@ namespace Mistral {
     static const int RGUIDED =  3;
     static const int RAND    =  4;
 
-    static const int nia = 50;
+    static const int nia = 52;
     static const char* int_ident[nia];
     
     static const int nsa = 15;
@@ -161,6 +162,9 @@ namespace Mistral {
     int limitresetpolicy;
     //used with task weight
     int taskweight;
+
+    //adapt max_nogood_size and forgetdecsize based on dicho results
+    int adaptsize, adaptforget;
 
 
     double Factor;

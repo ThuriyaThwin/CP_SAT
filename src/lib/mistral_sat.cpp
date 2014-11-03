@@ -1491,6 +1491,8 @@ void Mistral::ConstraintClauseBase::fixed_forget(double _forgetfulness, int _fix
 			//std::cout << " c fixed_forget : new size  " << learnt.size  << std::endl;
 		}
 		else {
+			get_solver()->update_forgetfulness_parameters();
+
 			//int prob_forget = _prob_forget;
 			//int max_size = _max_nogood_size;
 		int rest =((int) size)- unlocked_clauses;

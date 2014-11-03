@@ -128,7 +128,22 @@ void StatisticList::add_info(const int objective, int tp) {
 
 }
 
+int StatisticList::get_avgsizeofclauses(){
 
+	  int k, i=0, j=outcome.size();
+	  long unsigned int total_fails         = 0;
+
+	  long unsigned int  total_clauses_size       = 0;
+
+	  for(k=i; k<j; ++k) {
+	    total_fails        += fails[k];
+	    total_clauses_size += (fails[k] *avg_clauses_size[k]) ;
+	  }
+
+	  return total_clauses_size/total_fails;
+
+
+}
 
 std::ostream& StatisticList::print(std::ostream& os, 
 				   const char* prefix,
@@ -287,7 +302,8 @@ const char* ParameterList::int_ident[ParameterList::nia] =
    "-forgetbackjump" , "-hardkeep", "-hardforget" ,"-keepwhensize" , "-keepwhenbjm" ,
    "-keeplearning" , "-simulaterestart" , "-nogoodweight" , "-weighthistory" ,  "-fixedForget" ,
    "-fixedlimitSize" , "-fixedLearntSize" , "-probforget" ,"-forgetdecsize" , "-vsids",
-   "-autoconfig" , "-autoconfigublimit" , "-autoconfiglblimit", "-limitresetpolicy" , "-taskweight"
+   "-autoconfig" , "-autoconfigublimit" , "-autoconfiglblimit", "-limitresetpolicy" , "-taskweight" ,
+   "-adaptsize" , "-adaptforget"
   };
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
@@ -416,6 +432,10 @@ ParameterList::ParameterList(int length, char **commandline) {
 
   taskweight=0;
 
+  adaptsize=0 ;
+  adaptforget=0;
+
+
   if(Type == "osp") {
     Objective = "makespan";
     if(Heuristic == "none")
@@ -508,6 +528,8 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[47] != NOVAL) autoconfiglblimit  = int_param[47];
   if(int_param[48] != NOVAL) limitresetpolicy  = int_param[48];
   if(int_param[49] != NOVAL) taskweight  = int_param[49];
+  if(int_param[50] != NOVAL) adaptsize  = int_param[50];
+  if(int_param[51] != NOVAL) adaptforget  = int_param[51];
 
 
   if (keep_when_bjm || keep_when_size)
@@ -567,6 +589,8 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | semantic_learning " << ":" << std::right << std::setw(15) << semantic_learning << " |" << std::endl;
   os << std::left << std::setw(30) << " c | simple_learn " << ":" << std::right << std::setw(15) << simple_learn << " |" << std::endl;
   os << std::left << std::setw(30) << " c | max_nogood_size " << ":" << std::right << std::setw(15) << max_nogood_size << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | adaptsize " << ":" << std::right << std::setw(15) << adaptsize << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | adaptforget " << ":" << std::right << std::setw(15) << adaptforget << " |" << std::endl;
   os << std::left << std::setw(30) << " c | bounded_by_decision " << ":" << std::right << std::setw(15) << bounded_by_decision << " |" << std::endl;
   os << std::left << std::setw(30) << " c | forget all clauses " << ":" << std::right << std::setw(15) << (forgetall? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | hard_keep " << ":" << std::right << std::setw(15) << (hard_keep? "yes" : "no") << " |" << std::endl;
@@ -2031,7 +2055,8 @@ void SchedulingSolver::setup() {
 			  params->keep_when_bjm ,  params->keeplearning_in_bb, params->simulaterestart,
 			  params->nogood_based_weight, params->fixedForget , params-> fixedlimitSize ,
 			  params-> fixedLearntSize ,params-> prob_forget ,params-> forgetdecsize ,
-			  params-> limitresetpolicy , params-> taskweight
+			  params-> limitresetpolicy , params-> taskweight , params->adaptsize,
+			  params->adaptforget
 	  );
 
 	  if (!params->vsids)

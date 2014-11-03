@@ -162,6 +162,8 @@ namespace Mistral {
     int max_nogood_size;
     int bounded_by_decision;
 
+    int adaptsize, adaptforget;
+
     //The probability that a long clause will be forgotten
     int prob_forget;
     //To continue UP
@@ -916,6 +918,7 @@ namespace Mistral {
     void treat_explanation(Explanation::iterator start,Explanation::iterator end, bool semantic, bool orderedExploration);
     void clean_fdlearn();
     bool should_forget();
+    void update_forgetfulness_parameters();
     bool learn_virtual_literals(bool semantic, bool lazyGeneration);
 
 #ifdef _RECOVER_GENERATED
@@ -1010,7 +1013,8 @@ namespace Mistral {
     		int keep_when_bjm , int keeplearning_in_bb , int _simulaterestart,
     		int _nogood_based_weight , int fixedForget , int fixedlimitSize ,
     		int fixedLearntSize ,   int _prob_forget, int _forgetdecsize,
-    		int limitresetpolicy , int taskweight
+    		int limitresetpolicy , int taskweight , int _adaptsize,
+    		int _adaptforget
     );
 
     void close_propagation();

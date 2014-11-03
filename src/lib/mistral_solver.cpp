@@ -183,6 +183,10 @@ void Mistral::SolverParameters::initialise() {
   taskweight=0;
   updatefailurescope=0;
 
+  adaptsize = 0;
+  adaptforget = 0;
+
+
   //capacityinVarRangeWithLearning=0;
 
   prefix_comment = "c";
@@ -7864,6 +7868,16 @@ Mistral::Outcome Mistral::Solver::branch_right() {
   return status;
 }
 
+void Mistral::Solver::update_forgetfulness_parameters() {
+if (parameters.adaptsize){
+    		//int newsize  = statistics.avg_learned_size;
+    		//std::cout << " newsize " << statistics.avg_learned_size << std::endl;
+    		parameters.max_nogood_size =statistics.avg_learned_size * parameters.adaptsize / 100;
+    		parameters.forgetdecsize = parameters.max_nogood_size*   parameters.adaptforget  /100;
+    		//std::cout << " c new max_nogood_size " << parameters.max_nogood_size << std::endl;
+    		//std::cout << " c forgetdecsize " << parameters. forgetdecsize<< std::endl;
+    	}
+}
 
 void Mistral::Solver::backjump() {
   int backtrack_level = culprit.get_backtrack_level();
@@ -9973,7 +9987,9 @@ void Mistral::Solver::set_fdlearning_on(
         int _prob_forget,
         int _forgetdecsize,
         int _limitresetpolicy,
-        int _taskweight
+        int _taskweight ,
+        int _adaptsize,
+        int _adaptforget
 	    ) {
 
 	//	parameters.jsp_backjump = true;
@@ -10013,6 +10029,8 @@ void Mistral::Solver::set_fdlearning_on(
 	parameters.forgetdecsize =_forgetdecsize;
 	parameters.limitresetpolicy =  _limitresetpolicy;
 	parameters.taskweight = _taskweight;
+	parameters.adaptsize = _adaptsize;
+	parameters.adaptforget = _adaptforget;
 
 	std::cout << " c start_from : " << start_from << std::endl;
 	visitedUpperBounds.initialise(0, start_from  , BitSet::empt);
