@@ -303,7 +303,7 @@ const char* ParameterList::int_ident[ParameterList::nia] =
    "-keeplearning" , "-simulaterestart" , "-nogoodweight" , "-weighthistory" ,  "-fixedForget" ,
    "-fixedlimitSize" , "-fixedLearntSize" , "-probforget" ,"-forgetdecsize" , "-vsids",
    "-autoconfig" , "-autoconfigublimit" , "-autoconfiglblimit", "-limitresetpolicy" , "-taskweight" ,
-   "-adaptsize" , "-adaptforget"
+   "-adaptsize" , "-adaptforget" , "-repeatdicho"
   };
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
@@ -435,6 +435,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   adaptsize=0 ;
   adaptforget=0;
 
+  repeatdicho=0;
 
   if(Type == "osp") {
     Objective = "makespan";
@@ -530,6 +531,8 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[49] != NOVAL) taskweight  = int_param[49];
   if(int_param[50] != NOVAL) adaptsize  = int_param[50];
   if(int_param[51] != NOVAL) adaptforget  = int_param[51];
+  if(int_param[52] != NOVAL) repeatdicho  = int_param[52];
+
 
 
   if (keep_when_bjm || keep_when_size)
@@ -591,6 +594,7 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | max_nogood_size " << ":" << std::right << std::setw(15) << max_nogood_size << " |" << std::endl;
   os << std::left << std::setw(30) << " c | adaptsize " << ":" << std::right << std::setw(15) << adaptsize << " |" << std::endl;
   os << std::left << std::setw(30) << " c | adaptforget " << ":" << std::right << std::setw(15) << adaptforget << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | repeatdicho " << ":" << std::right << std::setw(15) << repeatdicho << " |" << std::endl;
   os << std::left << std::setw(30) << " c | bounded_by_decision " << ":" << std::right << std::setw(15) << bounded_by_decision << " |" << std::endl;
   os << std::left << std::setw(30) << " c | forget all clauses " << ":" << std::right << std::setw(15) << (forgetall? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | hard_keep " << ":" << std::right << std::setw(15) << (hard_keep? "yes" : "no") << " |" << std::endl;

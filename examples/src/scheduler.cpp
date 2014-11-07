@@ -68,9 +68,28 @@ int main( int argc, char** argv )
   // //exit(1);
 
   // if(solver.status == UNKNOWN) 
-  
+
+  int old_distance = solver->get_ub() -  solver->get_lb();
   solver->dichotomic_search();
   
+  //TODO add visited_objective
+  while (params.repeatdicho--){
+
+	  if(!stats.solved() && (old_distance > (stats.upper_bound - stats.lower_bound))) {
+		  std::cout << " c repeat new dicho " << params.repeatdicho +1<< std::endl;
+		  old_distance = stats.upper_bound - stats.lower_bound;
+		  solver->lb_C_max = (stats.lower_bound);
+		  solver->ub_C_max = (stats.upper_bound);
+		  solver->dichotomic_search();
+	  }
+	  else{
+		  break;
+	  }
+  }
+
+
+
+
   // else if( solver.status == SAT ) {
   //   std::cout << "c Solved while building!" << std::endl;
   //   exit(1);

@@ -84,7 +84,7 @@ namespace Mistral {
     static const int RGUIDED =  3;
     static const int RAND    =  4;
 
-    static const int nia = 52;
+    static const int nia = 53;
     static const char* int_ident[nia];
     
     static const int nsa = 15;
@@ -165,7 +165,7 @@ namespace Mistral {
 
     //adapt max_nogood_size and forgetdecsize based on dicho results
     int adaptsize, adaptforget;
-
+    int repeatdicho;
 
     double Factor;
     double Decay;
