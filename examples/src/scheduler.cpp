@@ -73,12 +73,12 @@ int main( int argc, char** argv )
   int old_distance = solver->get_ub() -  solver->get_lb();
   solver->dichotomic_search(0);
 
-  if (params.NodeBaselb){
+  if (params.lbCutoff){
 	  std::cout << " c Improving LB " << std::endl;
 	  old_distance = stats.upper_bound - stats.lower_bound;
 	  solver->lb_C_max = (stats.lower_bound);
 	  solver->ub_C_max = (stats.upper_bound);
-	  solver->dichotomic_search(params.NodeBaselb);
+	  solver->dichotomic_search(params.lbCutoff);
   }
 
   //TODO add visited_objective

@@ -168,7 +168,7 @@ namespace Mistral {
     int repeatdicho;
 
 
-    int NodeBaselb; // like "dyncutoff": node cutoff trying to mimic time cutoff to boost lb
+    int lbCutoff; // like "cutoff":but used to boost lb
 
     double Factor;
     double Decay;

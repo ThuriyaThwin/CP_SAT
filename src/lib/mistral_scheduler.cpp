@@ -303,7 +303,7 @@ const char* ParameterList::int_ident[ParameterList::nia] =
    "-keeplearning" , "-simulaterestart" , "-nogoodweight" , "-weighthistory" ,  "-fixedForget" ,
    "-fixedlimitSize" , "-fixedLearntSize" , "-probforget" ,"-forgetdecsize" , "-vsids",
    "-autoconfig" , "-autoconfigublimit" , "-autoconfiglblimit", "-limitresetpolicy" , "-taskweight" ,
-   "-adaptsize" , "-adaptforget" , "-repeatdicho" , "-lbdyncutoff"
+   "-adaptsize" , "-adaptforget" , "-repeatdicho" , "-lbcutoff"
   };
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
@@ -358,8 +358,8 @@ ParameterList::ParameterList(int length, char **commandline) {
   NodeCutoff  = 0;
   NodeBase    = 20;
 
-  //Souldn't be 20?
-  NodeBaselb  = 0;
+
+  lbCutoff  = 0;
   Dichotomy   = 128;
   Base        = 256;
   Randomized  = -1;
@@ -535,7 +535,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[50] != NOVAL) adaptsize  = int_param[50];
   if(int_param[51] != NOVAL) adaptforget  = int_param[51];
   if(int_param[52] != NOVAL) repeatdicho  = int_param[52];
-  if(int_param[53] != NOVAL) NodeBaselb  = int_param[53];
+  if(int_param[53] != NOVAL) lbCutoff  = int_param[53];
 
 
 
@@ -630,8 +630,8 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | greedy iterations " << ":" << std::right << std::setw(15) << InitBound << " |" << std::endl;
   os << std::left << std::setw(30) << " c | use initial probe " << ":" << std::right << std::setw(15) << (InitStep ? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | time cutoff " << ":" << std::right << std::setw(15) << Cutoff << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | lb time cutoff " << ":" << std::right << std::setw(15) << lbCutoff << " |" << std::endl;
   os << std::left << std::setw(30) << " c | node cutoff " << ":" << std::right << std::setw(15) << NodeCutoff << " |" << std::endl;
-  os << std::left << std::setw(30) << " c | lb node cutoff " << ":" << std::right << std::setw(15) <<  20000000 * NodeBaselb  << " |" << std::endl;
   os << std::left << std::setw(30) << " c | dichotomy " << ":" << std::right << std::setw(15) << (Dichotomy ? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | Dicho restart policy " << ":" << std::right << std::setw(15) << Policy << " |" << std::endl;
   os << std::left << std::setw(30) << " c | B&B restart policy " << ":" << std::right << std::setw(15) << BandBPolicy << " |" << std::endl;
@@ -3026,6 +3026,10 @@ void SchedulingSolver::dichotomic_search(int boostlb)
   
   
   parameters.verbosity = params->Verbose;
+  if (boostlb){
+	  parameters.time_limit = params->lbCutoff;
+  }
+  else
   parameters.time_limit = params->Cutoff;
   
   //   setVerbosity(params->Verbose);
@@ -3123,8 +3127,6 @@ void SchedulingSolver::dichotomic_search(int boostlb)
   }
 
 
-  unsigned long long int lbNodeFactor = 20000000;
-  unsigned long long int lbNodeCutoff = (lbNodeFactor * boostlb);
 
 
   init_obj  = (int)(floor(((double)minfsble + (double)maxfsble)/2));
@@ -3158,7 +3160,8 @@ void SchedulingSolver::dichotomic_search(int boostlb)
 	  //       setPropagsLimit(params->NodeCutoff);
 
 	  if(boostlb){
-	  parameters.propagation_limit =lbNodeCutoff;
+//		  parameters.propagation_limit =lbNodeCutoff;
+		  parameters.propagation_limit =0;
 	  }
 	  else
 		  parameters.propagation_limit = params->NodeCutoff;
