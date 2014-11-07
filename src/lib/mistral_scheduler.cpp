@@ -303,7 +303,7 @@ const char* ParameterList::int_ident[ParameterList::nia] =
    "-keeplearning" , "-simulaterestart" , "-nogoodweight" , "-weighthistory" ,  "-fixedForget" ,
    "-fixedlimitSize" , "-fixedLearntSize" , "-probforget" ,"-forgetdecsize" , "-vsids",
    "-autoconfig" , "-autoconfigublimit" , "-autoconfiglblimit", "-limitresetpolicy" , "-taskweight" ,
-   "-adaptsize" , "-adaptforget" , "-repeatdicho"
+   "-adaptsize" , "-adaptforget" , "-repeatdicho" , "-lbdyncutoff"
   };
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
@@ -357,6 +357,9 @@ ParameterList::ParameterList(int length, char **commandline) {
   Cutoff      = 300;
   NodeCutoff  = 0;
   NodeBase    = 20;
+
+  //Souldn't be 20?
+  NodeBaselb  = 0;
   Dichotomy   = 128;
   Base        = 256;
   Randomized  = -1;
@@ -532,6 +535,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[50] != NOVAL) adaptsize  = int_param[50];
   if(int_param[51] != NOVAL) adaptforget  = int_param[51];
   if(int_param[52] != NOVAL) repeatdicho  = int_param[52];
+  if(int_param[53] != NOVAL) NodeBaselb  = int_param[53];
 
 
 
@@ -627,6 +631,7 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | use initial probe " << ":" << std::right << std::setw(15) << (InitStep ? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | time cutoff " << ":" << std::right << std::setw(15) << Cutoff << " |" << std::endl;
   os << std::left << std::setw(30) << " c | node cutoff " << ":" << std::right << std::setw(15) << NodeCutoff << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | lb node cutoff " << ":" << std::right << std::setw(15) <<  20000000 * NodeBaselb  << " |" << std::endl;
   os << std::left << std::setw(30) << " c | dichotomy " << ":" << std::right << std::setw(15) << (Dichotomy ? "yes" : "no") << " |" << std::endl;
   os << std::left << std::setw(30) << " c | Dicho restart policy " << ":" << std::right << std::setw(15) << Policy << " |" << std::endl;
   os << std::left << std::setw(30) << " c | B&B restart policy " << ":" << std::right << std::setw(15) << BandBPolicy << " |" << std::endl;
@@ -2986,7 +2991,7 @@ std::ostream& SchedulingSolution::print(std::ostream& os, std::string type) {
 //   return ret_value;
 // }
 
-void SchedulingSolver::dichotomic_search()
+void SchedulingSolver::dichotomic_search(int boostlb)
 {
   
   //   presolve();
@@ -3117,6 +3122,11 @@ void SchedulingSolver::dichotomic_search()
 		  (static_cast<VariableRangeWithLearning*> (variables[i].range_domain))->domainConstraint->extend_vectors();
   }
 
+
+  unsigned long long int lbNodeFactor = 20000000;
+  unsigned long long int lbNodeCutoff = (lbNodeFactor * boostlb);
+
+
   init_obj  = (int)(floor(((double)minfsble + (double)maxfsble)/2));
 #ifdef _CHECK_NOGOOD
   //int init_obj  = (int)(floor(((double)minfsble + (double)maxfsble)/2));
@@ -3136,6 +3146,10 @@ void SchedulingSolver::dichotomic_search()
 	  if(remaining_time < (2*params->NodeBase)) break;
 
 	  int_objective = (int)(floor(((double)minfsble + (double)maxfsble)/2));
+
+	  if ((int_objective== minfsble) || (int_objective== maxfsble))
+		break;
+
 #ifdef _CHECK_NOGOOD
 	  dicho_lb=minfsble;
 	  dicho_ub= maxfsble;
@@ -3143,8 +3157,11 @@ void SchedulingSolver::dichotomic_search()
 	  std::cout << " c \n c \n c+=========[ start dichotomic step ]=========+" << std::endl;
 	  //       setPropagsLimit(params->NodeCutoff);
 
-	  parameters.propagation_limit = params->NodeCutoff;
-
+	  if(boostlb){
+	  parameters.propagation_limit =lbNodeCutoff;
+	  }
+	  else
+		  parameters.propagation_limit = params->NodeCutoff;
 
 	  std::cout << std::left << std::setw(30) << " c | current real range" << ":"
 			  << std::right << " " << std::setw(5) << stats->lower_bound
@@ -3244,13 +3261,26 @@ void SchedulingSolver::dichotomic_search()
 	  } else {
 		  //s    	std::cout << " c NOT SAT! " ;
 		  new_objective = int_objective;
-		  minfsble = int_objective+1;
+
 
 		  if( result == UNSAT ) {
+			  minfsble = int_objective+1;
+
 			  //	  std::cout << " UNSAT! " ;
 			  std::cout << std::left << std::setw(30) << " c | real lower bound" << ":" << std::right << std::setw(15) << minfsble << " |" << std::endl;
 		  } else {
-			  std::cout << std::left << std::setw(30) << " c | dichotomic lower bound" << ":" << std::right << std::setw(15) << minfsble << " |" << std::endl;
+
+			  if(boostlb){
+				  maxfsble = int_objective  ;
+				  std::cout << std::left << std::setw(30) << " c | dichotomic upper bound" << ":" << std::right << std::setw(15) << maxfsble << " |" << std::endl;
+
+			  }
+			  else
+			  {
+				  minfsble = int_objective+1;
+
+				  std::cout << std::left << std::setw(30) << " c | dichotomic lower bound" << ":" << std::right << std::setw(15) << minfsble << " |" << std::endl;
+			  }
 		  }
 
 		  //	  std::cout << std::endl;

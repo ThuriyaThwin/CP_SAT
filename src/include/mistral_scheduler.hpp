@@ -84,7 +84,7 @@ namespace Mistral {
     static const int RGUIDED =  3;
     static const int RAND    =  4;
 
-    static const int nia = 53;
+    static const int nia = 54;
     static const char* int_ident[nia];
     
     static const int nsa = 15;
@@ -166,6 +166,9 @@ namespace Mistral {
     //adapt max_nogood_size and forgetdecsize based on dicho results
     int adaptsize, adaptforget;
     int repeatdicho;
+
+
+    int NodeBaselb; // like "dyncutoff": node cutoff trying to mimic time cutoff to boost lb
 
     double Factor;
     double Decay;
@@ -734,7 +737,7 @@ namespace Mistral {
     // bool probe_ub();
     // void jtl_presolve();
     // void old_jtl_presolve();
-     void dichotomic_search();
+     void dichotomic_search(int boostlb=0);
     // void all_solutions_search();
     void branch_and_bound();
     // //void large_neighborhood_search();
