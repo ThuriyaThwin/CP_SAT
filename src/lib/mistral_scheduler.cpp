@@ -3147,6 +3147,9 @@ void SchedulingSolver::dichotomic_search(int boostlb)
 
 	  if(remaining_time < (2*params->NodeBase)) break;
 
+	  if (remaining_time < parameters.time_limit)
+		  parameters.time_limit = remaining_time;
+
 	  int_objective = (int)(floor(((double)minfsble + (double)maxfsble)/2));
 
 	  if ((int_objective== minfsble) || (int_objective== maxfsble))
