@@ -3027,6 +3027,7 @@ void SchedulingSolver::dichotomic_search(int boostlb)
   
   parameters.verbosity = params->Verbose;
   if (boostlb){
+	  std::cout << " c Improving LB " << std::endl;
 	  parameters.time_limit = params->lbCutoff;
   }
   else
