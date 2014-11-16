@@ -297,6 +297,8 @@ namespace Mistral {
     //EXPL
     //Explanation** reason_for;
     Vector< Clause* > reason_for;
+
+    //This vector contains the number of occurrences of each atom
     Vector< int > nb_clauses;
 
     // Vector< double > lit_activity;

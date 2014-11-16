@@ -303,7 +303,7 @@ const char* ParameterList::int_ident[ParameterList::nia] =
    "-keeplearning" , "-simulaterestart" , "-nogoodweight" , "-weighthistory" ,  "-fixedForget" ,
    "-fixedlimitSize" , "-fixedLearntSize" , "-probforget" ,"-forgetdecsize" , "-vsids",
    "-autoconfig" , "-autoconfigublimit" , "-autoconfiglblimit", "-limitresetpolicy" , "-taskweight" ,
-   "-adaptsize" , "-adaptforget" , "-repeatdicho" , "-lbcutoff"
+   "-adaptsize" , "-adaptforget" , "-repeatdicho" , "-lbcutoff", "-sizeocc"
   };
 
 const char* ParameterList::str_ident[ParameterList::nsa] = 
@@ -440,6 +440,8 @@ ParameterList::ParameterList(int length, char **commandline) {
 
   repeatdicho=0;
 
+  sizeocc=0;
+
   if(Type == "osp") {
     Objective = "makespan";
     if(Heuristic == "none")
@@ -536,6 +538,7 @@ ParameterList::ParameterList(int length, char **commandline) {
   if(int_param[51] != NOVAL) adaptforget  = int_param[51];
   if(int_param[52] != NOVAL) repeatdicho  = int_param[52];
   if(int_param[53] != NOVAL) lbCutoff  = int_param[53];
+  if(int_param[54] != NOVAL) sizeocc  = int_param[54];
 
 
 
@@ -621,6 +624,7 @@ std::ostream& ParameterList::print(std::ostream& os) {
   os << std::left << std::setw(30) << " c | taskweight" << ":" << std::right << std::setw(15) <<   taskweight << " |" << std::endl;
   os << std::left << std::setw(30) << " c | nogood_based_weight" << ":" << std::right << std::setw(15) <<   nogood_based_weight << " |" << std::endl;
   os << std::left << std::setw(30) << " c | reduce learnt clause " << ":" << std::right << std::setw(15) << (reduce_clauses? "yes" : "no") << " |" << std::endl;
+  os << std::left << std::setw(30) << " c | use size * occ as a reduction strategy? %" << ":" << std::right << std::setw(15) << (sizeocc? "yes" : "no")<< " |" << std::endl;
   os << std::left << std::setw(30) << " c | clause forgetfulness %" << ":" << std::right << std::setw(15) << Forgetfulness << " |" << std::endl;
   os << std::left << std::setw(30) << " c | backjump forgetfulness %" << ":" << std::right << std::setw(15) << Forgetfulness_retated_to_backjump << " |" << std::endl;
   os << std::left << std::setw(30) << " c | B&B forgetfulness %" << ":" << std::right << std::setw(15) << BBforgetfulness << " |" << std::endl;
@@ -2065,7 +2069,7 @@ void SchedulingSolver::setup() {
 			  params->nogood_based_weight, params->fixedForget , params-> fixedlimitSize ,
 			  params-> fixedLearntSize ,params-> prob_forget ,params-> forgetdecsize ,
 			  params-> limitresetpolicy , params-> taskweight , params->adaptsize,
-			  params->adaptforget
+			  params->adaptforget, params->sizeocc
 	  );
 
 	  if (!params->vsids)
@@ -3194,10 +3198,12 @@ void SchedulingSolver::dichotomic_search(int boostlb)
 #endif
 
 
+	  //std::cout << " nb_clauses size " << base->nb_clauses.size << std::endl;
+	  //std::cout << " nb_clauses " << base->nb_clauses << std::endl;
 	  result = restart_search(level);
 
-	 // std::cout << " nb_clauses size " << base->nb_clauses.size << std::endl;
-	 // std::cout << " nb_clauses " << base->nb_clauses << std::endl;
+	  //std::cout << " nb_clauses size " << base->nb_clauses.size << std::endl;
+	  //std::cout << " nb_clauses " << base->nb_clauses << std::endl;
 	 // std::cout << " learnt " << base->learnt << std::endl;
 	 // exit(1);
 	  if (base)

@@ -185,7 +185,7 @@ void Mistral::SolverParameters::initialise() {
 
   adaptsize = 0;
   adaptforget = 0;
-
+  sizeocc=0;
 
   //capacityinVarRangeWithLearning=0;
 
@@ -9989,7 +9989,8 @@ void Mistral::Solver::set_fdlearning_on(
         int _limitresetpolicy,
         int _taskweight ,
         int _adaptsize,
-        int _adaptforget
+        int _adaptforget,
+        int _sizeocc
 	    ) {
 
 	//	parameters.jsp_backjump = true;
@@ -10031,6 +10032,8 @@ void Mistral::Solver::set_fdlearning_on(
 	parameters.taskweight = _taskweight;
 	parameters.adaptsize = _adaptsize;
 	parameters.adaptforget = _adaptforget;
+	parameters.sizeocc = _sizeocc;
+
 
 	std::cout << " c start_from : " << start_from << std::endl;
 	visitedUpperBounds.initialise(0, start_from  , BitSet::empt);

@@ -84,7 +84,7 @@ namespace Mistral {
     static const int RGUIDED =  3;
     static const int RAND    =  4;
 
-    static const int nia = 54;
+    static const int nia = 55;
     static const char* int_ident[nia];
     
     static const int nsa = 15;
@@ -169,6 +169,9 @@ namespace Mistral {
 
 
     int lbCutoff; // like "cutoff":but used to boost lb
+
+    //Used as a strategy to evaluate clauses when  reducing the clause database
+    int sizeocc;
 
     double Factor;
     double Decay;

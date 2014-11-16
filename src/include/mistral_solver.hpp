@@ -131,6 +131,9 @@ namespace Mistral {
 	int fixedlimitSize;
 	int fixedLearntSize;
 
+	//used to evalues clauses before reducing the clause database
+	int sizeocc;
+
 	//used to initialise the capacity of vectors within VariableRangeWithLearning
 	//int capacityinVarRangeWithLearning;
 
@@ -1014,7 +1017,7 @@ namespace Mistral {
     		int _nogood_based_weight , int fixedForget , int fixedlimitSize ,
     		int fixedLearntSize ,   int _prob_forget, int _forgetdecsize,
     		int limitresetpolicy , int taskweight , int _adaptsize,
-    		int _adaptforget
+    		int _adaptforget , int _sizeocc
     );
 
     void close_propagation();

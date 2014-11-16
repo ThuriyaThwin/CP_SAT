@@ -455,8 +455,9 @@ void Mistral::ConstraintClauseBase::initialise() {
   if (fd_variables && get_solver()->parameters.lazy_generation ){
 	  std::cout << " c will enforce_nfc1 to false" << std::endl;
 	  enforce_nfc1 = false;
-	  nb_clauses.initialise(scope.size,scope.size,0);
+//	  nb_clauses.initialise(scope.size,scope.size,0);
   }
+  nb_clauses.initialise(scope.size,scope.size,0);
 
   //will_be_kept.initialise(0,2000000,BitSet::empt);
   locked_toforget.initialise(0,2000000,BitSet::empt);
@@ -668,19 +669,19 @@ void Mistral::ConstraintClauseBase::learn( Vector < Literal >& clause, double ac
    cl->locked=true;
    learnt.add( cl );
 
-   if (get_solver()->parameters.lazy_generation ){
+//   if (get_solver()->parameters.lazy_generation ){
 	 //  Clause& __clause = *cl;
 
 	  // std::cout << " init_var_size  " <<init_var_size << std::endl;
 		  // std::cout << " learn clause  " <<clause << std::endl;
+   int __id;
 	   for (int i =(clause.size-1); i >=0; --i){
-		   int __id = clause[i]/2;
-		   if (__id >= init_var_size){
+		   __id = clause[i]/2;
+		   //if (__id >= init_var_size){
 			   ++nb_clauses[__id] ;
 			   //std::cout << "  " << __id << " : " << nb_clauses[__id] << std::endl;
-		   }
-	   }
-
+		  // }
+	   //}
 	  // std::cout << " nb_clauses " << nb_clauses << std::endl;
    }
 
@@ -1405,17 +1406,17 @@ void Mistral::ConstraintClauseBase::remove( const int cidx , bool static_forget)
 	  is_watched_by[clause->data[0]].remove_elt( clause );
 	  is_watched_by[clause->data[1]].remove_elt( clause );
 
-	  if (nb_clauses.size){
+//	  if (nb_clauses.size){
 		  unsigned int _size = clause->size;
 		  Clause& c = *clause;
 		  int __id ;
 		  for (unsigned int i = 0; i< _size; ++i){
 			  __id = c[i]/2;
-			  if (__id >= init_var_size){
+	//		  if (__id >= init_var_size){
 				  --nb_clauses[__id];
-			  }
+	//		  }
 		  }
-	  }
+//	  }
 
 
 #ifdef _IMPROVE_UP
@@ -1602,7 +1603,27 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
     for(i=0; i<nlearnt; ++i)
       {
 	order[i] = i;
+	if(get_solver()->parameters.sizeocc){
+		//	double max = std::numeric_limits<double>::max();
+		sa[i] = 0.0;
+		Clause& clause = *(learnt[i]);
+		j = clause.size;
+		if (!learnt[i]->locked)
+			while(j--) // THE ACTIVITY OF A LITERAL IS A MEASURE OF HOW MUCH IT IS "WANTED" BY THE FORMULA - SHORT CLAUSE WITH UNWANTED LITERALS ARE THEREFORE GOOD
+			{
+				a = UNSIGNED(clause[j]) ;
+				if (is_a_bound_literal((clause[j]))){
+					std ::cout << " Virtual Literal here??" << std::endl;
+					std ::cout << "(learnt[i]->locked)" << (learnt[i]->locked) << std::endl;
+					std ::cout << "(learnt[i]->locked)" << learnt[i] << std::endl;
 
+					exit(1);
+				}
+				//		      sa[i] += (var_activity[a] + lit_activity[NOT(clause[j]) + (2*start_from)]);
+				sa[i] += (double) nb_clauses[a];
+			}
+	}
+	else {
 	if(lit_activity) {
 
 	  sa[i] = 0.0;
@@ -1640,14 +1661,14 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
 	  sa[i] /= (double)((real_size+1) *clause.size *clause.size);
 	  //sa[i] /= (double)(clause.size *clause.size *clause.size);
 	} else {
-
-	  sa[i] = 1.0/(double)(learnt[i]->size);
+			sa[i] = 1.0/(double)(learnt[i]->size);
 	}
+      }
       }
 
     keep = (int)((double)nlearnt * (1.0-forgetfulness));
 
-    if(lit_activity)
+    if(lit_activity || get_solver()->parameters.sizeocc)
       qsort(order, nlearnt, sizeof(int), compar);
     else {
       int swap;
@@ -1701,6 +1722,16 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
     		removed += learnt[i]->size;
     		remove( i );
     	}
+    	else
+    	{
+    		if (!keep){
+    			std::cout << "ERROR !keep" << std::cout;
+    			exit(1);
+    		}
+    		else
+    			--keep;
+    	}
+
     }
 
 
