@@ -1600,10 +1600,10 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
     Clause *tmp[nlearnt];
     int j, order[nlearnt], real_size;
     initSort(&(sa[0]));
+    if(get_solver()->parameters.sizeocc){
     for(i=0; i<nlearnt; ++i)
       {
 	order[i] = i;
-	if(get_solver()->parameters.sizeocc){
 		//	double max = std::numeric_limits<double>::max();
 		sa[i] = 0.0;
 		Clause& clause = *(learnt[i]);
@@ -1623,7 +1623,13 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
 				sa[i] += (double) nb_clauses[a];
 			}
 	}
-	else {
+    }
+
+    else {
+    	for(i=0; i<nlearnt; ++i)
+    	{
+    		order[i] = i;
+
 	if(lit_activity) {
 
 	  sa[i] = 0.0;
@@ -1716,11 +1722,14 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
 #endif
 
 
+    int _prob_forget= get_solver()->parameters.prob_forget;
     for(i=nlearnt; i>keep && sa[order[i-1]] != INFTY;) {
     	--i;
     	if (!learnt[i]->locked){
+    		if (randint(100) <_prob_forget){
     		removed += learnt[i]->size;
     		remove( i );
+    		}
     	}
     	else
     	{
