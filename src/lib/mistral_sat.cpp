@@ -1739,10 +1739,10 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
     for(i=nlearnt; i>keep && sa[order[i-1]] != INFTY;) {
     	--i;
     	if (!learnt[i]->locked){
-    		//if (randint(100) <_prob_forget){
+    		if (randint(100) <_prob_forget){
     		removed += learnt[i]->size;
     		remove( i );
-    		//}
+    		}
     	}
     	else
     	{
