@@ -1601,36 +1601,41 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
     int j, order[nlearnt], real_size ;
     initSort(&(sa[0]));
     int _fixedLearntSize= get_solver()->parameters.fixedLearntSize;
-    double max = 0.0;
-    if(get_solver()->parameters.sizeocc){
-    	int _rest=(nlearnt-_fixedLearntSize);
-    for(i=0; i<_rest; ++i)
-      {
-	order[i] = i;
-		//	double max = std::numeric_limits<double>::max();
-		sa[i] = 0.0;
-		Clause& clause = *(learnt[i]);
-		j = clause.size;
-		if (!learnt[i]->locked)
-			while(j--) // THE ACTIVITY OF A LITERAL IS A MEASURE OF HOW MUCH IT IS "WANTED" BY THE FORMULA - SHORT CLAUSE WITH UNWANTED LITERALS ARE THEREFORE GOOD
-			{
-				a = UNSIGNED(clause[j]) ;
-				if (is_a_bound_literal((clause[j]))){
-					std ::cout << " Virtual Literal here??" << std::endl;
-					std ::cout << "(learnt[i]->locked)" << (learnt[i]->locked) << std::endl;
-					std ::cout << "(learnt[i]->locked)" << learnt[i] << std::endl;
 
-					exit(1);
-				}
-				//		      sa[i] += (var_activity[a] + lit_activity[NOT(clause[j]) + (2*start_from)]);
-				sa[i] += (double) nb_clauses[a];
-			}
-		if (max< sa[i] ) max = sa[i] ;
-	}
-    ++max;
-    for (;i< nlearnt; ++i){
-    	sa[i]= max;
-    }
+    if(get_solver()->parameters.sizeocc){
+    	double max = 0.0;
+    	int _rest=(nlearnt-_fixedLearntSize);
+
+    	for(i=0; i<_rest; ++i)
+    	{
+    		order[i] = i;
+    		sa[i] = 0.0;
+    		Clause& clause = *(learnt[i]);
+    		j = clause.size;
+    		if (!learnt[i]->locked){
+    			while(j--) // THE ACTIVITY OF A LITERAL IS A MEASURE OF HOW MUCH IT IS "WANTED" BY THE FORMULA - SHORT CLAUSE WITH UNWANTED LITERALS ARE THEREFORE GOOD
+    			{
+    				a = UNSIGNED(clause[j]) ;
+    				if (is_a_bound_literal((clause[j]))){
+    					std ::cout << " Virtual Literal here??" << std::endl;
+    					std ::cout << "(learnt[i]->locked)" << (learnt[i]->locked) << std::endl;
+    					std ::cout << "(learnt[i]->locked)" << learnt[i] << std::endl;
+
+    					exit(1);
+    				}
+    				//		      sa[i] += (var_activity[a] + lit_activity[NOT(clause[j]) + (2*start_from)]);
+    				sa[i] += (double) nb_clauses[a];
+    			}
+    			sa[i] /= ((double) (clause.size -1));
+    			if (max< sa[i] ) max = sa[i] ;
+    		}
+    	}
+    	++max;
+
+    	for (;i< nlearnt; ++i){
+    		order[i] = i;
+    		sa[i]= max;
+    	}
     }
 
     else {
@@ -1734,10 +1739,10 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
     for(i=nlearnt; i>keep && sa[order[i-1]] != INFTY;) {
     	--i;
     	if (!learnt[i]->locked){
-    		if (randint(100) <_prob_forget){
+    		//if (randint(100) <_prob_forget){
     		removed += learnt[i]->size;
     		remove( i );
-    		}
+    		//}
     	}
     	else
     	{
