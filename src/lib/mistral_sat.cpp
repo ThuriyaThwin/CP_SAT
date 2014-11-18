@@ -1583,6 +1583,7 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
 {
 
 	//std::cout << "\n \n c start forget with " << learnt.size << std::endl;
+	//std::cout << " clauses \n " << learnt << std::endl;
 
 	//TODO update remove with static forget
   int removed = 0;
@@ -1629,12 +1630,14 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
     			sa[i] /= ((double) (clause.size -1));
     			if (max< sa[i] ) max = sa[i] ;
     		}
+    		//std::cout << " scope i " << i << ": " <<learnt[i]<< sa[i] << std::endl;
     	}
     	++max;
 
     	for (;i< nlearnt; ++i){
     		order[i] = i;
     		sa[i]= max;
+    		//std::cout << " scope i " << i << ": " <<learnt[i]<< sa[i] << std::endl;
     	}
     }
 
@@ -1741,8 +1744,14 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
     	if (!learnt[i]->locked){
     		if (randint(100) <_prob_forget){
     		removed += learnt[i]->size;
+    		//std::cout << " remove " << learnt[i] << std::endl;
     		remove( i );
     		}
+    /*		else
+    		{
+    			std::cout << " KEEP " << learnt[i] << std::endl;
+    		}
+    		*/
     	}
     	else
     	{
@@ -1801,9 +1810,9 @@ int Mistral::ConstraintClauseBase::forget(const double forgetfulness,
 	  }
   }
 	*/
-  //  std::cout << " c end forget with " << learnt.size << std::endl;
-  //  std::cout << " c learnt" << learnt << std::endl;
-
+    //std::cout << " \n \n \n c end forget with " << learnt.size << std::endl;
+    //std::cout << " c learnt" << learnt << std::endl;
+    //exit(1);
   return removed;
 
 }
