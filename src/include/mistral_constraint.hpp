@@ -5148,6 +5148,7 @@ if (enforce_nfc1)
 
 
 	  // Vector<__boundLiteral> lb;
+	  //ReversibleNum<int> last_ub;
 
 	  Vector<unsigned int> lower;
 	  Vector<unsigned int> greater;

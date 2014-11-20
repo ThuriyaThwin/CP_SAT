@@ -14769,6 +14769,9 @@ void Mistral::DomainFaithfulnessConstraint::initialise() {
 	//nb_locked;
 	cache_value.add(0);
 	nb_locked=0;
+
+	//last_ub.initialise(get_solver(), -1);
+
 }
 
 // if a variable alreagy exists then return its id, otherwise return -1
@@ -15053,8 +15056,23 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::incremental_p
 	if ((scope.size >1) && nb_locked){
 		int idx;
 		int needed_to_change=0;
+
+		//if (last_ub < 0)
+		//	last_ub=ub.back().idx;
+
 		int last_lb_idx=ub[0].idx;
 		int last_ub_idx=ub.back().idx;
+
+		//int last_ub_idx=last_ub;
+
+		/*if (scope[0].id()==260){
+			std::cout << "\n \n scope[0].get_domain() " << scope[0].get_domain() <<std::endl;
+			std::cout << "level " <<get_solver()->level <<std::endl;
+			std::cout << "ub " <<ub <<std::endl;
+			//wstd::cout << "last_ub " <<last_ub <<std::endl;
+
+		}
+*/
 		if (!locked[last_lb_idx])
 			last_lb_idx= get_greater(last_lb_idx);
 		if (!locked[last_ub_idx])
@@ -15065,10 +15083,16 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::incremental_p
 			//	std::cout << "X Dom:  " << scope[0].get_domain() <<std::endl;
 			//	std::cout << "idx " <<  idx << " domain : " << scope[idx].get_domain() <<std::endl;
 			if (idx){
-				//		std::cout << " value " <<  cache_value[idx] <<std::endl;
+				/*if (scope[0].id()==260){
+					std::cout << " \n idx " <<  idx <<std::endl;
+					std::cout << " value " <<  cache_value[idx] <<std::endl;
+				}*/
 				wiped=update_closest(idx, last_lb_idx,last_ub_idx,needed_to_change);
 			}
 			else if (!needed_to_change){
+				/*if (scope[0].id()==260){
+					std::cout << "we will update bound as well" <<std::endl;
+				}*/
 				needed_to_change|=4;
 			}
 		}
@@ -15096,6 +15120,7 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::incremental_p
 			int _lb = _x->get_min();
 			int _ub = _x->get_max();
 			for (int i = 0; i <ub.size ; ++i){
+				if (locked[ub[i].idx]){
 				if ((ub[i].value >= _ub) && ((!scope[ub[i].idx].is_ground()) || (!scope[ub[i].idx].get_min()))) {
 					ok = false;
 					break;
@@ -15110,6 +15135,7 @@ Mistral::PropagationOutcome Mistral::DomainFaithfulnessConstraint::incremental_p
 							ok = false;
 							break;
 						}
+				}
 			}
 
 			if (!ok){
@@ -15280,6 +15306,7 @@ void Mistral::DomainFaithfulnessConstraint::update_Range(int lb_idx, int ub_idx,
 
 			//std::cout << "cache_value[next]" << cache_value[next] <<std::endl ;
 			if (cache_value[next]>= bound){
+				//last_ub= next;
 				if (!scope[next].is_ground()){
 					scope[next].set_min(1);
 					eager_explanations[next]= encode_bound_literal(__id , bound, 1);
