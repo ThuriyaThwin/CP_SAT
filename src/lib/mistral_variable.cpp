@@ -1990,7 +1990,7 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::get_informations_of(in
 
 		double __size= (double) lowerbounds.size ;
 
-		int start_dicho= (__size - ( __size/10.0)) -1 ;
+		int start_dicho= (__size - ( __size/4.0)) -1 ;
 		//std::cout << " \n \n \n size : " << __size << " start dicho " << start_dicho << std::endl;
 
 		if(lowerbounds[start_dicho]>val){
@@ -2058,7 +2058,7 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::get_informations_of(in
 
 		double __size= (double) upperbounds.size ;
 
-		int start_dicho= (__size - ( __size/10.0)) -1 ;
+		int start_dicho= (__size - ( __size/4.0)) -1 ;
 		//std::cout << " \n \n \n size : " << __size << " start dicho " << start_dicho << std::endl;
 
 		if(upperbounds[start_dicho]<val){
