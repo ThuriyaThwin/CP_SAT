@@ -607,16 +607,21 @@ const int NOVAL = (int)((~(unsigned int)0)/2);
       return stack_[i];
     }
 
+    //Binary search for a value
+    //
     //We suppose here that the vector is already sorted.
+    //order=1 iff increasing order
+    //Uncomment (return -1) to add some tests. Otherwise, we are supposing that the vector contains the required value and lb <=ub
     int fast_dichotomy_search_index_of(const DATA_TYPE e, int lb, int ub,bool order = 1) const
     {
-    	if (!size)
-    		return -1;
     	//int idx = (size -1) >>1 , ub = size -1 , lb = 0 ;
-    	/*		if (ub < lb){
-	    	std::cout << " ub < lb!!" <<std::endl;
-			exit(1);
-		}
+
+    	/*    	if (!size)
+    		return -1;
+    	if (ub < lb){
+    		std::cout << " ub < lb!!" <<std::endl;
+    		exit(1);
+    	}
     	 */
     	//std::cout << " \n BEGIN dicho " <<std::endl;
     	int idx = (ub +lb)>> 1;
@@ -624,8 +629,9 @@ const int NOVAL = (int)((~(unsigned int)0)/2);
     		//	std::cout << "\n vector  " << this <<std::endl;
     		//idx = (ub +lb)>> 1;
     		while (stack_[idx] != e){
-    			if (ub == lb)
+    			/*if (ub == lb)
     				return -1;
+    			 */
     			if (stack_[idx]> e)
     				ub = idx -1;
     			else
@@ -640,8 +646,9 @@ const int NOVAL = (int)((~(unsigned int)0)/2);
     	else{
     		//std::cout << "\n vector  " << this <<std::endl;
     		while (stack_[idx] != e){
-    			if (ub == lb)
+    			/*if (ub == lb)
     				return -1;
+    			 */
     			if (stack_[idx]< e)
     				ub = idx -1;
     			else

@@ -38,6 +38,51 @@
 
 namespace Mistral {
 
+//Needed with learning :
+//with 32 bits :
+//The first bit is the sign : 0 lower bound; 1 : upper bound.
+//The next 16 bits for values : --> biggest value is 65535.
+//the last 4 bits are for the variable_id : biggest variable_id is 32767.
+
+
+#ifndef _64BITS_LITERALS
+inline unsigned int encode_bound_literal (int id_variable, int value,int sign) {
+	  //TODO Add compilation flag
+	  if ((value < 0) || (!value && (!sign)))
+	  {
+		  std::cout <<" \n \n \encode_bound_literal  ERROR "  << std::endl;
+		  exit(1);
+	  }
+	  return ( (sign << 31) | (value << 15)   | id_variable);}
+inline int get_variable_from_literal (unsigned int literal) { return ( 0x7FFF & literal) ;}
+inline int get_value_from_literal (unsigned int literal) {return ( (literal & 0x7FFFFFFF) >> 15);}
+inline int get_sign_from_literal (unsigned int literal) {return (literal >> 31);}
+inline bool is_upper_bound (unsigned int literal) {return (literal >> 31) ;}
+inline bool is_lower_bound (unsigned int literal) {return 1- (literal >> 31) ;}
+inline bool is_a_bound_literal (unsigned int literal) {return (literal > 0x7FFF ) ;}
+
+#else
+inline Literal encode_bound_literal (unsigned int id_variable, int value, unsigned int sign) {
+#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
+	  if ((value < 0) || (!value && (!sign)))
+	  {
+//		  std::cout <<" \n \n \encode_bound_literal  ERROR "  << value << std::endl;
+//		  exit(1);
+	  }
+	  if (value < 0)
+	  {
+		  std::cout <<" \n \n \encode_bound_literal  ERROR "  << value << std::endl;
+		  exit(1);
+	  }
+#endif
+	  return ( (((Literal) 1) << 63) | (((Literal) sign) << 62) | (((Literal) value) << 30) | id_variable);
+}
+inline unsigned int get_variable_from_literal (Literal literal) {return ( 0x3FFFFFFF & literal) ;}
+inline int get_value_from_literal (Literal literal) {return ((0x3FFFFFFFFFFFFFFF & literal) >> 30); }
+inline bool is_upper_bound (Literal literal) {return  ((literal & 0x4000000000000000) >> 62) ;}
+inline bool is_lower_bound (Literal literal) {return (1- ((literal & 0x4000000000000000) >> 62)) ;}
+inline bool is_a_bound_literal (Literal literal) {return literal >> 63;}
+#endif
 
 
 
@@ -894,11 +939,27 @@ namespace Mistral {
     	currentLVL_literal() {}
     	bool operator < (const currentLVL_literal& lit) const
     	{
-    		return (assignment_order < lit.assignment_order);
+    		//return (assignment_order < lit.assignment_order);
+    		bool r= (assignment_order < lit.assignment_order);
+    		if (!r){
+    			if (assignment_order==lit.assignment_order)
+    				if (is_a_bound_literal(l))
+    					return false;
+    		}
+    		//    		else
+    		return r;
     	}
     	bool operator > (const currentLVL_literal& lit) const
     	{
-    		return (assignment_order > lit.assignment_order);
+    		//    		return (assignment_order > lit.assignment_order);
+    		bool r = (assignment_order > lit.assignment_order);
+    		if (!r){
+    			if (assignment_order == lit.assignment_order){
+    				if (is_a_bound_literal(l))
+    					return true;
+    			}
+    		}
+    		return r;
     	}
 
     };
@@ -1364,52 +1425,6 @@ public:
   //SearchMonitor& operator<< (SearchMonitor& os, std::string& x);
   SearchMonitor& operator<< (SearchMonitor& os, const char* x);
   SearchMonitor& operator<< (SearchMonitor& os, const int x);
-
-  //Needed with learning :
-  //with 32 bits :
-  //The first bit is the sign : 0 lower bound; 1 : upper bound.
-  //The next 16 bits for values : --> biggest value is 65535.
-  //the last 4 bits are for the variable_id : biggest variable_id is 32767.
-
-
-#ifndef _64BITS_LITERALS
-  inline unsigned int encode_bound_literal (int id_variable, int value,int sign) {
-	  //TODO Add compilation flag
-	  if ((value < 0) || (!value && (!sign)))
-	  {
-		  std::cout <<" \n \n \encode_bound_literal  ERROR "  << std::endl;
-		  exit(1);
-	  }
-	  return ( (sign << 31) | (value << 15)   | id_variable);}
-  inline int get_variable_from_literal (unsigned int literal) { return ( 0x7FFF & literal) ;}
-  inline int get_value_from_literal (unsigned int literal) {return ( (literal & 0x7FFFFFFF) >> 15);}
-  inline int get_sign_from_literal (unsigned int literal) {return (literal >> 31);}
-  inline bool is_upper_bound (unsigned int literal) {return (literal >> 31) ;}
-  inline bool is_lower_bound (unsigned int literal) {return 1- (literal >> 31) ;}
-  inline bool is_a_bound_literal (unsigned int literal) {return (literal > 0x7FFF ) ;}
-
-#else
-  inline Literal encode_bound_literal (unsigned int id_variable, int value, unsigned int sign) {
-#ifdef _VERIFY_BEHAVIOUR_WHEN_LEARNING
-	  if ((value < 0) || (!value && (!sign)))
-	  {
-//		  std::cout <<" \n \n \encode_bound_literal  ERROR "  << value << std::endl;
-//		  exit(1);
-	  }
-	  if (value < 0)
-	  {
-		  std::cout <<" \n \n \encode_bound_literal  ERROR "  << value << std::endl;
-		  exit(1);
-	  }
-#endif
-	  return ( (((Literal) 1) << 63) | (((Literal) sign) << 62) | (((Literal) value) << 30) | id_variable);
-  }
-  inline unsigned int get_variable_from_literal (Literal literal) {return ( 0x3FFFFFFF & literal) ;}
-  inline int get_value_from_literal (Literal literal) {return ((0x3FFFFFFFFFFFFFFF & literal) >> 30); }
-  inline bool is_upper_bound (Literal literal) {return  ((literal & 0x4000000000000000) >> 62) ;}
-  inline bool is_lower_bound (Literal literal) {return (1- ((literal & 0x4000000000000000) >> 62)) ;}
-  inline bool is_a_bound_literal (Literal literal) {return literal >> 63;}
-#endif
 
 }
 

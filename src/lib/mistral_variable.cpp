@@ -1990,23 +1990,29 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::get_informations_of(in
 
 		double __size= (double) lowerbounds.size ;
 
-		int start_dicho= (__size - ( __size/4.0)) -1 ;
+		int start_dicho= (__size - ( __size/10.0)) -1 ;
 		//std::cout << " \n \n \n size : " << __size << " start dicho " << start_dicho << std::endl;
 
 		if(lowerbounds[start_dicho]>val){
 
-			start_dicho = lowerbounds.fast_dichotomy_search_index_of(val,0,start_dicho);
+			start_dicho = lowerbounds.fast_dichotomy_search_index_of(val,0,start_dicho-1);
 			//std::cout << " val : " << val << " start_dicho " << start_dicho << std::endl;
 		}
 		else{
 			if(lowerbounds[start_dicho]<val){
-				start_dicho = lowerbounds.fast_dichotomy_search_index_of(val,start_dicho,lowerbounds.size -1);
+				start_dicho = lowerbounds.fast_dichotomy_search_index_of(val,start_dicho+1,lowerbounds.size -1);
 				//std::cout << " val : " << val << " start_dicho " << start_dicho << std::endl;
 			}
 		}
 
-		if ((start_dicho==(-1) ) || (lowerbounds[start_dicho]!= val)){
-			std::cout << " (start_dicho==(-1) ) || (lowerbounds[start_dicho]!= val) "  << std::endl;
+		/*if ((start_dicho==(-1) ))
+		{
+			std::cout << " (start_dicho==(-1) ) "  << std::endl;
+			exit(1);
+		}*/
+
+		if (lowerbounds[start_dicho]!= val){
+			std::cout << " ( lowerbounds[start_dicho]!= val) "  << std::endl;
 			exit(1);
 		}
 
@@ -2058,23 +2064,29 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::get_informations_of(in
 
 		double __size= (double) upperbounds.size ;
 
-		int start_dicho= (__size - ( __size/4.0)) -1 ;
+		int start_dicho= (__size - ( __size/10.0)) -1 ;
 		//std::cout << " \n \n \n size : " << __size << " start dicho " << start_dicho << std::endl;
 
 		if(upperbounds[start_dicho]<val){
 
-			start_dicho = upperbounds.fast_dichotomy_search_index_of(val,0,start_dicho, 0);
+			start_dicho = upperbounds.fast_dichotomy_search_index_of(val,0,start_dicho-1, 0);
 			//std::cout << " val : " << val << " start_dicho " << start_dicho << std::endl;
 		}
 		else{
 			if( upperbounds[start_dicho]>val){
-				start_dicho = upperbounds.fast_dichotomy_search_index_of(val,start_dicho, upperbounds.size -1, 0);
+				start_dicho = upperbounds.fast_dichotomy_search_index_of(val,start_dicho+1, upperbounds.size -1, 0);
 				//std::cout << " val : " << val << " start_dicho " << start_dicho << std::endl;
 			}
 		}
 
-		if ((start_dicho==(-1) ) || (upperbounds[start_dicho]!= val)){
-			std::cout << " (start_dicho==(-1) ) || ( upperbounds[start_dicho]!= val) "  << std::endl;
+		/*if ((start_dicho==(-1) ))
+		{
+			std::cout << " (start_dicho==(-1) ) "  << std::endl;
+			exit(1);
+		}*/
+
+		if (upperbounds[start_dicho]!= val){
+			std::cout << " ( upperbounds[start_dicho]!= val) "  << std::endl;
 			exit(1);
 		}
 

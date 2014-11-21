@@ -5642,8 +5642,8 @@ void Mistral::Solver::add_Orderedliteral_tobe_explored(Literal l, int assignment
 	if (assignment_odr>=0){
 //		currentLVL_literals_to_explore.linear_sorted_add(currentLVL_literal(l,assignment_odr,e));
 		currentLVL_literals_to_explore.add(currentLVL_literal(l,assignment_odr,e));
-		if (!new_literal_to_expand)
-			new_literal_to_expand=1;
+		//if (!new_literal_to_expand)
+			++new_literal_to_expand;
 	}
 	else
 		currentLVL_literals_to_explore.add(currentLVL_literal(l,e));
@@ -6160,16 +6160,39 @@ Explanation * Mistral::Solver::get_next_to_explore(Literal & lit) {
 		exit(1);
 	}
 #endif
-	if (new_literal_to_expand){
+	if (new_literal_to_expand>1){
 		new_literal_to_expand=0;
 		//std::cout << "\n BEFORE currentLVL_literals_to_explore" <<currentLVL_literals_to_explore <<std::endl;
 		std::sort (currentLVL_literals_to_explore.stack_, currentLVL_literals_to_explore.stack_+currentLVL_literals_to_explore.size);
 		//std::cout << "\n AFTER currentLVL_literals_to_explore" <<currentLVL_literals_to_explore <<std::endl;
 	}
+	else if (new_literal_to_expand){
+		new_literal_to_expand=0;
+		unsigned int __iterator = currentLVL_literals_to_explore.size -1;
+
+		if (__iterator){
+			--__iterator;
+			currentLVL_literal x = currentLVL_literals_to_explore.back();
+    		//add(x);
+    		while (currentLVL_literals_to_explore[__iterator]> x)
+    		{
+    			currentLVL_literals_to_explore[__iterator+1] = currentLVL_literals_to_explore[__iterator];
+    			currentLVL_literals_to_explore[__iterator] = x;
+    			if (__iterator)
+    				--__iterator;
+    			else
+    				break;
+    		}
+    	}
+    	//else
+    	//	add(x);
+		//std::cout << "\n new_literal_to_expand==1 : outcome" <<currentLVL_literals_to_explore <<std::endl;
+	}
 	/*else{
 		std::cout << "\n \n new_literal_to_expand " << new_literal_to_expand << std::endl;
 		std::cout << "Ordered? " <<currentLVL_literals_to_explore <<std::endl;
 	}*/
+
 	currentLVL_literal o_l = currentLVL_literals_to_explore.pop();
 	lit = o_l.l;
 
