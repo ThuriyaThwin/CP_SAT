@@ -607,39 +607,48 @@ const int NOVAL = (int)((~(unsigned int)0)/2);
       return stack_[i];
     }
 
-    int fast_dichotomy_search_index_of(const DATA_TYPE e, bool order = 1) const
+    //We suppose here that the vector is already sorted.
+    int fast_dichotomy_search_index_of(const DATA_TYPE e, int lb, int ub,bool order = 1) const
     {
-
     	if (!size)
     		return -1;
-
-    	//	unsigned int idx = floor((double) (((double)size) / 2.0 )), ub = size -1 , lb = 0 ;
-    	int idx = (size -1) >>1 , ub = size -1 , lb = 0 ;
+    	//int idx = (size -1) >>1 , ub = size -1 , lb = 0 ;
+    	/*		if (ub < lb){
+	    	std::cout << " ub < lb!!" <<std::endl;
+			exit(1);
+		}
+    	 */
     	//std::cout << " \n BEGIN dicho " <<std::endl;
+    	int idx = (ub +lb)>> 1;
     	if (order){
+    		//	std::cout << "\n vector  " << this <<std::endl;
+    		//idx = (ub +lb)>> 1;
     		while (stack_[idx] != e){
-
-    			//std::cout << " begin idx :  " << idx <<std::endl;
-    			//std::cout << " ub  " << ub <<std::endl;
-    			//std::cout << " lb :  " << lb <<std::endl;
-
     			if (ub == lb)
     				return -1;
-
     			if (stack_[idx]> e)
     				ub = idx -1;
     			else
     				lb = idx +1;
-    			//div2
     			idx = (ub +lb)>> 1;
-
     			//	std::cout << " ub  " << ub <<std::endl;
     			//	std::cout << " lb :  " << lb <<std::endl;
     		}
-
     		//	std::cout << " \n Find with idx" << idx << std::endl;
-    		//	position = idx;
-    		//return true;
+    		return idx;
+    	}
+    	else{
+    		//std::cout << "\n vector  " << this <<std::endl;
+    		while (stack_[idx] != e){
+    			if (ub == lb)
+    				return -1;
+    			if (stack_[idx]< e)
+    				ub = idx -1;
+    			else
+    				lb = idx +1;
+    			idx = (ub +lb)>> 1;
+    		}
+    		//	std::cout << " \n Find with idx" << idx << std::endl;
     		return idx;
     	}
     }

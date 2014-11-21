@@ -1987,7 +1987,52 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::get_informations_of(in
 
 	if (lb)
 	{
-		unsigned int size=lowerbounds.size ;
+
+		double __size= (double) lowerbounds.size ;
+
+		int start_dicho= (__size - ( __size/10.0)) -1 ;
+		//std::cout << " \n \n \n size : " << __size << " start dicho " << start_dicho << std::endl;
+
+		if(lowerbounds[start_dicho]>val){
+
+			start_dicho = lowerbounds.fast_dichotomy_search_index_of(val,0,start_dicho);
+			//std::cout << " val : " << val << " start_dicho " << start_dicho << std::endl;
+		}
+		else{
+			if(lowerbounds[start_dicho]<val){
+				start_dicho = lowerbounds.fast_dichotomy_search_index_of(val,start_dicho,lowerbounds.size -1);
+				//std::cout << " val : " << val << " start_dicho " << start_dicho << std::endl;
+			}
+		}
+
+		if ((start_dicho==(-1) ) || (lowerbounds[start_dicho]!= val)){
+			std::cout << " (start_dicho==(-1) ) || (lowerbounds[start_dicho]!= val) "  << std::endl;
+			exit(1);
+		}
+
+		//else
+		//if(lowerbounds[start_dicho]== val)
+		//{
+		//std::cout << "OK : start_dicho : " <<start_dicho << " lb  " << lowerbounds << " val  " << val << std::endl;
+		lvl =  lower_bound_levels[start_dicho];
+		assign_order = lower_bound_orders[start_dicho];
+#ifdef _VISITED_VL
+		visited= visited_lower_bounds[start_dicho];
+		if (update_visited && (!visited)){
+			visited_lower_bounds[start_dicho]= true;
+			//if (!var_visited)
+			//	var_visited=true;
+			++lb_var_visited;
+		}
+#endif
+		return lower_bound_reasons[start_dicho];
+		//}
+
+		//}
+
+		//		unsigned int size=lowerbounds.size ;
+	/*	int size=lowerbounds.size ;
+
 		while (size --)
 			if(lowerbounds[size]== val)
 			{
@@ -2004,10 +2049,53 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::get_informations_of(in
 #endif
 				return lower_bound_reasons[size];
 			}
+
+			*/
 	}
 	else
 	{
-		unsigned int size=upperbounds.size ;
+
+
+		double __size= (double) upperbounds.size ;
+
+		int start_dicho= (__size - ( __size/10.0)) -1 ;
+		//std::cout << " \n \n \n size : " << __size << " start dicho " << start_dicho << std::endl;
+
+		if(upperbounds[start_dicho]<val){
+
+			start_dicho = upperbounds.fast_dichotomy_search_index_of(val,0,start_dicho, 0);
+			//std::cout << " val : " << val << " start_dicho " << start_dicho << std::endl;
+		}
+		else{
+			if( upperbounds[start_dicho]>val){
+				start_dicho = upperbounds.fast_dichotomy_search_index_of(val,start_dicho, upperbounds.size -1, 0);
+				//std::cout << " val : " << val << " start_dicho " << start_dicho << std::endl;
+			}
+		}
+
+		if ((start_dicho==(-1) ) || (upperbounds[start_dicho]!= val)){
+			std::cout << " (start_dicho==(-1) ) || ( upperbounds[start_dicho]!= val) "  << std::endl;
+			exit(1);
+		}
+
+		//else
+		//if( upperbounds[start_dicho]== val)
+		//{
+		//std::cout << "OK : start_dicho : " <<start_dicho << " lb  " <<  upperbounds << " val  " << val << std::endl;
+		lvl =  upper_bound_levels[start_dicho];
+		assign_order =  upper_bound_orders[start_dicho];
+#ifdef _VISITED_VL
+		visited= visited_upper_bounds[start_dicho];
+		if (update_visited && (!visited)){
+			visited_upper_bounds[start_dicho]= true;
+			//if (!var_visited)
+			//	var_visited=true;
+			++ub_var_visited;
+		}
+#endif
+		return  upper_bound_reasons[start_dicho];
+
+		/*unsigned int size=upperbounds.size ;
 		while (size --)
 			if(upperbounds[size]==val)
 			{
@@ -2024,6 +2112,7 @@ Mistral::Explanation* Mistral::VariableRangeWithLearning::get_informations_of(in
 #endif
 				return upper_bound_reasons[size];
 			}
+			*/
 	}
 
 	std::cout << " ERROR get_informations_of END ? TRY TO USE level_of_inreduction instead!!! " << std::endl;
