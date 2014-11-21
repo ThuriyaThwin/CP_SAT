@@ -919,6 +919,7 @@ namespace Mistral {
     void repace_with_disjunctions(int var, int val, int is_lb, Explanation * current_explanation);
     void generate_and_learn(complete_virtual_literal_informations info);
     void treat_explanation(Explanation::iterator start,Explanation::iterator end, bool semantic, bool orderedExploration);
+    int new_literal_to_expand;
     void clean_fdlearn();
     bool should_forget();
     void update_forgetfulness_parameters();

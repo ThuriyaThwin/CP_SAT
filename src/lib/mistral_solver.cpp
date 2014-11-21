@@ -5639,9 +5639,12 @@ void Mistral::Solver::generate_variables(){
 
 void Mistral::Solver::add_Orderedliteral_tobe_explored(Literal l, int assignment_odr, Explanation* e){
 //	if (parameters.orderedExploration)
-	if (assignment_odr>=0)
+	if (assignment_odr>=0){
 //		currentLVL_literals_to_explore.linear_sorted_add(currentLVL_literal(l,assignment_odr,e));
 		currentLVL_literals_to_explore.add(currentLVL_literal(l,assignment_odr,e));
+		if (!new_literal_to_expand)
+			new_literal_to_expand=1;
+	}
 	else
 		currentLVL_literals_to_explore.add(currentLVL_literal(l,e));
 
@@ -6157,10 +6160,16 @@ Explanation * Mistral::Solver::get_next_to_explore(Literal & lit) {
 		exit(1);
 	}
 #endif
-	//std::cout << "\n BEFORE currentLVL_literals_to_explore" <<currentLVL_literals_to_explore <<std::endl;
-	std::sort (currentLVL_literals_to_explore.stack_, currentLVL_literals_to_explore.stack_+currentLVL_literals_to_explore.size);
-	//std::cout << "\n AFTER currentLVL_literals_to_explore" <<currentLVL_literals_to_explore <<std::endl;
-
+	if (new_literal_to_expand){
+		new_literal_to_expand=0;
+		//std::cout << "\n BEFORE currentLVL_literals_to_explore" <<currentLVL_literals_to_explore <<std::endl;
+		std::sort (currentLVL_literals_to_explore.stack_, currentLVL_literals_to_explore.stack_+currentLVL_literals_to_explore.size);
+		//std::cout << "\n AFTER currentLVL_literals_to_explore" <<currentLVL_literals_to_explore <<std::endl;
+	}
+	/*else{
+		std::cout << "\n \n new_literal_to_expand " << new_literal_to_expand << std::endl;
+		std::cout << "Ordered? " <<currentLVL_literals_to_explore <<std::endl;
+	}*/
 	currentLVL_literal o_l = currentLVL_literals_to_explore.pop();
 	lit = o_l.l;
 
@@ -7113,7 +7122,7 @@ void Mistral::Solver::clean_fdlearn() {
 		simple_fdlearn_nogood();
 	else
 	{
-
+		new_literal_to_expand =0;
 		visited_literals.clear();
 		Literal q , a_literal;
 
