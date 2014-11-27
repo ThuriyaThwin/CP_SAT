@@ -1526,8 +1526,12 @@ void Mistral::ConstraintClauseBase::fixed_forget(double _forgetfulness, int _fix
 				//get_solver()->parameters.max_nogood_size-=_k;
 				//std::cout << " c database size is still large! recalling fixedForget with size bounded by " <<
 				//		_max_nogood_size - _forgetdecsize << std::endl;
+				int old_adapt= get_solver()->parameters.adaptsize;
+				if (old_adapt)
+					get_solver()->parameters.adaptsize = 0;
 				fixed_forget(_forgetfulness, _fixedlimitSize ,
 						_prob_forget, (_max_nogood_size - _forgetdecsize), _fixedLearntSize, _forgetdecsize );
+				get_solver()->parameters.adaptsize= old_adapt;
 				//get_solver()->parameters.max_nogood_size+=_k;
 			}
 		//std::cout << " c  & fixed_forget : new size  " << learnt.size  << std::endl;
