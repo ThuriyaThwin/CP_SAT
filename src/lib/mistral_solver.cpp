@@ -7921,14 +7921,15 @@ Mistral::Outcome Mistral::Solver::branch_right() {
 }
 
 void Mistral::Solver::update_forgetfulness_parameters() {
-if (parameters.adaptsize){
-    		//int newsize  = statistics.avg_learned_size;
-    		//std::cout << " newsize " << statistics.avg_learned_size << std::endl;
-    		parameters.max_nogood_size =statistics.avg_learned_size * parameters.adaptsize / 100;
-    		parameters.forgetdecsize = parameters.max_nogood_size*   parameters.adaptforget  /100;
-    		//std::cout << " c new max_nogood_size " << parameters.max_nogood_size << std::endl;
-    		//std::cout << " c forgetdecsize " << parameters. forgetdecsize<< std::endl;
-    	}
+	if (parameters.adaptsize){
+		//int newsize  = statistics.avg_learned_size;
+		//std::cout << " avgsize " << statistics.avg_learned_size << std::endl;
+		double __max = int (statistics.avg_learned_size * ((double) parameters.adaptsize / 100.0));
+		parameters.max_nogood_size = __max;
+		parameters.forgetdecsize = int ( __max * ((double) parameters.adaptforget  / 100.0));
+		//std::cout << " new max_nogood_size " << parameters.max_nogood_size << std::endl;
+		//std::cout << " forgetdecsize " << parameters. forgetdecsize<< std::endl;
+	}
 }
 
 void Mistral::Solver::backjump() {
