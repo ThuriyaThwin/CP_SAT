@@ -78,7 +78,11 @@ int main( int argc, char** argv )
   //  old_distance = stats.upper_bound - stats.lower_bound;
   //  solver->lb_C_max = (stats.lower_bound);
   //  solver->ub_C_max = (stats.upper_bound);
-  solver->dichotomic_search(params.lbCutoff);
+  if (params.repeatdicho)
+	  solver->dichotomic_search();
+  else
+	  solver->dichotomic_search(params.lbCutoff);
+
   //}
 
   //TODO add visited_objective
@@ -89,7 +93,7 @@ int main( int argc, char** argv )
 		  old_distance = stats.upper_bound - stats.lower_bound;
 		  solver->lb_C_max = (stats.lower_bound);
 		  solver->ub_C_max = (stats.upper_bound);
-		  solver->dichotomic_search();
+		  solver->dichotomic_search(params.lbCutoff);
 	  }
 	  else{
 		  break;
