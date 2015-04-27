@@ -2068,7 +2068,7 @@ void SchedulingSolver::setup() {
 			  params->keep_when_bjm ,  params->keeplearning_in_bb, params->simulaterestart,
 			  params->nogood_based_weight, params->fixedForget , params-> fixedlimitSize ,
 			  params-> fixedLearntSize ,params-> prob_forget ,params-> forgetdecsize ,
-			  params-> limitresetpolicy , params-> taskweight , params->adaptsize,
+			  (unsigned int) params-> limitresetpolicy , params-> taskweight , params->adaptsize,
 			  params->adaptforget, params->sizeocc
 	  );
 

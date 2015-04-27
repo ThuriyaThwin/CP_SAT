@@ -216,8 +216,8 @@ inline bool is_a_bound_literal (Literal literal) {return literal >> 63;}
     int prob_forget;
     //To continue UP
     int forgetdecsize;
-    //To reset the policy (see the scheduler module for more details)
-    int limitresetpolicy;
+    //To reset the restart policy after limitresetpolicy new failures
+    unsigned int limitresetpolicy;
 
     int taskweight;
 
@@ -1078,7 +1078,7 @@ inline bool is_a_bound_literal (Literal literal) {return literal >> 63;}
     		int keep_when_bjm , int keeplearning_in_bb , int _simulaterestart,
     		int _nogood_based_weight , int fixedForget , int fixedlimitSize ,
     		int fixedLearntSize ,   int _prob_forget, int _forgetdecsize,
-    		int limitresetpolicy , int taskweight , int _adaptsize,
+    		unsigned int limitresetpolicy , int taskweight , int _adaptsize,
     		int _adaptforget , int _sizeocc
     );
 

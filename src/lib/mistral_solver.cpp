@@ -2008,7 +2008,7 @@ Mistral::Outcome Mistral::Solver::restart_search(const int root, const bool _res
   // std::cout << "[" << std::right << std::setw(33) << "]";
   // std::cout.flush();
   //int count_restarts =1;
-  int limit_reset_policy = parameters.limitresetpolicy;
+  unsigned int limit_reset_policy = parameters.limitresetpolicy;
 
 //  int max_per_variable=1000;
   int max_avg=100000;
@@ -10039,7 +10039,7 @@ void Mistral::Solver::set_fdlearning_on(
         int _fixedLearntSize,
         int _prob_forget,
         int _forgetdecsize,
-        int _limitresetpolicy,
+        unsigned int _limitresetpolicy,
         int _taskweight ,
         int _adaptsize,
         int _adaptforget,

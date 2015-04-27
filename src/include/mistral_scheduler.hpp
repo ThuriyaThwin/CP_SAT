@@ -159,7 +159,7 @@ namespace Mistral {
     int autoconfigublimit;
     int autoconfiglblimit;
     //if >0, we reset the policy once we hit  $limitresetpolicy failures.
-    int limitresetpolicy;
+    unsigned int limitresetpolicy;
     //used with task weight
     int taskweight;
 
