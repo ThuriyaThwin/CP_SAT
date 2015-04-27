@@ -10081,7 +10081,7 @@ void Mistral::Solver::set_fdlearning_on(
 
 	parameters.prob_forget = _prob_forget;
 	parameters.forgetdecsize =_forgetdecsize;
-	parameters.limitresetpolicy =  _limitresetpolicy;
+	//parameters.limitresetpolicy =  _limitresetpolicy;
 	parameters.taskweight = _taskweight;
 	parameters.adaptsize = _adaptsize;
 	parameters.adaptforget = _adaptforget;

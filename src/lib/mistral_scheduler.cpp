@@ -2076,6 +2076,9 @@ void SchedulingSolver::setup() {
 		  parameters.updatefailurescope=1;
   }
 
+  parameters.limitresetpolicy =  params->limitresetpolicy;
+
+
 #ifdef _MONITOR
   monitor_list << tasks[15] << " "
 
