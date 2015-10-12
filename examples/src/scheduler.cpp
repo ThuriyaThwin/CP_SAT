@@ -69,6 +69,7 @@ int main( int argc, char** argv )
 
   // if(solver.status == UNKNOWN) 
 
+  std::cout << "c Model : " << solver << std::endl;
 
   int old_distance = solver->get_ub() -  solver->get_lb();
   //solver->dichotomic_search(0);

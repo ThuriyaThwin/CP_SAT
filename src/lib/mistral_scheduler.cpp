@@ -1970,9 +1970,20 @@ void SchedulingSolver::setup() {
   start_from = tasks.size +1;
 //  std::cout << "SET START FROM " << start_from << std::endl;
 
+
+  Vector< Vector< Vector< Variable > > > tmp_map;
+
+  tmp_map.initialise(data->nMachines(),data->nMachines());
+
   // mutual exclusion constraints
-  for(k=0; k<data->nMachines(); ++k) 
-    for(i=0; i<data->nTasksInMachine(k); ++i)
+  for(k=0; k<data->nMachines(); ++k) {
+
+	  tmp_map[k].initialise(data->nTasksInMachine(k),data->nTasksInMachine(k));
+
+	  for(i=0; i<data->nTasksInMachine(k); ++i){
+
+		  tmp_map[k][i].initialise(data->nTasksInMachine(k),data->nTasksInMachine(k));
+
       for(j=i+1; j<data->nTasksInMachine(k); ++j) {
 	ti = data->getMachineTask(k,i);
 	tj = data->getMachineTask(k,j);
@@ -2032,13 +2043,21 @@ void SchedulingSolver::setup() {
 	tasks_of_d.add(tasks[tj].get_var());
 	disjunct_map.add(tasks_of_d);
 
+	//std::cout << " add bool for i j= " << i << " " << j << std::endl ;
+	//std::cout << " bool = " << disjuncts.back().get_var().id() << std::endl ;
+
+	tmp_map[k][i][j]=disjuncts.back().get_var();
 
       }
-
+	  }
+  }
 
   for(unsigned int i=0; i<disjuncts.size; ++i)
    add(Free(disjuncts[i]));
   //add( disjuncts );
+
+
+
 
 //   //exit(1);
 
@@ -2075,6 +2094,91 @@ void SchedulingSolver::setup() {
 	  if (!params->vsids)
 		  parameters.updatefailurescope=1;
   }
+
+
+
+  //Clauses
+  //Vector< Vector< Literal > > clauses;
+  //Vector< Literal > new_clause;
+  VarArray subsequence;
+
+  for(k=0; k<data->nMachines(); ++k)
+	  for(i=0; i<data->nTasksInMachine(k); ++i)
+		  for(j=i+1; j<data->nTasksInMachine(k); ++j)
+			  for(int l=j+1; l<data->nTasksInMachine(k); ++l) {
+
+
+				  /*    			std::cout << " task i " << i << std::endl ;
+    			std::cout << " task j " << j << std::endl ;
+    			std::cout << " task l " << l << std::endl ;
+
+    			std::cout << " bool i j" << tmp_map[k][i][j].id() << std::endl ;
+    			std::cout << " bool j l" << tmp_map[k][j][l].id() << std::endl ;
+    			std::cout << " bool i l" << tmp_map[k][i][l].id() << std::endl ;
+    			std::cout << " \n "<< std::endl ;
+				   */
+
+				  /*    			new_clause.clear();
+    			//lit <-- Not e_kij
+    			lit =  2* tmp_map[k][i][j].id();
+    			new_clause.add(lit);
+    			//lit <-- Not e_kjl
+    			lit =  2* tmp_map[k][j][l].id();
+    			new_clause.add(lit);
+    			//lit <-- e_kil
+    			lit =  2* tmp_map[k][i][l].id()+1;
+    			new_clause.add(lit);
+
+
+    			new_clause.clear();
+    			//lit <-- e_kij
+    			lit =  2* tmp_map[k][i][j].id()+1;
+    			new_clause.add(lit);
+    			//lit <-- e_kjl
+    			lit =  2* tmp_map[k][j][l].id()+1;
+    			new_clause.add(lit);
+    			//lit <-- Not e_kil
+    			lit =  2* tmp_map[k][i][l].id();
+    			new_clause.add(lit);
+    			clauses.add(new_clause);
+
+
+				   */
+
+				  /*    			new_clause.clear();
+    			new_clause.add(encode_boolean_variable_as_literal(tmp_map[k][i][j].id(),0));
+    			new_clause.add(encode_boolean_variable_as_literal(tmp_map[k][j][l].id(),0));
+    			new_clause.add(encode_boolean_variable_as_literal(tmp_map[k][i][l].id(),1));
+    			clauses.add(new_clause);
+    			new_clause.clear();
+    			new_clause.add(encode_boolean_variable_as_literal(tmp_map[k][i][j].id(),1));
+    			new_clause.add(encode_boolean_variable_as_literal(tmp_map[k][j][l].id(),1));
+    			new_clause.add(encode_boolean_variable_as_literal(tmp_map[k][i][l].id(),0));
+    			clauses.add(new_clause);
+
+				   */
+
+
+				  subsequence.clear();
+				  subsequence.add(!tmp_map[k][i][j]);
+				  subsequence.add(!tmp_map[k][j][l]);
+				  subsequence.add(tmp_map[k][i][l]);
+				//  add( BoolSum( subsequence, 1, INFTY) );
+
+				  subsequence.clear();
+				  subsequence.add(tmp_map[k][i][j]);
+				  subsequence.add(tmp_map[k][j][l]);
+				  subsequence.add(!tmp_map[k][i][l]);
+				  //add( BoolSum( subsequence, 1, INFTY) );
+
+			  }
+
+  //add clauses
+/*		for(int i=0; i<clauses.size; ++i) {
+			base->add(clauses[i]);
+		}
+*/
+
 
   parameters.limitresetpolicy =  params->limitresetpolicy;
 
